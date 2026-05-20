@@ -1,0 +1,174 @@
+import { type Metadata } from "next";
+import Link from "next/link";
+import { BLOG_POSTS, CATEGORY_META, type BlogCategory } from "./blog-data";
+
+export const metadata: Metadata = {
+  title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — MysticAI",
+  description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
+  keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
+};
+
+const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string }> = [
+  { key: "all",       label: "全部",     icon: "✦" },
+  { key: "tarot",     label: "塔罗牌意", icon: "🔮" },
+  { key: "dream",     label: "周公解梦", icon: "💭" },
+  { key: "horoscope", label: "星座运势", icon: "🌌" },
+];
+
+export default function BlogListPage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | undefined>;
+}) {
+  const cat = (searchParams.cat ?? "all") as BlogCategory | "all";
+  const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
+
+  return (
+    <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+
+      {/* ── Nav ── */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 100,
+        background: "rgba(10,6,28,0.92)", backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(201,168,76,0.12)",
+        padding: "0 20px", height: 52,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <Link href="/" style={{
+          display: "flex", alignItems: "center", gap: 8,
+          textDecoration: "none", color: "rgba(201,168,76,0.75)", fontSize: "0.8rem",
+          letterSpacing: "0.06em",
+        }}>
+          <span>←</span><span>返回首页</span>
+        </Link>
+        <div style={{
+          fontFamily: "Cinzel, serif", fontSize: "0.85rem", fontWeight: 700,
+          background: "linear-gradient(135deg,#e8d5a3,#c9a84c)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+        }}>神秘学知识库</div>
+        <div style={{ width: 80 }} />
+      </nav>
+
+      {/* ── Hero ── */}
+      <section style={{ textAlign: "center", padding: "48px 20px 32px", position: "relative" }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "radial-gradient(ellipse at 50% 0%, rgba(100,60,200,0.18) 0%, transparent 65%)",
+          pointerEvents: "none",
+        }} />
+        <p style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.22em", color: "rgba(201,168,76,0.5)", marginBottom: 8, textTransform: "uppercase" }}>
+          MYSTIC KNOWLEDGE BASE
+        </p>
+        <h1 style={{
+          fontFamily: "Cinzel,serif", fontSize: "clamp(1.6rem,5vw,2.6rem)", fontWeight: 700,
+          background: "linear-gradient(135deg,#e8d5a3 0%,#c9a84c 50%,#f0e68c 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+          marginBottom: 10, lineHeight: 1.25,
+        }}>神秘学知识库</h1>
+        <p style={{ fontSize: "0.88rem", color: "rgba(200,175,145,0.65)", maxWidth: 480, margin: "0 auto 28px", lineHeight: 1.6 }}>
+          塔罗78张牌意逐一解析 · 周公解梦深度科普 · 星座运势实时指南
+        </p>
+      </section>
+
+      {/* ── Category Tabs ── */}
+      <div style={{
+        display: "flex", gap: 8, padding: "0 20px 20px", justifyContent: "center",
+        flexWrap: "wrap",
+      }}>
+        {CATEGORIES.map(c => {
+          const active = cat === c.key;
+          return (
+            <Link
+              key={c.key}
+              href={c.key === "all" ? "/blog" : `/blog?cat=${c.key}`}
+              style={{
+                padding: "7px 18px", borderRadius: 22, textDecoration: "none",
+                border: active ? "1px solid rgba(201,168,76,0.55)" : "1px solid rgba(201,168,76,0.14)",
+                background: active ? "rgba(201,168,76,0.14)" : "transparent",
+                color: active ? "rgba(240,210,120,0.95)" : "rgba(210,185,130,0.65)",
+                fontSize: "0.78rem", display: "flex", alignItems: "center", gap: 5,
+                transition: "all 0.18s", whiteSpace: "nowrap",
+              }}
+            >
+              <span>{c.icon}</span>{c.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* ── Article Grid ── */}
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 16px 80px" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 420px), 1fr))",
+          gap: 14,
+        }}>
+          {filtered.map(post => {
+            const meta = CATEGORY_META[post.category];
+            return (
+              <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
+                <article style={{
+                  borderRadius: 16,
+                  background: "rgba(16,10,38,0.85)",
+                  border: "1px solid rgba(201,168,76,0.15)",
+                  padding: "20px 20px 18px",
+                  cursor: "pointer",
+                  position: "relative",
+                  transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 28px rgba(100,60,200,0.18)`;
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.32)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.15)";
+                }}
+                >
+                  {/* Category Badge */}
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
+                    borderRadius: 8, padding: "2px 9px", marginBottom: 10,
+                    fontSize: "0.66rem", color: meta.color, fontWeight: 600,
+                  }}>
+                    <span>{meta.icon}</span>{meta.label}
+                  </div>
+
+                  <h2 style={{
+                    fontSize: "0.96rem", fontWeight: 700, color: "#e8d5a3",
+                    lineHeight: 1.45, marginBottom: 8, fontFamily: "serif",
+                  }}>{post.title}</h2>
+
+                  <p style={{
+                    fontSize: "0.76rem", color: "rgba(200,175,140,0.58)", lineHeight: 1.55,
+                    marginBottom: 14,
+                    display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}>{post.description}</p>
+
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    fontSize: "0.66rem", color: "rgba(201,168,76,0.4)",
+                  }}>
+                    <span>📅 {post.publishedAt} · ⏱ {post.readingTime} 分钟阅读</span>
+                    <span style={{ color: "rgba(201,168,76,0.6)" }}>阅读全文 →</span>
+                  </div>
+                </article>
+              </Link>
+            );
+          })}
+        </div>
+
+        {filtered.length === 0 && (
+          <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(200,175,145,0.4)", fontSize: "0.9rem" }}>
+            该分类暂无文章，敬请期待
+          </div>
+        )}
+      </div>
+
+    </div>
+  );
+}

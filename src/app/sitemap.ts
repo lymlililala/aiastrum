@@ -1,10 +1,13 @@
 import { type MetadataRoute } from "next";
+import { BLOG_POSTS } from "./blog/blog-data";
 
 const BASE_URL = "https://aiastrum.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = [
+  // 工具页面
+  const toolRoutes = [
     { path: "/",              priority: 1.0,  changeFrequency: "daily"   },
+    { path: "/blog",          priority: 0.95, changeFrequency: "daily"   },
     { path: "/tarot",         priority: 0.9,  changeFrequency: "weekly"  },
     { path: "/horoscope",     priority: 0.9,  changeFrequency: "daily"   },
     { path: "/daily-fortune", priority: 0.9,  changeFrequency: "daily"   },
@@ -29,10 +32,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/ai-mystic",     priority: 0.8,  changeFrequency: "weekly"  },
   ] as const;
 
-  return routes.map(({ path, priority, changeFrequency }) => ({
+  const toolEntries: MetadataRoute.Sitemap = toolRoutes.map(({ path, priority, changeFrequency }) => ({
     url: `${BASE_URL}${path}`,
     lastModified: new Date(),
     changeFrequency,
     priority,
   }));
+
+  // 博客文章页面（独立 lastModified，优先级高，有助于快速被收录）
+  const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
+
+  return [...toolEntries, ...blogEntries];
 }
