@@ -8,8 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
-    OPENAI_API_KEY: z.string().optional(),
-    OPENAI_BASE_URL: z.string().optional(),
+    DEEPSEEK_API_KEY: z.string().optional(),
   },
 
   /**
@@ -27,8 +26,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
+    DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

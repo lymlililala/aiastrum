@@ -117,8 +117,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing card data" }, { status: 400 });
   }
 
-  const apiKey = env.OPENAI_API_KEY;
-  const baseUrl = env.OPENAI_BASE_URL ?? "https://api.openai.com";
+  const apiKey = env.DEEPSEEK_API_KEY;
+  const baseUrl = "https://api.deepseek.com";
 
   // 如果没有配置 API key，返回模拟数据
   if (!apiKey) {
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "deepseek-v4-flash",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 800,
         temperature: 0.85,

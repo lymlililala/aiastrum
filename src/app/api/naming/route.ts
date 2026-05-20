@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
     recommend_reason: string;
   }> = [];
 
-  const apiKey = env.OPENAI_API_KEY;
-  const baseUrl = env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+  const apiKey = env.DEEPSEEK_API_KEY;
+  const baseUrl = "https://api.deepseek.com";
 
   if (apiKey) {
     try {
@@ -120,14 +120,14 @@ export async function POST(request: NextRequest) {
         freeNames,
       );
 
-      const response = await fetch(`${baseUrl}/chat/completions`, {
+      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "deepseek-v4-flash",
           messages: [
             {
               role: "system",

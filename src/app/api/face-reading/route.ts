@@ -18,10 +18,7 @@ export async function POST(request: NextRequest) {
     // 图片已接收，仅用于本次分析，不保存
 
     // ===== 尝试调用 AI API =====
-    const apiKey =
-      process.env.DEEPSEEK_API_KEY ??
-      process.env.OPENAI_API_KEY ??
-      null;
+    const apiKey = process.env.DEEPSEEK_API_KEY ?? null;
 
     let aiEnhancedReport = null;
 
@@ -63,11 +60,8 @@ async function callAIForEnhancement(
   seed: string,
   apiKey: string
 ): Promise<AIEnhancement | null> {
-  const isDeepSeek = !process.env.OPENAI_API_KEY;
-  const baseUrl = isDeepSeek
-    ? "https://api.deepseek.com/v1"
-    : "https://api.openai.com/v1";
-  const model = isDeepSeek ? "deepseek-chat" : "gpt-4o-mini";
+  const baseUrl = "https://api.deepseek.com";
+  const model = "deepseek-v4-flash";
 
   const modeName = mode === "face" ? "面相" : "手相";
   const prompt = `你是一位融合东方面相学与现代心理学的AI命理师。
@@ -83,7 +77,7 @@ async function callAIForEnhancement(
 只返回 JSON 格式：
 {"overview": "...", "lifeQuote": "...", "shareText": "..."}`;
 
-  const response = await fetch(`${baseUrl}/chat/completions`, {
+  const response = await fetch(`${baseUrl}/v1/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,

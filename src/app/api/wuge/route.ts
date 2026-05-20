@@ -102,22 +102,22 @@ export async function POST(request: NextRequest) {
   // 尝试调用AI API生成报告
   let aiReport: { personality: string; career: string; love: string; health: string; lifeQuote: string } | null = null;
 
-  const apiKey = env.OPENAI_API_KEY;
-  const baseUrl = env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
+  const apiKey = env.DEEPSEEK_API_KEY;
+  const baseUrl = "https://api.deepseek.com";
 
   if (apiKey) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      const response = await fetch(`${baseUrl}/chat/completions`, {
+      const response = await fetch(`${baseUrl}/v1/chat/completions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "deepseek-v4-flash",
           messages: [
             {
               role: "system",

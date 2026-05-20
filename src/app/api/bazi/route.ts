@@ -145,8 +145,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "排盘计算失败" }, { status: 500 });
   }
 
-  const apiKey = env.OPENAI_API_KEY;
-  const baseUrl = env.OPENAI_BASE_URL ?? "https://api.openai.com";
+  const apiKey = env.DEEPSEEK_API_KEY;
+  const baseUrl = "https://api.deepseek.com";
 
   // 如果没有配置 API key，返回模拟数据
   if (!apiKey) {
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "deepseek-v4-flash",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 1000,
         temperature: 0.8,
