@@ -220,7 +220,7 @@ export interface LoveReport {
   score: LoveScore;
   // 性格特质（免费可见部分）
   personalityTrait: string;
-  peachForecast: PeachForecast;
+  peachForecast: PeachBlossomForecast;
   soulmate: SoulmatePicture;
   loveAdvice: LoveAdvice;
   // AI 增强（可选）
