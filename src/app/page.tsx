@@ -605,6 +605,56 @@ function ModuleSelectPage() {
         )}
       </div>
 
+      {/* ── 知识库推广横幅 ── */}
+      <div style={{ maxWidth: 960, margin: "0 auto 16px", padding: "0 16px" }}>
+        <Link href="/blog" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{
+            borderRadius: 16,
+            background: "linear-gradient(135deg, rgba(100,60,200,0.15) 0%, rgba(201,168,76,0.08) 100%)",
+            border: "1px solid rgba(201,168,76,0.2)",
+            padding: "16px 20px",
+            display: "flex", alignItems: "center", gap: 14,
+            cursor: "pointer",
+            transition: "border-color 0.2s, box-shadow 0.2s",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.38)";
+            (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 24px rgba(100,60,200,0.15)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.2)";
+            (e.currentTarget as HTMLElement).style.boxShadow = "none";
+          }}
+          >
+            <div style={{
+              width: 42, height: 42, borderRadius: 11, flexShrink: 0,
+              background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
+            }}>📚</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#e8d5a3", marginBottom: 3 }}>
+                {lang === "zh" ? "神秘学知识库" : "Mystic Knowledge Base"}
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "rgba(200,175,140,0.55)", lineHeight: 1.4 }}>
+                {lang === "zh"
+                  ? "塔罗78张牌意 · 周公解梦大全 · 星座运势指南"
+                  : "78 Tarot card meanings · Dream guides · Horoscope articles"}
+              </div>
+            </div>
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0,
+            }}>
+              <span style={{
+                fontSize: "0.58rem", padding: "2px 8px", borderRadius: 6,
+                background: "linear-gradient(135deg,#7c3aed,#c084fc)", color: "#fff",
+                fontWeight: 600, letterSpacing: "0.04em",
+              }}>SEO</span>
+              <span style={{ fontSize: "0.75rem", color: "rgba(201,168,76,0.55)" }}>→</span>
+            </div>
+          </div>
+        </Link>
+      </div>
+
       {/* ── FOOTER ── */}
       <footer style={{
         borderTop: "1px solid rgba(201,168,76,0.08)",
