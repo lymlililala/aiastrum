@@ -1,0 +1,596 @@
+/* ===== 每日开运指南 CSS ===== */
+
+.df-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0518 0%, #0d0920 40%, #080614 100%);
+  padding-bottom: 60px;
+}
+
+/* 英雄区 */
+.df-hero {
+  position: relative;
+  padding: 60px 20px 40px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.df-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(240, 165, 0, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.df-hero-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: rgba(240, 165, 0, 0.7);
+  border: 1px solid rgba(240, 165, 0, 0.25);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  background: rgba(240, 165, 0, 0.06);
+}
+
+.df-hero-title {
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #FFD700, #F0A500, #C9A84C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  font-family: serif;
+}
+
+.df-hero-date {
+  font-size: 0.85rem;
+  color: rgba(240, 200, 120, 0.6);
+  margin-bottom: 4px;
+}
+
+.df-hero-lunar {
+  font-size: 0.75rem;
+  color: rgba(240, 200, 120, 0.4);
+}
+
+/* 主内容 */
+.df-content {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 输入表单 */
+.df-form {
+  background: rgba(26, 16, 53, 0.7);
+  border: 1px solid rgba(240, 165, 0, 0.2);
+  border-radius: 20px;
+  padding: 28px 24px;
+  backdrop-filter: blur(12px);
+}
+
+.df-form-title {
+  font-size: 1rem;
+  color: #e8d5a3;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: serif;
+}
+
+.df-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.df-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.df-field-full {
+  margin-bottom: 16px;
+}
+
+.df-label {
+  font-size: 0.75rem;
+  color: rgba(240, 200, 120, 0.7);
+  letter-spacing: 0.05em;
+}
+
+.df-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(240, 165, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #e8d5a3;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.df-input:focus {
+  border-color: rgba(240, 165, 0, 0.5);
+}
+
+.df-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #C9A84C, #F0A500);
+  color: #0a0518;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: serif;
+  letter-spacing: 0.05em;
+}
+
+.df-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(240, 165, 0, 0.35);
+}
+
+/* 结果区 */
+.df-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 运势总览卡 */
+.df-overview-card {
+  background: rgba(20, 12, 45, 0.85);
+  border: 1px solid rgba(240, 165, 0, 0.25);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.df-overview-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(240, 165, 0, 0.1) 0%, transparent 70%);
+}
+
+.df-overview-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.df-element-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(240, 165, 0, 0.2);
+}
+
+.df-element-label {
+  font-size: 0.6rem;
+  color: rgba(240, 165, 0, 0.5);
+  margin-top: 2px;
+}
+
+.df-overview-info {
+  flex: 1;
+}
+
+.df-day-pillar {
+  font-size: 1.2rem;
+  color: #FFD700;
+  font-weight: 700;
+  font-family: serif;
+  letter-spacing: 0.1em;
+}
+
+.df-day-sub {
+  font-size: 0.75rem;
+  color: rgba(240, 200, 120, 0.5);
+  margin-top: 2px;
+}
+
+.df-overall-score {
+  text-align: right;
+}
+
+.df-score-num {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FFD700, #F0A500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.df-score-label {
+  font-size: 0.7rem;
+  color: rgba(240, 200, 120, 0.5);
+}
+
+/* 四维运势 */
+.df-scores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.df-score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.df-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.df-score-name {
+  font-size: 0.75rem;
+  color: rgba(240, 200, 120, 0.7);
+}
+
+.df-score-val {
+  font-size: 0.75rem;
+  color: #FFD700;
+  font-weight: 600;
+}
+
+.df-score-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.df-score-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #C9A84C, #FFD700);
+  transition: width 1s ease;
+}
+
+/* 幸运要素卡 */
+.df-lucky-card {
+  background: rgba(15, 10, 35, 0.85);
+  border: 1px solid rgba(240, 165, 0, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.df-card-title {
+  font-size: 0.85rem;
+  color: rgba(240, 165, 0, 0.8);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.df-lucky-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.df-lucky-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(240, 165, 0, 0.1);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.df-lucky-emoji {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.df-lucky-label {
+  font-size: 0.6rem;
+  color: rgba(240, 200, 120, 0.45);
+  margin-bottom: 4px;
+}
+
+.df-lucky-value {
+  font-size: 0.85rem;
+  color: #e8d5a3;
+  font-weight: 600;
+  font-family: serif;
+}
+
+/* 穿搭建议卡 */
+.df-outfit-card {
+  background: rgba(15, 10, 35, 0.85);
+  border: 1px solid rgba(240, 165, 0, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.df-color-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.df-color-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px var(--color);
+}
+
+.df-color-info {
+  flex: 1;
+}
+
+.df-color-name {
+  font-size: 1rem;
+  color: #e8d5a3;
+  font-weight: 600;
+  font-family: serif;
+}
+
+.df-color-sub {
+  font-size: 0.7rem;
+  color: rgba(240, 200, 120, 0.4);
+}
+
+.df-avoid-color {
+  font-size: 0.75rem;
+  color: rgba(220, 100, 100, 0.7);
+  text-align: right;
+}
+
+.df-outfit-text {
+  font-size: 0.85rem;
+  color: rgba(220, 200, 160, 0.8);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.df-accessory {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(240, 165, 0, 0.06);
+  border: 1px solid rgba(240, 165, 0, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: rgba(240, 200, 120, 0.8);
+}
+
+/* 晨间仪式卡 */
+.df-ritual-card {
+  background: rgba(15, 10, 35, 0.85);
+  border: 1px solid rgba(240, 165, 0, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.df-ritual-text {
+  font-size: 0.88rem;
+  color: rgba(220, 200, 160, 0.85);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.df-mantra-box {
+  background: rgba(240, 165, 0, 0.07);
+  border: 1px solid rgba(240, 165, 0, 0.18);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: #FFD700;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.6;
+  font-family: serif;
+}
+
+/* 禁忌卡 */
+.df-avoid-card {
+  background: rgba(15, 10, 35, 0.85);
+  border: 1px solid rgba(200, 60, 60, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.df-avoid-card .df-card-title {
+  color: rgba(220, 100, 80, 0.8);
+}
+
+.df-avoid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.df-avoid-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.83rem;
+  color: rgba(220, 170, 150, 0.8);
+  line-height: 1.5;
+}
+
+.df-avoid-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(220, 100, 80, 0.6);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* 祝福语卡 */
+.df-blessing-card {
+  background: linear-gradient(135deg, rgba(240, 165, 0, 0.08), rgba(201, 168, 76, 0.04));
+  border: 1px solid rgba(240, 165, 0, 0.25);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.df-blessing-text {
+  font-size: 0.95rem;
+  color: #e8d5a3;
+  line-height: 1.7;
+  font-family: serif;
+}
+
+/* 海报分享按钮 */
+.df-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.df-poster-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #C9A84C, #F0A500);
+  color: #0a0518;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.df-reset-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: rgba(240, 200, 120, 0.5);
+  font-size: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(240, 165, 0, 0.12);
+  cursor: pointer;
+}
+
+/* 海报弹窗 */
+.df-poster-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.df-poster-wrap {
+  max-width: 360px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.df-poster-canvas {
+  width: 360px;
+  border-radius: 20px;
+  display: block;
+}
+
+.df-poster-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.df-poster-save {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(135deg, #C9A84C, #F0A500);
+  color: #0a0518;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.df-poster-close {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(240, 200, 120, 0.7);
+  border-radius: 10px;
+  border: 1px solid rgba(240, 165, 0, 0.2);
+  cursor: pointer;
+}
+
+/* 加载动画 */
+.df-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 20px;
+}
+
+.df-loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(240, 165, 0, 0.1);
+  border-top-color: rgba(240, 165, 0, 0.8);
+  border-radius: 50%;
+  animation: df-spin 1s linear infinite;
+}
+
+@keyframes df-spin {
+  to { transform: rotate(360deg); }
+}
+
+.df-loading-text {
+  font-size: 0.9rem;
+  color: rgba(240, 200, 120, 0.6);
+  font-family: serif;
+}
+
+/* 淡入动画 */
+.df-fade-in {
+  animation: df-fade 0.6s ease-out forwards;
+}
+
+@keyframes df-fade {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}

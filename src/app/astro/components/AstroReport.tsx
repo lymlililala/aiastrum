@@ -1,0 +1,333 @@
+"use client";
+
+import React, { useState } from "react";
+import type { AstroChart } from "../astro-engine";
+import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, HOUSE_LIST } from "../astro-data";
+import type { ZodiacSign } from "../astro-data";
+
+interface AstroReportProps {
+  chart: AstroChart;
+}
+
+type TabType = "big3" | "planets" | "aspects";
+
+// 星座标签组件
+function ZodiacBadge({ sign }: { sign: ZodiacSign }) {
+  const zodiac = ZODIAC_LIST.find((z) => z.id === sign)!;
+  const elementColors: Record<string, string> = {
+    fire: "#FF6B6B",
+    earth: "#A8C87E",
+    air: "#87CEEB",
+    water: "#6EC5E9",
+  };
+  return (
+    <span
+      className="astro-zodiac-badge"
+      style={{ borderColor: `${elementColors[zodiac.element]}60`, color: elementColors[zodiac.element] }}
+    >
+      {zodiac.symbol} {zodiac.name}
+    </span>
+  );
+}
+
+// Big3 三巨头卡片
+function Big3Card({ chart }: { chart: AstroChart }) {
+  const { big3 } = chart;
+  const sunPlanet = PLANET_MAP.Sun;
+  const moonPlanet = PLANET_MAP.Moon;
+
+  const cards = [
+    {
+      planet: sunPlanet,
+      label: "太阳星座",
+      sublabel: "外在性格与人生追求",
+      sign: big3.sun.sign,
+      text: big3.sun.text,
+      gradient: "linear-gradient(135deg, rgba(243,156,18,0.15), rgba(243,156,18,0.05))",
+      border: "rgba(243,156,18,0.3)",
+    },
+    {
+      planet: moonPlanet,
+      label: "月亮星座",
+      sublabel: "内在情绪与安全感",
+      sign: big3.moon.sign,
+      text: big3.moon.text,
+      gradient: "linear-gradient(135deg, rgba(189,195,199,0.15), rgba(189,195,199,0.05))",
+      border: "rgba(189,195,199,0.3)",
+    },
+    ...(big3.rising ? [{
+      planet: { symbol: "↑", name: "上升", color: "#9B59B6", id: "rising" as const },
+      label: "上升星座",
+      sublabel: "外在气质与第一印象",
+      sign: big3.rising.sign,
+      text: big3.rising.text,
+      gradient: "linear-gradient(135deg, rgba(155,89,182,0.15), rgba(155,89,182,0.05))",
+      border: "rgba(155,89,182,0.3)",
+    }] : []),
+  ];
+
+  return (
+    <div className="astro-big3-section">
+      <div className="astro-section-header">
+        <h2 className="astro-section-title">⭐ Big 3 三巨头</h2>
+        <p className="astro-section-subtitle">你性格的核心支柱</p>
+      </div>
+
+      {/* 一句话总结 */}
+      <div className="astro-big3-summary">
+        {big3.rising
+          ? `${ZODIAC_LIST.find(z => z.id === big3.rising!.sign)?.name}上升 · ${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}太阳 · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}月亮`
+          : `${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}太阳 · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}月亮`}
+      </div>
+
+      <div className="astro-big3-cards">
+        {cards.map((card, i) => (
+          <div
+            key={i}
+            className="astro-big3-card"
+            style={{ background: card.gradient, borderColor: card.border }}
+          >
+            <div className="astro-big3-card-header">
+              <span className="astro-big3-planet-symbol" style={{ color: card.planet.color }}>
+                {card.planet.symbol}
+              </span>
+              <div>
+                <div className="astro-big3-label">{card.label}</div>
+                <div className="astro-big3-sublabel">{card.sublabel}</div>
+              </div>
+              <ZodiacBadge sign={card.sign} />
+            </div>
+            <p className="astro-big3-text">{card.text}</p>
+          </div>
+        ))}
+      </div>
+
+      {!big3.rising && (
+        <div className="astro-no-time-notice">
+          💡 提供出生时间可解锁上升星座解读，了解你展现给世界的外在气质
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 行星宫位解读
+function PlanetHouseSection({ chart }: { chart: AstroChart }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const mainPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
+
+  return (
+    <div className="astro-planets-section">
+      <div className="astro-section-header">
+        <h2 className="astro-section-title">🪐 行星星座与宫位</h2>
+        <p className="astro-section-subtitle">点击行星了解详细解读</p>
+      </div>
+
+      <div className="astro-planet-list">
+        {mainPlanets.map((pid) => {
+          const planetPos = chart.planets.find((p) => p.planet === pid);
+          const planetInterpret = chart.planetInterpretations.find((p) => p.planet === pid);
+          const planetInfo = PLANET_MAP[pid];
+          const zodiacInfo = ZODIAC_LIST.find((z) => z.id === planetPos?.sign);
+          const houseInfo = HOUSE_LIST.find((h) => h.num === planetPos?.house);
+          const isExpanded = expanded === pid;
+
+          if (!planetPos || !zodiacInfo) return null;
+
+          return (
+            <div
+              key={pid}
+              className={`astro-planet-item ${isExpanded ? "expanded" : ""}`}
+              onClick={() => setExpanded(isExpanded ? null : pid)}
+            >
+              <div className="astro-planet-item-header">
+                <div className="astro-planet-icon" style={{ borderColor: `${planetInfo.color}50`, background: `${planetInfo.color}10` }}>
+                  <span style={{ color: planetInfo.color, fontSize: "1.2rem" }}>{planetInfo.symbol}</span>
+                </div>
+                <div className="astro-planet-info">
+                  <span className="astro-planet-name">{planetInfo.name}</span>
+                  <div className="astro-planet-position">
+                    <ZodiacBadge sign={planetPos.sign} />
+                    <span className="astro-planet-degree">
+                      {planetPos.degree}°{planetPos.minute.toString().padStart(2, "0")}&apos;
+                    </span>
+                    {chart.hasTimeData && (
+                      <span className="astro-planet-house">第 {planetPos.house} 宫</span>
+                    )}
+                  </div>
+                </div>
+                <span className={`astro-expand-icon ${isExpanded ? "rotated" : ""}`}>▼</span>
+              </div>
+
+              {isExpanded && (
+                <div className="astro-planet-detail">
+                  <div className="astro-planet-meaning">
+                    <span className="astro-detail-label">行星含义</span>
+                    <p>{planetInfo.meaning}</p>
+                  </div>
+                  {planetInterpret?.signKeyword && (
+                    <div className="astro-planet-sign-interp">
+                      <span className="astro-detail-label">
+                        在{zodiacInfo.name}
+                      </span>
+                      <p>{planetInterpret.signKeyword}</p>
+                    </div>
+                  )}
+                  {chart.hasTimeData && planetInterpret?.houseText && houseInfo && (
+                    <div className="astro-planet-house-interp">
+                      <span className="astro-detail-label">
+                        落入第 {planetPos.house} 宫（{houseInfo.domain}）
+                      </span>
+                      <p>{planetInterpret.houseText}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 外行星简报 */}
+      <div className="astro-outer-planets">
+        <h3 className="astro-outer-title">外行星（世代影响）</h3>
+        <div className="astro-outer-grid">
+          {(["Uranus", "Neptune", "Pluto"] as const).map((pid) => {
+            const planetPos = chart.planets.find((p) => p.planet === pid);
+            const planetInfo = PLANET_MAP[pid];
+            const zodiacInfo = ZODIAC_LIST.find((z) => z.id === planetPos?.sign);
+            if (!planetPos || !zodiacInfo) return null;
+            return (
+              <div key={pid} className="astro-outer-planet-card">
+                <span style={{ color: planetInfo.color }}>{planetInfo.symbol}</span>
+                <span className="astro-outer-planet-name">{planetInfo.name}</span>
+                <span className="astro-outer-planet-sign">{zodiacInfo.symbol} {zodiacInfo.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="astro-outer-note">
+          外行星在一个星座停留多年，代表整个世代共同的精神能量特征
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// 核心相位解读
+function AspectsSection({ chart }: { chart: AstroChart }) {
+  return (
+    <div className="astro-aspects-section">
+      <div className="astro-section-header">
+        <h2 className="astro-section-title">🔗 核心相位</h2>
+        <p className="astro-section-subtitle">行星间的能量连结（最紧密的 {chart.topAspects.length} 个）</p>
+      </div>
+
+      {chart.topAspects.length === 0 ? (
+        <div className="astro-no-aspects">暂无紧密相位</div>
+      ) : (
+        <div className="astro-aspect-list">
+          {chart.topAspects.map((aspect, i) => {
+            const p1Info = PLANET_MAP[aspect.planet1];
+            const p2Info = PLANET_MAP[aspect.planet2];
+            const aspectInfo = ASPECT_MAP[aspect.type];
+            return (
+              <div key={i} className="astro-aspect-card" style={{ borderLeftColor: aspectInfo.color }}>
+                <div className="astro-aspect-header">
+                  <div className="astro-aspect-planets">
+                    <span style={{ color: p1Info.color }}>{p1Info.symbol} {p1Info.name}</span>
+                    <span
+                      className="astro-aspect-symbol"
+                      style={{ color: aspectInfo.color }}
+                    >
+                      {aspectInfo.symbol}
+                    </span>
+                    <span style={{ color: p2Info.color }}>{p2Info.symbol} {p2Info.name}</span>
+                  </div>
+                  <div className="astro-aspect-meta">
+                    <span
+                      className="astro-aspect-type-badge"
+                      style={{
+                        background: `${aspectInfo.color}20`,
+                        color: aspectInfo.color,
+                        border: `1px solid ${aspectInfo.color}40`,
+                      }}
+                    >
+                      {aspectInfo.name}
+                    </span>
+                    <span className="astro-aspect-orb">{aspect.orb.toFixed(1)}°</span>
+                    <span
+                      className="astro-aspect-nature"
+                      style={{
+                        color: aspectInfo.nature === "harmonious" ? "#2ECC71"
+                          : aspectInfo.nature === "challenging" ? "#E74C3C"
+                          : "#F1C40F",
+                      }}
+                    >
+                      {aspectInfo.nature === "harmonious" ? "和谐"
+                        : aspectInfo.nature === "challenging" ? "挑战"
+                        : "中性"}
+                    </span>
+                  </div>
+                </div>
+                <p className="astro-aspect-text">{aspect.interpretation}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 主报告组件
+export function AstroReport({ chart }: AstroReportProps) {
+  const [activeTab, setActiveTab] = useState<TabType>("big3");
+
+  const tabs: Array<{ id: TabType; label: string; icon: string }> = [
+    { id: "big3", label: "三巨头", icon: "⭐" },
+    { id: "planets", label: "行星宫位", icon: "🪐" },
+    { id: "aspects", label: "核心相位", icon: "🔗" },
+  ];
+
+  return (
+    <div className="astro-report-wrapper">
+      {/* 用户信息标题 */}
+      <div className="astro-report-header">
+        <h1 className="astro-report-name">{chart.input.name}</h1>
+        <p className="astro-report-info">
+          {chart.input.birthDate.replace(/-/g, " / ")}
+          {chart.hasTimeData && ` · ${chart.input.birthTime}`}
+          {" · "}{chart.input.city.name}
+        </p>
+        {!chart.hasTimeData && (
+          <div className="astro-report-no-time">
+            ℹ️ 未提供出生时间，宫位数据不可用
+          </div>
+        )}
+      </div>
+
+      {/* Tab 切换 */}
+      <div className="astro-report-tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`astro-report-tab ${activeTab === tab.id ? "active" : ""}`}
+          >
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Tab 内容 */}
+      <div className="astro-report-content">
+        {activeTab === "big3" && <Big3Card chart={chart} />}
+        {activeTab === "planets" && <PlanetHouseSection chart={chart} />}
+        {activeTab === "aspects" && <AspectsSection chart={chart} />}
+      </div>
+    </div>
+  );
+}

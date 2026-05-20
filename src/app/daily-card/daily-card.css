@@ -1,0 +1,370 @@
+/* ===== 每日宇宙提示卡 CSS ===== */
+
+.dc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 60px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 动态背景 */
+.dc-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  transition: background 0.8s ease;
+}
+
+.dc-stars {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dc-star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: dc-twinkle var(--dur) ease-in-out infinite alternate;
+}
+
+@keyframes dc-twinkle {
+  from { opacity: var(--min-op); transform: scale(1); }
+  to { opacity: var(--max-op); transform: scale(1.5); }
+}
+
+/* 内容区 */
+.dc-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* 日期区 */
+.dc-date-area {
+  text-align: center;
+}
+
+.dc-date-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.dc-date-text {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: serif;
+}
+
+/* ===== 卡片翻转容器 ===== */
+.dc-card-scene {
+  width: 280px;
+  height: 380px;
+  perspective: 800px;
+  cursor: pointer;
+}
+
+.dc-card-flipper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.dc-card-scene.flipped .dc-card-flipper {
+  transform: rotateY(180deg);
+}
+
+/* 卡背面（初始显示） */
+.dc-card-back,
+.dc-card-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.dc-card-back {
+  background: linear-gradient(135deg, #0d0920, #1a1040, #0d0920);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(100, 50, 200, 0.15);
+}
+
+.dc-card-back-pattern {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  opacity: 0.15;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 14px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,0.05) 0px,
+      rgba(255,255,255,0.05) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+}
+
+.dc-card-back-star {
+  font-size: 3rem;
+  animation: dc-pulse 2s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes dc-pulse {
+  from { filter: drop-shadow(0 0 6px rgba(200, 150, 255, 0.4)); transform: scale(1); }
+  to { filter: drop-shadow(0 0 16px rgba(200, 150, 255, 0.8)); transform: scale(1.08); }
+}
+
+.dc-card-back-hint {
+  font-size: 0.78rem;
+  color: rgba(200, 160, 255, 0.55);
+  letter-spacing: 0.1em;
+  font-family: serif;
+  position: relative;
+  z-index: 1;
+}
+
+.dc-card-back-border {
+  position: absolute;
+  inset: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* 卡正面（翻转后显示） */
+.dc-card-front {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: dc-card-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes dc-card-glow {
+  from { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); }
+  to { box-shadow: 0 20px 80px rgba(0, 0, 0, 0.7), 0 0 40px var(--card-glow, rgba(150, 100, 255, 0.15)); }
+}
+
+.dc-front-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+.dc-front-emoji {
+  font-size: 3.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+}
+
+.dc-front-title {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.dc-front-message {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.6;
+  font-family: serif;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+.dc-front-divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dc-front-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  line-height: 1.65;
+}
+
+.dc-front-category {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+}
+
+/* 翻转提示 */
+.dc-flip-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+
+.dc-flip-hint.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dc-flip-arrow {
+  font-size: 1.5rem;
+  animation: dc-bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes dc-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.dc-flip-text {
+  font-size: 0.75rem;
+  color: rgba(200, 160, 255, 0.45);
+  letter-spacing: 0.1em;
+  font-family: serif;
+}
+
+/* 翻开后的操作区 */
+.dc-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.5s ease 0.4s;
+}
+
+.dc-actions.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dc-share-btn {
+  width: 100%;
+  padding: 13px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.dc-share-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.dc-again-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: none;
+  color: rgba(200, 160, 255, 0.35);
+  font-size: 0.75rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.dc-again-btn:hover {
+  color: rgba(200, 160, 255, 0.6);
+}
+
+/* 海报弹窗 */
+.dc-poster-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dc-poster-wrap {
+  max-width: 360px;
+  width: 100%;
+}
+
+.dc-poster-canvas {
+  width: 360px;
+  border-radius: 20px;
+  display: block;
+}
+
+.dc-poster-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.dc-poster-save {
+  flex: 1;
+  padding: 12px;
+  background: rgba(147, 51, 234, 0.7);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.dc-poster-close {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(200, 160, 255, 0.7);
+  border-radius: 10px;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  cursor: pointer;
+}
