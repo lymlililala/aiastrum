@@ -47,6 +47,81 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      <style>{`
+        .blog-post-nav-back:hover { color: rgba(201,168,76,0.95) !important; }
+        .blog-post-cta:hover { border-color: rgba(201,168,76,0.45) !important; box-shadow: 0 6px 24px rgba(100,60,200,0.14) !important; }
+        .blog-post-cta { transition: border-color 0.2s, box-shadow 0.2s; }
+        .blog-related-item:hover { border-color: rgba(201,168,76,0.28) !important; }
+        .blog-related-item { transition: border-color 0.2s; }
+        .blog-content h2 {
+          font-family: serif;
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #e8d5a3;
+          margin: 28px 0 12px;
+          padding-bottom: 6px;
+          border-bottom: 1px solid rgba(201,168,76,0.12);
+          line-height: 1.4;
+        }
+        .blog-content h3 {
+          font-family: serif;
+          font-size: 0.96rem;
+          font-weight: 600;
+          color: rgba(232,213,163,0.85);
+          margin: 20px 0 8px;
+          line-height: 1.4;
+        }
+        .blog-content p {
+          font-size: 0.9rem;
+          color: rgba(200,175,140,0.78);
+          line-height: 1.8;
+          margin-bottom: 14px;
+        }
+        .blog-content ul, .blog-content ol {
+          padding-left: 20px;
+          margin-bottom: 16px;
+        }
+        .blog-content li {
+          font-size: 0.88rem;
+          color: rgba(200,175,140,0.75);
+          line-height: 1.75;
+          margin-bottom: 6px;
+        }
+        .blog-content li strong { color: rgba(232,213,163,0.9); }
+        .blog-content strong { color: rgba(232,213,163,0.9); }
+        .blog-content blockquote {
+          border-left: 2px solid rgba(201,168,76,0.45);
+          padding: 10px 16px;
+          margin: 20px 0;
+          background: rgba(201,168,76,0.06);
+          border-radius: 0 8px 8px 0;
+        }
+        .blog-content blockquote p {
+          color: rgba(232,213,163,0.7);
+          font-style: italic;
+          margin-bottom: 0;
+        }
+        .blog-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 18px;
+          font-size: 0.82rem;
+        }
+        .blog-content th {
+          background: rgba(201,168,76,0.12);
+          color: rgba(232,213,163,0.85);
+          padding: 8px 12px;
+          text-align: left;
+          font-weight: 600;
+          border-bottom: 1px solid rgba(201,168,76,0.2);
+        }
+        .blog-content td {
+          padding: 8px 12px;
+          color: rgba(200,175,140,0.72);
+          border-bottom: 1px solid rgba(201,168,76,0.08);
+        }
+        .blog-content tr:hover td { background: rgba(201,168,76,0.04); }
+      `}</style>
 
       {/* ── Nav ── */}
       <nav style={{
@@ -56,13 +131,13 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         padding: "0 20px", height: 52,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <Link href="/blog" style={{
+        <Link href="/blog" className="blog-post-nav-back" style={{
           display: "flex", alignItems: "center", gap: 6,
           textDecoration: "none", color: "rgba(201,168,76,0.7)", fontSize: "0.8rem",
-          letterSpacing: "0.04em",
+          letterSpacing: "0.04em", transition: "color 0.18s",
         }}>← 返回知识库</Link>
         <div style={{
-          display: "flex", alignItems: "center", gap: 5,
+          display: "inline-flex", alignItems: "center", gap: 5,
           background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
           borderRadius: 8, padding: "3px 10px",
           fontSize: "0.66rem", color: meta.color, fontWeight: 600,
@@ -111,7 +186,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           </div>
         </header>
 
-        {/* ── TOP CTA（文章顶部引流卡） ── */}
+        {/* ── TOP CTA ── */}
         <CTACard post={post} meta={meta} />
 
         {/* ── Article Body ── */}
@@ -121,7 +196,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* ── BOTTOM CTA（文章底部转化） ── */}
+        {/* ── BOTTOM CTA ── */}
         <div style={{ marginTop: 48 }}>
           <CTACard post={post} meta={meta} large />
         </div>
@@ -140,16 +215,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {related.map(r => (
                 <Link key={r.slug} href={`/blog/${r.slug}`} style={{ textDecoration: "none" }}>
-                  <div style={{
+                  <div className="blog-related-item" style={{
                     padding: "14px 16px", borderRadius: 12,
                     background: "rgba(16,10,38,0.7)",
                     border: "1px solid rgba(201,168,76,0.12)",
                     display: "flex", alignItems: "flex-start", gap: 12,
-                    transition: "border-color 0.2s",
-                  }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.28)"}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.12)"}
-                  >
+                  }}>
                     <span style={{ fontSize: 20, flexShrink: 0, marginTop: 1 }}>{CATEGORY_META[r.category].icon}</span>
                     <div>
                       <div style={{ fontSize: "0.84rem", color: "#e8d5a3", fontWeight: 600, marginBottom: 4, lineHeight: 1.35 }}>
@@ -166,91 +237,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             </div>
           </section>
         )}
-
       </div>
-
-      {/* ── Article content styles ── */}
-      <style>{`
-        .blog-content h2 {
-          font-family: serif;
-          font-size: 1.15rem;
-          font-weight: 700;
-          color: #e8d5a3;
-          margin: 28px 0 12px;
-          padding-bottom: 6px;
-          border-bottom: 1px solid rgba(201,168,76,0.12);
-          line-height: 1.4;
-        }
-        .blog-content h3 {
-          font-family: serif;
-          font-size: 0.96rem;
-          font-weight: 600;
-          color: rgba(232,213,163,0.85);
-          margin: 20px 0 8px;
-          line-height: 1.4;
-        }
-        .blog-content p {
-          font-size: 0.9rem;
-          color: rgba(200,175,140,0.78);
-          line-height: 1.8;
-          margin-bottom: 14px;
-        }
-        .blog-content ul, .blog-content ol {
-          padding-left: 20px;
-          margin-bottom: 16px;
-        }
-        .blog-content li {
-          font-size: 0.88rem;
-          color: rgba(200,175,140,0.75);
-          line-height: 1.75;
-          margin-bottom: 6px;
-        }
-        .blog-content li strong {
-          color: rgba(232,213,163,0.9);
-        }
-        .blog-content strong {
-          color: rgba(232,213,163,0.9);
-        }
-        .blog-content blockquote {
-          border-left: 2px solid rgba(201,168,76,0.45);
-          padding: 10px 16px;
-          margin: 20px 0;
-          background: rgba(201,168,76,0.06);
-          border-radius: 0 8px 8px 0;
-        }
-        .blog-content blockquote p {
-          color: rgba(232,213,163,0.7);
-          font-style: italic;
-          margin-bottom: 0;
-        }
-        .blog-content table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 18px;
-          font-size: 0.82rem;
-        }
-        .blog-content th {
-          background: rgba(201,168,76,0.12);
-          color: rgba(232,213,163,0.85);
-          padding: 8px 12px;
-          text-align: left;
-          font-weight: 600;
-          border-bottom: 1px solid rgba(201,168,76,0.2);
-        }
-        .blog-content td {
-          padding: 8px 12px;
-          color: rgba(200,175,140,0.72);
-          border-bottom: 1px solid rgba(201,168,76,0.08);
-        }
-        .blog-content tr:hover td {
-          background: rgba(201,168,76,0.04);
-        }
-      `}</style>
     </div>
   );
 }
 
-// ── CTA 卡片组件 ──────────────────────────────────────────────────────────────
+// ── CTA 卡片组件（纯静态，用 CSS hover）─────────────────────────────────────
 function CTACard({
   post,
   meta,
@@ -262,25 +254,15 @@ function CTACard({
 }) {
   return (
     <Link href={post.ctaHref} style={{ textDecoration: "none", display: "block" }}>
-      <div style={{
+      <div className="blog-post-cta" style={{
         borderRadius: 14,
         background: `linear-gradient(135deg, ${meta.color}14 0%, rgba(100,60,200,0.12) 100%)`,
         border: `1px solid ${meta.color}30`,
         padding: large ? "20px 20px" : "14px 18px",
         display: "flex", alignItems: "center",
         gap: 12, cursor: "pointer",
-        transition: "border-color 0.2s, box-shadow 0.2s",
         boxShadow: `0 4px 20px ${meta.color}10`,
-      }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = `${meta.color}55`;
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 6px 24px ${meta.color}22`;
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = `${meta.color}30`;
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${meta.color}10`;
-      }}
-      >
+      }}>
         <div style={{
           width: large ? 44 : 36, height: large ? 44 : 36, borderRadius: 10,
           background: `${meta.color}20`, border: `1px solid ${meta.color}35`,
