@@ -1,0 +1,1268 @@
+/* ===== 卢恩符文模块样式 ===== */
+/* 主题：北欧神秘 · 石头质感 · 冰蓝金色 */
+
+/* ===== 页面容器 ===== */
+.rune-page {
+  position: relative;
+  min-height: 100vh;
+  z-index: 1;
+}
+
+/* ===== 背景装饰 ===== */
+.rune-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.rune-bg-layer {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(30, 80, 140, 0.22), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(20, 50, 100, 0.15), transparent),
+    radial-gradient(ellipse 40% 30% at 20% 60%, rgba(180, 140, 60, 0.06), transparent);
+}
+
+/* 符文行背景装饰 */
+.rune-bg-runes {
+  position: absolute;
+  bottom: 10%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  font-family: serif;
+  font-size: 40px;
+  color: rgba(100, 150, 220, 0.06);
+  pointer-events: none;
+  letter-spacing: 8px;
+  animation: runesDrift 30s linear infinite;
+}
+
+@keyframes runesDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-40px); }
+}
+
+.rune-bg-stone1,
+.rune-bg-stone2,
+.rune-bg-stone3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.08;
+}
+
+.rune-bg-stone1 {
+  width: 500px;
+  height: 500px;
+  top: -80px;
+  right: -100px;
+  background: radial-gradient(circle, #1e5fa0, transparent);
+}
+
+.rune-bg-stone2 {
+  width: 400px;
+  height: 400px;
+  bottom: 80px;
+  left: -80px;
+  background: radial-gradient(circle, #2a6040, transparent);
+}
+
+.rune-bg-stone3 {
+  width: 300px;
+  height: 300px;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, #c9a84c, transparent);
+  opacity: 0.04;
+}
+
+/* ===== 内容区 ===== */
+.rune-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+}
+
+/* ===== 页头 ===== */
+.rune-page-header {
+  text-align: center;
+  padding: 36px 0 28px;
+  animation: fadeInDown 0.7s ease-out forwards;
+}
+
+.rune-page-emblem {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.rune-page-emblem-ring {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(100, 160, 240, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: rotateSlow 20s linear infinite;
+  margin: 0 auto;
+}
+
+.rune-page-emblem-ring::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(100, 160, 240, 0.15);
+}
+
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rune-page-symbol {
+  font-family: serif;
+  font-size: 40px;
+  color: rgba(100, 170, 255, 0.8);
+  text-shadow: 0 0 20px rgba(80, 140, 220, 0.6);
+  animation: rotateSlow 20s linear infinite reverse;
+  display: block;
+}
+
+.rune-page-title {
+  font-family: serif;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #b0d4f5, #7ec8e3, #4a9eca, #c9a84c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.rune-page-slogan {
+  font-size: 0.85rem;
+  color: rgba(160, 195, 240, 0.55);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.rune-page-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.rune-divider-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(100, 160, 240, 0.3));
+}
+
+.rune-divider-line:last-child {
+  background: linear-gradient(to left, transparent, rgba(100, 160, 240, 0.3));
+}
+
+.rune-divider-rune {
+  font-family: serif;
+  font-size: 18px;
+  color: rgba(100, 160, 240, 0.4);
+}
+
+/* ===== 占卜模式选择 ===== */
+.rune-mode-section {
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.rune-mode-label {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(160, 195, 240, 0.45);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.rune-mode-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.rune-mode-card {
+  position: relative;
+  background: rgba(12, 18, 32, 0.85);
+  border: 1px solid rgba(80, 130, 200, 0.18);
+  border-radius: 20px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+.rune-mode-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(80, 130, 220, 0.08), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.rune-mode-card:hover::before,
+.rune-mode-card-active::before {
+  opacity: 1;
+}
+
+.rune-mode-card:hover {
+  border-color: rgba(100, 160, 240, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(60, 110, 200, 0.2);
+}
+
+.rune-mode-card-active {
+  border-color: rgba(100, 160, 240, 0.55) !important;
+  background: rgba(20, 35, 65, 0.9) !important;
+  box-shadow: 0 6px 24px rgba(60, 110, 200, 0.25), inset 0 1px 0 rgba(100, 160, 240, 0.1);
+}
+
+.rune-mode-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+  animation: floatSmall 4s ease-in-out infinite;
+}
+
+.rune-mode-icon:nth-child(1) { animation-delay: 0s; }
+.rune-mode-icon:nth-child(2) { animation-delay: 1s; }
+
+.rune-mode-name {
+  font-family: serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #c8daf5;
+  margin-bottom: 6px;
+}
+
+.rune-mode-subtitle {
+  font-size: 0.75rem;
+  color: rgba(140, 175, 230, 0.55);
+  margin-bottom: 10px;
+}
+
+.rune-mode-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.rune-mode-tag {
+  font-size: 0.68rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: rgba(80, 130, 200, 0.12);
+  color: rgba(140, 185, 245, 0.7);
+  border: 1px solid rgba(80, 130, 200, 0.2);
+}
+
+.rune-mode-active-dot {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7ec8e3;
+  box-shadow: 0 0 8px #7ec8e3;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ===== 冥想/抽牌区域 ===== */
+.rune-focus-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.rune-focus-hint {
+  font-size: 0.88rem;
+  color: rgba(160, 195, 240, 0.55);
+  text-align: center;
+  margin-bottom: 36px;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* 符文袋/抽牌按钮 */
+.rune-draw-btn-wrap {
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.rune-draw-btn-ring {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(100, 160, 240, 0.15);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+
+.rune-draw-btn-ring2 {
+  position: absolute;
+  inset: -35px;
+  border-radius: 50%;
+  border: 1px solid rgba(100, 160, 240, 0.08);
+  animation: ringPulse 3s ease-in-out infinite 1s;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+.rune-draw-btn {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid rgba(100, 160, 240, 0.4);
+  background: radial-gradient(circle at 35% 35%, #1e2d4a, #0d1525);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow:
+    0 0 40px rgba(60, 110, 200, 0.15),
+    inset 0 1px 0 rgba(100, 160, 240, 0.1);
+}
+
+.rune-draw-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(80, 140, 220, 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.rune-draw-btn:hover::before,
+.rune-draw-btn-pressing::before {
+  opacity: 1;
+}
+
+.rune-draw-btn:hover {
+  border-color: rgba(100, 160, 240, 0.7);
+  box-shadow:
+    0 0 60px rgba(60, 110, 200, 0.3),
+    0 0 20px rgba(100, 160, 240, 0.2),
+    inset 0 1px 0 rgba(100, 160, 240, 0.15);
+  transform: scale(1.03);
+}
+
+.rune-draw-btn-pressing {
+  transform: scale(0.97) !important;
+  border-color: rgba(100, 160, 240, 0.9) !important;
+  box-shadow:
+    0 0 80px rgba(60, 110, 200, 0.5),
+    0 0 30px rgba(100, 160, 240, 0.4),
+    inset 0 2px 0 rgba(100, 160, 240, 0.2) !important;
+}
+
+/* 石头纹理 */
+.rune-draw-btn-texture {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(100, 140, 200, 0.015) 2px,
+      rgba(100, 140, 200, 0.015) 4px
+    );
+}
+
+.rune-draw-btn-symbol {
+  font-family: serif;
+  font-size: 52px;
+  color: rgba(100, 170, 255, 0.7);
+  text-shadow: 0 0 20px rgba(80, 140, 220, 0.6);
+  z-index: 1;
+  line-height: 1;
+}
+
+.rune-draw-btn-text {
+  font-size: 0.75rem;
+  color: rgba(140, 185, 245, 0.55);
+  letter-spacing: 0.1em;
+  z-index: 1;
+}
+
+/* 抽牌按钮进度条 */
+.rune-draw-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(to right, #4a9eca, #7ec8e3);
+  border-radius: 0 0 80px 80px;
+  transition: width 0.1s linear;
+}
+
+/* 抽牌说明 */
+.rune-draw-desc {
+  text-align: center;
+}
+
+.rune-draw-desc-text {
+  font-size: 0.78rem;
+  color: rgba(140, 180, 240, 0.45);
+  line-height: 1.6;
+}
+
+/* 抽牌加载态 */
+.rune-drawing-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 0;
+}
+
+.rune-drawing-runes {
+  font-family: serif;
+  font-size: 36px;
+  color: rgba(100, 160, 240, 0.6);
+  letter-spacing: 12px;
+  animation: runeFlicker 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes runeFlicker {
+  from { opacity: 0.4; text-shadow: none; }
+  to { opacity: 1; text-shadow: 0 0 20px rgba(80, 140, 220, 0.8); }
+}
+
+.rune-drawing-text {
+  font-size: 0.9rem;
+  color: rgba(160, 200, 255, 0.6);
+  font-style: italic;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* ===== 结果区域 ===== */
+.rune-reading-container {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.rune-reading-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.rune-reading-mode-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(140, 185, 245, 0.8);
+  background: rgba(60, 110, 200, 0.12);
+  border: 1px solid rgba(80, 140, 220, 0.25);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.rune-reading-time {
+  font-size: 0.75rem;
+  color: rgba(140, 180, 240, 0.35);
+}
+
+/* ===== 单石布局 ===== */
+.rune-single-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== 三石布局 ===== */
+.rune-three-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rune-three-stones {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* ===== 符文石组件 ===== */
+.rune-stone-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.rune-stone-compact .rune-stone-scene {
+  width: 100px;
+  height: 100px;
+}
+
+.rune-stone-compact .rune-symbol {
+  font-size: 44px !important;
+}
+
+/* 位置标签 */
+.rune-position-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  color: rgba(140, 185, 245, 0.6);
+  letter-spacing: 0.05em;
+}
+
+.rune-position-icon {
+  font-size: 1rem;
+}
+
+/* 石头翻转场景 */
+.rune-stone-scene {
+  width: 140px;
+  height: 140px;
+  perspective: 600px;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+/* 3D 翻转容器 */
+.rune-stone-scene > * {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rune-stone-front {
+  transform: rotateY(180deg);
+}
+
+.rune-stone-back {
+  transform: rotateY(0deg);
+}
+
+.rune-stone-flipped .rune-stone-front {
+  transform: rotateY(0deg);
+}
+
+.rune-stone-flipped .rune-stone-back {
+  transform: rotateY(-180deg);
+}
+
+/* 石头正面 */
+.rune-stone-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #252c3e, #141824 70%, #0c1018);
+  border: 2px solid rgba(80, 130, 200, 0.3);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(100, 150, 220, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* 石头纹理层 */
+.rune-stone-texture {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      rgba(120, 150, 200, 0.015) 3px,
+      rgba(120, 150, 200, 0.015) 6px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 4px,
+      rgba(100, 130, 180, 0.01) 4px,
+      rgba(100, 130, 180, 0.01) 8px
+    );
+}
+
+/* 符文字符 */
+.rune-symbol {
+  font-family: serif;
+  font-size: 68px;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s;
+}
+
+/* 逆位标记 */
+.rune-reversed-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: #F87171;
+  background: rgba(200, 60, 60, 0.15);
+  border: 1px solid rgba(200, 60, 60, 0.3);
+  border-radius: 8px;
+  padding: 1px 6px;
+  letter-spacing: 0.05em;
+}
+
+/* 发光动画 */
+.rune-stone-glow {
+  animation: stoneGlow 1.4s ease-out forwards;
+}
+
+@keyframes stoneGlow {
+  0% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
+  30% {
+    box-shadow:
+      0 0 60px var(--rune-color, #4a9eca),
+      0 0 20px var(--rune-color2, #7ec8e3),
+      0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
+}
+
+/* 背面 */
+.rune-stone-back {
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rune-back-pattern {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rune-back-symbol {
+  font-family: serif;
+  font-size: 30px;
+  color: rgba(100, 160, 240, 0.25);
+  z-index: 2;
+}
+
+.rune-back-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(100, 160, 240, 0.15);
+  animation: ripple 2s ease-in-out infinite;
+}
+
+@keyframes ripple {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 0.1; }
+}
+
+.rune-back-hint {
+  font-size: 0.68rem;
+  color: rgba(120, 165, 230, 0.35);
+  letter-spacing: 0.08em;
+}
+
+/* ===== 符文名称（翻开后） ===== */
+.rune-stone-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.rune-name-cn {
+  font-family: serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.rune-name-en {
+  font-size: 0.85rem;
+  color: rgba(160, 200, 255, 0.55);
+}
+
+.rune-orientation-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* 提示文字 */
+.rune-reveal-hint {
+  font-size: 0.82rem;
+  color: rgba(140, 180, 245, 0.45);
+  text-align: center;
+  margin-top: 16px;
+  font-style: italic;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* ===== 详情卡（单石） ===== */
+.rune-detail-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px;
+  border: 1px solid rgba(80, 130, 200, 0.2);
+  padding: 24px 20px;
+  margin-top: 20px;
+  background: rgba(10, 16, 28, 0.8);
+  backdrop-filter: blur(12px);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.rune-detail-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.rune-keyword {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.rune-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  font-size: 0.78rem;
+  color: rgba(140, 180, 245, 0.5);
+  margin-bottom: 16px;
+}
+
+.rune-meta-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(140, 180, 245, 0.3);
+}
+
+.rune-detail-section {
+  margin-bottom: 14px;
+}
+
+.rune-detail-label {
+  font-size: 0.75rem;
+  color: rgba(140, 185, 245, 0.5);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rune-detail-text {
+  font-size: 0.88rem;
+  color: rgba(200, 215, 245, 0.8);
+  line-height: 1.75;
+}
+
+.rune-detail-advice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: rgba(60, 100, 180, 0.08);
+  border: 1px solid rgba(80, 130, 220, 0.15);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.rune-advice-icon {
+  color: rgba(140, 185, 245, 0.6);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rune-advice-text {
+  font-size: 0.85rem;
+  color: rgba(200, 215, 245, 0.7);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* 神话背景折叠 */
+.rune-mythology {
+  margin-top: 8px;
+}
+
+.rune-mythology-summary {
+  font-size: 0.78rem;
+  color: rgba(140, 175, 240, 0.45);
+  cursor: pointer;
+  padding: 8px 0;
+  letter-spacing: 0.05em;
+  list-style: none;
+  user-select: none;
+}
+
+.rune-mythology-summary::-webkit-details-marker {
+  display: none;
+}
+
+.rune-mythology-summary::before {
+  content: "▸ ";
+  color: rgba(100, 160, 240, 0.4);
+}
+
+details[open] .rune-mythology-summary::before {
+  content: "▾ ";
+}
+
+.rune-mythology-text {
+  font-size: 0.82rem;
+  color: rgba(180, 205, 245, 0.55);
+  line-height: 1.75;
+  font-style: italic;
+  padding-top: 8px;
+  border-top: 1px solid rgba(80, 130, 200, 0.1);
+  margin-top: 4px;
+}
+
+/* ===== 三石详情 ===== */
+.rune-three-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.rune-three-detail-card {
+  background: rgba(10, 16, 28, 0.8);
+  border-radius: 18px;
+  border: 1px solid rgba(80, 130, 200, 0.2);
+  padding: 20px 18px;
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.rune-three-pos-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rune-three-pos-icon {
+  font-size: 1.4rem;
+}
+
+.rune-three-pos-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(180, 210, 255, 0.8);
+  font-family: serif;
+}
+
+.rune-three-pos-desc {
+  font-size: 0.72rem;
+  color: rgba(140, 175, 240, 0.45);
+  margin-top: 2px;
+}
+
+.rune-three-rune-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.rune-three-symbol {
+  font-family: serif;
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.rune-three-rune-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(200, 220, 255, 0.85);
+  font-family: serif;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rune-three-rune-kws {
+  font-size: 0.75rem;
+  color: rgba(140, 175, 240, 0.5);
+  margin-top: 3px;
+}
+
+.rune-three-meaning {
+  font-size: 0.85rem;
+  color: rgba(200, 215, 245, 0.75);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+
+.rune-three-advice {
+  display: flex;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: rgba(160, 195, 245, 0.55);
+  font-style: italic;
+}
+
+/* 综合解读 */
+.rune-synthesis-card {
+  background: linear-gradient(135deg, rgba(40, 30, 80, 0.6), rgba(20, 30, 60, 0.6));
+  border: 1px solid rgba(160, 140, 240, 0.2);
+  border-radius: 18px;
+  padding: 22px 20px;
+  text-align: center;
+}
+
+.rune-synthesis-title {
+  font-family: serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(200, 185, 255, 0.85);
+  margin-bottom: 14px;
+  letter-spacing: 0.06em;
+}
+
+.rune-synthesis-text {
+  font-size: 0.87rem;
+  color: rgba(200, 215, 245, 0.75);
+  line-height: 1.8;
+  text-align: left;
+}
+
+/* ===== 底部操作区 ===== */
+.rune-reading-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rune-share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #1e4a7a, #2d6aaa, #1e4a7a);
+  background-size: 200% 100%;
+  border: 1px solid rgba(100, 160, 240, 0.4);
+  border-radius: 16px;
+  color: #b0d8f5;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: serif;
+  padding: 15px 24px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.3s ease;
+}
+
+.rune-share-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(60, 120, 220, 0.35);
+  background-position: right center;
+  border-color: rgba(100, 160, 240, 0.7);
+}
+
+.rune-again-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(12, 18, 32, 0.7);
+  border: 1px solid rgba(80, 130, 200, 0.2);
+  border-radius: 16px;
+  color: rgba(160, 200, 245, 0.6);
+  font-size: 0.92rem;
+  padding: 13px 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rune-again-btn:hover {
+  border-color: rgba(80, 130, 200, 0.45);
+  color: rgba(160, 200, 245, 0.9);
+  background: rgba(20, 30, 55, 0.8);
+}
+
+/* ===== 返回链接 ===== */
+.rune-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: rgba(140, 180, 240, 0.45);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(80, 130, 200, 0.12);
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.rune-back-link:hover {
+  color: rgba(140, 180, 240, 0.8);
+  border-color: rgba(80, 130, 200, 0.3);
+  background: rgba(20, 35, 65, 0.4);
+}
+
+/* ===== 海报弹窗 ===== */
+.rune-poster-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.rune-poster-modal {
+  position: relative;
+  background: rgba(8, 14, 28, 0.96);
+  border: 1px solid rgba(80, 130, 200, 0.25);
+  border-radius: 24px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(100, 160, 240, 0.05) inset;
+}
+
+.rune-poster-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(100, 150, 220, 0.15);
+  color: rgba(160, 200, 245, 0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.rune-poster-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #c8d8f5;
+}
+
+.rune-poster-title {
+  font-family: serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #c8d8f5;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.rune-poster-preview {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid rgba(80, 130, 200, 0.1);
+}
+
+.rune-poster-generating {
+  text-align: center;
+  color: rgba(160, 200, 245, 0.55);
+}
+
+.rune-poster-gen-icon {
+  font-family: serif;
+  font-size: 40px;
+  color: rgba(100, 160, 240, 0.6);
+  display: block;
+  margin-bottom: 12px;
+  animation: runeFlicker 0.5s ease-in-out infinite alternate;
+}
+
+.rune-poster-generating p {
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.rune-poster-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.rune-poster-actions {
+  text-align: center;
+}
+
+.rune-poster-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1e4a7a, #2d6aaa);
+  border: 1px solid rgba(100, 160, 240, 0.4);
+  border-radius: 14px;
+  color: #b0d8f5;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 13px 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.rune-poster-download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(60, 120, 220, 0.35);
+  border-color: rgba(100, 160, 240, 0.7);
+}
+
+.rune-poster-share-tip {
+  font-size: 0.78rem;
+  color: rgba(140, 175, 240, 0.35);
+}
+
+/* ===== 工具动画 ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatSmall {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 480px) {
+  .rune-mode-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .rune-three-stones {
+    gap: 8px;
+  }
+
+  .rune-stone-compact .rune-stone-scene {
+    width: 88px;
+    height: 88px;
+  }
+
+  .rune-stone-compact .rune-symbol {
+    font-size: 38px !important;
+  }
+
+  .rune-draw-btn {
+    width: 140px;
+    height: 140px;
+  }
+
+  .rune-draw-btn-symbol {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  .rune-stone-compact .rune-stone-scene {
+    width: 78px;
+    height: 78px;
+  }
+
+  .rune-stone-compact .rune-symbol {
+    font-size: 32px !important;
+  }
+}

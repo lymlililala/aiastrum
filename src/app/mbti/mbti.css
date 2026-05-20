@@ -1,0 +1,454 @@
+/* ===== MBTI x 星座碰撞 CSS ===== */
+
+.mbti-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0518 0%, #0d0920 50%, #080614 100%);
+  padding-bottom: 60px;
+}
+
+/* 英雄区 */
+.mbti-hero {
+  position: relative;
+  padding: 60px 20px 36px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.mbti-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.14) 0%, transparent 65%);
+}
+
+.mbti-hero-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: rgba(167, 139, 250, 0.7);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  background: rgba(124, 58, 237, 0.07);
+}
+
+.mbti-trending {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  color: #fff;
+  background: linear-gradient(135deg, #E91E8C, #7C3AED);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.mbti-hero-title {
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, #DDD6FE, #A78BFA, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  font-family: serif;
+}
+
+.mbti-hero-sub {
+  font-size: 0.83rem;
+  color: rgba(180, 160, 240, 0.55);
+  line-height: 1.6;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* 内容区 */
+.mbti-content {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 选择卡片 */
+.mbti-select-card {
+  background: rgba(20, 12, 45, 0.85);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+}
+
+.mbti-select-title {
+  font-size: 0.9rem;
+  color: #e8d5a3;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: serif;
+}
+
+.mbti-select-group {
+  margin-bottom: 20px;
+}
+
+.mbti-select-label {
+  font-size: 0.75rem;
+  color: rgba(180, 160, 240, 0.65);
+  margin-bottom: 10px;
+  display: block;
+  letter-spacing: 0.05em;
+}
+
+/* MBTI 类型网格 */
+.mbti-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.mbti-type-btn {
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(167, 139, 250, 0.7);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.mbti-type-btn:hover {
+  border-color: rgba(124, 58, 237, 0.5);
+  color: #DDD6FE;
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.mbti-type-btn.selected {
+  border-color: #7C3AED;
+  background: rgba(124, 58, 237, 0.25);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+}
+
+/* 星座网格 */
+.mbti-zodiac-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.mbti-zodiac-btn {
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(233, 30, 140, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(240, 160, 220, 0.65);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.mbti-zodiac-btn:hover {
+  border-color: rgba(233, 30, 140, 0.4);
+  color: #F8BBD9;
+}
+
+.mbti-zodiac-btn.selected {
+  border-color: #E91E8C;
+  background: rgba(233, 30, 140, 0.2);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(233, 30, 140, 0.25);
+}
+
+.mbti-generate-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #7C3AED, #E91E8C);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: serif;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.mbti-generate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+}
+
+.mbti-generate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 结果卡 */
+.mbti-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 主档案卡 */
+.mbti-profile-card {
+  border-radius: 24px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mbti-profile-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mbti-combo-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.mbti-profile-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  font-family: serif;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.mbti-profile-icon {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.mbti-tagline {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+  font-style: italic;
+  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  padding-left: 12px;
+  margin-bottom: 16px;
+}
+
+.mbti-summary {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+}
+
+/* 特质网格 */
+.mbti-traits-card {
+  background: rgba(15, 10, 35, 0.88);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.mbti-card-title {
+  font-size: 0.82rem;
+  color: rgba(167, 139, 250, 0.8);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mbti-traits-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mbti-trait-item {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.mbti-trait-label {
+  font-size: 0.65rem;
+  color: rgba(167, 139, 250, 0.5);
+  margin-bottom: 5px;
+  letter-spacing: 0.05em;
+}
+
+.mbti-trait-value {
+  font-size: 0.8rem;
+  color: #e8d5a3;
+  line-height: 1.5;
+}
+
+/* 内心OS卡 */
+.mbti-mood-card {
+  background: rgba(15, 10, 35, 0.88);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.mbti-mood-text {
+  font-size: 0.95rem;
+  color: #DDD6FE;
+  font-style: italic;
+  line-height: 1.7;
+  text-align: center;
+  font-family: serif;
+}
+
+/* 危险模式卡 */
+.mbti-danger-card {
+  background: rgba(15, 5, 5, 0.88);
+  border: 1px solid rgba(220, 80, 60, 0.2);
+  border-radius: 20px;
+  padding: 16px 20px;
+}
+
+.mbti-danger-card .mbti-card-title {
+  color: rgba(220, 100, 80, 0.8);
+}
+
+.mbti-danger-text {
+  font-size: 0.83rem;
+  color: rgba(220, 180, 160, 0.8);
+  line-height: 1.6;
+}
+
+/* 最配 & 名人 */
+.mbti-compat-card {
+  background: rgba(15, 10, 35, 0.88);
+  border: 1px solid rgba(233, 30, 140, 0.18);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+}
+
+.mbti-compat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.mbti-compat-label {
+  font-size: 0.65rem;
+  color: rgba(240, 160, 220, 0.5);
+  margin-bottom: 8px;
+}
+
+.mbti-compat-value {
+  font-size: 1rem;
+  color: #F8BBD9;
+  font-weight: 700;
+  font-family: serif;
+}
+
+.mbti-compat-divider {
+  width: 1px;
+  background: rgba(233, 30, 140, 0.12);
+}
+
+/* 操作按钮 */
+.mbti-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mbti-poster-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #7C3AED, #E91E8C);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.mbti-reset-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: rgba(167, 139, 250, 0.5);
+  font-size: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  cursor: pointer;
+}
+
+/* 海报弹窗 */
+.mbti-poster-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mbti-poster-wrap {
+  max-width: 360px;
+  width: 100%;
+}
+
+.mbti-poster-canvas {
+  width: 360px;
+  border-radius: 20px;
+  display: block;
+}
+
+.mbti-poster-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mbti-poster-save {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(135deg, #7C3AED, #E91E8C);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.mbti-poster-close {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(167, 139, 250, 0.7);
+  border-radius: 10px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  cursor: pointer;
+}
+
+/* 淡入 */
+.mbti-fade-in {
+  animation: mbti-fade 0.5s ease-out forwards;
+}
+
+@keyframes mbti-fade {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
