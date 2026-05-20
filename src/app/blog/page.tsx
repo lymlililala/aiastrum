@@ -25,6 +25,12 @@ export default function BlogListPage({
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      <style>{`
+        .blog-nav-back:hover { color: rgba(201,168,76,0.95) !important; }
+        .blog-cat-tab:hover { border-color: rgba(201,168,76,0.4) !important; color: rgba(240,210,120,0.85) !important; }
+        .blog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(100,60,200,0.18) !important; border-color: rgba(201,168,76,0.32) !important; }
+        .blog-card { transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+      `}</style>
 
       {/* ── Nav ── */}
       <nav style={{
@@ -34,10 +40,10 @@ export default function BlogListPage({
         padding: "0 20px", height: 52,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <Link href="/" style={{
+        <Link href="/" className="blog-nav-back" style={{
           display: "flex", alignItems: "center", gap: 8,
           textDecoration: "none", color: "rgba(201,168,76,0.75)", fontSize: "0.8rem",
-          letterSpacing: "0.06em",
+          letterSpacing: "0.06em", transition: "color 0.18s",
         }}>
           <span>←</span><span>返回首页</span>
         </Link>
@@ -81,12 +87,13 @@ export default function BlogListPage({
             <Link
               key={c.key}
               href={c.key === "all" ? "/blog" : `/blog?cat=${c.key}`}
+              className="blog-cat-tab"
               style={{
                 padding: "7px 18px", borderRadius: 22, textDecoration: "none",
                 border: active ? "1px solid rgba(201,168,76,0.55)" : "1px solid rgba(201,168,76,0.14)",
                 background: active ? "rgba(201,168,76,0.14)" : "transparent",
                 color: active ? "rgba(240,210,120,0.95)" : "rgba(210,185,130,0.65)",
-                fontSize: "0.78rem", display: "flex", alignItems: "center", gap: 5,
+                fontSize: "0.78rem", display: "inline-flex", alignItems: "center", gap: 5,
                 transition: "all 0.18s", whiteSpace: "nowrap",
               }}
             >
@@ -107,26 +114,13 @@ export default function BlogListPage({
             const meta = CATEGORY_META[post.category];
             return (
               <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
-                <article style={{
+                <article className="blog-card" style={{
                   borderRadius: 16,
                   background: "rgba(16,10,38,0.85)",
                   border: "1px solid rgba(201,168,76,0.15)",
                   padding: "20px 20px 18px",
                   cursor: "pointer",
-                  position: "relative",
-                  transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 28px rgba(100,60,200,0.18)`;
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.32)";
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(201,168,76,0.15)";
-                }}
-                >
+                }}>
                   {/* Category Badge */}
                   <div style={{
                     display: "inline-flex", alignItems: "center", gap: 4,
@@ -168,7 +162,6 @@ export default function BlogListPage({
           </div>
         )}
       </div>
-
     </div>
   );
 }
