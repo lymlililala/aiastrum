@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 import Link from "next/link";
+import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
 import { BLOG_POSTS, CATEGORY_META, type BlogCategory } from "./blog-data";
 
 export const metadata: Metadata = {
@@ -8,6 +9,9 @@ export const metadata: Metadata = {
   keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
 };
 
+// 强制每次请求都重新从数据库读（ISR 60s）
+export const revalidate = 60;
+
 const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string }> = [
   { key: "all",       label: "全部",     icon: "✦" },
   { key: "tarot",     label: "塔罗牌意", icon: "🔮" },
@@ -15,13 +19,55 @@ const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string
   { key: "horoscope", label: "星座运势", icon: "🌌" },
 ];
 
-export default function BlogListPage({
+// 将数据库格式转为展示格式（与静态数据结构对齐）
+function toDisplayPost(p: DbBlogPost) {
+  return {
+    slug: p.slug,
+    category: p.category as BlogCategory,
+    title: p.title,
+    description: p.description,
+    publishedAt: p.published_at,
+    readingTime: p.reading_time,
+  };
+}
+
+export default async function BlogListPage({
   searchParams,
 }: {
   searchParams: Record<string, string | undefined>;
 }) {
   const cat = (searchParams.cat ?? "all") as BlogCategory | "all";
-  const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
+
+  // 优先从数据库读取，失败时兜底用静态数据
+  let posts: ReturnType<typeof toDisplayPost>[];
+  try {
+    const dbPosts = await fetchAllPosts(cat === "all" ? undefined : cat);
+    if (dbPosts.length > 0) {
+      posts = dbPosts.map(toDisplayPost);
+    } else {
+      // 数据库为空时用静态数据
+      const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
+      posts = filtered.map(p => ({
+        slug: p.slug,
+        category: p.category,
+        title: p.title,
+        description: p.description,
+        publishedAt: p.publishedAt,
+        readingTime: p.readingTime,
+      }));
+    }
+  } catch {
+    // 数据库不可达时降级到静态
+    const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
+    posts = filtered.map(p => ({
+      slug: p.slug,
+      category: p.category,
+      title: p.title,
+      description: p.description,
+      publishedAt: p.publishedAt,
+      readingTime: p.readingTime,
+    }));
+  }
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
@@ -74,13 +120,13 @@ export default function BlogListPage({
         <p style={{ fontSize: "0.88rem", color: "rgba(200,175,145,0.65)", maxWidth: 480, margin: "0 auto 28px", lineHeight: 1.6 }}>
           塔罗78张牌意逐一解析 · 周公解梦深度科普 · 星座运势实时指南
         </p>
+        <p style={{ fontSize: "0.72rem", color: "rgba(201,168,76,0.4)", marginTop: -16, marginBottom: 8 }}>
+          共 {posts.length} 篇文章
+        </p>
       </section>
 
       {/* ── Category Tabs ── */}
-      <div style={{
-        display: "flex", gap: 8, padding: "0 20px 20px", justifyContent: "center",
-        flexWrap: "wrap",
-      }}>
+      <div style={{ display: "flex", gap: 8, padding: "0 20px 20px", justifyContent: "center", flexWrap: "wrap" }}>
         {CATEGORIES.map(c => {
           const active = cat === c.key;
           return (
@@ -110,7 +156,7 @@ export default function BlogListPage({
           gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 420px), 1fr))",
           gap: 14,
         }}>
-          {filtered.map(post => {
+          {posts.map(post => {
             const meta = CATEGORY_META[post.category];
             return (
               <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
@@ -121,7 +167,6 @@ export default function BlogListPage({
                   padding: "20px 20px 18px",
                   cursor: "pointer",
                 }}>
-                  {/* Category Badge */}
                   <div style={{
                     display: "inline-flex", alignItems: "center", gap: 4,
                     background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
@@ -156,7 +201,7 @@ export default function BlogListPage({
           })}
         </div>
 
-        {filtered.length === 0 && (
+        {posts.length === 0 && (
           <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(200,175,145,0.4)", fontSize: "0.9rem" }}>
             该分类暂无文章，敬请期待
           </div>
