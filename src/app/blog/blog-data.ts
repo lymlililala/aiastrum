@@ -1,8 +1,32 @@
 // ─── 博客文章数据层 ───────────────────────────────────────────────────────────
-// MVP 阶段：文章内容静态存储在代码中，后续可迁移至 CMS / MDX
-// 三个专栏：tarot（塔罗牌意）| dream（周公解梦）| horoscope（星座运势）
+// 文章内容已迁移至 Supabase 数据库，此文件只保留类型定义和分类元数据
+// 专栏：tarot | dream | horoscope | astro | numerology | rune | bazi | ziwei
+//        naming | wuge | meihua | qimen | almanac | lingqian | love | face-reading
+//        mbti | synastry | daily-fortune | daily-card | pet-psychic | ai-mystic
 
-export type BlogCategory = "tarot" | "dream" | "horoscope";
+export type BlogCategory =
+  | "tarot"
+  | "dream"
+  | "horoscope"
+  | "astro"
+  | "numerology"
+  | "rune"
+  | "bazi"
+  | "ziwei"
+  | "naming"
+  | "wuge"
+  | "meihua"
+  | "qimen"
+  | "almanac"
+  | "lingqian"
+  | "love"
+  | "face-reading"
+  | "mbti"
+  | "synastry"
+  | "daily-fortune"
+  | "daily-card"
+  | "pet-psychic"
+  | "ai-mystic";
 
 export interface BlogPost {
   slug: string;
@@ -20,471 +44,27 @@ export interface BlogPost {
   ctaLabelEn: string;
 }
 
-// ─── 文章列表 ─────────────────────────────────────────────────────────────────
-
-export const BLOG_POSTS: BlogPost[] = [
-
-  // ══════════════════════════════════════════
-  // 📖 塔罗牌意系列
-  // ══════════════════════════════════════════
-
-  {
-    slug: "tarot-the-fool-meaning",
-    category: "tarot",
-    title: "塔罗牌愚者（The Fool）完整解析：正逆位 × 爱情 × 事业",
-    titleEn: "The Fool Tarot Card: Complete Guide to Upright & Reversed",
-    description: "愚者是塔罗大阿尔卡纳第0张，代表全新的开始、纯真与无限可能。本文详解愚者正位与逆位在爱情、事业、财运中的寓意，帮你读懂这张最充满希望的牌。",
-    keywords: ["塔罗牌愚者", "愚者正位", "愚者逆位", "愚者爱情", "The Fool tarot", "塔罗牌意"],
-    publishedAt: "2026-05-10",
-    readingTime: 6,
-    ctaHref: "/tarot",
-    ctaLabel: "👉 立即抽取塔罗牌，AI 为你解读",
-    ctaLabelEn: "Draw Tarot Cards — AI Reading",
-    content: `
-<h2>愚者是谁？</h2>
-<p>愚者（The Fool）是塔罗大阿尔卡纳的第 0 号牌，也是整副牌中编号最特殊的存在——他既是起点，也是终点，象征着灵魂在无数次轮回中永恒的纯真与勇气。</p>
-<p>牌面上，一位年轻的旅者身着华服，肩扛行囊，手持白玫瑰，站在悬崖边缘，眼神望向天空，毫无畏惧。他的脚步即将踏空，但面容却充满欢喜——他不是无知的鲁莽，而是信任宇宙的纯粹信念。</p>
-
-<h2>愚者正位含义</h2>
-<h3>核心寓意</h3>
-<p>正位愚者代表：<strong>全新开始、冒险精神、天真烂漫、无限可能</strong>。这是一个充满希望与自由的信号。</p>
-<ul>
-  <li><strong>爱情</strong>：单身者即将迎来一段纯粹、令人心跳加速的新恋情；恋人间可能开启全新的相处模式，回归最初相爱的心动感觉。但愚者也提醒你：不要因为"新鲜感"而忽视对方的真实性格。</li>
-  <li><strong>事业</strong>：极佳的创业或转行时机。你内心已准备好跳出舒适区，宇宙也在为你铺路。勇敢去做吧，哪怕没有完美的计划。</li>
-  <li><strong>财运</strong>：可能有意外的财务机会出现。但愚者的天真也警示：投资前需仔细评估，避免冲动消费。</li>
-  <li><strong>整体运势</strong>：万事俱备，勇敢出发，结果往往超出预期。</li>
-</ul>
-
-<h2>愚者逆位含义</h2>
-<h3>核心寓意</h3>
-<p>逆位愚者代表：<strong>鲁莽冲动、缺乏计划、逃避现实、错失良机</strong>。需要暂缓行动，重新思考。</p>
-<ul>
-  <li><strong>爱情</strong>：感情中可能存在不成熟的一面——对方或你自己在逃避承诺，或者因为冲动而做出日后后悔的决定。复合时出现此牌，通常暗示时机未到。</li>
-  <li><strong>事业</strong>：当前的冒险计划过于草率，缺乏充分准备。建议稳扎稳打，打好基础再行动。</li>
-  <li><strong>财运</strong>：警惕鲁莽的金融决策，避免因一时冲动损失财富。</li>
-</ul>
-
-<h2>愚者 × 其他牌的组合解读</h2>
-<ul>
-  <li><strong>愚者 + 恋人</strong>：一段命中注定、充满激情的浪漫邂逅即将到来。</li>
-  <li><strong>愚者 + 世界</strong>：一个完整的生命旅程——从懵懂出发，到最终圆满，象征人生大转折即将完成。</li>
-  <li><strong>愚者 + 宝剑三</strong>：冲动的行为可能带来心痛。三思而后行。</li>
-  <li><strong>愚者 + 太阳</strong>：极度乐观的信号，新开始将带来巨大的喜悦与成功。</li>
-</ul>
-
-<h2>愚者给你的人生启示</h2>
-<blockquote>
-  <p>"每一次出发，都是你对生命最深情的告白。"</p>
-</blockquote>
-<p>当愚者出现，宇宙在提醒你：放下对"完美时机"的执念，勇敢迈出第一步。生命最美的风景，从来不在地图上，而在那些你从未走过的路上。</p>
-    `,
-  },
-
-  {
-    slug: "tarot-the-high-priestess-meaning",
-    category: "tarot",
-    title: "女祭司（The High Priestess）塔罗牌解析：直觉、神秘与内在智慧",
-    titleEn: "The High Priestess Tarot: Intuition, Mystery & Inner Wisdom",
-    description: "女祭司是塔罗大阿尔卡纳第2张，象征直觉、潜意识与神秘知识。详解女祭司正逆位在爱情（暗恋/秘密恋情）、事业、灵性层面的深层含义。",
-    keywords: ["塔罗女祭司", "女祭司正位", "女祭司逆位", "女祭司爱情", "The High Priestess tarot"],
-    publishedAt: "2026-05-12",
-    readingTime: 5,
-    ctaHref: "/tarot",
-    ctaLabel: "👉 AI 塔罗占卜，读懂内心深处的答案",
-    ctaLabelEn: "AI Tarot — Unlock Your Inner Truth",
-    content: `
-<h2>女祭司：沉默中隐藏的力量</h2>
-<p>女祭司（The High Priestess）是大阿尔卡纳第2号牌，坐镇于所罗门神庙的两根圆柱之间，手捧象征律法与神秘的卷轴，月冠加身，脚踏新月。她是一切神秘学问的守门人，不轻易开口，却洞悉一切。</p>
-
-<h2>女祭司正位</h2>
-<ul>
-  <li><strong>爱情</strong>：感情中存在未挑明的心意——可能是暗恋、或是一段秘而不宣的情感。正位女祭司建议你倾听内心，而不是急于表白或追问答案。有些事，时间会说清楚。</li>
-  <li><strong>事业</strong>：此刻不宜高调行动，更适合观察、积累信息。同事或竞争对手可能有你不知道的隐情。信任你的直觉，比任何分析都重要。</li>
-  <li><strong>灵性</strong>：强烈暗示你正处于灵性成长的关键阶段，适合冥想、学习塔罗/占星等内在探索。</li>
-</ul>
-
-<h2>女祭司逆位</h2>
-<ul>
-  <li><strong>爱情</strong>：隐瞒、欺骗或信息不对等。关系中有一方没有说实话。逆位也可能代表忽视了自己内心真实的感受。</li>
-  <li><strong>事业</strong>：你可能正在压抑自己的真实判断，迎合他人意见。请重新听从自己的内在声音。</li>
-</ul>
-
-<h2>女祭司给你的提醒</h2>
-<p>不是所有答案都需要从外部寻找。女祭司提醒你：<strong>你内心的直觉，比任何占卜师都更了解你的未来。</strong></p>
-    `,
-  },
-
-  {
-    slug: "tarot-the-tower-meaning",
-    category: "tarot",
-    title: "塔（The Tower）塔罗牌解析：突变、崩塌与重生的真相",
-    titleEn: "The Tower Tarot Card: Sudden Change, Collapse & Rebirth",
-    description: "塔牌是塔罗中最令人恐惧的牌之一，却也是最具解放力量的存在。深度解析塔正逆位在感情、事业中的真实含义：不是末日，而是重建的开始。",
-    keywords: ["塔罗牌塔", "塔正位", "塔逆位", "The Tower tarot", "塔罗牌最可怕的牌", "塔罗突变"],
-    publishedAt: "2026-05-14",
-    readingTime: 7,
-    ctaHref: "/tarot",
-    ctaLabel: "👉 抽取塔罗牌，看看宇宙给你的真实信号",
-    ctaLabelEn: "Draw Cards — What Does the Universe Say?",
-    content: `
-<h2>为什么人们最怕抽到"塔"？</h2>
-<p>塔（The Tower）是大阿尔卡纳第16号牌。牌面上，一座高塔被闪电劈中，燃起大火，两个人从塔中跌落——这幅景象几乎是所有塔罗初学者噩梦的来源。但真相是：<strong>塔牌代表的"崩塌"，往往是你人生中最需要的一次清除。</strong></p>
-
-<h2>塔正位含义</h2>
-<p>核心关键词：<strong>突变、震荡、揭露真相、旧结构崩塌、强制刷新</strong></p>
-<ul>
-  <li><strong>爱情</strong>：关系中隐藏的矛盾将被迫揭开——可能是一次激烈的争吵、意外的分手，或是发现了不愿面对的真相。痛苦是真实的，但清醒也是真实的。</li>
-  <li><strong>事业</strong>：公司、项目或合作关系可能发生剧变。虽然混乱，但往往是改变命运轨迹的转折点。</li>
-  <li><strong>财运</strong>：警惕突发的财务损失，避免高风险投机。</li>
-</ul>
-
-<h2>塔逆位含义</h2>
-<p>核心关键词：<strong>逃避崩塌、延迟的危机、内部瓦解</strong></p>
-<p>逆位的塔并不代表危机消失——只是它在内部慢慢侵蚀，而非瞬间爆发。你可能正在明知某段关系或某个情况已经走到尽头，却一直不愿做出改变。逆位塔提醒你：<strong>主动放手，好过被迫崩塌。</strong></p>
-
-<h2>塔的深层哲学</h2>
-<blockquote>
-  <p>"那些从你生命中轰然倒塌的东西，不是你的损失——而是宇宙为你清除的障碍。"</p>
-</blockquote>
-<p>老子说：损之又损，以至于无为。塔牌的智慧与此相通——有时候，那些你认为坚不可摧的"稳定"，恰恰是阻碍你成长的牢笼。塔的轰然倒下，是凤凰涅槃之前必经的烈焰。</p>
-    `,
-  },
-
-  {
-    slug: "tarot-the-star-meaning",
-    category: "tarot",
-    title: "星星（The Star）塔罗牌：希望、疗愈与宇宙的允诺",
-    titleEn: "The Star Tarot Card: Hope, Healing & Cosmic Promise",
-    description: "星星牌是塔罗大阿尔卡纳第17张，紧跟在塔牌之后，象征黑暗后的希望曙光。详解星星正逆位含义，尤其在失恋、复合、低谷期的深刻指引意义。",
-    keywords: ["塔罗星星", "星星正位", "星星逆位", "塔罗希望", "The Star tarot", "失恋塔罗"],
-    publishedAt: "2026-05-16",
-    readingTime: 5,
-    ctaHref: "/tarot",
-    ctaLabel: "👉 现在占卜，星星是否在为你闪烁？",
-    ctaLabelEn: "Read Your Stars — AI Tarot Now",
-    content: `
-<h2>黑暗之后的星光</h2>
-<p>星星（The Star）是大阿尔卡纳第17号牌，紧随在"塔"牌之后出现。当一切轰然倒塌，是星星在夜空中为你点亮方向。牌面上，一位赤裸的女子跪在河边，双手持瓶，将水轻轻倒回大地与河中——这是一个慷慨、治愈、与宇宙融为一体的灵魂。</p>
-
-<h2>星星正位</h2>
-<ul>
-  <li><strong>爱情</strong>：低谷后的疗愈与希望。若你刚经历分手或感情挫折，星星告诉你：伤口正在愈合，更美好的人和事正在路上。若在关系中抽到此牌，代表这段感情纯净、有灵魂层面的连接。</li>
-  <li><strong>事业</strong>：经历了一段困难期后，局面开始好转。你的付出将被看见，才华终将被认可。</li>
-  <li><strong>身心</strong>：极佳的疗愈信号。适合此时开始冥想、养生、或寻求心理疏导。</li>
-</ul>
-
-<h2>星星逆位</h2>
-<p>逆位星星：<strong>失去希望、自我怀疑、愿景破灭</strong>。你可能正处于最消极的状态，感觉一切努力都是徒劳。这时候，星星逆位不是宣判，而是在提醒你：你已经太久没有好好照顾自己的内心了。</p>
-
-<h2>星星的治愈金句</h2>
-<blockquote>
-  <p>"你不需要假装没事，但请相信：黎明永远在黑暗的尽头等你。"</p>
-</blockquote>
-    `,
-  },
-
-  // ══════════════════════════════════════════
-  // 🌙 周公解梦系列
-  // ══════════════════════════════════════════
-
-  {
-    slug: "dream-about-snake",
-    category: "dream",
-    title: "梦见蛇是什么预兆？周公解梦 × 心理学深度解析",
-    titleEn: "Dreaming of Snakes: Chinese Dream Interpretation & Psychology",
-    description: "梦见蛇是最常见的梦境之一，但含义大相径庭。本文结合周公解梦传统与荣格心理学，全面解析梦见大蛇、被蛇咬、蛇缠身、蛇追人等20种常见情形的预兆与心理含义。",
-    keywords: ["梦见蛇", "梦到蛇是什么意思", "梦见大蛇", "梦见被蛇咬", "蛇缠身什么预兆", "周公解梦蛇"],
-    publishedAt: "2026-05-11",
-    readingTime: 8,
-    ctaHref: "/dream",
-    ctaLabel: "👉 AI 解析你的梦境，探索潜意识密码",
-    ctaLabelEn: "AI Dream Decoder — Unlock Your Subconscious",
-    content: `
-<h2>蛇梦：一个古老而复杂的符号</h2>
-<p>在人类所有的梦境符号中，蛇或许是出现频率最高、含义最复杂的一个。它同时出现在东西方神话、宗教、心理学的核心位置——在伊甸园中诱惑夏娃，在古希腊象征医疗与智慧，在中国文化中则与财富、灵力、甚至转变都有深刻关联。</p>
-
-<h2>周公解梦：蛇的传统解读</h2>
-<h3>梦见大蛇/巨蟒</h3>
-<p>传统释义中，大蛇往往与重大机遇或权贵人物相关。若大蛇温顺或向你靠近，暗示贵人将至，事业或财运有提升；若大蛇凶猛攻击，则提示近期可能遭遇强势的对手或压力。</p>
-
-<h3>梦见被蛇咬</h3>
-<p>这是最令人惊醒的蛇梦类型。若咬后感到剧痛，传统认为是健康方面的警示信号，建议近期关注身体状况。若咬而无痛，或反而感到某种奇异的平静，则可能象征一种"痛苦的觉醒"——某件困扰你的事即将强制得到解决。</p>
-
-<h3>梦见蛇缠身</h3>
-<p>蛇缠身常被解读为感情上的纠缠——可能是一段剪不断理还乱的关系，或者是某个人正在对你施加隐形的控制与影响。</p>
-
-<h3>梦见蛇追你</h3>
-<p>被蛇追是典型的"逃避型梦境"。荣格心理学认为，追你的蛇代表你在现实中一直回避的某个问题或情绪——越逃，它追得越紧。</p>
-
-<h3>梦见蛇蜕皮</h3>
-<p>这是所有蛇梦中最正面的类型之一。蜕皮象征着蜕变、更新与重生——你正在或即将经历一次重要的个人转变，旧的自我正在脱落，新的可能性正在显现。</p>
-
-<h2>荣格心理学视角</h2>
-<p>荣格认为，蛇是人类集体无意识中最原始的原型符号之一，代表<strong>本能力量、生命能量（里比多）与阴影面</strong>。梦见蛇，往往意味着你的潜意识正在试图向你传递一个信号：某种被压抑的情绪、欲望或恐惧，需要被正视。</p>
-
-<h2>梦见蛇的颜色解析</h2>
-<ul>
-  <li><strong>白蛇</strong>：纯洁、灵性显现，可能预示精神层面的提升或高人指点。</li>
-  <li><strong>黑蛇</strong>：潜伏的威胁或内心深处的恐惧与阴暗面。</li>
-  <li><strong>金蛇</strong>：财富、权力与机遇的象征，往往是吉兆。</li>
-  <li><strong>红蛇</strong>：强烈的情绪（愤怒、激情）或健康方面的信号。</li>
-  <li><strong>绿蛇</strong>：疗愈、成长与自然力量。</li>
-</ul>
-    `,
-  },
-
-  {
-    slug: "dream-about-water",
-    category: "dream",
-    title: "梦见水是什么意思？洪水、大海、河流、下雨全解析",
-    titleEn: "Dreaming of Water: Flood, Ocean, River & Rain Meanings",
-    description: "水是梦境中最常见的元素之一，象征情感、潜意识与生命力。详解梦见洪水、大海、下雨、清水、浑水、溺水等各种水梦的周公解梦释义与心理学含义。",
-    keywords: ["梦见水", "梦见洪水", "梦见大海", "梦见下雨", "梦见溺水", "周公解梦水"],
-    publishedAt: "2026-05-13",
-    readingTime: 7,
-    ctaHref: "/dream",
-    ctaLabel: "👉 用 AI 解析你昨晚的梦，探索潜意识",
-    ctaLabelEn: "Decode Your Dream with AI Now",
-    content: `
-<h2>水：梦境中情感的镜子</h2>
-<p>在所有梦境元素中，水拥有最广泛的象征意义。荣格认为，水是潜意识最直接的象征——水的状态往往映射着你当前的情绪状态和内心深度。</p>
-
-<h2>梦见清澈的水</h2>
-<p>清澈的水通常是吉兆。代表思路清晰、内心平静、事业或感情运势顺畅。梦见在清澈的溪流中行走，暗示人生正走在正确的轨道上。</p>
-
-<h2>梦见浑浊的水</h2>
-<p>浑浊、污浊的水与当前的困惑、混乱状态相关联。可能暗示人际关系中存在是非，或某件事的真相尚不明朗。建议近期保持低调，避免做重大决策。</p>
-
-<h2>梦见洪水</h2>
-<p>洪水是情绪即将"决堤"的强烈信号。你可能正处于巨大的压力之下，而那些被长期压抑的情感正在积累能量。若梦中洪水淹没了房屋，可能暗示家庭或生活稳定性受到威胁；若洪水退去，则象征危机正在过去。</p>
-
-<h2>梦见大海</h2>
-<p>大海象征无边无际的潜意识与生命的宏大力量。平静的大海代表内心安宁与广阔的可能性；波涛汹涌的大海则反映内心的动荡与对未知的恐惧；站在海边眺望，往往与人生重大抉择或新的开始相关。</p>
-
-<h2>梦见溺水</h2>
-<p>溺水梦通常与被情绪淹没、感到失控或窒息有关。在心理学上，溺水梦多发于承受巨大压力、焦虑感爆棚的时期，是潜意识在发出求救信号——你需要减压，需要寻求帮助。</p>
-
-<h2>梦见下雨</h2>
-<ul>
-  <li><strong>小雨绵绵</strong>：象征思念、淡淡的忧愁，或即将到来的情绪释放与清洁。</li>
-  <li><strong>暴雨倾盆</strong>：重大变故或情绪崩溃点即将到来。</li>
-  <li><strong>雨后彩虹</strong>：经历低谷后的希望与美好，极佳的吉兆。</li>
-</ul>
-    `,
-  },
-
-  {
-    slug: "dream-about-teeth-falling",
-    category: "dream",
-    title: "梦见牙齿掉了是什么预兆？最全解析",
-    titleEn: "Dreaming of Teeth Falling Out: The Definitive Guide",
-    description: "梦见掉牙是全球最普遍的梦境之一，几乎每个人都做过。为什么会梦见牙齿脱落？代表死亡征兆吗？本文从周公解梦、西方心理学、现代研究三个角度给出完整答案。",
-    keywords: ["梦见掉牙", "梦见牙齿掉了", "掉牙梦是什么意思", "梦见牙齿脱落", "周公解梦掉牙"],
-    publishedAt: "2026-05-15",
-    readingTime: 6,
-    ctaHref: "/dream",
-    ctaLabel: "👉 AI 解读你的掉牙梦，看看潜意识在说什么",
-    ctaLabelEn: "Decode Your Dream — AI Interpretation",
-    content: `
-<h2>你不是一个人在做掉牙梦</h2>
-<p>研究表明，梦见牙齿掉落是全人类最普遍的共同梦境之一，横跨不同文化、年龄和地域。这本身就说明了一件事：它来自人类潜意识的某个深层共鸣。</p>
-
-<h2>传统周公解梦释义</h2>
-<p>在中国传统梦境文化中，牙齿与家人（尤其是长辈）的健康状况有关联，因此有"梦见掉牙，亲人有灾"的说法。但这只是众多解读之一，<strong>切勿过度焦虑，将梦境与现实直接挂钩。</strong></p>
-
-<p>另一种传统解读认为，牙齿象征你的"根基"——经济基础、家庭稳定性或个人权威。梦见掉牙，可能反映你在某方面感到根基不稳。</p>
-
-<h2>西方心理学解读</h2>
-<p>佛洛伊德认为掉牙梦与阉割焦虑（即对失去权力与控制感的恐惧）有关。而现代心理学研究更倾向于将其解读为：</p>
-<ul>
-  <li><strong>焦虑与压力</strong>：这是最主流的解释。研究显示，掉牙梦的频率与现实生活压力水平显著相关。</li>
-  <li><strong>自我形象焦虑</strong>：担心在他人面前的形象受损，害怕出丑或被批评。</li>
-  <li><strong>沟通问题</strong>：牙齿与开口说话相关——梦中掉牙，可能暗示你有些话想说却没有说出来。</li>
-</ul>
-
-<h2>不同情境的掉牙梦</h2>
-<ul>
-  <li><strong>牙齿一颗颗慢慢掉落</strong>：对某件事或某段关系的逐渐失去信心，是一个渐进式的失落过程。</li>
-  <li><strong>牙齿一下子全掉了</strong>：可能面临突然的重大变故，感到一切失控。</li>
-  <li><strong>掉牙后重新长出来</strong>：极佳的信号——经历失去后，新的机会与成长即将到来。</li>
-  <li><strong>掉牙不疼、平静接受</strong>：你正在以成熟的心态接受生命中某种改变的到来。</li>
-</ul>
-
-<h2>做了掉牙梦该怎么办？</h2>
-<p>第一，<strong>不要恐慌</strong>——绝大多数情况下，掉牙梦只是潜意识在处理压力，与现实预兆无关。第二，反问自己：最近生活中哪方面让你感到焦虑或不安全？梦境往往是这个问题的答案。</p>
-    `,
-  },
-
-  // ══════════════════════════════════════════
-  // ⭐ 星座运势系列
-  // ══════════════════════════════════════════
-
-  {
-    slug: "2026-aquarius-horoscope",
-    category: "horoscope",
-    title: "2026年水瓶座下半年运势：事业、爱情、财运全解析",
-    titleEn: "Aquarius 2026 Second Half Horoscope: Career, Love & Finance",
-    description: "2026年下半年水瓶座整体运势预测。土星继续驻留水瓶座带来的考验与机遇，木星在双子座为你加持的幸运领域，以及每月重点运势概览。",
-    keywords: ["2026水瓶座运势", "水瓶座下半年运势", "水瓶座2026", "水瓶座爱情运", "Aquarius 2026 horoscope"],
-    publishedAt: "2026-05-20",
-    readingTime: 8,
-    ctaHref: "/horoscope",
-    ctaLabel: "👉 查看水瓶座本周详细运势，五维指数解析",
-    ctaLabelEn: "Check Your Aquarius Weekly Horoscope Now",
-    content: `
-<h2>2026年水瓶座大背景：转型中的破局者</h2>
-<p>对水瓶座来说，2026年是一个"被迫成长"的年份。土星（你的传统守护星）继续在双鱼座运行，要求你在边界感、情感责任与灵性探索上交出答卷；与此同时，天王星（现代守护星）在金牛座的最后阶段，将持续撬动你对稳定与自由的平衡认知。</p>
-
-<h2>2026年下半年整体运势概览</h2>
-<h3>7月：整顿期</h3>
-<p>7月初水星逆行结束后，被搁置的计划重新启动。职场上可能有意想不到的机会出现，但需要你主动争取。感情方面，前半月较为平淡，后半月在满月能量影响下，情绪波动较大，注意与伴侣的沟通方式。</p>
-
-<h3>8月：能量爆发月</h3>
-<p>这是水瓶座2026年最重要的月份之一。太阳进入狮子座，对面激活你的人际关系宫，人脉扩张的绝佳时机。创业者或自由职业者可能迎来重要的合作机会。单身水瓶有较大概率在这个月邂逅心动的人。</p>
-
-<h3>9-10月：深耕期</h3>
-<p>木星在双子座继续为你的思维和学习带来扩展。这两个月特别适合进修、拿证、或深化某项专业技能。财务方面保持稳健，避免大额投资。</p>
-
-<h3>11月：收获前夜</h3>
-<p>木星将在11月底进入巨蟹座，激活你的健康与工作宫。这个月你会感受到能量调度的需要——为即将到来的收获季做好身心准备。</p>
-
-<h3>12月：年末冲刺</h3>
-<p>射手季的乐观能量点燃水瓶座的社交热情。年末聚会中可能有重要的人脉交集。事业上的努力开始看到成果，感情关系也趋于稳定温暖。</p>
-
-<h2>2026年水瓶座爱情运</h2>
-<p>整体而言，2026年下半年水瓶座的感情运走入深水区——不再是表面的新鲜刺激，而是真正考验你是否愿意放下"独立绝缘体"的防御机制，向另一个灵魂真实敞开。</p>
-<ul>
-  <li><strong>已恋爱</strong>：关系进入更成熟阶段，可能面临同居、婚姻等实质性话题。8月满月附近是感情的高峰期，也是争吵的高发期，坦诚沟通胜过一切。</li>
-  <li><strong>单身</strong>：8月和11月是两个相遇的重要窗口期。你喜欢的类型可能是思维活跃、有独特见解的人。</li>
-</ul>
-
-<h2>2026年水瓶座事业财运</h2>
-<p>事业上，创新思维依然是你最大的竞争力。下半年特别有利于与"技术+人文"交叉领域相关的工作。财运整体平稳，9月有意外小财的可能，但全年避免激进的投资策略。</p>
-
-<h2>水瓶座2026年幸运指南</h2>
-<ul>
-  <li>💫 <strong>幸运色</strong>：电光蓝、银灰</li>
-  <li>🔢 <strong>幸运数字</strong>：4、11、22</li>
-  <li>💎 <strong>幸运石</strong>：紫水晶、石榴石</li>
-  <li>🤝 <strong>最佳配对星座</strong>：双子座、天秤座、射手座</li>
-</ul>
-    `,
-  },
-
-  {
-    slug: "mercury-retrograde-2026",
-    category: "horoscope",
-    title: "2026年水星逆行时间表：哪些星座最受影响？如何应对？",
-    titleEn: "Mercury Retrograde 2026: Dates, Affected Signs & Survival Guide",
-    description: "2026年水星逆行共发生3次，分别影响不同星座。本文提供完整时间表，详解每次逆行对十二星座的具体影响，以及实用的应对策略和禁忌事项。",
-    keywords: ["2026水星逆行", "水星逆行时间", "水星逆行影响", "水逆怎么办", "Mercury retrograde 2026"],
-    publishedAt: "2026-05-18",
-    readingTime: 7,
-    ctaHref: "/horoscope",
-    ctaLabel: "👉 查看你的星座在水逆期间的详细运势",
-    ctaLabelEn: "Check Your Sign During Mercury Retrograde",
-    content: `
-<h2>什么是水星逆行？</h2>
-<p>水星逆行（Mercury Retrograde）是指从地球视角看，水星呈现出"向后移动"的视觉现象，实际上是地球与水星公转速度差异造成的视差效果。</p>
-<p>在占星学中，水星掌管沟通、交通、技术、合同与短途旅行。当水星逆行时，这些领域往往容易出现混乱、延误、误解与技术故障——这就是为什么"水逆"成为了现代人最常挂在嘴边的占星话题。</p>
-
-<h2>2026年水星逆行完整时间表</h2>
-<table>
-  <tr><th>逆行期间</th><th>所在星座</th><th>影响重点</th></tr>
-  <tr><td>1月14日 — 2月4日</td><td>摩羯座 → 射手座</td><td>职业规划、长期目标重新审视</td></tr>
-  <tr><td>5月22日 — 6月14日</td><td>双子座</td><td>沟通、社交媒体、短途出行</td></tr>
-  <tr><td>9月19日 — 10月11日</td><td>天秤座</td><td>关系、合约、美学决策</td></tr>
-</table>
-
-<h2>水星逆行期间：十二星座影响速查</h2>
-<h3>最受影响的星座</h3>
-<ul>
-  <li><strong>双子座 & 处女座</strong>（水星守护星座）：每次水逆期间都会感受到最强烈的影响。沟通易出偏差，技术问题频发，需要格外谨慎。</li>
-  <li><strong>逆行所在星座</strong>：2026年5月的逆行在双子座，对双子座、射手座（对面宫位）影响最大。</li>
-</ul>
-
-<h3>受益的星座</h3>
-<p>水逆并非对所有星座都是负面的。对于<strong>白羊座、狮子座、射手座</strong>（火象星座）而言，5月的水逆在双子座期间，有助于重新审视过去的沟通问题，修复旧关系，完成搁置已久的创意项目。</p>
-
-<h2>水星逆行期间的生存法则</h2>
-<h3>绝对避免做的事</h3>
-<ul>
-  <li>❌ 签署重要合同（尤其是首次合作）</li>
-  <li>❌ 购买电子产品（容易出现故障）</li>
-  <li>❌ 发送重要邮件前未仔细检查</li>
-  <li>❌ 开始全新的重大项目或投资</li>
-</ul>
-
-<h3>水逆期间反而适合做的事</h3>
-<ul>
-  <li>✅ 重新联系旧友或前任（若关系有修复可能）</li>
-  <li>✅ 完成搁置的项目</li>
-  <li>✅ 反思与内省，整理思路</li>
-  <li>✅ 备份重要文件，整理电脑</li>
-  <li>✅ 旧地重游，回顾过去</li>
-</ul>
-
-<h2>水逆的深层启示</h2>
-<p>占星师们常说的一句话是：<strong>"水逆不是宇宙的惩罚，而是宇宙强制给你的减速带。"</strong> 在这个快速前进的时代，水逆提醒我们：放慢脚步，看看那些被遗忘在路边的重要事物。</p>
-    `,
-  },
-
-  {
-    slug: "rising-sign-meaning",
-    category: "horoscope",
-    title: "上升星座是什么？为什么它比太阳星座更重要？",
-    titleEn: "What Is Your Rising Sign & Why It Matters More Than Your Sun Sign",
-    description: "上升星座（Ascendant）决定了你给人的第一印象和外在形象，被称为'灵魂的面具'。本文详解上升星座的含义、计算方式，以及12个上升星座的典型特征。",
-    keywords: ["上升星座", "上升星座是什么", "上升星座怎么算", "上升星座意义", "Ascendant astrology"],
-    publishedAt: "2026-05-17",
-    readingTime: 7,
-    ctaHref: "/astro",
-    ctaLabel: "👉 输入出生信息，立即计算你的上升星座",
-    ctaLabelEn: "Calculate Your Rising Sign & Full Birth Chart",
-    content: `
-<h2>为什么你不只是你的太阳星座？</h2>
-<p>当有人问"你是什么星座？"，你脱口而出的是太阳星座——这是根据出生日期决定的。但在职业占星师的体系中，个人星盘由三个最核心的元素构成：<strong>太阳星座（内在自我）、月亮星座（情感与潜意识）、上升星座（外在形象）</strong>。</p>
-<p>上升星座，有时被称为"灵魂的面具"或"社会化的我"，决定了你给陌生人留下的第一印象，以及你面对世界的方式。</p>
-
-<h2>如何计算你的上升星座？</h2>
-<p>上升星座由你的<strong>出生时间（精确到小时）和出生地点</strong>共同决定。由于地球自转，黄道12星座大约每2小时在东方地平线上升起一个，因此出生时间哪怕相差1-2小时，上升星座可能完全不同。</p>
-<p>这也是为什么双胞胎尽管太阳星座相同，性格却可能差异明显的原因——他们的上升星座可能已经不一样了。</p>
-
-<h2>12个上升星座的典型特征</h2>
-<ul>
-  <li><strong>上升白羊</strong>：充满活力、直接坦率，给人朝气蓬勃的印象。行动力强，天生领袖气质。</li>
-  <li><strong>上升金牛</strong>：沉稳可靠、气质优雅，给人踏实安全感。对美的感知力强。</li>
-  <li><strong>上升双子</strong>：机智风趣、善于表达，给人活泼聪明的印象。社交能量极强。</li>
-  <li><strong>上升巨蟹</strong>：温柔体贴、具有保护欲，给人亲切居家的感觉。情感敏锐。</li>
-  <li><strong>上升狮子</strong>：自信耀眼、天生王者气场，给人印象深刻、不可忽视。</li>
-  <li><strong>上升处女</strong>：细心周到、专业可靠，给人一丝不苟的精英印象。分析力强。</li>
-  <li><strong>上升天秤</strong>：优雅和谐、魅力四射，给人如沐春风的感觉。极具美感。</li>
-  <li><strong>上升天蝎</strong>：神秘深邃、眼神摄人，给人难以捉摸但极具吸引力的印象。</li>
-  <li><strong>上升射手</strong>：开朗乐观、充满探险精神，给人自由不羁、豪爽大方的感觉。</li>
-  <li><strong>上升摩羯</strong>：成熟稳重、目标明确，给人可信赖的专业人士印象。</li>
-  <li><strong>上升水瓶</strong>：独特前卫、与众不同，给人充满创意和独立精神的印象。</li>
-  <li><strong>上升双鱼</strong>：温柔梦幻、富有艺术气息，给人飘逸神秘的灵性感。</li>
-</ul>
-
-<h2>上升星座 vs 太阳星座：哪个更"真实"？</h2>
-<p>简单来说：<strong>太阳星座是你的核心本质，上升星座是你展示给世界的方式。</strong> 有些人的太阳和上升星座差异极大——比如一个内心敏感细腻的巨蟹座，若上升是狮子座，在外人眼中会显得自信耀眼，完全看不出内在的脆弱。</p>
-<p>了解自己的上升星座，能帮助你理解"为什么别人对我的印象总是和我自认为的不一样？"这个困扰了无数人的问题。</p>
-    `,
-  },
-];
-
-// ─── 辅助函数 ─────────────────────────────────────────────────────────────────
-
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return BLOG_POSTS.find(p => p.slug === slug);
-}
-
-export function getPostsByCategory(category: BlogCategory): BlogPost[] {
-  return BLOG_POSTS.filter(p => p.category === category);
-}
-
 export const CATEGORY_META: Record<BlogCategory, { label: string; labelEn: string; icon: string; color: string }> = {
-  tarot:     { label: "塔罗牌意",  labelEn: "Tarot Guide",      icon: "🔮", color: "#c9a84c" },
-  dream:     { label: "周公解梦",  labelEn: "Dream Meanings",   icon: "💭", color: "#9b59ff" },
-  horoscope: { label: "星座运势",  labelEn: "Horoscope",        icon: "🌌", color: "#FF9800" },
+  tarot:         { label: "塔罗牌意",   labelEn: "Tarot Guide",          icon: "🔮", color: "#c9a84c" },
+  dream:         { label: "周公解梦",   labelEn: "Dream Meanings",        icon: "💭", color: "#9b59ff" },
+  horoscope:     { label: "星座运势",   labelEn: "Horoscope",             icon: "🌌", color: "#FF9800" },
+  astro:         { label: "星盘解析",   labelEn: "Birth Chart",           icon: "✦",  color: "#6495ED" },
+  numerology:    { label: "生命灵数",   labelEn: "Numerology",            icon: "🔯", color: "#7C3AED" },
+  rune:          { label: "卢恩符文",   labelEn: "Rune Oracle",           icon: "ᚠ",  color: "#4a9eca" },
+  bazi:          { label: "生辰八字",   labelEn: "Bazi",                  icon: "☯",  color: "#d4832a" },
+  ziwei:         { label: "紫微斗数",   labelEn: "Purple Star",           icon: "紫", color: "#C77DFF" },
+  naming:        { label: "墨韵起名",   labelEn: "Name Oracle",           icon: "🖌", color: "#c9a84c" },
+  wuge:          { label: "姓名五格",   labelEn: "Name Numerology",       icon: "𝕎", color: "#5a9a5a" },
+  meihua:        { label: "梅花心易",   labelEn: "I Ching Oracle",        icon: "🌸", color: "#C04851" },
+  qimen:         { label: "奇门遁甲",   labelEn: "Qi Men Dun Jia",        icon: "奇", color: "#C9A84C" },
+  almanac:       { label: "老黄历",     labelEn: "Feng Shui Calendar",    icon: "⏰", color: "#C0392B" },
+  lingqian:      { label: "云端灵签",   labelEn: "Divine Oracle",         icon: "🪬", color: "#8B5CF6" },
+  love:          { label: "姻缘占卜",   labelEn: "Love Oracle",           icon: "💞", color: "#b06aff" },
+  "face-reading":{ label: "赛博算命",   labelEn: "Cyber Fortune",         icon: "👁", color: "#00F5FF" },
+  mbti:          { label: "MBTI星球",   labelEn: "MBTI × Zodiac",         icon: "🧩", color: "#A78BFA" },
+  synastry:      { label: "星盘合盘",   labelEn: "Synastry",              icon: "💫", color: "#E91E8C" },
+  "daily-fortune":{ label: "每日开运",  labelEn: "Daily Fortune",         icon: "☀️", color: "#f0a500" },
+  "daily-card":  { label: "每日提示卡", labelEn: "Daily Cosmic Card",     icon: "✦",  color: "#a78bfa" },
+  "pet-psychic": { label: "宠物灵语",   labelEn: "Pet Psychic",           icon: "🐾", color: "#5dc885" },
+  "ai-mystic":   { label: "AI解忧馆",   labelEn: "AI Mystic",             icon: "🔮", color: "#c084fc" },
 };

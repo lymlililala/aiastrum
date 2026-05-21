@@ -1,9 +1,9 @@
 import { type MetadataRoute } from "next";
-import { BLOG_POSTS } from "./blog/blog-data";
+import { fetchAllPosts } from "~/lib/supabase";
 
 const BASE_URL = "https://aiastrum.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 工具页面
   const toolRoutes = [
     { path: "/",              priority: 1.0,  changeFrequency: "daily"   },
@@ -39,13 +39,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority,
   }));
 
-  // 博客文章页面（独立 lastModified，优先级高，有助于快速被收录）
-  const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
-    url: `${BASE_URL}/blog/${post.slug}`,
-    lastModified: new Date(post.publishedAt),
-    changeFrequency: "monthly" as const,
-    priority: 0.85,
-  }));
+  // 博客文章页面（从数据库动态获取）
+  let blogEntries: MetadataRoute.Sitemap = [];
+  try {
+    const posts = await fetchAllPosts();
+    blogEntries = posts.map(post => ({
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: new Date(post.published_at),
+      changeFrequency: "monthly" as const,
+      priority: 0.85,
+    }));
+  } catch {
+    // 数据库不可达时 sitemap 只包含工具页面
+  }
 
   return [...toolEntries, ...blogEntries];
 }
