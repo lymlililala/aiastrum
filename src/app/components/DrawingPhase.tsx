@@ -65,14 +65,15 @@ interface SelectedCard extends DrawnCard {
 interface DrawingPhaseProps {
   domain: string;
   spreadType: "single" | "three";
-  lang?: "zh" | "en";
+  lang?: "zh" | "en" | "tw";
   onComplete: (result: ReadingState) => void;
 }
 
 const TOTAL_DISPLAY_CARDS = 12;
 
 export function DrawingPhase({ domain, spreadType, lang = "zh", onComplete }: DrawingPhaseProps) {
-  const t = DT[lang];
+  // tw fallback to zh dict, tw language injection handled at API level
+  const t = DT[lang === "tw" ? "zh" : lang];
   const spreadPositions = spreadType === "single" ? t.positions.single : t.positions.three;
 
   const [step, setStep] = useState<DrawStep>("meditation");

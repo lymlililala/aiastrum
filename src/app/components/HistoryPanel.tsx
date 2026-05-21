@@ -27,12 +27,12 @@ const HT = {
 
 interface HistoryPanelProps {
   history: ReadingRecord[];
-  lang?: "zh" | "en";
+  lang?: "zh" | "en" | "tw";
   onClose: () => void;
 }
 
 export function HistoryPanel({ history, lang = "zh", onClose }: HistoryPanelProps) {
-  const t = HT[lang];
+  const t = HT[lang === "tw" ? "zh" : lang];
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (

@@ -2,11 +2,14 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { DOMAINS, SPREADS } from "./tarot-data";
 import { DrawingPhase } from "./components/DrawingPhase";
 import { ResultPhase } from "./components/ResultPhase";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { useReadingHistory, useDailyLimit } from "./hooks";
+import { getLocaleFromPath } from "~/lib/i18n";
+import { LangSwitcher } from "./components/LangSwitcher";
 import type { TarotCard } from "./tarot-data";
 
 type Phase = "home" | "tarot-landing" | "select-domain" | "select-spread" | "drawing" | "result";
@@ -19,27 +22,16 @@ export interface ReadingState {
 }
 
 export default function HomePage() {
+  const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>("home");
   const [readingState, setReadingState] = useState<ReadingState | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<string>("");
   const [selectedSpread, setSelectedSpread] = useState<"single" | "three">("single");
   const [showHistory, setShowHistory] = useState(false);
-  const [lang, setLangState] = useState<"zh" | "en">("zh");
 
-  // 同步首页语言设置
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("mystic_lang");
-      if (saved === "en" || saved === "zh") setLangState(saved);
-    } catch { /* ignore */ }
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "mystic_lang" && (e.newValue === "en" || e.newValue === "zh")) {
-        setLangState(e.newValue);
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  // 从 URL 路径读取语言（/en /zh /tw）
+  const urlLocale = getLocaleFromPath(pathname);
+  const lang: "zh" | "en" | "tw" = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
 
   const { history, saveReading } = useReadingHistory();
   const { recordUsage } = useDailyLimit();
@@ -62,7 +54,7 @@ export default function HomePage() {
       setReadingState(result);
       recordUsage(result.spreadType);
       saveReading({
-        date: new Date().toLocaleDateString(lang === "en" ? "en-US" : "zh-CN"),
+        date: new Date().toLocaleDateString(lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN"),
         spreadType: result.spreadType,
         domain: result.domain,
         cards: result.cards,
@@ -144,6 +136,67 @@ export default function HomePage() {
 // ───────────────────────────────────────────
 // i18n 文案（需在 MODULES 类型定义之前）
 // ───────────────────────────────────────────
+
+// 繁体中文文案（tw）
+const TW = {
+  heroSub:        "你的每日宇宙指南",
+  heroTitle:      "命運密語",
+  heroDesc:       "古老智慧與現代 AI 的交融，探索屬於你的命運密碼",
+  heroCard1Label: "每日一籤",
+  heroCard2Label: "AI 解憂館",
+  heroCard3Label: "每日開運",
+  tabAll:         "全部",
+  tabWestern:     "西方神秘",
+  tabEastern:     "東方智慧",
+  tabLifestyle:   "趣味生活",
+  sectionFeatured:"精選推薦",
+  sectionMore:    "更多功能",
+  tarotTitle:        "塔羅占卜",
+  tarotDesc:         "抽取塔羅牌，AI 解讀過去、現在與未來的隱秘低語",
+  astroTitle:        "星盤解析",
+  astroDesc:         "精準計算太陽、月亮、上升點，繪製專屬星盤，解讀命運密碼",
+  mbtiTitle:         "MBTI 星球碰撞",
+  mbtiDesc:          "MBTI × 星座，生成專屬梗文化人格檔案，極具傳播屬性",
+  horoscopeTitle:    "星座運勢",
+  horoscopeDesc:     "十二星座每日/週/月運勢，五維指數全方位解析",
+  runeTitle:         "盧恩符文",
+  runeDesc:          "古老北歐符文占卜，單石奧丁之眼或三石諾倫女神",
+  numerologyTitle:   "生命靈數",
+  numerologyDesc:    "輸入生日計算專屬靈數（1-9、11、22、33），解析性格天賦",
+  namingTitle:       "墨韻起名",
+  namingDesc:        "生辰八字推算喜用神，結合詩詞典籍甄選吉名",
+  loveTitle:         "姻緣占卜",
+  loveDesc:          "星盤×命理三維解析，揭秘命中正緣特徵與相遇時機",
+  faceTitle:         "賽博算命",
+  faceDesc:          "AI 神經網路掃描面相·手相，解碼隱藏天賦與命運密碼",
+  baziTitle:         "生辰八字",
+  baziDesc:          "天干地支排盤，揭示命格與流年運勢",
+  ziweiTitle:        "紫微斗數",
+  ziweiDesc:         "東方占星術之王，十四主星排布十二宮，四化飛星揭秘人生軌跡",
+  meihuaTitle:       "梅花心易",
+  meihuaDesc:        "北宋邵雍傳世之法，觀物取象，體用生剋斷吉凶",
+  qimenTitle:        "奇門遁甲",
+  qimenDesc:         "真太陽時校準，九宮格專業排盤，商業與出行吉凶精準提示",
+  dreamTitle:        "周公解夢",
+  dreamDesc:         "傳統周公解夢 × 榮格心理學，雙軌解析夢境與潛意識",
+  almanacTitle:      "老黃曆",
+  almanacDesc:       "每日宜忌一目了然，定製擇吉日，結婚搬家開業出行",
+  lingqianTitle:     "雲端靈籤",
+  lingqianDesc:      "觀音·黃大仙虔誠求籤，擲筊確認，白話解析四維運勢",
+  wugeTitle:         "姓名五格",
+  wugeDesc:          "康熙字典筆劃，五格剖象，81數理解析姓名與命運",
+  dailyFortuneTitle: "每日開運指南",
+  dailyFortuneDesc:  "基於生辰五行，每日生成專屬幸運色、數字、方位與穿搭建議",
+  petTitle:          "寵物靈語",
+  petDesc:           "上傳寵物照片+名字，結合塔羅單牌，解讀毛孩子今天的內心世界",
+  aiMysticTitle:     "AI 解憂館",
+  aiMysticDesc:      "向AI塔羅師傾訴煩惱，獲得溫柔共情與塔羅指引",
+  synastryTitle:     "星盤合盤",
+  synastryDesc:      "輸入雙方生日，分析跨盤行星相位，計算愛情/友情契合度",
+  dailyCardTitle:    "每日宇宙提示卡",
+  dailyCardFullDesc: "每日一籤盲盒，精美卡背翻轉動畫，直擊心靈的宇宙提示",
+};
+
 const ZH = {
   heroSub:        "你的每日宇宙指南",
   heroTitle:      "命运密语",
@@ -326,16 +379,14 @@ const MODULES: ModuleItem[] = [
 // 首页主组件
 // ───────────────────────────────────────────
 function ModuleSelectPage() {
-  const [lang, setLang] = useState<"zh" | "en">(() => {
-    try {
-      const saved = typeof window !== "undefined" ? localStorage.getItem("mystic_lang") : null;
-      return saved === "en" ? "en" : "zh";
-    } catch { return "zh"; }
-  });
+  const pathname = usePathname();
+  const urlLocale = getLocaleFromPath(pathname);
+  const lang: "zh" | "en" | "tw" = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
+
   const [moonPhase, setMoonPhase] = useState({ emoji: "🌙", label: "" });
   const [activeTab, setActiveTab] = useState<"all" | "western" | "eastern" | "lifestyle">("all");
 
-  const t = lang === "zh" ? ZH : EN;
+  const t = lang === "en" ? EN : lang === "tw" ? TW : ZH;
 
   useEffect(() => {
     const now = new Date();
@@ -344,14 +395,16 @@ function ModuleSelectPage() {
     const phase = ((daysSince % 29.53) + 29.53) % 29.53;
     let emoji = "🌑";
     let label = lang === "zh" ? "新月" : "New Moon";
-    if      (phase < 1.85)  { emoji = "🌑"; label = lang === "zh" ? "新月"   : "New Moon"; }
-    else if (phase < 7.38)  { emoji = "🌒"; label = lang === "zh" ? "娥眉月" : "Waxing Crescent"; }
-    else if (phase < 9.22)  { emoji = "🌓"; label = lang === "zh" ? "上弦月" : "First Quarter"; }
-    else if (phase < 14.77) { emoji = "🌔"; label = lang === "zh" ? "盈凸月" : "Waxing Gibbous"; }
-    else if (phase < 16.61) { emoji = "🌕"; label = lang === "zh" ? "满月"   : "Full Moon"; }
-    else if (phase < 22.15) { emoji = "🌖"; label = lang === "zh" ? "亏凸月" : "Waning Gibbous"; }
-    else if (phase < 23.99) { emoji = "🌗"; label = lang === "zh" ? "下弦月" : "Last Quarter"; }
-    else                    { emoji = "🌘"; label = lang === "zh" ? "残月"   : "Waning Crescent"; }
+    const isZh = lang === "zh"; const isTw = lang === "tw";
+    if      (phase < 1.85)  { emoji = "🌑"; label = lang === "en" ? "New Moon"        : isZh ? "新月"   : "新月"; }
+    else if (phase < 7.38)  { emoji = "🌒"; label = lang === "en" ? "Waxing Crescent" : isZh ? "娥眉月" : "娥眉月"; }
+    else if (phase < 9.22)  { emoji = "🌓"; label = lang === "en" ? "First Quarter"   : isZh ? "上弦月" : "上弦月"; }
+    else if (phase < 14.77) { emoji = "🌔"; label = lang === "en" ? "Waxing Gibbous"  : isZh ? "盈凸月" : "盈凸月"; }
+    else if (phase < 16.61) { emoji = "🌕"; label = lang === "en" ? "Full Moon"       : isZh ? "满月"   : "滿月"; }
+    else if (phase < 22.15) { emoji = "🌖"; label = lang === "en" ? "Waning Gibbous"  : isZh ? "亏凸月" : "虧凸月"; }
+    else if (phase < 23.99) { emoji = "🌗"; label = lang === "en" ? "Last Quarter"    : isZh ? "下弦月" : "下弦月"; }
+    else                    { emoji = "🌘"; label = lang === "en" ? "Waning Crescent"  : isZh ? "残月"   : "殘月"; }
+    void isTw; // suppress unused warning
     setMoonPhase({ emoji, label });
   }, [lang]);
 
@@ -389,7 +442,7 @@ function ModuleSelectPage() {
               lineHeight: 1.1,
             }}>MysticAI</div>
             <div style={{ fontSize: "0.6rem", color: "rgba(201,168,76,0.45)", letterSpacing: "0.12em", lineHeight: 1 }}>
-              {lang === "zh" ? "命运密语" : "DESTINY ORACLE"}
+              {lang === "en" ? "DESTINY ORACLE" : lang === "tw" ? "命運密語" : "命运密语"}
             </div>
           </div>
         </div>
@@ -399,19 +452,7 @@ function ModuleSelectPage() {
           <span>{moonPhase.label}</span>
         </div>
 
-        <button
-          onClick={() => setLang(l => {
-            const next = l === "zh" ? "en" : "zh";
-            try { localStorage.setItem("mystic_lang", next); } catch { /* ignore */ }
-            return next;
-          })}
-          style={{
-            fontSize: "0.72rem", padding: "4px 10px", borderRadius: 20,
-            border: "1px solid rgba(201,168,76,0.25)", background: "rgba(201,168,76,0.08)",
-            color: "rgba(201,168,76,0.8)", cursor: "pointer", letterSpacing: "0.08em",
-            fontFamily: "Cinzel, serif", flexShrink: 0,
-          }}
-        >{lang === "zh" ? "EN" : "中文"}</button>
+        <LangSwitcher />
       </header>
 
       {/* ── HERO ── */}
