@@ -5,8 +5,7 @@ import { type Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { LOCALE_LANG, getLocaleFromPath, type Locale } from "~/lib/i18n";
-
-export const BASE_URL = "https://aiastrum.com";
+import { BASE_URL } from "~/lib/seo";
 
 // ── 全局默认 metadata（各页面可通过 generateMetadata 覆盖） ──────────────────
 export const metadata: Metadata = {
