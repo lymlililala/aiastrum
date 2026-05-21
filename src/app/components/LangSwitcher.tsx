@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LOCALES, LOCALE_LABEL, LOCALE_SHORT, getLocaleFromPath, stripLocale, type Locale } from "~/lib/i18n";
 
 function getCookieLocale(): Locale | null {
@@ -12,7 +12,6 @@ function getCookieLocale(): Locale | null {
 }
 
 export function LangSwitcher() {
-  const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -42,15 +41,15 @@ export function LangSwitcher() {
     setOpen(false);
     // 写入 cookie（供 middleware 和工具页面读取）
     document.cookie = `mystic_locale=${locale};path=/;max-age=31536000;samesite=lax`;
-    setCookieLocale(locale);
 
+    // 使用完整页面跳转，确保服务端重新读取语言设置
     if (urlLocale) {
       // 当前页面有 locale 前缀（首页 /zh /en /tw）：替换前缀跳转
       const bare = stripLocale(pathname);
-      router.push(`/${locale}${bare === "/" ? "" : bare}`);
+      window.location.href = `/${locale}${bare === "/" ? "" : bare}`;
     } else {
-      // 工具页面（/tarot /bazi 等）：无需改变 URL，刷新页面让 middleware 透传新语言
-      router.refresh();
+      // 工具页面（/tarot /bazi 等）：保持 URL，强制全页刷新让 cookie 生效
+      window.location.reload();
     }
   }
 
