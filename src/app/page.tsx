@@ -703,16 +703,17 @@ function ModuleSelectPage() {
 // ───────────────────────────────────────────
 // 子组件
 // ───────────────────────────────────────────
+// SectionLabel 使用 h2 标签保证 SEO H 标签层级正确
 function SectionLabel({ icon, label }: { icon: string; label: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+    <h2 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontWeight: "normal" }}>
       <span style={{ fontSize: 13, opacity: 0.65 }}>{icon}</span>
       <span style={{
         fontSize: "0.7rem", fontFamily: "Cinzel, serif",
         color: "rgba(201,168,76,0.5)", letterSpacing: "0.1em", textTransform: "uppercase",
       }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: "linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />
-    </div>
+    </h2>
   );
 }
 

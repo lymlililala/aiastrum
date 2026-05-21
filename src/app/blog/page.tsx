@@ -3,11 +3,27 @@ import Link from "next/link";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
 import { CATEGORY_META, type BlogCategory } from "./blog-data";
 
+const BASE_URL = "https://aiastrum.com";
+
 export const metadata: Metadata = {
   title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — AiAstrum",
   description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
   keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
-  alternates: { canonical: "https://aiastrum.com/blog" },
+  alternates: { canonical: `${BASE_URL}/blog` },
+  openGraph: {
+    title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — AiAstrum",
+    description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
+    url: `${BASE_URL}/blog`,
+    type: "website",
+    siteName: "AiAstrum",
+    images: [{ url: `${BASE_URL}/images/og-cover.png`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "神秘学知识库 — AiAstrum",
+    description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。",
+    images: [`${BASE_URL}/images/og-cover.png`],
+  },
 };
 
 // 强制每次请求都重新从数据库读（ISR 60s）

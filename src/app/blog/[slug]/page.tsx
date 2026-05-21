@@ -21,12 +21,26 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   try {
     const db = await fetchPostBySlug(params.slug);
     if (db) {
+      const BASE_URL = "https://aiastrum.com";
       return {
         title: `${db.title} — AiAstrum 神秘学知识库`,
         description: db.description,
         keywords: db.keywords,
-        openGraph: { title: db.title, description: db.description, type: "article" },
-        alternates: { canonical: `https://aiastrum.com/blog/${params.slug}` },
+        alternates: { canonical: `${BASE_URL}/blog/${params.slug}` },
+        openGraph: {
+          title: db.title,
+          description: db.description,
+          type: "article",
+          url: `${BASE_URL}/blog/${params.slug}`,
+          siteName: "AiAstrum",
+          images: [{ url: `${BASE_URL}/images/og-cover.png`, width: 1200, height: 630 }],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: db.title,
+          description: db.description,
+          images: [`${BASE_URL}/images/og-cover.png`],
+        },
       };
     }
   } catch { /* 降级 */ }

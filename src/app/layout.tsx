@@ -6,27 +6,39 @@ import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { LOCALE_LANG, getLocaleFromPath, type Locale } from "~/lib/i18n";
 
-const BASE_URL = "https://aiastrum.com";
+export const BASE_URL = "https://aiastrum.com";
 
+// ── 全局默认 metadata（各页面可通过 generateMetadata 覆盖） ──────────────────
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "AiAstrum · 命运密语 | Tarot, Astrology & Eastern Wisdom",
+  title: {
+    default: "AiAstrum · 命运密语 | Tarot, Astrology & Eastern Wisdom",
+    template: "%s | AiAstrum",
+  },
   description: "Your daily cosmic guide — Tarot readings, birth charts, Bazi destiny, MBTI × Zodiac, AI oracle and more. Ancient wisdom meets modern AI.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
-  alternates: {
-    canonical: BASE_URL,
-    languages: {
-      "en":    `${BASE_URL}/en`,
-      "zh-CN": `${BASE_URL}/zh`,
-      "zh-TW": `${BASE_URL}/tw`,
-      "x-default": `${BASE_URL}/zh`,
-    },
-  },
+  // canonical 不在此处硬写，由各页面 generateMetadata 动态设置
+  // hreflang alternates 仅首页在此设置，工具页通过 generateMetadata 设置
   openGraph: {
+    siteName: "AiAstrum",
     title: "AiAstrum · 命运密语 | Destiny Oracle",
     description: "Your daily cosmic guide — Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
     type: "website",
     url: BASE_URL,
+    images: [
+      {
+        url: `${BASE_URL}/images/og-cover.png`,
+        width: 1200,
+        height: 630,
+        alt: "AiAstrum — AI Divination & Cosmic Wisdom",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AiAstrum · 命运密语 | Destiny Oracle",
+    description: "Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
+    images: [`${BASE_URL}/images/og-cover.png`],
   },
   keywords: ["tarot", "astrology", "bazi", "zodiac", "MBTI", "numerology", "I Ching", "feng shui", "destiny", "oracle", "AI divination", "占卜", "八字", "星盘", "塔罗"],
 };
@@ -41,6 +53,42 @@ export default async function RootLayout({
   const locale: Locale = localeHeader ?? getLocaleFromPath(xPathname) ?? "zh";
   const htmlLang = LOCALE_LANG[locale];
 
+  // ── 站点级 JSON-LD（WebSite + Organization）──────────────────────────────
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${BASE_URL}/#website`,
+        "url": BASE_URL,
+        "name": "AiAstrum",
+        "description": "AI-powered divination platform — Tarot, Astrology, Bazi & Eastern Wisdom",
+        "inLanguage": ["en", "zh-CN", "zh-TW"],
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${BASE_URL}/blog?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+        "name": "AiAstrum",
+        "url": BASE_URL,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${BASE_URL}/images/logo.png`,
+          "width": 200,
+          "height": 200,
+        },
+        "sameAs": [],
+      },
+    ],
+  };
+
   return (
     <html lang={htmlLang} className={`${GeistSans.variable}`}>
       <head>
@@ -50,11 +98,11 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
           rel="stylesheet"
         />
-        {/* hreflang SEO 标签 */}
-        <link rel="alternate" hrefLang="en"      href={`${BASE_URL}/en`} />
-        <link rel="alternate" hrefLang="zh-CN"   href={`${BASE_URL}/zh`} />
-        <link rel="alternate" hrefLang="zh-TW"   href={`${BASE_URL}/tw`} />
-        <link rel="alternate" hrefLang="x-default" href={`${BASE_URL}/zh`} />
+        {/* 站点级结构化数据 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="font-crimson bg-deep-purple min-h-screen">
         {/* 星空背景 */}
@@ -89,7 +137,7 @@ function Stars() {
             left: star.left,
             width: star.size,
             height: star.size,
-            opacity: 0.25,   /* 降低星点亮度，避免抢夺视线 */
+            opacity: 0.25,
             animation: `twinkle ${star.duration} ease-in-out ${star.delay} infinite`,
           }}
         />
@@ -97,5 +145,3 @@ function Stars() {
     </div>
   );
 }
-
-
