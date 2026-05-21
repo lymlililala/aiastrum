@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   // metadataBase 统一使用不带 www 的标准域名，与 sitemap/robots 保持一致
@@ -41,6 +42,7 @@ export default function RootLayout({
         {/* 装饰星点 */}
         <Stars />
         {children}
+        <Analytics />
       </body>
     </html>
   );
