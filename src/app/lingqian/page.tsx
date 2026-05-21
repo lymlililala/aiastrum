@@ -82,6 +82,10 @@ export default function LingQianPage() {
 
   return (
     <div className="lq-page">
+      {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        在线求签 — 观音灵签 · 妈祖签诗 AI 解签
+      </h1>
       {/* 顶部导航栏 */}
       <nav className="lq-nav">
         <div className="lq-nav-left">

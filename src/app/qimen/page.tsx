@@ -55,6 +55,10 @@ export default function QimenPage() {
 
   return (
     <div className="qm-page">
+      {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        奇门遁甲排盘 — AI 奇门格局在线起局
+      </h1>
       {/* 星空背景 */}
       <div className="stars-bg" />
 

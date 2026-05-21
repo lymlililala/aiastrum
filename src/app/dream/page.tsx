@@ -51,6 +51,10 @@ export default function DreamPage() {
 
   return (
     <div className="dream-page">
+      {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        周公解梦 — AI 梦境解析与潜意识探索
+      </h1>
       {/* 星空背景 */}
       <div className="dream-bg" aria-hidden="true">
         <div className="dream-bg-gradient" />

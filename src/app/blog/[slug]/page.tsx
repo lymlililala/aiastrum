@@ -85,6 +85,37 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   const meta = CATEGORY_META[post.category];
 
+  // ── 结构化数据 ──────────────────────────────────────────────────────────────
+  const pageUrl = `https://aiastrum.com/blog/${post.slug}`;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.description,
+    "url": pageUrl,
+    "datePublished": post.publishedAt,
+    "dateModified": post.publishedAt,
+    "author": { "@type": "Organization", "name": "MysticAI", "url": "https://aiastrum.com" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "MysticAI · 命运密语",
+      "url": "https://aiastrum.com",
+      "logo": { "@type": "ImageObject", "url": "https://aiastrum.com/favicon.ico" },
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": pageUrl },
+    "articleSection": meta.label,
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://aiastrum.com" },
+      { "@type": "ListItem", "position": 2, "name": "神秘学知识库", "item": "https://aiastrum.com/blog" },
+      { "@type": "ListItem", "position": 3, "name": post.title, "item": pageUrl },
+    ],
+  };
+
   // 相关文章
   let related: Array<{ slug: string; category: "tarot"|"dream"|"horoscope"; title: string; readingTime: number }> = [];
   try {
@@ -104,6 +135,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      {/* Article 结构化数据 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      {/* BreadcrumbList 结构化数据 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <style>{`
         .blog-post-nav-back:hover { color: rgba(201,168,76,0.95) !important; }
         .blog-post-cta { transition: border-color 0.2s, box-shadow 0.2s; }

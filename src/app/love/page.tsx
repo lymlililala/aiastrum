@@ -72,6 +72,10 @@ export default function LovePage() {
 
   return (
     <main className="love-main">
+      {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        合婚配对测算 — AI 爱情缘分分析
+      </h1>
       {/* 返回首页 */}
       <a href="/" style={{
         position: "fixed", top: 16, left: 16, zIndex: 200,

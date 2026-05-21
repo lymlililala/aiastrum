@@ -4,7 +4,7 @@
  */
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://tixgzezejjsyuzgdhcd.supabase.co";
+const SUPABASE_URL = "https://tixgzezefjjsyuzgdhcd.supabase.co";
 const SERVICE_ROLE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpeGd6ZXplZmpqc3l1emdkaGNkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODE0OTM3OCwiZXhwIjoyMDkzNzI1Mzc4fQ.CBarLrHnr-tr5ZPaGs2JvW3NJE6O5O1Hw7oTWsHuI-E";
 

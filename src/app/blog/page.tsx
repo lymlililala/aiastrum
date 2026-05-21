@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — MysticAI",
   description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
   keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
+  alternates: { canonical: "https://aiastrum.com/blog" },
 };
 
 // 强制每次请求都重新从数据库读（ISR 60s）
@@ -69,8 +70,29 @@ export default async function BlogListPage({
     }));
   }
 
+  // ── ItemList 结构化数据 ──────────────────────────────────────────────────────
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "神秘学知识库 — MysticAI",
+    "description": "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南",
+    "url": "https://aiastrum.com/blog",
+    "numberOfItems": posts.length,
+    "itemListElement": posts.map((post, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "url": `https://aiastrum.com/blog/${post.slug}`,
+      "name": post.title,
+    })),
+  };
+
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      {/* ItemList 结构化数据 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <style>{`
         .blog-nav-back:hover { color: rgba(201,168,76,0.95) !important; }
         .blog-cat-tab:hover { border-color: rgba(201,168,76,0.4) !important; color: rgba(240,210,120,0.85) !important; }
