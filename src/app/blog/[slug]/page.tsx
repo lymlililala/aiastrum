@@ -2,46 +2,41 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchPostBySlug, fetchAllPosts, fetchAllSlugs, type DbBlogPost } from "~/lib/supabase";
-import { getPostBySlug, BLOG_POSTS, CATEGORY_META } from "../blog-data";
+import { CATEGORY_META } from "../blog-data";
 
-export const revalidate = 60;
+export const revalidate = 3600; // 1小时重验证
+export const dynamicParams = true; // 允许构建时未预渲染的路径按需渲染
 
-// ── 静态路由生成 ──────────────────────────────────────────────────────────────
+// ── 静态路由生成（预渲染全部文章） ────────────────────────────────────────────
 export async function generateStaticParams() {
   try {
     const slugs = await fetchAllSlugs();
     if (slugs.length > 0) return slugs.map(slug => ({ slug }));
-  } catch { /* 降级 */ }
-  return BLOG_POSTS.map(p => ({ slug: p.slug }));
+  } catch { /* 降级为空，dynamicParams=true 时仍可按需渲染 */ }
+  return [];
 }
 
 // ── 动态 Metadata ─────────────────────────────────────────────────────────────
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  let title = "", description = "", keywords: string[] = [];
   try {
     const db = await fetchPostBySlug(params.slug);
-    if (db) { title = db.title; description = db.description; keywords = db.keywords; }
+    if (db) {
+      return {
+        title: `${db.title} — MysticAI 神秘学知识库`,
+        description: db.description,
+        keywords: db.keywords,
+        openGraph: { title: db.title, description: db.description, type: "article" },
+        alternates: { canonical: `https://aiastrum.com/blog/${params.slug}` },
+      };
+    }
   } catch { /* 降级 */ }
-
-  if (!title) {
-    const st = getPostBySlug(params.slug);
-    if (st) { title = st.title; description = st.description; keywords = st.keywords; }
-  }
-  if (!title) return {};
-
-  return {
-    title: `${title} — MysticAI 神秘学知识库`,
-    description,
-    keywords,
-    openGraph: { title, description, type: "article" },
-    alternates: { canonical: `https://aiastrum.com/blog/${params.slug}` },
-  };
+  return {};
 }
 
-// ── 页面数据结构（统一 DB / 静态）────────────────────────────────────────────
+// ── 页面数据结构 ──────────────────────────────────────────────────────────────
 type PostDisplay = {
   slug: string;
-  category: "tarot" | "dream" | "horoscope";
+  category: string; // 支持所有 22 个分类
   title: string;
   description: string;
   publishedAt: string;
@@ -53,7 +48,7 @@ type PostDisplay = {
 
 function fromDb(p: DbBlogPost): PostDisplay {
   return {
-    slug: p.slug, category: p.category, title: p.title,
+    slug: p.slug, category: p.category as string, title: p.title,
     description: p.description, publishedAt: p.published_at,
     readingTime: p.reading_time, content: p.content,
     ctaHref: p.cta_href, ctaLabel: p.cta_label,
@@ -62,28 +57,17 @@ function fromDb(p: DbBlogPost): PostDisplay {
 
 // ── 页面主体 ──────────────────────────────────────────────────────────────────
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  // 优先读数据库，失败降级到静态
+  // 从数据库读取文章
   let post: PostDisplay | null = null;
   try {
     const db = await fetchPostBySlug(params.slug);
     if (db) post = fromDb(db);
   } catch { /* 降级 */ }
 
-  if (!post) {
-    const st = getPostBySlug(params.slug);
-    if (st) {
-      post = {
-        slug: st.slug, category: st.category, title: st.title,
-        description: st.description, publishedAt: st.publishedAt,
-        readingTime: st.readingTime, content: st.content,
-        ctaHref: st.ctaHref, ctaLabel: st.ctaLabel,
-      };
-    }
-  }
-
   if (!post) notFound();
 
-  const meta = CATEGORY_META[post.category];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const meta = (CATEGORY_META as any)[post.category] ?? { label: "文章", labelEn: "Article", icon: "✦", color: "#c9a84c" };
 
   // ── 结构化数据 ──────────────────────────────────────────────────────────────
   const pageUrl = `https://aiastrum.com/blog/${post.slug}`;
@@ -116,22 +100,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
 
-  // 相关文章
-  let related: Array<{ slug: string; category: "tarot"|"dream"|"horoscope"; title: string; readingTime: number }> = [];
+  // 相关文章（同分类）
+  let related: Array<{ slug: string; category: string; title: string; readingTime: number }> = [];
   try {
     const dbAll = await fetchAllPosts(post.category);
     related = dbAll
       .filter(p => p.slug !== post!.slug)
       .slice(0, 3)
-      .map(p => ({ slug: p.slug, category: p.category, title: p.title, readingTime: p.reading_time }));
-  } catch { /* 降级到静态 */ }
-
-  if (related.length === 0) {
-    related = BLOG_POSTS
-      .filter(p => p.category === post!.category && p.slug !== post!.slug)
-      .slice(0, 3)
-      .map(p => ({ slug: p.slug, category: p.category, title: p.title, readingTime: p.readingTime }));
-  }
+      .map(p => ({ slug: p.slug, category: p.category as string, title: p.title, readingTime: p.reading_time }));
+  } catch { /* 忽略 */ }
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
@@ -205,18 +182,22 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <div style={{ flex:1, height:1, background:"linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-              {related.map(r => (
-                <Link key={r.slug} href={`/blog/${r.slug}`} style={{ textDecoration:"none" }}>
-                  <div className="blog-related-item" style={{ padding:"14px 16px", borderRadius:12, background:"rgba(16,10,38,0.7)", border:"1px solid rgba(201,168,76,0.12)", display:"flex", alignItems:"flex-start", gap:12 }}>
-                    <span style={{ fontSize:20, flexShrink:0, marginTop:1 }}>{CATEGORY_META[r.category].icon}</span>
-                    <div>
-                      <div style={{ fontSize:"0.84rem", color:"#e8d5a3", fontWeight:600, marginBottom:4, lineHeight:1.35 }}>{r.title}</div>
-                      <div style={{ fontSize:"0.68rem", color:"rgba(200,175,140,0.5)" }}>{r.readingTime} 分钟阅读</div>
+              {related.map(r => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const relMeta = (CATEGORY_META as any)[r.category] ?? { icon: "✦", color: "#c9a84c" };
+                return (
+                  <Link key={r.slug} href={`/blog/${r.slug}`} style={{ textDecoration:"none" }}>
+                    <div className="blog-related-item" style={{ padding:"14px 16px", borderRadius:12, background:"rgba(16,10,38,0.7)", border:"1px solid rgba(201,168,76,0.12)", display:"flex", alignItems:"flex-start", gap:12 }}>
+                      <span style={{ fontSize:20, flexShrink:0, marginTop:1 }}>{relMeta.icon}</span>
+                      <div>
+                        <div style={{ fontSize:"0.84rem", color:"#e8d5a3", fontWeight:600, marginBottom:4, lineHeight:1.35 }}>{r.title}</div>
+                        <div style={{ fontSize:"0.68rem", color:"rgba(200,175,140,0.5)" }}>{r.readingTime} 分钟阅读</div>
+                      </div>
+                      <span style={{ marginLeft:"auto", color:"rgba(201,168,76,0.4)", fontSize:"0.9rem", flexShrink:0, marginTop:2 }}>→</span>
                     </div>
-                    <span style={{ marginLeft:"auto", color:"rgba(201,168,76,0.4)", fontSize:"0.9rem", flexShrink:0, marginTop:2 }}>→</span>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

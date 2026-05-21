@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import Link from "next/link";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
-import { BLOG_POSTS, CATEGORY_META, type BlogCategory } from "./blog-data";
+import { CATEGORY_META, type BlogCategory } from "./blog-data";
 
 export const metadata: Metadata = {
   title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — MysticAI",
@@ -14,13 +14,32 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string }> = [
-  { key: "all",       label: "全部",     icon: "✦" },
-  { key: "tarot",     label: "塔罗牌意", icon: "🔮" },
-  { key: "dream",     label: "周公解梦", icon: "💭" },
-  { key: "horoscope", label: "星座运势", icon: "🌌" },
+  { key: "all",            label: "全部",     icon: "✦"  },
+  { key: "tarot",          label: "塔罗牌意", icon: "🔮" },
+  { key: "dream",          label: "周公解梦", icon: "💭" },
+  { key: "horoscope",      label: "星座运势", icon: "🌌" },
+  { key: "astro",          label: "星盘解析", icon: "✦"  },
+  { key: "numerology",     label: "生命灵数", icon: "🔯" },
+  { key: "rune",           label: "卢恩符文", icon: "ᚠ"  },
+  { key: "bazi",           label: "生辰八字", icon: "☯"  },
+  { key: "ziwei",          label: "紫微斗数", icon: "紫" },
+  { key: "meihua",         label: "梅花易数", icon: "🌸" },
+  { key: "qimen",          label: "奇门遁甲", icon: "⚔"  },
+  { key: "almanac",        label: "老黄历",   icon: "📅" },
+  { key: "lingqian",       label: "灵签",     icon: "🎋" },
+  { key: "naming",         label: "AI起名",   icon: "✍"  },
+  { key: "wuge",           label: "五格姓名学",icon: "🔯"},
+  { key: "love",           label: "姻缘占卜", icon: "💞" },
+  { key: "face-reading",   label: "赛博算命", icon: "👁"  },
+  { key: "mbti",           label: "MBTI星球", icon: "🧩" },
+  { key: "synastry",       label: "星盘合盘", icon: "💫" },
+  { key: "daily-fortune",  label: "每日开运", icon: "☀️" },
+  { key: "daily-card",     label: "每日提示卡",icon: "✦" },
+  { key: "pet-psychic",    label: "宠物灵语", icon: "🐾" },
+  { key: "ai-mystic",      label: "AI解忧馆", icon: "🔮" },
 ];
 
-// 将数据库格式转为展示格式（与静态数据结构对齐）
+// 将数据库格式转为展示格式
 function toDisplayPost(p: DbBlogPost) {
   return {
     slug: p.slug,
@@ -39,35 +58,16 @@ export default async function BlogListPage({
 }) {
   const cat = (searchParams.cat ?? "all") as BlogCategory | "all";
 
-  // 优先从数据库读取，失败时兜底用静态数据
-  let posts: ReturnType<typeof toDisplayPost>[];
+  // 从数据库读取文章
+  let posts: ReturnType<typeof toDisplayPost>[] = [];
   try {
     const dbPosts = await fetchAllPosts(cat === "all" ? undefined : cat);
-    if (dbPosts.length > 0) {
-      posts = dbPosts.map(toDisplayPost);
-    } else {
-      // 数据库为空时用静态数据
-      const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
-      posts = filtered.map(p => ({
-        slug: p.slug,
-        category: p.category,
-        title: p.title,
-        description: p.description,
-        publishedAt: p.publishedAt,
-        readingTime: p.readingTime,
-      }));
-    }
+    posts = dbPosts.map(toDisplayPost).sort(
+      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
   } catch {
-    // 数据库不可达时降级到静态
-    const filtered = cat === "all" ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === cat);
-    posts = filtered.map(p => ({
-      slug: p.slug,
-      category: p.category,
-      title: p.title,
-      description: p.description,
-      publishedAt: p.publishedAt,
-      readingTime: p.readingTime,
-    }));
+    // 数据库不可达时返回空列表
+    posts = [];
   }
 
   // ── ItemList 结构化数据 ──────────────────────────────────────────────────────
@@ -179,7 +179,8 @@ export default async function BlogListPage({
           gap: 14,
         }}>
           {posts.map(post => {
-            const meta = CATEGORY_META[post.category];
+            const meta = (CATEGORY_META as Record<string, typeof CATEGORY_META[BlogCategory]>)[post.category]
+              ?? { label: "文章", labelEn: "Article", icon: "✦", color: "#c9a84c" };
             return (
               <Link key={post.slug} href={`/blog/${post.slug}`} style={{ textDecoration: "none" }}>
                 <article className="blog-card" style={{
