@@ -11,7 +11,7 @@ const BASE_URL = "https://aiastrum.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "MysticAI · 命运密语 | Tarot, Astrology & Eastern Wisdom",
+  title: "AiAstrum · 命运密语 | Tarot, Astrology & Eastern Wisdom",
   description: "Your daily cosmic guide — Tarot readings, birth charts, Bazi destiny, MBTI × Zodiac, AI oracle and more. Ancient wisdom meets modern AI.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
   alternates: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "MysticAI · 命运密语 | Destiny Oracle",
+    title: "AiAstrum · 命运密语 | Destiny Oracle",
     description: "Your daily cosmic guide — Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
     type: "website",
     url: BASE_URL,

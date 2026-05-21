@@ -2,7 +2,7 @@
 export const en = {
   // Hero
   heroSub:        "Your Daily Cosmic Guide",
-  heroTitle:      "MysticAI",
+  heroTitle:      "AiAstrum",
   heroDesc:       "Ancient wisdom meets modern AI — explore your destiny code",
   heroCard1Label: "Daily Card",
   heroCard2Label: "AI Mystic",

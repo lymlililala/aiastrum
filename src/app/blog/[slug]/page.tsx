@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const db = await fetchPostBySlug(params.slug);
     if (db) {
       return {
-        title: `${db.title} — MysticAI 神秘学知识库`,
+        title: `${db.title} — AiAstrum 神秘学知识库`,
         description: db.description,
         keywords: db.keywords,
         openGraph: { title: db.title, description: db.description, type: "article" },
@@ -79,10 +79,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "url": pageUrl,
     "datePublished": post.publishedAt,
     "dateModified": post.publishedAt,
-    "author": { "@type": "Organization", "name": "MysticAI", "url": "https://aiastrum.com" },
+    "author": { "@type": "Organization", "name": "AiAstrum", "url": "https://aiastrum.com" },
     "publisher": {
       "@type": "Organization",
-      "name": "MysticAI · 命运密语",
+      "name": "AiAstrum · 命运密语",
       "url": "https://aiastrum.com",
       "logo": { "@type": "ImageObject", "url": "https://aiastrum.com/favicon.ico" },
     },

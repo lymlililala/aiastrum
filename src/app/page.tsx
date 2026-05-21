@@ -253,7 +253,7 @@ const ZH = {
 
 const EN = {
   heroSub:        "Your Daily Cosmic Guide",
-  heroTitle:      "MysticAI",
+  heroTitle:      "AiAstrum",
   heroDesc:       "Ancient wisdom meets modern AI — explore your destiny code",
   heroCard1Label: "Daily Card",
   heroCard2Label: "AI Mystic",
@@ -432,7 +432,7 @@ function ModuleSelectPage() {
               background: "linear-gradient(135deg,#e8d5a3,#c9a84c)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
               lineHeight: 1.1,
-            }}>MysticAI</div>
+            }}>AiAstrum</div>
             <div style={{ fontSize: "0.6rem", color: "rgba(201,168,76,0.45)", letterSpacing: "0.12em", lineHeight: 1 }}>
               {lang === "en" ? "DESTINY ORACLE" : lang === "tw" ? "命運密語" : "命运密语"}
             </div>
@@ -696,7 +696,7 @@ function ModuleSelectPage() {
       }}>
         <div style={{ height: 1, background: "linear-gradient(90deg,transparent,rgba(201,168,76,0.12),transparent)", marginBottom: 16 }} />
         <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.75rem", color: "rgba(201,168,76,0.6)", letterSpacing: "0.15em", marginBottom: 8 }}>
-          ✦ MysticAI · {lang === "zh" ? "命运密语" : "Destiny Oracle"} ✦
+          ✦ AiAstrum · {lang === "zh" ? "命运密语" : lang === "tw" ? "命運密語" : "Destiny Oracle"} ✦
         </div>
         {/* 版权声明文字提亮至可读水平 (#888) */}
         <p style={{ fontSize: "0.68rem", color: "rgba(180,165,145,0.6)", lineHeight: 1.6, maxWidth: 320, margin: "0 auto 8px" }}>

@@ -20,11 +20,11 @@ export async function GET() {
     .map(p => `- [${p.title}](https://aiastrum.com/blog/${p.slug}): ${p.description}`)
     .join("\n");
 
-  const content = `# MysticAI — 神秘学 AI 占卜平台
+  const content = `# AiAstrum — 神秘学 AI 占卜平台
 
 ## 网站概述
 
-MysticAI（aiastrum.com）是一个融合东西方神秘学与 AI 技术的占卜平台，提供塔罗牌解读、星盘分析、生辰八字、紫微斗数、周公解梦等 22 种玄学工具，所有解读均由 AI 实时生成，支持中英文。
+AiAstrum（aiastrum.com）是一个融合东西方神秘学与 AI 技术的占卜平台，提供塔罗牌解读、星盘分析、生辰八字、紫微斗数、周公解梦等 22 种玄学工具，所有解读均由 AI 实时生成，支持中英文。
 
 ## 核心功能
 
