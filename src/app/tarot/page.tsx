@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { DOMAINS, SPREADS } from "../tarot-data";
 import { DrawingPhase } from "../components/DrawingPhase";
 import { ResultPhase } from "../components/ResultPhase";
 import { HistoryPanel } from "../components/HistoryPanel";
 import { useReadingHistory, useDailyLimit } from "../hooks";
+import { getLocaleFromPath } from "~/lib/i18n";
+import { LangSwitcher } from "../components/LangSwitcher";
 import type { TarotCard } from "../tarot-data";
 
-// ── 双语文案 ────────────────────────────────────────
+// ── 三语文案 ────────────────────────────────────────
 const T = {
   zh: {
     back:           "← 返回",
@@ -37,7 +40,36 @@ const T = {
     ],
     spreads: [
       { id: "single", name: "每日一牌",      desc: "获取今日指引与运势",      positions: ["今日指引"] },
-      { id: "three",  name: "过去·现在·未来", desc: "深度解析你的问题脉络",    positions: ["过去", "现在", "未来"] },
+      { id: "three",  name: "過去·現在·未來", desc: "深度解析你的問題脈絡",    positions: ["過去", "現在", "未來"] },
+    ],
+  },
+  tw: {
+    back:           "← 返回",
+    history:        "📜 占卜記錄",
+    title:          "塔羅啟示錄",
+    subtitle:       "TAROT ORACLE",
+    desc:           "用古老的智慧，解讀當下的困惑。\n讓 AI 塔羅師為你揭示命運的低語。",
+    feat1:          "每日一牌",
+    feat2:          "三牌陣",
+    feat3:          "AI 解析",
+    startBtn:       "開啟占卜",
+    step1:          "STEP 1",
+    selectDomain:   "選擇占卜領域",
+    domainHint:     "你今天想探索哪個方向？",
+    step2:          "STEP 2",
+    selectSpread:   "選擇牌陣方式",
+    spreadHint:     "選擇你的占卜方式",
+    free:           "免費",
+    backDomain:     "← 返回選擇領域",
+    domains: [
+      { id: "love",    name: "愛情" },
+      { id: "career",  name: "事業" },
+      { id: "wealth",  name: "財富" },
+      { id: "general", name: "綜合" },
+    ],
+    spreads: [
+      { id: "single", name: "每日一牌",      desc: "獲取今日指引與運勢",      positions: ["今日指引"] },
+      { id: "three",  name: "過去·現在·未來", desc: "深度解析你的問題脈絡",    positions: ["過去", "現在", "未來"] },
     ],
   },
   en: {
@@ -70,7 +102,7 @@ const T = {
     ],
   },
 };
-type Lang = "zh" | "en";
+type Lang = "zh" | "en" | "tw";
 // ────────────────────────────────────────────────────
 
 type Phase = "landing" | "select-domain" | "select-spread" | "drawing" | "result";
@@ -83,20 +115,15 @@ export interface ReadingState {
 }
 
 export default function TarotPage() {
+  const pathname = usePathname();
+  const urlLocale = getLocaleFromPath(pathname);
+  const lang: Lang = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
+
   const [phase, setPhase] = useState<Phase>("landing");
   const [readingState, setReadingState] = useState<ReadingState | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<string>("");
   const [selectedSpread, setSelectedSpread] = useState<"single" | "three">("single");
   const [showHistory, setShowHistory] = useState(false);
-  const [lang, setLang] = useState<Lang>("zh");
-
-  // 读取首页保存的语言偏好
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("mystic_lang");
-      if (saved === "en" || saved === "zh") setLang(saved);
-    } catch { /* ignore */ }
-  }, []);
 
   const t = T[lang];
 
@@ -121,7 +148,7 @@ export default function TarotPage() {
       setReadingState(result);
       recordUsage(result.spreadType);
       saveReading({
-        date: new Date().toLocaleDateString(lang === "zh" ? "zh-CN" : "en-US"),
+        date: new Date().toLocaleDateString(lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN"),
         spreadType: result.spreadType,
         domain: result.domain,
         cards: result.cards,

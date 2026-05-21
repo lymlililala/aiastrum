@@ -71,13 +71,14 @@ function renderMarkdown(text: string) {
 
 interface ResultPhaseProps {
   readingState: ReadingState;
-  lang?: "zh" | "en";
+  lang?: "zh" | "en" | "tw";
   onRestart: () => void;
   onNewReading: () => void;
 }
 
 export function ResultPhase({ readingState, lang = "zh", onRestart, onNewReading }: ResultPhaseProps) {
-  const t = RT[lang];
+  // tw fallback to zh dict for static UI labels
+  const t = RT[lang === "tw" ? "zh" : lang];
   const [showPoster, setShowPoster] = useState(false);
   const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
   const [posterDataUrl, setPosterDataUrl] = useState<string | null>(null);
