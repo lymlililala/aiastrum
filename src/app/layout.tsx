@@ -4,13 +4,20 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
+  // metadataBase 统一使用不带 www 的标准域名，与 sitemap/robots 保持一致
+  // Next.js 会据此自动生成每个页面的 canonical 标签
+  metadataBase: new URL("https://aiastrum.com"),
   title: "MysticAI · 命运密语 | Tarot, Astrology & Eastern Wisdom",
   description: "Your daily cosmic guide — Tarot readings, birth charts, Bazi destiny, MBTI × Zodiac, AI oracle and more. Ancient wisdom meets modern AI.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  alternates: {
+    canonical: "https://aiastrum.com",
+  },
   openGraph: {
     title: "MysticAI · 命运密语 | Destiny Oracle",
     description: "Your daily cosmic guide — Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
     type: "website",
+    url: "https://aiastrum.com",
   },
   keywords: ["tarot", "astrology", "bazi", "zodiac", "MBTI", "numerology", "I Ching", "feng shui", "destiny", "oracle", "AI divination", "占卜", "八字", "星盘", "塔罗"],
 };

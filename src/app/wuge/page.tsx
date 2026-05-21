@@ -80,6 +80,10 @@ export default function WugePage() {
 
   return (
     <div className="wuge-page">
+      {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
+      <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        姓名五格测算 — 笔画数理 AI 姓名分析
+      </h1>
       {/* 背景纹理层 */}
       <div className="wuge-bg-layer" aria-hidden="true">
         <div className="wuge-bg-texture" />
