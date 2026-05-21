@@ -448,7 +448,7 @@ function ModuleSelectPage() {
       </header>
 
       {/* ── HERO ── */}
-      <section style={{ textAlign: "center", padding: "40px 20px 0", position: "relative", overflow: "hidden" }}>
+      <section style={{ textAlign: "center", padding: "20px 20px 0", position: "relative", overflow: "hidden" }}>
         <div style={{
           position: "absolute", inset: 0,
           background: "radial-gradient(ellipse at 50% 0%, rgba(100,60,200,0.22) 0%, transparent 68%)",
@@ -562,8 +562,8 @@ function ModuleSelectPage() {
           ))}
         </div>
 
-        {/* Hero 底部间距加大，与 Tab 栏形成明显物理隔离 */}
-        <div style={{ height: 32 }} />
+        {/* Hero 底部间距，与 Tab 栏形成物理隔离 */}
+        <div style={{ height: 16 }} />
       </section>
 
       {/* Hero 与 Tab 之间的装饰分割线 */}
