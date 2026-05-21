@@ -4,7 +4,6 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
-import { LangSwitcher } from "./components/LangSwitcher";
 import { LOCALE_LANG, getLocaleFromPath, type Locale } from "~/lib/i18n";
 
 const BASE_URL = "https://aiastrum.com";
@@ -62,12 +61,6 @@ export default async function RootLayout({
         <div className="stars-bg" />
         {/* 装饰星点 */}
         <Stars />
-        {/* 全局语言切换器（右下角悬浮，不干扰各页面布局） */}
-        <div style={{
-          position: "fixed", bottom: 24, right: 20, zIndex: 500,
-        }}>
-          <LangSwitcher />
-        </div>
         {children}
         <Analytics />
       </body>
