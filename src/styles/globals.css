@@ -8,8 +8,8 @@
 :root {
   --gold: #c9a84c;
   --gold-light: #e8d5a3;
-  --deep-purple: #0f0a1e;
-  --midnight: #1a1035;
+  --deep-purple: #15121D;   /* 深空灰紫，比纯黑更护眼 */
+  --midnight: #1c1828;
   --cosmic: #2d1b69;
   --mystic: #4a2c8a;
 }
@@ -24,21 +24,21 @@ html {
 
 body {
   background-color: var(--deep-purple);
-  color: #e8d5a3;
+  color: #F2F2F5;   /* 柔和灰白，比纯白护眼 */
   font-family: 'Crimson Text', serif;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* 星空背景动画 */
+/* 星空背景 */
 .stars-bg {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(ellipse at 20% 20%, rgba(45, 27, 105, 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(30, 15, 70, 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 10%, rgba(90, 50, 160, 0.2) 0%, transparent 40%),
-    #0f0a1e;
+    radial-gradient(ellipse at 20% 20%, rgba(45, 27, 105, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(30, 15, 70, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 10%, rgba(90, 50, 160, 0.12) 0%, transparent 40%),
+    #15121D;
   z-index: -1;
 }
 
@@ -146,19 +146,19 @@ body {
   box-shadow: 0 0 15px rgba(201, 168, 76, 0.2), inset 0 0 15px rgba(201, 168, 76, 0.05);
 }
 
-/* 毛玻璃效果 */
+/* 毛玻璃效果 — 统一半透明玻璃底 */
 .glass-card {
-  background: rgba(26, 16, 53, 0.7);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(201, 168, 76, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-dark {
-  background: rgba(15, 10, 30, 0.8);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* 打字机效果 */

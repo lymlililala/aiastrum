@@ -325,49 +325,35 @@ type ModuleItem = {
   featured?: boolean;
 };
 
+// 统一玻璃态底色（Glassmorphism）— 颜色只通过图标光晕体现
+const GLASS_BG = "rgba(255,255,255,0.04)";
+
 const MODULES: ModuleItem[] = [
   // 西方神秘学
-  // 🔮 塔罗 — 保留水晶球，神秘感强
-  { icon: "🔮", href: "/tarot",        titleKey: "tarotTitle",       descKey: "tarotDesc",         accentColor: "#c9a84c", bgColor: "rgba(26,16,53,0.85)",  category: "western",   featured: true },
-  // 🧩 MBTI — 保留拼图，个性鲜明
-  { icon: "🧩", href: "/mbti",         titleKey: "mbtiTitle",        descKey: "mbtiDesc",          accentColor: "#A78BFA", bgColor: "rgba(8,5,20,0.92)",    badge: "🔥", category: "western",   featured: true },
-  // ✦ 星盘 — 用六芒星替代白羊座符号，更神秘
-  { icon: "✦",  href: "/astro",        titleKey: "astroTitle",       descKey: "astroDesc",         accentColor: "#6495ED", bgColor: "rgba(5,8,30,0.92)",    category: "western" },
-  // 🌌 星座 — 星云图，宇宙感
-  { icon: "🌌", href: "/horoscope",    titleKey: "horoscopeTitle",   descKey: "horoscopeDesc",     accentColor: "#FF9800", bgColor: "rgba(10,8,28,0.92)",   category: "western" },
-  // ᚠ 卢恩 — 保留原始符文字符，最契合
-  { icon: "ᚠ",  href: "/rune",         titleKey: "runeTitle",        descKey: "runeDesc",          accentColor: "#4a9eca", bgColor: "rgba(6,10,22,0.92)",   category: "western" },
-  // 🔯 生命灵数 — 大卫之星替代数字键盘，神秘感强
-  { icon: "🔯", href: "/numerology",   titleKey: "numerologyTitle",  descKey: "numerologyDesc",    accentColor: "#7C3AED", bgColor: "rgba(10,5,30,0.92)",   category: "western" },
-  // 💫 星盘合盘 — 保留流星，爱情与星空
-  { icon: "💫", href: "/synastry",     titleKey: "synastryTitle",    descKey: "synastryDesc",      accentColor: "#E91E8C", bgColor: "rgba(10,5,22,0.95)",   category: "western" },
-  // 👁 赛博算命 — 全视之眼替代显微镜，神秘AI感
-  { icon: "👁", href: "/face-reading", titleKey: "faceTitle",        descKey: "faceDesc",          accentColor: "#00F5FF", bgColor: "rgba(2,0,20,0.95)",    badge: "HOT", category: "western" },
+  { icon: "🔮", href: "/tarot",        titleKey: "tarotTitle",       descKey: "tarotDesc",         accentColor: "#c9a84c", bgColor: GLASS_BG, category: "western",   featured: true },
+  { icon: "🧩", href: "/mbti",         titleKey: "mbtiTitle",        descKey: "mbtiDesc",          accentColor: "#A78BFA", bgColor: GLASS_BG, badge: "🔥", category: "western",   featured: true },
+  { icon: "✦",  href: "/astro",        titleKey: "astroTitle",       descKey: "astroDesc",         accentColor: "#6495ED", bgColor: GLASS_BG, category: "western" },
+  { icon: "🌌", href: "/horoscope",    titleKey: "horoscopeTitle",   descKey: "horoscopeDesc",     accentColor: "#FF9800", bgColor: GLASS_BG, category: "western" },
+  { icon: "ᚠ",  href: "/rune",         titleKey: "runeTitle",        descKey: "runeDesc",          accentColor: "#4a9eca", bgColor: GLASS_BG, category: "western" },
+  { icon: "🔯", href: "/numerology",   titleKey: "numerologyTitle",  descKey: "numerologyDesc",    accentColor: "#7C3AED", bgColor: GLASS_BG, category: "western" },
+  { icon: "💫", href: "/synastry",     titleKey: "synastryTitle",    descKey: "synastryDesc",      accentColor: "#E91E8C", bgColor: GLASS_BG, category: "western" },
+  { icon: "👁", href: "/face-reading", titleKey: "faceTitle",        descKey: "faceDesc",          accentColor: "#00F5FF", bgColor: GLASS_BG, badge: "HOT", category: "western" },
   // 东方智慧
-  // ☯ 八字 — 阴阳鱼，最契合
-  { icon: "☯",  href: "/bazi",         titleKey: "baziTitle",        descKey: "baziDesc",          accentColor: "#d4832a", bgColor: "rgba(30,10,5,0.85)",   category: "eastern",   featured: true },
-  // 紫 紫微 — 保留汉字，东方印章感
-  { icon: "紫", href: "/ziwei",        titleKey: "ziweiTitle",       descKey: "ziweiDesc",         accentColor: "#C77DFF", bgColor: "rgba(8,5,26,0.92)",    category: "eastern",   featured: true },
-  // 🌸 梅花心易 — 樱花替代空心小花，更精致
-  { icon: "🌸", href: "/meihua",       titleKey: "meihuaTitle",      descKey: "meihuaDesc",        accentColor: "#C04851", bgColor: "rgba(12,8,8,0.90)",    category: "eastern" },
-  // 奇 奇门 — 保留汉字，古籍印章感
-  { icon: "奇", href: "/qimen",        titleKey: "qimenTitle",       descKey: "qimenDesc",         accentColor: "#C9A84C", bgColor: "rgba(12,10,24,0.95)",  category: "eastern" },
-  // 💭 周公解梦 — 思绪云朵替代月亮（月亮已在 Hero 用过）
-  { icon: "💭", href: "/dream",        titleKey: "dreamTitle",       descKey: "dreamDesc",         accentColor: "#9b59ff", bgColor: "rgba(8,8,28,0.85)",    category: "eastern" },
-  // 🗓 老黄历 — 用带光晕的日历emoji替代📅（系统UI感重的那个）
-  { icon: "⏰", href: "/almanac",      titleKey: "almanacTitle",     descKey: "almanacDesc",       accentColor: "#C0392B", bgColor: "rgba(26,16,8,0.92)",   category: "eastern" },
-  // 🪬 灵签 — 护符/驱邪符号，神秘东方感
-  { icon: "🪬", href: "/lingqian",     titleKey: "lingqianTitle",    descKey: "lingqianDesc",      accentColor: "#8B5CF6", bgColor: "rgba(20,10,30,0.90)",  category: "eastern" },
-  // 🖌 墨韵起名 — 毛笔替代圆珠笔✍️，更有书法意境
-  { icon: "🖌", href: "/naming",       titleKey: "namingTitle",      descKey: "namingDesc",        accentColor: "#c9a84c", bgColor: "rgba(28,20,10,0.88)",  category: "eastern" },
-  // 卍 姓名五格 — 用吉祥符号替代汉堡菜单☰
-  { icon: "𝕎", href: "/wuge",         titleKey: "wugeTitle",        descKey: "wugeDesc",          accentColor: "#5a9a5a", bgColor: "rgba(8,18,10,0.85)",   category: "eastern" },
+  { icon: "☯",  href: "/bazi",         titleKey: "baziTitle",        descKey: "baziDesc",          accentColor: "#d4832a", bgColor: GLASS_BG, category: "eastern",   featured: true },
+  { icon: "紫", href: "/ziwei",        titleKey: "ziweiTitle",       descKey: "ziweiDesc",         accentColor: "#C77DFF", bgColor: GLASS_BG, category: "eastern",   featured: true },
+  { icon: "🌸", href: "/meihua",       titleKey: "meihuaTitle",      descKey: "meihuaDesc",        accentColor: "#C04851", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "奇", href: "/qimen",        titleKey: "qimenTitle",       descKey: "qimenDesc",         accentColor: "#C9A84C", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "💭", href: "/dream",        titleKey: "dreamTitle",       descKey: "dreamDesc",         accentColor: "#9b59ff", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "⏰", href: "/almanac",      titleKey: "almanacTitle",     descKey: "almanacDesc",       accentColor: "#C0392B", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "🪬", href: "/lingqian",     titleKey: "lingqianTitle",    descKey: "lingqianDesc",      accentColor: "#8B5CF6", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "🖌", href: "/naming",       titleKey: "namingTitle",      descKey: "namingDesc",        accentColor: "#c9a84c", bgColor: GLASS_BG, category: "eastern" },
+  { icon: "𝕎", href: "/wuge",         titleKey: "wugeTitle",        descKey: "wugeDesc",          accentColor: "#5a9a5a", bgColor: GLASS_BG, category: "eastern" },
   // 趣味生活
-  { icon: "✦",  href: "/daily-card",   titleKey: "dailyCardTitle",   descKey: "dailyCardFullDesc", accentColor: "#a78bfa", bgColor: "rgba(5,5,18,0.95)",    badge: "Daily", category: "lifestyle", featured: true },
-  { icon: "☀️", href: "/daily-fortune",titleKey: "dailyFortuneTitle",descKey: "dailyFortuneDesc",  accentColor: "#f0a500", bgColor: "rgba(20,12,5,0.92)",   badge: "NEW",  category: "lifestyle", featured: true },
-  { icon: "🐾", href: "/pet-psychic",  titleKey: "petTitle",         descKey: "petDesc",           accentColor: "#5dc885", bgColor: "rgba(5,15,8,0.92)",    category: "lifestyle" },
-  { icon: "🔮", href: "/ai-mystic",    titleKey: "aiMysticTitle",    descKey: "aiMysticDesc",      accentColor: "#c084fc", bgColor: "rgba(6,4,18,0.95)",    badge: "AI",   category: "lifestyle" },
-  { icon: "💞", href: "/love",         titleKey: "loveTitle",        descKey: "loveDesc",          accentColor: "#b06aff", bgColor: "rgba(12,8,28,0.90)",   category: "lifestyle" },
+  { icon: "✦",  href: "/daily-card",   titleKey: "dailyCardTitle",   descKey: "dailyCardFullDesc", accentColor: "#a78bfa", bgColor: GLASS_BG, badge: "Daily", category: "lifestyle", featured: true },
+  { icon: "☀️", href: "/daily-fortune",titleKey: "dailyFortuneTitle",descKey: "dailyFortuneDesc",  accentColor: "#f0a500", bgColor: GLASS_BG, badge: "NEW",  category: "lifestyle", featured: true },
+  { icon: "🐾", href: "/pet-psychic",  titleKey: "petTitle",         descKey: "petDesc",           accentColor: "#5dc885", bgColor: GLASS_BG, category: "lifestyle" },
+  { icon: "🔮", href: "/ai-mystic",    titleKey: "aiMysticTitle",    descKey: "aiMysticDesc",      accentColor: "#c084fc", bgColor: GLASS_BG, badge: "AI",   category: "lifestyle" },
+  { icon: "💞", href: "/love",         titleKey: "loveTitle",        descKey: "loveDesc",          accentColor: "#b06aff", bgColor: GLASS_BG, category: "lifestyle" },
 ];
 
 // ───────────────────────────────────────────
@@ -417,9 +403,9 @@ function ModuleSelectPage() {
       {/* ── HEADER ── */}
       <header style={{
         position: "sticky", top: 0, zIndex: 100,
-        background: "rgba(10,6,28,0.88)",
+        background: "rgba(21,18,29,0.90)",
         backdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(201,168,76,0.1)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
         padding: "0 20px",
         height: 56,
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
@@ -572,8 +558,8 @@ function ModuleSelectPage() {
       {/* ── TAB BAR ── */}
       <div style={{
         position: "sticky", top: 56, zIndex: 90,
-        background: "rgba(8,4,24,0.95)", backdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(201,168,76,0.1)",
+        background: "rgba(21,18,29,0.96)", backdropFilter: "blur(16px)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
         padding: "12px 16px", overflowX: "auto",
         display: "flex", gap: 8, scrollbarWidth: "none",
       }}>
@@ -759,11 +745,13 @@ function FeaturedCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
         style={{
           borderRadius: 18, padding: "18px 16px",
           background: mod.bgColor,
-          border: `1px solid ${hovered ? mod.accentColor + "55" : mod.accentColor + "30"}`,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border: `1px solid ${hovered ? mod.accentColor + "50" : "rgba(255,255,255,0.08)"}`,
           cursor: "pointer", position: "relative", overflow: "visible",
           transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
           transform: hovered ? "translateY(-2px)" : "translateY(0)",
-          boxShadow: hovered ? `0 8px 28px ${mod.accentColor}22` : "none",
+          boxShadow: hovered ? `0 8px 28px ${mod.accentColor}28` : "none",
         }}
       >
         {/* 背景光晕 */}
@@ -807,7 +795,7 @@ function FeaturedCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
               marginBottom: 4, fontFamily: "serif", lineHeight: 1.2,
             }}>{title}</h3>
             <p style={{
-              fontSize: "0.76rem", color: "rgba(200,180,150,0.6)", lineHeight: 1.45,
+              fontSize: "0.76rem", color: "rgba(210,195,170,0.78)", lineHeight: 1.45,
               display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>{desc}</p>
           </div>
@@ -839,12 +827,14 @@ function GridCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
         style={{
           borderRadius: 16, padding: "18px 14px 16px",
           background: mod.bgColor,
-          border: `1px solid ${hovered ? mod.accentColor + "45" : mod.accentColor + "28"}`,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border: `1px solid ${hovered ? mod.accentColor + "50" : "rgba(255,255,255,0.08)"}`,
           cursor: "pointer", position: "relative", overflow: "visible",
           minHeight: 130,
           transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
           transform: hovered ? "translateY(-2px)" : "translateY(0)",
-          boxShadow: hovered ? `0 6px 20px ${mod.accentColor}1E` : "none",
+          boxShadow: hovered ? `0 6px 20px ${mod.accentColor}28` : "none",
           /* 居中排版 */
           display: "flex", flexDirection: "column", alignItems: "center",
         }}
@@ -894,7 +884,7 @@ function GridCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
           }}>{title}</h3>
           {/* 描述居中，严格1行截断保证高度一致 */}
           <p style={{
-            fontSize: "0.66rem", color: "rgba(200,175,140,0.55)", lineHeight: 1.4,
+            fontSize: "0.66rem", color: "rgba(210,195,170,0.72)", lineHeight: 1.4,
             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
             margin: 0,
           }}>{desc}</p>

@@ -89,7 +89,7 @@ function Stars() {
             left: star.left,
             width: star.size,
             height: star.size,
-            opacity: 0.4,
+            opacity: 0.25,   /* 降低星点亮度，避免抢夺视线 */
             animation: `twinkle ${star.duration} ease-in-out ${star.delay} infinite`,
           }}
         />

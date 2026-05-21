@@ -18,8 +18,8 @@ export default {
           glow: "#f0e68c",
         },
         deep: {
-          purple: "#0f0a1e",
-          midnight: "#1a1035",
+          purple: "#15121D",   /* 深空灰紫，比纯黑更护眼 */
+          midnight: "#1c1828",
           cosmic: "#2d1b69",
           mystic: "#4a2c8a",
         },
@@ -65,7 +65,7 @@ export default {
       },
       backgroundImage: {
         "mystic-gradient":
-          "linear-gradient(135deg, #0f0a1e 0%, #2d1b69 50%, #0f0a1e 100%)",
+          "linear-gradient(135deg, #15121D 0%, #2d1b69 50%, #15121D 100%)",
         "gold-gradient":
           "linear-gradient(135deg, #c9a84c 0%, #8b6914 50%, #c9a84c 100%)",
       },
