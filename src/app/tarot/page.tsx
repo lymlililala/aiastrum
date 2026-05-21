@@ -2,13 +2,12 @@
 
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { DOMAINS, SPREADS } from "../tarot-data";
 import { DrawingPhase } from "../components/DrawingPhase";
 import { ResultPhase } from "../components/ResultPhase";
 import { HistoryPanel } from "../components/HistoryPanel";
 import { useReadingHistory, useDailyLimit } from "../hooks";
-import { getLocaleFromPath } from "~/lib/i18n";
+import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
 import type { TarotCard } from "../tarot-data";
 
@@ -115,9 +114,7 @@ export interface ReadingState {
 }
 
 export default function TarotPage() {
-  const pathname = usePathname();
-  const urlLocale = getLocaleFromPath(pathname);
-  const lang: Lang = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
+  const lang = useLocale() as Lang;
 
   const [phase, setPhase] = useState<Phase>("landing");
   const [readingState, setReadingState] = useState<ReadingState | null>(null);

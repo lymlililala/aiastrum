@@ -4,14 +4,28 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { LOCALES, LOCALE_LABEL, LOCALE_SHORT, getLocaleFromPath, stripLocale, type Locale } from "~/lib/i18n";
 
+function getCookieLocale(): Locale | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)mystic_locale=([^;]+)/);
+  const val = match?.[1];
+  return val && LOCALES.includes(val as Locale) ? (val as Locale) : null;
+}
+
 export function LangSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // 从 URL 路径读取当前语言
-  const currentLocale: Locale = getLocaleFromPath(pathname) ?? "zh";
+  // 从 URL 路径或 cookie 读取当前语言
+  const urlLocale = getLocaleFromPath(pathname);
+  const [cookieLocale, setCookieLocale] = useState<Locale | null>(null);
+
+  useEffect(() => {
+    setCookieLocale(getCookieLocale());
+  }, []);
+
+  const currentLocale: Locale = urlLocale ?? cookieLocale ?? "zh";
 
   // 点击外部关闭
   useEffect(() => {
@@ -26,11 +40,18 @@ export function LangSwitcher() {
 
   function switchLocale(locale: Locale) {
     setOpen(false);
-    // 保存偏好到 cookie（供 middleware 下次嗅探用）
-    document.cookie = `mystic_locale=${locale};path=/;max-age=31536000`;
-    // 保留当前路径，只替换语言前缀
-    const bare = stripLocale(pathname);
-    router.push(`/${locale}${bare}`);
+    // 写入 cookie（供 middleware 和工具页面读取）
+    document.cookie = `mystic_locale=${locale};path=/;max-age=31536000;samesite=lax`;
+    setCookieLocale(locale);
+
+    if (urlLocale) {
+      // 当前页面有 locale 前缀（首页 /zh /en /tw）：替换前缀跳转
+      const bare = stripLocale(pathname);
+      router.push(`/${locale}${bare === "/" ? "" : bare}`);
+    } else {
+      // 工具页面（/tarot /bazi 等）：无需改变 URL，刷新页面让 middleware 透传新语言
+      router.refresh();
+    }
   }
 
   return (

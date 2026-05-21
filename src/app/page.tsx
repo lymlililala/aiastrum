@@ -2,13 +2,12 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { DOMAINS, SPREADS } from "./tarot-data";
 import { DrawingPhase } from "./components/DrawingPhase";
 import { ResultPhase } from "./components/ResultPhase";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { useReadingHistory, useDailyLimit } from "./hooks";
-import { getLocaleFromPath } from "~/lib/i18n";
+import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "./components/LangSwitcher";
 import type { TarotCard } from "./tarot-data";
 
@@ -22,16 +21,12 @@ export interface ReadingState {
 }
 
 export default function HomePage() {
-  const pathname = usePathname();
+  const lang = useLocale();
   const [phase, setPhase] = useState<Phase>("home");
   const [readingState, setReadingState] = useState<ReadingState | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<string>("");
   const [selectedSpread, setSelectedSpread] = useState<"single" | "three">("single");
   const [showHistory, setShowHistory] = useState(false);
-
-  // 从 URL 路径读取语言（/en /zh /tw）
-  const urlLocale = getLocaleFromPath(pathname);
-  const lang: "zh" | "en" | "tw" = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
 
   const { history, saveReading } = useReadingHistory();
   const { recordUsage } = useDailyLimit();
@@ -379,10 +374,7 @@ const MODULES: ModuleItem[] = [
 // 首页主组件
 // ───────────────────────────────────────────
 function ModuleSelectPage() {
-  const pathname = usePathname();
-  const urlLocale = getLocaleFromPath(pathname);
-  const lang: "zh" | "en" | "tw" = (urlLocale === "en" || urlLocale === "tw") ? urlLocale : "zh";
-
+  const lang = useLocale();
   const [moonPhase, setMoonPhase] = useState({ emoji: "🌙", label: "" });
   const [activeTab, setActiveTab] = useState<"all" | "western" | "eastern" | "lifestyle">("all");
 
