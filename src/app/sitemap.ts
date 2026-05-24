@@ -1,6 +1,10 @@
 import { type MetadataRoute } from "next";
 import { fetchAllPosts } from "~/lib/supabase";
 
+// 强制每次请求都实时查询 Supabase，不使用构建时静态缓存
+// 这样新增博客文章后无需重新部署，Google 下次抓取时即可获取最新 sitemap
+export const dynamic = "force-dynamic";
+
 const BASE_URL = "https://aiastrum.com";
 
 // 网站实际上线日期（避免生成未来时间）
@@ -91,17 +95,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
-  // ── 3. 博客文章页（动态获取，只有中文内容）──────────────────────────────
+  // ── 3. 博客文章页（动态获取）──────────────────────────────────────────
   let blogEntries: MetadataRoute.Sitemap = [];
   try {
     const posts = await fetchAllPosts();
+    const now = new Date();
     blogEntries = posts.map(post => {
-      // 确保 lastModified 不超过今天
       const pubDate = new Date(post.published_at);
-      const now = new Date();
+      // 未来日期文章：用今天作为 lastModified（表示"刚发布"，促进 Google 抓取）
       return {
         url: `${BASE_URL}/blog/${post.slug}`,
-        lastModified: pubDate > now ? SITE_LAUNCH : pubDate,
+        lastModified: pubDate > now ? now : pubDate,
         changeFrequency: "monthly" as const,
         priority: 0.85,
       };
