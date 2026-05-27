@@ -3,6 +3,7 @@
 // 专栏：tarot | dream | horoscope | astro | numerology | rune | bazi | ziwei
 //        naming | wuge | meihua | qimen | almanac | lingqian | love | face-reading
 //        mbti | synastry | daily-fortune | daily-card | pet-psychic | ai-mystic
+//        风水 | 水晶 | 冥想
 
 export type BlogCategory =
   | "tarot"
@@ -26,7 +27,10 @@ export type BlogCategory =
   | "daily-fortune"
   | "daily-card"
   | "pet-psychic"
-  | "ai-mystic";
+  | "ai-mystic"
+  | "风水"
+  | "水晶"
+  | "冥想";
 
 export interface BlogPost {
   slug: string;
@@ -67,4 +71,7 @@ export const CATEGORY_META: Record<BlogCategory, { label: string; labelEn: strin
   "daily-card":  { label: "每日提示卡", labelEn: "Daily Cosmic Card",     icon: "✦",  color: "#a78bfa" },
   "pet-psychic": { label: "宠物灵语",   labelEn: "Pet Psychic",           icon: "🐾", color: "#5dc885" },
   "ai-mystic":   { label: "AI解忧馆",   labelEn: "AI Mystic",             icon: "🔮", color: "#c084fc" },
+  "风水":         { label: "风水布局",   labelEn: "Feng Shui",             icon: "🏯", color: "#22c55e" },
+  "水晶":         { label: "水晶疗愈",   labelEn: "Crystal Healing",       icon: "💎", color: "#67e8f9" },
+  "冥想":         { label: "冥想灵修",   labelEn: "Meditation",            icon: "🧘", color: "#a78bfa" },
 };

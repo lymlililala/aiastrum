@@ -53,6 +53,9 @@ const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string
   { key: "daily-card",     label: "每日提示卡",icon: "✦" },
   { key: "pet-psychic",    label: "宠物灵语", icon: "🐾" },
   { key: "ai-mystic",      label: "AI解忧馆", icon: "🔮" },
+  { key: "风水",           label: "风水布局", icon: "🏯" },
+  { key: "水晶",           label: "水晶疗愈", icon: "💎" },
+  { key: "冥想",           label: "冥想灵修", icon: "🧘" },
 ];
 
 // 将数据库格式转为展示格式
