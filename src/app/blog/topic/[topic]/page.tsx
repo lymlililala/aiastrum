@@ -21,7 +21,7 @@ interface Topic {
 const re = (p: DbBlogPost, rx: RegExp) => rx.test((p.slug + " " + p.title).toLowerCase());
 
 // ── 4 个主题 pillar（依据 GSC：解梦/牌阵/符文/水晶 为已验证强需求）─────────────
-export const TOPICS: Record<string, Topic> = {
+const TOPICS: Record<string, Topic> = {
   "dream-interpretation": {
     h1: "解梦大全 · Dream Dictionary",
     title: "解梦大全：常见梦境含义完整索引 | Dream Dictionary",
