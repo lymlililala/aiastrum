@@ -7,8 +7,11 @@ import { canonicalSlug } from "~/lib/canonical-overrides";
 import { buildFaqSchema } from "~/lib/faq-schema";
 import { CATEGORY_META } from "../blog-data";
 
-export const revalidate = 3600; // 1小时重验证
-export const dynamicParams = true; // 允许构建时未预渲染的路径按需渲染
+// 根 layout 使用 headers()（读取 locale），整站本质为动态渲染。
+// 故本路由显式 force-dynamic：按需服务端渲染，避免与 ISR(revalidate) 冲突导致
+// DYNAMIC_SERVER_USAGE 500；同时不在构建时预渲染近千页，保持构建快速。
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 // ── 静态路由生成 ──────────────────────────────────────────────────────────────
 // 不在构建时预渲染任何文章：返回空数组，配合 dynamicParams=true + revalidate
