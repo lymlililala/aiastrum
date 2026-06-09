@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchPostBySlug, fetchAllPosts, fetchAllSlugs, type DbBlogPost } from "~/lib/supabase";
 import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links";
+import { canonicalSlug } from "~/lib/canonical-overrides";
 import { CATEGORY_META } from "../blog-data";
 
 export const revalidate = 3600; // 1小时重验证
@@ -23,16 +24,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const db = await fetchPostBySlug(params.slug);
     if (db) {
       const BASE_URL = "https://aiastrum.com";
+      // 重复文章：canonical 指向主文章，集中排名信号
+      const canonicalUrl = `${BASE_URL}/blog/${canonicalSlug(params.slug)}`;
       return {
         title: `${db.title} — AiAstrum 神秘学知识库`,
         description: db.description,
         keywords: db.keywords,
-        alternates: { canonical: `${BASE_URL}/blog/${params.slug}` },
+        alternates: { canonical: canonicalUrl },
         openGraph: {
           title: db.title,
           description: db.description,
           type: "article",
-          url: `${BASE_URL}/blog/${params.slug}`,
+          url: canonicalUrl,
           siteName: "AiAstrum",
           images: [{ url: `${BASE_URL}/images/og-cover.png`, width: 1200, height: 630 }],
         },
@@ -87,7 +90,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const meta = (CATEGORY_META as any)[post.category] ?? { label: "文章", labelEn: "Article", icon: "✦", color: "#c9a84c" };
 
   // ── 结构化数据 ──────────────────────────────────────────────────────────────
-  const pageUrl = `https://aiastrum.com/blog/${post.slug}`;
+  const pageUrl = `https://aiastrum.com/blog/${canonicalSlug(post.slug)}`;
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",

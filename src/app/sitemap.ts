@@ -1,5 +1,6 @@
 import { type MetadataRoute } from "next";
 import { fetchAllPosts } from "~/lib/supabase";
+import { CANONICAL_OVERRIDES } from "~/lib/canonical-overrides";
 
 // 强制每次请求都实时查询 Supabase，不使用构建时静态缓存
 // 这样新增博客文章后无需重新部署，Google 下次抓取时即可获取最新 sitemap
@@ -100,7 +101,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const posts = await fetchAllPosts();
     const now = new Date();
-    blogEntries = posts.map(post => {
+    blogEntries = posts
+      // 排除被合并到主文章的次要重复 slug（canonical 已指向主文章，sitemap 不应再列出）
+      .filter(post => !CANONICAL_OVERRIDES[post.slug])
+      .map(post => {
       const pubDate = new Date(post.published_at);
       // 未来日期文章：用今天作为 lastModified（表示"刚发布"，促进 Google 抓取）
       return {
