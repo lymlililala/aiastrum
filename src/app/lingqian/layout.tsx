@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 import { toolMetadata, breadcrumbJsonLd, webAppJsonLd, BASE_URL } from "~/lib/seo";
+import ToolArticleLinks from "~/app/components/ToolArticleLinks";
 
 export const metadata: Metadata = toolMetadata({
   path: "/lingqian",
@@ -23,6 +24,7 @@ export default function LingqianLayout({ children }: { children: React.ReactNode
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: webApp }} />
       {children}
+      <ToolArticleLinks category="lingqian" />
     </>
   );
 }

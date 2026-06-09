@@ -44,3 +44,5 @@ yarn-error.log*
 
 # idea files
 .idea
+# GSC 导出报告（本地分析用，不入库）
+gsc/

@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchPostBySlug, fetchAllPosts, fetchAllSlugs, type DbBlogPost } from "~/lib/supabase";
+import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links";
 import { CATEGORY_META } from "../blog-data";
 
 export const revalidate = 3600; // 1小时重验证
@@ -53,6 +54,7 @@ type PostDisplay = {
   category: string; // 支持所有 22 个分类
   title: string;
   description: string;
+  keywords: string[];
   publishedAt: string;
   readingTime: number;
   content: string;
@@ -63,7 +65,8 @@ type PostDisplay = {
 function fromDb(p: DbBlogPost): PostDisplay {
   return {
     slug: p.slug, category: p.category as string, title: p.title,
-    description: p.description, publishedAt: p.published_at,
+    description: p.description, keywords: p.keywords ?? [],
+    publishedAt: p.published_at,
     readingTime: p.reading_time, content: p.content,
     ctaHref: p.cta_href, ctaLabel: p.cta_label,
   };
@@ -114,13 +117,33 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
 
-  // 相关文章（同分类）
+  // 相关文章（按关键词相关度排序）+ 正文上下文内链：共用同一次全量查询
   let related: Array<{ slug: string; category: string; title: string; readingTime: number }> = [];
+  let linkedContent = post.content;
   try {
-    const dbAll = await fetchAllPosts(post.category);
-    related = dbAll
-      .filter(p => p.slug !== post!.slug)
-      .slice(0, 3)
+    const pool = await fetchAllPosts(); // 仅元数据、无 content，全站文章池
+    const others = pool.filter(p => p.slug !== post!.slug);
+
+    // ── 正文自动内链：优先同类文章作为锚词来源 ──────────────────────────────
+    const candidates: LinkCandidate[] = [
+      ...others.filter(p => p.category === post!.category),
+      ...others.filter(p => p.category !== post!.category),
+    ].map(p => ({ slug: p.slug, title: p.title, keywords: p.keywords }));
+    linkedContent = injectContextualLinks(post.content, candidates, post.slug, { maxLinks: 6 });
+
+    // ── 相关文章：与当前文章关键词重合数打分，同分按发布时间新→旧 ──────────
+    const myKw = new Set((post.keywords ?? []).map(k => k.toLowerCase()));
+    const score = (p: DbBlogPost) =>
+      (p.keywords ?? []).reduce((n, k) => n + (myKw.has(k.toLowerCase()) ? 1 : 0), 0)
+      + (p.category === post!.category ? 0.5 : 0); // 同类轻微加权
+    related = others
+      .slice()
+      .sort((a, b) => {
+        const d = score(b) - score(a);
+        if (d !== 0) return d;
+        return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+      })
+      .slice(0, 6)
       .map(p => ({ slug: p.slug, category: p.category as string, title: p.title, readingTime: p.reading_time }));
   } catch { /* 忽略 */ }
 
@@ -154,6 +177,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         .blog-content th { background:rgba(201,168,76,0.12); color:rgba(232,213,163,0.85); padding:8px 12px; text-align:left; font-weight:600; border-bottom:1px solid rgba(201,168,76,0.2); }
         .blog-content td { padding:8px 12px; color:rgba(200,175,140,0.72); border-bottom:1px solid rgba(201,168,76,0.08); }
         .blog-content tr:hover td { background:rgba(201,168,76,0.04); }
+        .blog-inline-link { color:#e8c96a; text-decoration:underline; text-decoration-color:rgba(201,168,76,0.4); text-underline-offset:2px; transition:color 0.15s; }
+        .blog-inline-link:hover { color:#f0d98a; text-decoration-color:rgba(201,168,76,0.8); }
       `}</style>
 
       {/* Nav */}
@@ -182,7 +207,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         <CTACard post={post} meta={meta} />
 
-        <article className="blog-content" style={{ marginTop:32 }} dangerouslySetInnerHTML={{ __html: post.content }} />
+        <article className="blog-content" style={{ marginTop:32 }} dangerouslySetInnerHTML={{ __html: linkedContent }} />
 
         <div style={{ marginTop:48 }}>
           <CTACard post={post} meta={meta} large />
@@ -213,6 +238,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 );
               })}
             </div>
+            <Link
+              href={`/blog?cat=${post.category}`}
+              className="blog-post-nav-back"
+              style={{ display:"inline-flex", alignItems:"center", gap:6, marginTop:16, color:"rgba(201,168,76,0.7)", fontSize:"0.78rem", textDecoration:"none" }}
+            >查看更多 {meta.label} 文章 →</Link>
           </section>
         )}
       </div>
