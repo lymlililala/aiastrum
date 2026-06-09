@@ -8,8 +8,8 @@
 export const CANONICAL_OVERRIDES: Record<string, string> = {
   // 中文「2026 水星逆行时间表」两篇 → 合并到 slug 更简洁的主文章
   "mercury-retrograde-2026-guide": "mercury-retrograde-2026",
-  // Celtic Cross 两篇 → 合并到内容更完整、更新的一篇
-  "celtic-cross-tarot-spread-complete-guide": "celtic-cross-tarot-spread-guide",
+  // Celtic Cross 两篇 → 合并到 Google 已实际收录/排名（171 展示）的那篇，保住既有权重
+  "celtic-cross-tarot-spread-guide": "celtic-cross-tarot-spread-complete-guide",
 };
 
 /** 返回某 slug 的规范 slug（无映射则返回自身） */
