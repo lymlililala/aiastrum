@@ -39,11 +39,6 @@ function isUsableTerm(term: string): boolean {
   return t.length >= 6 && /[a-z]/.test(t);   // 英文短语 ≥6 字符且含字母
 }
 
-/** 正则转义 */
-function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
 interface Term {
   term: string;
   lower: string;
@@ -99,7 +94,7 @@ export function injectContextualLinks(
   opts: InjectOptions = {},
 ): string {
   const maxLinks = opts.maxLinks ?? 6;
-  const maxCandidates = opts.maxCandidates ?? 200;
+  const maxCandidates = opts.maxCandidates ?? 5000; // 覆盖全站文章，避免漏掉靠后的候选
   if (!html || candidates.length === 0 || maxLinks <= 0) return html;
 
   const terms = buildIndex(candidates, currentSlug, maxCandidates);
@@ -134,22 +129,20 @@ export function injectContextualLinks(
     if (skipStack.length > 0 || injected >= maxLinks) continue;
 
     const orig = part;
+    const lowerText = orig.toLowerCase(); // 预先小写化，用 indexOf 大小写不敏感匹配（比逐词正则快得多）
     // 在「不可变的原文」上收集互不重叠的匹配，最后一次性重建，避免改写后误匹配已注入的锚点
     const claims: Array<{ start: number; end: number; slug: string; matched: string }> = [];
-    for (const { term, lower, slug } of terms) {
+    for (const { lower, slug } of terms) {
       if (injected >= maxLinks) break;
       if (usedTerms.has(lower) || usedSlugs.has(slug)) continue;
 
-      const re = new RegExp(escapeRegExp(term), "i");
-      const m = re.exec(orig);
-      if (!m) continue;
-
-      const start = m.index;
-      const end = start + m[0].length;
+      const start = lowerText.indexOf(lower);
+      if (start < 0) continue;
+      const end = start + lower.length;
       // 与已认领区间重叠则跳过
       if (claims.some(c => start < c.end && end > c.start)) continue;
 
-      claims.push({ start, end, slug, matched: m[0] });
+      claims.push({ start, end, slug, matched: orig.slice(start, end) });
       usedTerms.add(lower);
       usedSlugs.add(slug);
       injected++;

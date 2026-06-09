@@ -73,4 +73,16 @@ describe("injectContextualLinks", () => {
     expect(injectContextualLinks("", candidates, "x")).toBe("");
     expect(injectContextualLinks("<p>hi</p>", [], "x")).toBe("<p>hi</p>");
   });
+
+  it("匹配靠后位置的候选（默认候选上限须覆盖全站，防 maxCandidates 过小回归）", () => {
+    const many: LinkCandidate[] = Array.from({ length: 300 }, (_, i) => ({
+      slug: `post-${i}`,
+      title: `Post ${i}`,
+      keywords: [`unique phrase ${i}`],
+    }));
+    // 命中词来自第 260 篇（远超旧的 200 上限）
+    const html = "<p>here is unique phrase 260 in the body</p>";
+    const out = injectContextualLinks(html, many, "self");
+    expect(out).toContain('href="/blog/post-260"');
+  });
 });
