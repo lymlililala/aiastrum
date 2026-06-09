@@ -129,7 +129,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       ...others.filter(p => p.category === post!.category),
       ...others.filter(p => p.category !== post!.category),
     ].map(p => ({ slug: p.slug, title: p.title, keywords: p.keywords }));
-    linkedContent = injectContextualLinks(post.content, candidates, post.slug, { maxLinks: 6 });
+    linkedContent = injectContextualLinks(post.content, candidates, post.slug, { maxLinks: 8 });
 
     // ── 相关文章：与当前文章关键词重合数打分，同分按发布时间新→旧 ──────────
     const myKw = new Set((post.keywords ?? []).map(k => k.toLowerCase()));

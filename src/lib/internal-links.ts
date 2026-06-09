@@ -36,7 +36,7 @@ function isUsableTerm(term: string): boolean {
   const t = term.trim().toLowerCase();
   if (!t || STOPWORDS.has(t)) return false;
   if (isCjk(t)) return t.length >= 3;       // 中文短语 ≥3 字
-  return t.length >= 6 && /[a-z]/.test(t);   // 英文短语 ≥6 字符且含字母
+  return t.length >= 5 && /[a-z]/.test(t);   // 英文短语 ≥5 字符且含字母
 }
 
 interface Term {
@@ -93,7 +93,7 @@ export function injectContextualLinks(
   currentSlug: string,
   opts: InjectOptions = {},
 ): string {
-  const maxLinks = opts.maxLinks ?? 6;
+  const maxLinks = opts.maxLinks ?? 8;
   const maxCandidates = opts.maxCandidates ?? 5000; // 覆盖全站文章，避免漏掉靠后的候选
   if (!html || candidates.length === 0 || maxLinks <= 0) return html;
 
