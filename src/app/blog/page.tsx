@@ -190,6 +190,28 @@ export default async function BlogListPage({
         })}
       </div>
 
+      {/* ── 主题专题 pillar 入口 ── */}
+      <div style={{ maxWidth: 960, margin: "0 auto 8px", padding: "0 16px" }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+          {[
+            { href: "/blog/topic/dream-interpretation", icon: "💭", label: "解梦大全" },
+            { href: "/blog/topic/tarot-spreads", icon: "🃏", label: "塔罗牌阵大全" },
+            { href: "/blog/topic/rune-meanings", icon: "ᚠ", label: "卢恩符文大全" },
+            { href: "/blog/topic/crystal-healing", icon: "💎", label: "水晶疗愈大全" },
+          ].map(t => (
+            <Link key={t.href} href={t.href} style={{
+              display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none",
+              padding: "8px 16px", borderRadius: 12,
+              background: "linear-gradient(135deg,rgba(100,60,200,.14),rgba(201,168,76,.08))",
+              border: "1px solid rgba(201,168,76,.22)", color: "rgba(232,213,163,.9)",
+              fontSize: ".8rem", fontWeight: 600,
+            }}>
+              <span>{t.icon}</span>{t.label} →
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* ── Article Grid ── */}
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 16px 80px" }}>
         <div style={{

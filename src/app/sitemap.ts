@@ -96,6 +96,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
+  // ── 2b. 主题 pillar 索引页 ────────────────────────────────────────────────
+  const pillarEntries: MetadataRoute.Sitemap = [
+    "dream-interpretation", "tarot-spreads", "rune-meanings", "crystal-healing",
+  ].map(topic => ({
+    url: `${BASE_URL}/blog/topic/${topic}`,
+    lastModified: SITE_LAUNCH,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   // ── 3. 博客文章页（动态获取）──────────────────────────────────────────
   let blogEntries: MetadataRoute.Sitemap = [];
   try {
@@ -118,5 +128,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 数据库不可达时 sitemap 只包含静态页面
   }
 
-  return [...homeEntries, ...toolEntries, ...blogEntries];
+  return [...homeEntries, ...toolEntries, ...pillarEntries, ...blogEntries];
 }
