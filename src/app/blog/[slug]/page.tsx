@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       // 重复文章：canonical 指向主文章，集中排名信号
       const canonicalUrl = `${BASE_URL}/blog/${canonicalSlug(params.slug)}`;
       return {
-        title: `${db.title} — AiAstrum 神秘学知识库`,
+        title: db.title, // 根 layout 模板会自动追加 " | AiAstrum"，此处不再重复品牌名
         description: db.description,
         keywords: db.keywords,
         alternates: { canonical: canonicalUrl },

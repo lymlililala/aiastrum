@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `${BASE_URL}/${lang}`;
 
   return {
-    title: meta.title,
+    title: { absolute: meta.title }, // 标题已含品牌名，用 absolute 阻止模板再追加 " | AiAstrum"
     description: meta.description,
     alternates: {
       canonical: canonicalUrl,

@@ -6,7 +6,7 @@ import { CATEGORY_META, type BlogCategory } from "./blog-data";
 const BASE_URL = "https://aiastrum.com";
 
 export const metadata: Metadata = {
-  title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — AiAstrum",
+  title: "神秘学知识库 — 塔罗牌意 · 周公解梦 · 星座运势", // 模板自动追加 " | AiAstrum"
   description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
   keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
   alternates: { canonical: `${BASE_URL}/blog` },
