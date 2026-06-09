@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchPostBySlug, fetchAllPosts, fetchAllSlugs, type DbBlogPost } from "~/lib/supabase";
+import { fetchPostBySlug, fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
 import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links";
 import { canonicalSlug } from "~/lib/canonical-overrides";
 import { buildFaqSchema } from "~/lib/faq-schema";
@@ -10,12 +10,11 @@ import { CATEGORY_META } from "../blog-data";
 export const revalidate = 3600; // 1小时重验证
 export const dynamicParams = true; // 允许构建时未预渲染的路径按需渲染
 
-// ── 静态路由生成（预渲染全部文章） ────────────────────────────────────────────
+// ── 静态路由生成 ──────────────────────────────────────────────────────────────
+// 不在构建时预渲染任何文章：返回空数组，配合 dynamicParams=true + revalidate
+// 走按需 ISR（首次访问渲染并缓存 1 小时）。避免近千篇文章在构建时逐页全量查库+
+// 内链注入导致构建时间随文章数线性膨胀（此前 >10 分钟）。
 export async function generateStaticParams() {
-  try {
-    const slugs = await fetchAllSlugs();
-    if (slugs.length > 0) return slugs.map(slug => ({ slug }));
-  } catch { /* 降级为空，dynamicParams=true 时仍可按需渲染 */ }
   return [];
 }
 
