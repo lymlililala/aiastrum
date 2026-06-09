@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
 
 const SUPABASE_URL = process.env.SUPABASE_URL ?? "https://tixgzezefjjsyuzgdhcd.supabase.co";
 
@@ -64,7 +65,7 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T> {
 }
 
 /** 获取所有文章（列表页用，不含 content 节省带宽）— 服务端用 admin 绕过 RLS */
-export async function fetchAllPosts(category?: string): Promise<DbBlogPost[]> {
+async function fetchAllPostsRaw(category?: string): Promise<DbBlogPost[]> {
   return withRetry(async () => {
     const all: DbBlogPost[] = [];
     // 分页拉取，突破 1000 行上限，确保 sitemap 收录全部文章
@@ -87,6 +88,18 @@ export async function fetchAllPosts(category?: string): Promise<DbBlogPost[]> {
     }
     return all;
   });
+}
+
+// 跨请求缓存全量文章查询（1 小时）。force-dynamic 页面每请求都会调用它，
+// 不缓存会导致每次抓取都全表扫描 + 内链注入，并发抓取时易超时；缓存后渲染变轻。
+const fetchAllPostsCached = unstable_cache(
+  (category?: string) => fetchAllPostsRaw(category),
+  ["mysticai-all-posts"],
+  { revalidate: 3600, tags: ["blog-posts"] },
+);
+
+export function fetchAllPosts(category?: string): Promise<DbBlogPost[]> {
+  return fetchAllPostsCached(category);
 }
 
 /** 按 slug 获取单篇文章（含 content）— 服务端用 admin 绕过 RLS */
