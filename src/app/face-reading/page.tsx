@@ -9,10 +9,16 @@ import { UploadPhoto } from "./components/UploadPhoto";
 import { ScanAnimation } from "./components/ScanAnimation";
 import { FaceReport } from "./components/FaceReport";
 import { FacePoster } from "./components/FacePoster";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { FACE_T, type FaceLang } from "./face-reading-i18n";
 
 type Phase = "landing" | "upload" | "scanning" | "result";
 
 export default function FaceReadingPage() {
+  const lang = useLocale() as FaceLang;
+  const t = FACE_T[lang];
+
   const [phase, setPhase] = useState<Phase>("landing");
   const [mode, setMode] = useState<AnalysisMode>("face");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -43,23 +49,23 @@ export default function FaceReadingPage() {
         // 开始 AI 分析
         const result = await analyzeImage(file, mode, (progress) => {
           setScanProgress(progress);
-        });
+        }, lang);
 
         if (result.success && result.report) {
           setReport(result.report);
           saveToHistory(result.report);
           setPhase("result");
         } else {
-          setError(result.error ?? "分析失败，请重试");
+          setError(result.error ?? t.analyzeFailed);
           setPhase("upload");
         }
       } catch (err) {
         console.error("Analysis failed:", err);
-        setError("分析过程出错，请重试");
+        setError(t.analyzeError);
         setPhase("upload");
       }
     },
-    [mode]
+    [mode, t, lang]
   );
 
   // 重新分析
@@ -74,7 +80,7 @@ export default function FaceReadingPage() {
 
   // Landing 页
   if (phase === "landing") {
-    return <LandingPage onStart={() => setPhase("upload")} />;
+    return <LandingPage t={t} onStart={() => setPhase("upload")} />;
   }
 
   return (
@@ -82,13 +88,15 @@ export default function FaceReadingPage() {
       {/* 顶部导航 */}
       <nav className="fr-nav">
         <Link href="/" className="fr-nav-back">
-          ← 返回
+          {t.navBack}
         </Link>
         <div className="fr-nav-title">
           <span className="fr-nav-icon">🔬</span>
-          <span>{mode === "face" ? "AI 面相分析" : "AI 手相分析"}</span>
+          <span>{mode === "face" ? t.navFace : t.navPalm}</span>
         </div>
-        <div className="fr-nav-placeholder" />
+        <div className="fr-nav-placeholder">
+          <LangSwitcher />
+        </div>
       </nav>
 
       {/* 错误提示 */}
@@ -102,6 +110,7 @@ export default function FaceReadingPage() {
       <main className="fr-main">
         {phase === "upload" && (
           <UploadPhoto
+            t={t}
             mode={mode}
             onModeChange={setMode}
             onImageSelect={handleImageSelect}
@@ -110,6 +119,7 @@ export default function FaceReadingPage() {
 
         {phase === "scanning" && imageUrl && (
           <ScanAnimation
+            t={t}
             imageUrl={processedImageUrl || imageUrl}
             progress={scanProgress}
             mode={mode}
@@ -118,6 +128,7 @@ export default function FaceReadingPage() {
 
         {phase === "result" && report && (
           <FaceReport
+            t={t}
             report={report}
             imageUrl={processedImageUrl || imageUrl}
             onShare={() => setShowPoster(true)}
@@ -129,6 +140,8 @@ export default function FaceReadingPage() {
       {/* 分享海报弹窗 */}
       {showPoster && report && (
         <FacePoster
+          t={t}
+          lang={lang}
           report={report}
           imageUrl={processedImageUrl || imageUrl}
           onClose={() => setShowPoster(false)}
@@ -139,13 +152,18 @@ export default function FaceReadingPage() {
 }
 
 // ===== Landing 页 =====
-function LandingPage({ onStart }: { onStart: () => void }) {
+function LandingPage({ t, onStart }: { t: (typeof FACE_T)[FaceLang]; onStart: () => void }) {
   return (
     <div className="fr-landing">
       {/* 返回按钮 */}
       <Link href="/" className="fr-landing-back">
-        ← 返回首页
+        {t.landBack}
       </Link>
+
+      {/* 语言切换 */}
+      <div className="fr-landing-lang" style={{ position: "absolute", top: 16, right: 16, zIndex: 50 }}>
+        <LangSwitcher />
+      </div>
 
       {/* 主标题区 */}
       <div className="fr-landing-hero">
@@ -161,23 +179,23 @@ function LandingPage({ onStart }: { onStart: () => void }) {
 
         <div className="fr-landing-badge">
           <span className="fr-landing-badge-dot" />
-          AI 神经网络解析
+          {t.landBadge}
         </div>
 
         <h1 className="fr-landing-title">
-          <span className="fr-landing-title-main">赛博算命</span>
-          <span className="fr-landing-title-sub">AI 面相 · 手相分析</span>
+          <span className="fr-landing-title-main">{t.landTitleMain}</span>
+          <span className="fr-landing-title-sub">{t.landTitleSub}</span>
         </h1>
 
         <p className="fr-landing-slogan">
-          用 AI 解码你的隐藏天赋
+          {t.landSlogan}
         </p>
 
         <div className="fr-landing-features">
           {[
-            { icon: "⚡", text: "3秒极速分析" },
-            { icon: "🧬", text: "神经网络识别" },
-            { icon: "🔒", text: "照片阅后即焚" },
+            { icon: "⚡", text: t.landFeat1 },
+            { icon: "🧬", text: t.landFeat2 },
+            { icon: "🔒", text: t.landFeat3 },
           ].map((f) => (
             <div key={f.text} className="fr-landing-feature">
               <span className="fr-lf-icon">{f.icon}</span>
@@ -190,25 +208,25 @@ function LandingPage({ onStart }: { onStart: () => void }) {
       {/* 示例报告展示 */}
       <div className="fr-landing-preview">
         <div className="fr-preview-card">
-          <div className="fr-preview-header">AI 分析结果预览</div>
+          <div className="fr-preview-header">{t.previewHeader}</div>
           <div className="fr-preview-talent">
             <div
               className="fr-preview-talent-badge"
               style={{ background: "linear-gradient(135deg, #FFD700, #FFA500)" }}
             >
-              <span>⚡ 传说</span>
-              <span>👑 天生领袖</span>
+              <span>{t.previewRarity}</span>
+              <span>{t.previewTalent}</span>
             </div>
           </div>
           <div className="fr-preview-score">
             <span className="fr-preview-score-num">92</span>
-            <span className="fr-preview-score-label">命运指数</span>
+            <span className="fr-preview-score-label">{t.previewScoreLabel}</span>
           </div>
           <div className="fr-preview-dims">
             {[
-              { name: "事业运", score: 95, icon: "💼" },
-              { name: "财富运", score: 88, icon: "💰" },
-              { name: "贵人缘", score: 91, icon: "🤝" },
+              { name: t.previewDimCareer, score: 95, icon: "💼" },
+              { name: t.previewDimWealth, score: 88, icon: "💰" },
+              { name: t.previewDimNoble, score: 91, icon: "🤝" },
             ].map((d) => (
               <div key={d.name} className="fr-preview-dim">
                 <span>{d.icon} {d.name}</span>
@@ -226,31 +244,31 @@ function LandingPage({ onStart }: { onStart: () => void }) {
       <div className="fr-landing-cta">
         <button className="fr-landing-btn" onClick={onStart}>
           <span className="fr-landing-btn-icon">📸</span>
-          <span className="fr-landing-btn-text">立即测试</span>
-          <span className="fr-landing-btn-sub">面相 / 手相 均可</span>
+          <span className="fr-landing-btn-text">{t.ctaTitle}</span>
+          <span className="fr-landing-btn-sub">{t.ctaSub}</span>
         </button>
 
         <p className="fr-landing-disclaimer">
-          ⚠️ 本测试仅供娱乐，不代表专业指导意见
+          {t.landDisclaimer}
         </p>
 
         <p className="fr-landing-privacy">
-          🔒 照片仅用于分析，阅后即焚，不留存任何图像数据
+          {t.landPrivacy}
         </p>
       </div>
 
       {/* 用户证言（社交证明）*/}
       <div className="fr-landing-testimonials">
         {[
-          { avatar: "👩‍💼", text: "居然说我是天生领袖！太准了吧 😭", name: "小美" },
-          { avatar: "👨‍💻", text: "手相分析说我智慧线极强，真的很有意思", name: "阿杰" },
-          { avatar: "👩‍🎨", text: "测出来是创意鬼才，分享给闺蜜们了！", name: "糖糖" },
-        ].map((t, i) => (
+          { avatar: "👩‍💼", text: t.testimonial1, name: t.testimonialName1 },
+          { avatar: "👨‍💻", text: t.testimonial2, name: t.testimonialName2 },
+          { avatar: "👩‍🎨", text: t.testimonial3, name: t.testimonialName3 },
+        ].map((tm, i) => (
           <div key={i} className="fr-testimonial">
-            <span className="fr-testimonial-avatar">{t.avatar}</span>
+            <span className="fr-testimonial-avatar">{tm.avatar}</span>
             <div className="fr-testimonial-content">
-              <p className="fr-testimonial-text">{t.text}</p>
-              <p className="fr-testimonial-name">— {t.name}</p>
+              <p className="fr-testimonial-text">{tm.text}</p>
+              <p className="fr-testimonial-name">— {tm.name}</p>
             </div>
           </div>
         ))}

@@ -9,9 +9,10 @@ import {
   getAspectText,
   DIMENSION_LABELS,
   getScoreTier,
+  rs,
 } from "./synastry-data";
 
-import type { RelationType } from "./synastry-data";
+import type { RelationType, Lang, DimensionKey } from "./synastry-data";
 
 import {
   calcJulianDay,
@@ -66,6 +67,7 @@ export interface SynastryAspect {
 
 // ===== 契合度维度得分 =====
 export interface DimensionScore {
+  key: DimensionKey;  // 语言无关的稳定 key（d1/d2/d3），供综合解读分支判断
   label: string;
   icon: string;
   desc: string;
@@ -260,11 +262,37 @@ function detectAspect(lon1: number, lon2: number): { type: AspectType; orb: numb
   return null;
 }
 
+// ===== 默认相位文案（无专属文案时）三语模板 =====
+const NATURE_WORD: Record<Lang, Record<"harmonious" | "challenging" | "neutral", string>> = {
+  zh: { harmonious: "和谐", challenging: "张力", neutral: "强烈" },
+  tw: { harmonious: "和諧", challenging: "張力", neutral: "強烈" },
+  en: { harmonious: "harmonious", challenging: "tense", neutral: "intense" },
+};
+
+function buildDefaultDesc(
+  lang: Lang,
+  pAName: string,
+  pBName: string,
+  aspName: string,
+  orb: number,
+  natureWord: string,
+): string {
+  const orbStr = orb.toFixed(1);
+  if (lang === "en") {
+    return `Your ${pAName} forms a ${aspName} with their ${pBName} (orb ${orbStr}°), giving the two of you a ${natureWord} energy exchange in this area.`;
+  }
+  if (lang === "tw") {
+    return `你的${pAName}與TA的${pBName}形成${aspName}（容許度 ${orbStr}°），兩人在這方面有${natureWord}的能量交互。`;
+  }
+  return `你的${pAName}与TA的${pBName}形成${aspName}（容许度 ${orbStr}°），两人在这方面有${natureWord}的能量交互。`;
+}
+
 // ===== 计算跨盘相位 =====
 function calcSynastryAspects(
   planetsA: PlanetPos[],
   planetsB: PlanetPos[],
   relationType: RelationType,
+  lang: Lang,
 ): SynastryAspect[] {
   const keyPlanets = RELATION_KEY_PLANETS[relationType];
   const keyPlanetSet = new Set(
@@ -309,6 +337,13 @@ function calcSynastryAspects(
       const pBName = PLANET_MAP[posB.planet]?.name ?? posB.planet;
       const aspName = ASPECT_LIST.find((a) => a.id === asp.type)?.name ?? asp.type;
 
+      // 解析专属文案（多语言 L → 纯字符串）
+      const resolvedShortTitle = textData ? rs(textData.shortTitle, lang) : null;
+      const resolvedDescription = textData ? rs(textData.description, lang) : null;
+
+      // 自然属性词（用于默认文案）
+      const natureWord = NATURE_WORD[lang][asp.nature];
+
       results.push({
         planetA: posA.planet,
         planetB: posB.planet,
@@ -316,8 +351,8 @@ function calcSynastryAspects(
         orb: asp.orb,
         score,
         weight,
-        shortTitle: textData?.shortTitle ?? `${pAName}${aspName}${pBName}`,
-        description: textData?.description ?? `你的${pAName}与TA的${pBName}形成${aspName}（容许度 ${asp.orb.toFixed(1)}°），两人在这方面有${asp.nature === "harmonious" ? "和谐" : asp.nature === "challenging" ? "张力" : "强烈"}的能量交互。`,
+        shortTitle: resolvedShortTitle ?? `${pAName} ${aspName} ${pBName}`,
+        description: resolvedDescription ?? buildDefaultDesc(lang, pAName, pBName, aspName, asp.orb, natureWord),
         isKeyPlanet: isKey,
         nature: asp.nature,
       });
@@ -338,6 +373,7 @@ function calcSynastryAspects(
 function calcDimensions(
   aspects: SynastryAspect[],
   relationType: RelationType,
+  lang: Lang,
 ): [DimensionScore, DimensionScore, DimensionScore] {
   const dimLabels = DIMENSION_LABELS[relationType];
 
@@ -382,9 +418,9 @@ function calcDimensions(
   };
 
   return [
-    { label: dimLabels.d1.label, icon: dimLabels.d1.icon, desc: dimLabels.d1.desc, raw: calcDimRaw(dimPlanets[0]), score: normalize(calcDimRaw(dimPlanets[0])) },
-    { label: dimLabels.d2.label, icon: dimLabels.d2.icon, desc: dimLabels.d2.desc, raw: calcDimRaw(dimPlanets[1]), score: normalize(calcDimRaw(dimPlanets[1])) },
-    { label: dimLabels.d3.label, icon: dimLabels.d3.icon, desc: dimLabels.d3.desc, raw: calcDimRaw(dimPlanets[2]), score: normalize(calcDimRaw(dimPlanets[2])) },
+    { key: "d1", label: rs(dimLabels.d1.label, lang), icon: dimLabels.d1.icon, desc: rs(dimLabels.d1.desc, lang), raw: calcDimRaw(dimPlanets[0]), score: normalize(calcDimRaw(dimPlanets[0])) },
+    { key: "d2", label: rs(dimLabels.d2.label, lang), icon: dimLabels.d2.icon, desc: rs(dimLabels.d2.desc, lang), raw: calcDimRaw(dimPlanets[1]), score: normalize(calcDimRaw(dimPlanets[1])) },
+    { key: "d3", label: rs(dimLabels.d3.label, lang), icon: dimLabels.d3.icon, desc: rs(dimLabels.d3.desc, lang), raw: calcDimRaw(dimPlanets[2]), score: normalize(calcDimRaw(dimPlanets[2])) },
   ];
 }
 
@@ -421,16 +457,16 @@ function calcTotalScore(aspects: SynastryAspect[], relationType: RelationType): 
 }
 
 // ===== 主入口 =====
-export function buildSynastryResult(input: SynastryInput): SynastryResult {
+export function buildSynastryResult(input: SynastryInput, lang: Lang = "zh"): SynastryResult {
   const planetsA = calcPersonPlanets(input.personA);
   const planetsB = calcPersonPlanets(input.personB);
 
-  const aspects = calcSynastryAspects(planetsA, planetsB, input.relationType);
+  const aspects = calcSynastryAspects(planetsA, planetsB, input.relationType, lang);
   const topAspects = aspects.slice(0, 8);
 
-  const dimensions = calcDimensions(aspects, input.relationType);
+  const dimensions = calcDimensions(aspects, input.relationType, lang);
   const totalScore = calcTotalScore(aspects, input.relationType);
-  const tier = getScoreTier(totalScore);
+  const tier = getScoreTier(totalScore, lang);
 
   return {
     input,

@@ -6,6 +6,74 @@ import { BaziLoading } from "./components/BaziLoading";
 import { BaziReport } from "./components/BaziReport";
 import type { BaziInput, BaziResult } from "./bazi-engine";
 import Link from "next/link";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+
+// ── 三语文案 ────────────────────────────────────────
+const T = {
+  zh: {
+    back:          "返回首页",
+    brand:         "生辰八字",
+    restart:       "重新测算",
+    reqFailed:     "请求失败",
+    calcFailed:    "排盘失败，请稍后重试",
+    inputHint:     "请填写出生信息",
+    inputTitle:    "生辰八字测算",
+    inputSubtitle: "天干地支排盘 · AI 命理深度解读",
+    landTitle:     "生辰八字",
+    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
+    landDescL1:    "以出生时间为密钥，",
+    landDescL2:    "解读天干地支间隐藏的命运密码。",
+    landDescL3:    "五行性格 · 流年运势 · AI 深度解读",
+    feat1:         "四柱排盘",
+    feat2:         "五行分析",
+    feat3:         "AI解读",
+    startBtn:      "✦ 开始测算",
+    landFooter:    "✦ 天干地支排盘 · 仅供娱乐参考 ✦",
+  },
+  tw: {
+    back:          "返回首頁",
+    brand:         "生辰八字",
+    restart:       "重新測算",
+    reqFailed:     "請求失敗",
+    calcFailed:    "排盤失敗，請稍後重試",
+    inputHint:     "請填寫出生資訊",
+    inputTitle:    "生辰八字測算",
+    inputSubtitle: "天干地支排盤 · AI 命理深度解讀",
+    landTitle:     "生辰八字",
+    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
+    landDescL1:    "以出生時間為密鑰，",
+    landDescL2:    "解讀天干地支間隱藏的命運密碼。",
+    landDescL3:    "五行性格 · 流年運勢 · AI 深度解讀",
+    feat1:         "四柱排盤",
+    feat2:         "五行分析",
+    feat3:         "AI解讀",
+    startBtn:      "✦ 開始測算",
+    landFooter:    "✦ 天干地支排盤 · 僅供娛樂參考 ✦",
+  },
+  en: {
+    back:          "Home",
+    brand:         "BaZi",
+    restart:       "Restart",
+    reqFailed:     "Request failed",
+    calcFailed:    "Reading failed, please try again later",
+    inputHint:     "Enter your birth details",
+    inputTitle:    "BaZi Reading",
+    inputSubtitle: "Four Pillars chart · In-depth AI interpretation",
+    landTitle:     "BaZi",
+    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
+    landDescL1:    "Your birth time is the key,",
+    landDescL2:    "unlocking the destiny hidden in the Heavenly Stems and Earthly Branches.",
+    landDescL3:    "Five Elements personality · Yearly fortune · In-depth AI reading",
+    feat1:         "Four Pillars",
+    feat2:         "Five Elements",
+    feat3:         "AI Reading",
+    startBtn:      "✦ Start Reading",
+    landFooter:    "✦ Four Pillars chart · For entertainment only ✦",
+  },
+};
+type Lang = "zh" | "en" | "tw";
+// ────────────────────────────────────────────────────
 
 type Phase = "landing" | "input" | "loading" | "result";
 
@@ -16,6 +84,9 @@ interface BaziResultState {
 }
 
 export default function BaziPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [phase, setPhase] = useState<Phase>("landing");
   const [resultState, setResultState] = useState<BaziResultState | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -27,11 +98,11 @@ export default function BaziPage() {
       const response = await fetch("/api/bazi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ ...input, lang }),
       });
 
       if (!response.ok) {
-        throw new Error("请求失败");
+        throw new Error(t.reqFailed);
       }
 
       const data = (await response.json()) as { report: string; baziResult: BaziResult };
@@ -39,10 +110,10 @@ export default function BaziPage() {
       setPhase("result");
     } catch (error) {
       console.warn("Bazi request error:", error);
-      setErrMsg("排盘失败，请稍后重试");
+      setErrMsg(t.calcFailed);
       setPhase("input");
     }
-  }, []);
+  }, [t]);
 
   const handleRestart = useCallback(() => {
     setPhase("landing");
@@ -73,7 +144,7 @@ export default function BaziPage() {
               className="text-sm tracking-widest hidden sm:block"
               style={{ color: "var(--ink-gold)", fontFamily: "serif" }}
             >
-              返回首页
+              {t.back}
             </span>
           </Link>
 
@@ -83,30 +154,32 @@ export default function BaziPage() {
               className="text-sm font-bold tracking-widest hidden sm:block"
               style={{ color: "var(--ink-gold)", fontFamily: "serif" }}
             >
-              生辰八字
+              {t.brand}
             </span>
           </div>
 
-          {phase === "result" && (
-            <button
-              onClick={handleRestart}
-              className="text-xs px-3 py-1.5 rounded-full"
-              style={{
-                background: "rgba(180, 60, 30, 0.2)",
-                border: "1px solid rgba(180, 60, 30, 0.4)",
-                color: "var(--ink-light)",
-              }}
-            >
-              重新测算
-            </button>
-          )}
-          {phase !== "result" && <div className="w-16" />}
+          <div className="flex items-center gap-2">
+            {phase === "result" && (
+              <button
+                onClick={handleRestart}
+                className="text-xs px-3 py-1.5 rounded-full"
+                style={{
+                  background: "rgba(180, 60, 30, 0.2)",
+                  border: "1px solid rgba(180, 60, 30, 0.4)",
+                  color: "var(--ink-light)",
+                }}
+              >
+                {t.restart}
+              </button>
+            )}
+            <LangSwitcher />
+          </div>
         </nav>
       )}
 
       {/* Landing Page */}
       {phase === "landing" && (
-        <BaziLandingPage onStart={() => setPhase("input")} />
+        <BaziLandingPage t={t} onStart={() => setPhase("input")} />
       )}
 
       {/* 输入表单 */}
@@ -136,7 +209,7 @@ export default function BaziPage() {
                 className="text-xs tracking-widest mb-3"
                 style={{ color: "rgba(200,150,80,0.6)", fontFamily: "serif" }}
               >
-                请填写出生信息
+                {t.inputHint}
               </p>
               <h2
                 className="text-2xl font-bold mb-2"
@@ -148,23 +221,24 @@ export default function BaziPage() {
                   fontFamily: "serif",
                 }}
               >
-                生辰八字测算
+                {t.inputTitle}
               </h2>
               <p className="text-sm" style={{ color: "rgba(200,180,150,0.6)" }}>
-                天干地支排盘 · AI 命理深度解读
+                {t.inputSubtitle}
               </p>
             </div>
-            <BaziInputForm onSubmit={handleSubmit} />
+            <BaziInputForm lang={lang} onSubmit={handleSubmit} />
           </div>
         </div>
       )}
 
       {/* 加载动画 */}
-      {phase === "loading" && <BaziLoading />}
+      {phase === "loading" && <BaziLoading lang={lang} />}
 
       {/* 报告展示 */}
       {phase === "result" && resultState && (
         <BaziReport
+          lang={lang}
           baziResult={resultState.baziResult}
           report={resultState.report}
           birthInfo={resultState.birthInfo}
@@ -176,7 +250,7 @@ export default function BaziPage() {
 }
 
 // ===== Landing Page =====
-function BaziLandingPage({ onStart }: { onStart: () => void }) {
+function BaziLandingPage({ t, onStart }: { t: (typeof T)[Lang]; onStart: () => void }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-20">
       {/* 顶部装饰 */}
@@ -228,7 +302,7 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
           animation: "bazi-fade-in 0.8s ease-out",
         }}
       >
-        生辰八字
+        {t.landTitle}
       </h1>
       <p
         className="text-sm tracking-widest mb-3"
@@ -238,7 +312,7 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
           animation: "bazi-fade-in 0.8s 0.1s ease-out both",
         }}
       >
-        BAZI · CHINESE ASTROLOGY
+        {t.landSubtitle}
       </p>
 
       <p
@@ -250,12 +324,12 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
           fontSize: "1rem",
         }}
       >
-        以出生时间为密钥，
+        {t.landDescL1}
         <br />
-        解读天干地支间隐藏的命运密码。
+        {t.landDescL2}
         <br />
         <span style={{ color: "rgba(200,150,80,0.6)", fontSize: "0.9rem" }}>
-          五行性格 · 流年运势 · AI 深度解读
+          {t.landDescL3}
         </span>
       </p>
 
@@ -275,9 +349,9 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
         style={{ animation: "bazi-fade-in 0.8s 0.4s ease-out both" }}
       >
         {[
-          { icon: "⊞", text: "四柱排盘" },
-          { icon: "☵", text: "五行分析" },
-          { icon: "✦", text: "AI解读" },
+          { icon: "⊞", text: t.feat1 },
+          { icon: "☵", text: t.feat2 },
+          { icon: "✦", text: t.feat3 },
         ].map((f) => (
           <div key={f.text} className="text-center">
             <div className="text-2xl mb-1" style={{ color: "var(--vermillion)", fontFamily: "serif" }}>
@@ -299,7 +373,7 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
           animation: "bazi-fade-in 0.8s 0.5s ease-out both",
         }}
       >
-        ✦ 开始测算
+        {t.startBtn}
       </button>
 
       <p
@@ -309,7 +383,7 @@ function BaziLandingPage({ onStart }: { onStart: () => void }) {
           animation: "bazi-fade-in 0.8s 0.6s ease-out both",
         }}
       >
-        ✦ 天干地支排盘 · 仅供娱乐参考 ✦
+        {t.landFooter}
       </p>
 
       {/* 底部装饰天干地支 */}

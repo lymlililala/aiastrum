@@ -80,7 +80,8 @@ export interface AnalysisResult {
 export async function analyzeImage(
   file: File,
   mode: AnalysisMode,
-  onProgress?: (progress: ScanProgress) => void
+  onProgress?: (progress: ScanProgress) => void,
+  lang: "zh" | "en" | "tw" = "zh"
 ): Promise<AnalysisResult> {
   // 验证图片
   const validation = validateImage(file);
@@ -97,6 +98,7 @@ export async function analyzeImage(
     formData.append("image", file);
     formData.append("mode", mode);
     formData.append("seed", seed);
+    formData.append("lang", lang);
 
     // 动画与请求并行
     const [apiResult] = await Promise.all([

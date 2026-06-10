@@ -8,9 +8,28 @@ import {
   SANHE_GROUPS, LIUHE_PAIRS, SOLAR_TERMS, JIAN_CHU_12, HUANGDAO_JI,
   JIANSHEN_YIJI, PENGZU_TIANGAN, PENGZU_DIZHI, CAISHEN_DIRECTION,
   XISHEN_DIRECTION, LUNAR_FESTIVALS, HOUR_PERIODS, SCORE_WEIGHTS,
-  ALMANAC_EVENTS,
-  type ShengXiao,
+  ALMANAC_EVENTS, JIANSHEN_L, DIRECTION_L, SHENGXIAO_L,
+  type ShengXiao, type L,
 } from "./almanac-data";
+
+// ===== 语言解析 =====
+export type Lang = "zh" | "en" | "tw";
+
+/** 解析单条本地化字符串；缺失时回落到 zh */
+function rs(v: L | undefined, lang: Lang): string {
+  if (!v) return "";
+  return v[lang] ?? v.zh;
+}
+
+/** 解析方位（按中文 key 查本地化表，缺失则原样返回）*/
+function rsDir(zhDir: string, lang: Lang): string {
+  return DIRECTION_L[zhDir]?.[lang] ?? zhDir;
+}
+
+/** 解析生肖名称展示 */
+function rsAnimal(animal: ShengXiao, lang: Lang): string {
+  return SHENGXIAO_L[animal]?.[lang] ?? animal;
+}
 
 // ===== 类型定义 =====
 export interface LunarDate {
@@ -57,8 +76,17 @@ export interface DayInfo {
   hours: HourInfo[];
 }
 
+// 时辰信息：period.name 已按 lang 解析为纯字符串；animal 保留生肖 token（组件展示时本地化）
+export interface ResolvedHourPeriod {
+  name: string;
+  zhi: string;
+  startHour: number;
+  endHour: number;
+  animal: ShengXiao;
+}
+
 export interface HourInfo {
-  period: typeof HOUR_PERIODS[number];
+  period: ResolvedHourPeriod;
   luck: "吉" | "凶" | "平";
   color: string;
   desc: string;
@@ -210,24 +238,59 @@ function getApproxLunarOffset(year: number): number {
   return Math.max(10, Math.min(50, base));
 }
 
-/** 获取节气名称 */
-function getSolarTerm(month: number, day: number): string | undefined {
+/** 获取节气名称（按 lang 解析）*/
+function getSolarTerm(month: number, day: number, lang: Lang): string | undefined {
   const term = SOLAR_TERMS.find(t => t.month === month && Math.abs(t.day - day) <= 1);
-  return term?.name;
+  return term ? rs(term.name, lang) : undefined;
 }
 
-/** 获取农历节日 */
-function getLunarFestival(lunarMonth: number, lunarDay: number): string | undefined {
+/** 获取农历节日（按 lang 解析）*/
+function getLunarFestival(lunarMonth: number, lunarDay: number, lang: Lang): string | undefined {
   const festival = LUNAR_FESTIVALS.find(f => f.lunarMonth === lunarMonth && f.lunarDay === lunarDay);
-  return festival?.name;
+  return festival ? rs(festival.name, lang) : undefined;
 }
 
-/** 生成时辰吉凶（基于日支逐时冲克）*/
-function generateHourInfos(dayZhiIdx: number): HourInfo[] {
-  return HOUR_PERIODS.map((period, i) => {
+/** 时辰吉凶描述模板（按关系与 lang） */
+const HOUR_DESC: Record<"chong" | "wang" | "sanhe" | "liuhe" | "xing" | "ping", Record<Lang, (n: string) => string>> = {
+  chong: {
+    zh: (n) => `${n}与日支相冲，不宜启行、出门或动土`,
+    tw: (n) => `${n}與日支相沖，不宜啟行、出門或動土`,
+    en: (n) => `${n} clashes with the day branch — avoid setting out, traveling, or breaking ground`,
+  },
+  wang: {
+    zh: (n) => `${n}日支得令，精力旺盛，宜办重要事项`,
+    tw: (n) => `${n}日支得令，精力旺盛，宜辦重要事項`,
+    en: (n) => `${n} aligns with the day branch — energy is strong; good for important matters`,
+  },
+  sanhe: {
+    zh: (n) => `${n}三合得助，办事顺遂，财运亨通`,
+    tw: (n) => `${n}三合得助，辦事順遂，財運亨通`,
+    en: (n) => `${n} forms a triple harmony — affairs go smoothly and fortune flows`,
+  },
+  liuhe: {
+    zh: (n) => `${n}六合相配，人和事顺，宜社交会谈`,
+    tw: (n) => `${n}六合相配，人和事順，宜社交會談`,
+    en: (n) => `${n} forms a six harmony — people and matters align; good for socializing and talks`,
+  },
+  xing: {
+    zh: (n) => `${n}遇刑，需谨慎言行，避免争执`,
+    tw: (n) => `${n}遇刑，需謹慎言行，避免爭執`,
+    en: (n) => `${n} meets a penalty — mind your words and avoid disputes`,
+  },
+  ping: {
+    zh: (n) => `${n}平常时辰，日常事务均可进行`,
+    tw: (n) => `${n}平常時辰，日常事務均可進行`,
+    en: (n) => `${n} is an ordinary hour — fine for everyday matters`,
+  },
+};
+
+/** 生成时辰吉凶（基于日支逐时冲克），desc/period.name 按 lang 解析 */
+function generateHourInfos(dayZhiIdx: number, lang: Lang): HourInfo[] {
+  return HOUR_PERIODS.map((period) => {
     // 日支与时支关系：相冲为凶，三合六合为吉，其他为平
     const hourZhiIdx = DI_ZHI.indexOf(period.zhi as typeof DI_ZHI[number]);
     const diff = (hourZhiIdx - dayZhiIdx + 12) % 12;
+    const name = rs(period.name, lang);
 
     let luck: "吉" | "凶" | "平";
     let color: string;
@@ -236,29 +299,37 @@ function generateHourInfos(dayZhiIdx: number): HourInfo[] {
     if (diff === 6) {
       // 相冲
       luck = "凶"; color = "#888";
-      desc = `${period.name}与日支相冲，不宜启行、出门或动土`;
+      desc = HOUR_DESC.chong[lang](name);
     } else if (diff === 0) {
       // 相同（旺）
       luck = "吉"; color = "#C0392B";
-      desc = `${period.name}日支得令，精力旺盛，宜办重要事项`;
+      desc = HOUR_DESC.wang[lang](name);
     } else if ([4, 8].includes(diff)) {
       // 三合
       luck = "吉"; color = "#E74C3C";
-      desc = `${period.name}三合得助，办事顺遂，财运亨通`;
+      desc = HOUR_DESC.sanhe[lang](name);
     } else if ([1, 11].includes(diff)) {
       // 六合
       luck = "吉"; color = "#E67E22";
-      desc = `${period.name}六合相配，人和事顺，宜社交会谈`;
+      desc = HOUR_DESC.liuhe[lang](name);
     } else if ([3, 9].includes(diff)) {
       // 刑
       luck = "凶"; color = "#7F8C8D";
-      desc = `${period.name}遇刑，需谨慎言行，避免争执`;
+      desc = HOUR_DESC.xing[lang](name);
     } else {
       luck = "平"; color = "#BDC3C7";
-      desc = `${period.name}平常时辰，日常事务均可进行`;
+      desc = HOUR_DESC.ping[lang](name);
     }
 
-    return { period, luck, color, desc };
+    const resolvedPeriod: ResolvedHourPeriod = {
+      name,
+      zhi: period.zhi,
+      startHour: period.startHour,
+      endHour: period.endHour,
+      animal: period.animal,
+    };
+
+    return { period: resolvedPeriod, luck, color, desc };
   });
 }
 
@@ -279,7 +350,7 @@ function calcScore(
 }
 
 // ===== 主函数：获取某天的完整黄历信息 =====
-export function getDayInfo(year: number, month: number, day: number): DayInfo {
+export function getDayInfo(year: number, month: number, day: number, lang: Lang = "zh"): DayInfo {
   const date = new Date(year, month - 1, day);
   const weekDay = date.getDay();
 
@@ -296,17 +367,18 @@ export function getDayInfo(year: number, month: number, day: number): DayInfo {
 
   // 宜忌
   const baseYiJi = JIANSHEN_YIJI[jianShen] ?? { yi: [], ji: [] };
-  
-  // 基于彭祖百忌额外加入禁忌
+
+  // 基于彭祖百忌额外加入禁忌（始终以 zh 原文做关键词提取，保证逻辑一致）
   const extraJi: string[] = [];
-  const penGanText = PENGZU_TIANGAN[dayGan] ?? "";
-  const penZhiText = PENGZU_DIZHI[dayZhi] ?? "";
+  const penGanText = PENGZU_TIANGAN[dayGan]?.zh ?? "";
+  const penZhiText = PENGZU_DIZHI[dayZhi]?.zh ?? "";
   // 从彭祖百忌文字里提取事项关键词
   if (penGanText.includes("开仓")) extraJi.push("纳财");
   if (penGanText.includes("修灶") || penZhiText.includes("修灶")) extraJi.push("作灶");
   if (penGanText.includes("嫁娶") || penZhiText.includes("嫁娶")) extraJi.push("嫁娶");
   if (penGanText.includes("词讼") || penZhiText.includes("词讼")) extraJi.push("词讼");
 
+  // 宜忌数组保留中文 key（用于匹配/择日/组件查表），不翻译
   const yi = [...new Set(baseYiJi.yi)];
   const ji = [...new Set([...baseYiJi.ji, ...extraJi])];
 
@@ -316,21 +388,21 @@ export function getDayInfo(year: number, month: number, day: number): DayInfo {
   // 农历
   const lunar = solarToLunar(year, month, day);
 
-  // 节气节日
-  const solarTerm = getSolarTerm(month, day);
-  const festival  = getLunarFestival(lunar.month, lunar.day);
+  // 节气节日（按 lang 解析）
+  const solarTerm = getSolarTerm(month, day, lang);
+  const festival  = getLunarFestival(lunar.month, lunar.day, lang);
 
-  // 方位
-  const caishenDir = CAISHEN_DIRECTION[dayZhi] ?? "正南";
-  const xishenDir  = XISHEN_DIRECTION[dayZhi]  ?? "东南";
-  const fushenDir  = CAISHEN_DIRECTION[monthZhi] ?? "正北";
+  // 方位（按 lang 解析为展示字符串）
+  const caishenDir = rsDir(CAISHEN_DIRECTION[dayZhi] ?? "正南", lang);
+  const xishenDir  = rsDir(XISHEN_DIRECTION[dayZhi]  ?? "东南", lang);
+  const fushenDir  = rsDir(CAISHEN_DIRECTION[monthZhi] ?? "正北", lang);
 
-  // 彭祖百忌
-  const pengzuTiangan = PENGZU_TIANGAN[dayGan] ?? "";
-  const pengzuDizhi   = PENGZU_DIZHI[dayZhi]   ?? "";
+  // 彭祖百忌（按 lang 解析）
+  const pengzuTiangan = rs(PENGZU_TIANGAN[dayGan], lang);
+  const pengzuDizhi   = rs(PENGZU_DIZHI[dayZhi], lang);
 
   // 时辰吉凶
-  const hours = generateHourInfos(dayZhiIdx);
+  const hours = generateHourInfos(dayZhiIdx, lang);
 
   // 评分
   const score = calcScore(isHuangDao, yi, ji, !!(solarTerm || festival));
@@ -339,9 +411,9 @@ export function getDayInfo(year: number, month: number, day: number): DayInfo {
     solar: { year, month, day, weekDay },
     lunar,
     yearGan, yearZhi, monthGan, monthZhi, dayGan, dayZhi,
-    jianShen, isHuangDao,
+    jianShen: rs(JIANSHEN_L[jianShen], lang) || jianShen, isHuangDao,
     yi, ji,
-    chongZhi, chongAnimal, shaDirection,
+    chongZhi, chongAnimal, shaDirection: rsDir(shaDirection, lang),
     caishenDir, xishenDir, fushenDir,
     pengzuTiangan, pengzuDizhi,
     solarTerm, festival,
@@ -357,11 +429,44 @@ export interface LuckyDay extends DayInfo {
   overallScore: number;      // 综合评分（含生肖加成）
 }
 
-export function findLuckyDays(params: AlmanacSearchParams): LuckyDay[] {
+/** 择日文案片段（按 lang） */
+const LUCKY_PHRASES = {
+  good: { zh: "宜", tw: "宜", en: "Good for " } as Record<Lang, string>,
+  huangdao: { zh: "黄道吉日", tw: "黃道吉日", en: "Auspicious day" } as Record<Lang, string>,
+  sanheTip: {
+    zh: (a: string) => `此日与您的生肖（${a}）三合，大吉大利！`,
+    tw: (a: string) => `此日與您的生肖（${a}）三合，大吉大利！`,
+    en: (a: string) => `This day forms a triple harmony with your zodiac (${a}) — highly auspicious!`,
+  },
+  liuheTip: {
+    zh: (a: string) => `此日与您的生肖（${a}）六合，和谐顺遂。`,
+    tw: (a: string) => `此日與您的生肖（${a}）六合，和諧順遂。`,
+    en: (a: string) => `This day forms a six harmony with your zodiac (${a}) — harmonious and smooth.`,
+  },
+  sanheTag: {
+    zh: (a: string) => `三合${a}命`,
+    tw: (a: string) => `三合${a}命`,
+    en: (a: string) => `Triple harmony with ${a}`,
+  },
+  liuheTag: {
+    zh: (a: string) => `六合${a}命`,
+    tw: (a: string) => `六合${a}命`,
+    en: (a: string) => `Six harmony with ${a}`,
+  },
+};
+
+/** 将宜忌事项 key 解析为展示名 */
+function resolveEventName(key: string, lang: Lang): string {
+  const ev = ALMANAC_EVENTS.find(e => e.key === key);
+  return ev ? rs(ev.name, lang) : key;
+}
+
+export function findLuckyDays(params: AlmanacSearchParams, lang: Lang = "zh"): LuckyDay[] {
   const results: LuckyDay[] = [];
 
   const current = new Date(params.startDate);
   const end     = new Date(params.endDate);
+  const sep = lang === "en" ? ", " : "、";
 
   // 获取事项的宜忌要求
   const { SELECT_EVENTS } = require("./almanac-data") as typeof import("./almanac-data");
@@ -379,14 +484,13 @@ export function findLuckyDays(params: AlmanacSearchParams): LuckyDay[] {
       continue;
     }
 
-    const info = getDayInfo(y, m, d);
+    const info = getDayInfo(y, m, d, lang);
 
     // 检查事项匹配
     const matchReason: string[] = [];
-    let qualified = true;
 
     if (selectEvent) {
-      // 必须包含某个宜项
+      // 必须包含某个宜项（基于中文 key 匹配，逻辑不变）
       const hasRequiredYi = selectEvent.requiredYi.some(req => info.yi.includes(req));
       if (!hasRequiredYi) {
         current.setDate(current.getDate() + 1);
@@ -400,7 +504,11 @@ export function findLuckyDays(params: AlmanacSearchParams): LuckyDay[] {
         continue;
       }
 
-      matchReason.push(`宜${selectEvent.requiredYi.filter(r => info.yi.includes(r)).join("、")}`);
+      const matched = selectEvent.requiredYi
+        .filter(r => info.yi.includes(r))
+        .map(r => resolveEventName(r, lang))
+        .join(sep);
+      matchReason.push(`${LUCKY_PHRASES.good[lang]}${matched}`);
     }
 
     // 生肖避冲
@@ -421,15 +529,16 @@ export function findLuckyDays(params: AlmanacSearchParams): LuckyDay[] {
       const sanheGroup = SANHE_GROUPS.find(g => g.includes(params.userShengxiao!));
       const dayAnimalZhiIdx = DI_ZHI.indexOf(info.dayZhi as typeof DI_ZHI[number]);
       const dayAnimal = SHENG_XIAO[dayAnimalZhiIdx]!;
+      const userAnimalName = rsAnimal(params.userShengxiao, lang);
 
       if (sanheGroup?.includes(dayAnimal)) {
         shengxiaoBonus += SCORE_WEIGHTS.sanhe;
-        shengxiaoTip = `此日与您的生肖（${params.userShengxiao}）三合，大吉大利！`;
-        matchReason.push(`三合${params.userShengxiao}命`);
+        shengxiaoTip = LUCKY_PHRASES.sanheTip[lang](userAnimalName);
+        matchReason.push(LUCKY_PHRASES.sanheTag[lang](userAnimalName));
       } else if (LIUHE_PAIRS[params.userShengxiao] === dayAnimal) {
         shengxiaoBonus += SCORE_WEIGHTS.liuhe;
-        shengxiaoTip = `此日与您的生肖（${params.userShengxiao}）六合，和谐顺遂。`;
-        matchReason.push(`六合${params.userShengxiao}命`);
+        shengxiaoTip = LUCKY_PHRASES.liuheTip[lang](userAnimalName);
+        matchReason.push(LUCKY_PHRASES.liuheTag[lang](userAnimalName));
       }
     }
 
@@ -444,9 +553,9 @@ export function findLuckyDays(params: AlmanacSearchParams): LuckyDay[] {
     }
 
     // 黄道加成
-    if (info.isHuangDao) matchReason.push("黄道吉日");
+    if (info.isHuangDao) matchReason.push(LUCKY_PHRASES.huangdao[lang]);
 
-    // 传统节日加成
+    // 传统节日加成（info.festival/solarTerm 已按 lang 解析）
     if (info.festival) matchReason.push(info.festival);
     if (info.solarTerm) matchReason.push(info.solarTerm);
 
@@ -473,13 +582,13 @@ export interface CalendarDay {
   festival?: string;
 }
 
-export function getMonthCalendar(year: number, month: number): CalendarDay[] {
+export function getMonthCalendar(year: number, month: number, lang: Lang = "zh"): CalendarDay[] {
   const days: CalendarDay[] = [];
   const today = new Date();
   const daysInMonth = new Date(year, month, 0).getDate();
 
   for (let d = 1; d <= daysInMonth; d++) {
-    const info = getDayInfo(year, month, d);
+    const info = getDayInfo(year, month, d, lang);
     const isToday = today.getFullYear() === year && today.getMonth() + 1 === month && today.getDate() === d;
 
     days.push({

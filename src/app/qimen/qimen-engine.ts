@@ -14,12 +14,14 @@ import {
   BUSINESS_TIPS, GAN_JIALING_GEJU as _GAN_JIALING_GEJU,
   WUXING_KE, WUXING_SHENG as _WUXING_SHENG,
   SPECIAL_GEJU as _SPECIAL_GEJU,
+  rsL, gateName, godName, gongName as gongDisplayName, fangweiName, wuxingName,
+  type Lang, type L,
   type YinYang, type PanType, type JuType, type QimenEvent,
   type BaMen, type JiuXing, type BaShen, type TianGan,
 } from "./qimen-data";
 
 // 重新导出供外部组件使用
-export type { QimenEvent, PanType, JuType, YinYang } from "./qimen-data";
+export type { QimenEvent, PanType, JuType, YinYang, Lang } from "./qimen-data";
 
 // ===== 输入参数 =====
 export interface QimenInput {
@@ -429,7 +431,8 @@ interface GejuResult {
 
 function detectGeju(
   gongs: GongData[],
-  _yinyangJu: YinYang
+  _yinyangJu: YinYang,
+  lang: Lang
 ): GejuResult[] {
   const results: GejuResult[] = [];
 
@@ -439,38 +442,119 @@ function detectGeju(
     if (g.tiDiTianGan === g.tianTianGan) fuyin.push(g.gongNum);
   }
   if (fuyin.length >= 3) {
-    results.push({ name: "伏吟", type: "中平", desc: "天地盘多宫相同，万事皆休，不宜出行动事。", gongNums: fuyin });
+    results.push({
+      name: rsL({ zh: "伏吟", en: "Fuyin (Stagnation)", tw: "伏吟" }, lang),
+      type: "中平",
+      desc: rsL({
+        zh: "天地盘多宫相同，万事皆休，不宜出行动事。",
+        en: "Heaven and Earth plates coincide across palaces — all matters stall; avoid travel and new action.",
+        tw: "天地盤多宮相同，萬事皆休，不宜出行動事。",
+      }, lang),
+      gongNums: fuyin,
+    });
   }
 
-  // 2. 太白入荧：某宫天盘庚，地盘丙
+  // 2. 天盘/地盘干加临格局
   for (const g of gongs) {
     if (g.tianTianGan === "庚" && g.tiDiTianGan === "丙") {
-      results.push({ name: "太白入荧", type: "大凶", desc: "庚加丙，防资金被盗或合作方反水，不利投资。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "太白入荧", en: "Metal Enters Fire (Taibai Ru Ying)", tw: "太白入熒" }, lang),
+        type: "大凶",
+        desc: rsL({
+          zh: "庚加丙，防资金被盗或合作方反水，不利投资。",
+          en: "Geng over Bing — guard against theft of funds or a partner turning hostile; unfavorable for investment.",
+          tw: "庚加丙，防資金被盜或合作方反水，不利投資。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.tianTianGan === "丙" && g.tiDiTianGan === "庚") {
-      results.push({ name: "荧入太白", type: "大凶", desc: "丙加庚，官非口舌，损丁破财，防官司。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "荧入太白", en: "Fire Enters Metal (Ying Ru Taibai)", tw: "熒入太白" }, lang),
+        type: "大凶",
+        desc: rsL({
+          zh: "丙加庚，官非口舌，损丁破财，防官司。",
+          en: "Bing over Geng — lawsuits and quarrels, loss of people and wealth; beware litigation.",
+          tw: "丙加庚，官非口舌，損丁破財，防官司。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.tianTianGan === "甲" && g.tiDiTianGan === "乙") {
-      results.push({ name: "青龙返首", type: "大吉", desc: "甲加乙，青龙返首，大吉，诸事顺遂，求谋必成。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "青龙返首", en: "Azure Dragon Returns (Qinglong Fanshou)", tw: "青龍返首" }, lang),
+        type: "大吉",
+        desc: rsL({
+          zh: "甲加乙，青龙返首，大吉，诸事顺遂，求谋必成。",
+          en: "Jia over Yi, the Azure Dragon Returns — highly auspicious; all matters go smoothly and plans succeed.",
+          tw: "甲加乙，青龍返首，大吉，諸事順遂，求謀必成。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.tianTianGan === "丁" && g.tiDiTianGan === "乙") {
-      results.push({ name: "飞鸟跌穴", type: "大吉", desc: "丁加乙，飞鸟跌穴，奇格最吉，谋事必成，财利双收。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "飞鸟跌穴", en: "Bird Falls into Nest (Feiniao Diexue)", tw: "飛鳥跌穴" }, lang),
+        type: "大吉",
+        desc: rsL({
+          zh: "丁加乙，飞鸟跌穴，奇格最吉，谋事必成，财利双收。",
+          en: "Ding over Yi, Bird Falls into Nest — the most auspicious special pattern; plans succeed and profit doubles.",
+          tw: "丁加乙，飛鳥跌穴，奇格最吉，謀事必成，財利雙收。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.tianTianGan === "甲" && g.tiDiTianGan === "戊") {
-      results.push({ name: "天乙伏宫", type: "凶", desc: "甲加戊，天乙伏宫，万事迟滞，难以推进，宜守不宜攻。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "天乙伏宫", en: "Tianyi Hidden (Tianyi Fugong)", tw: "天乙伏宮" }, lang),
+        type: "凶",
+        desc: rsL({
+          zh: "甲加戊，天乙伏宫，万事迟滞，难以推进，宜守不宜攻。",
+          en: "Jia over Wu, Tianyi Hidden — everything stalls and is hard to advance; hold rather than push.",
+          tw: "甲加戊，天乙伏宮，萬事遲滯，難以推進，宜守不宜攻。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.tianTianGan === "戊" && g.tiDiTianGan === "甲") {
-      results.push({ name: "天乙飞宫", type: "凶", desc: "戊加甲，天乙飞宫，做事反复，变化无常。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "天乙飞宫", en: "Tianyi Flying (Tianyi Feigong)", tw: "天乙飛宮" }, lang),
+        type: "凶",
+        desc: rsL({
+          zh: "戊加甲，天乙飞宫，做事反复，变化无常。",
+          en: "Wu over Jia, Tianyi Flying — actions repeat and reverse; conditions are unstable.",
+          tw: "戊加甲，天乙飛宮，做事反復，變化無常。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
   }
 
   // 3. 白虎猖狂：白虎+死门同宫
   for (const g of gongs) {
     if (g.shen === "白虎" && g.men === "死门") {
-      results.push({ name: "白虎猖狂", type: "大凶", desc: "白虎临死门，防意外伤灾、血光之事。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "白虎猖狂", en: "Rampant White Tiger (Baihu Changkuang)", tw: "白虎猖狂" }, lang),
+        type: "大凶",
+        desc: rsL({
+          zh: "白虎临死门，防意外伤灾、血光之事。",
+          en: "White Tiger meets the Death Gate — guard against accidents, injury and bloodshed.",
+          tw: "白虎臨死門，防意外傷災、血光之事。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
     if (g.shen === "腾蛇" && g.men === "惊门") {
-      results.push({ name: "腾蛇妖娇", type: "凶", desc: "腾蛇临惊门，防虚惊、谗言、诡计、小人作祟。", gongNums: [g.gongNum] });
+      results.push({
+        name: rsL({ zh: "腾蛇妖娇", en: "Bewitching Serpent (Tengshe Yaojiao)", tw: "騰蛇妖嬌" }, lang),
+        type: "凶",
+        desc: rsL({
+          zh: "腾蛇临惊门，防虚惊、谗言、诡计、小人作祟。",
+          en: "Serpent meets the Fright Gate — beware false alarms, slander, schemes and petty saboteurs.",
+          tw: "騰蛇臨驚門，防虛驚、讒言、詭計、小人作祟。",
+        }, lang),
+        gongNums: [g.gongNum],
+      });
     }
   }
 
@@ -480,8 +564,13 @@ function detectGeju(
   );
   if (sanQiGongs.length >= 3) {
     results.push({
-      name: "三奇得使", type: "大吉",
-      desc: "三奇（乙丙丁）俱现，大吉之兆，利于出行、创业、求财。",
+      name: rsL({ zh: "三奇得使", en: "Three Marvels Aligned (Sanqi Deshi)", tw: "三奇得使" }, lang),
+      type: "大吉",
+      desc: rsL({
+        zh: "三奇（乙丙丁）俱现，大吉之兆，利于出行、创业、求财。",
+        en: "The Three Marvels (Yi, Bing, Ding) all appear — a highly auspicious sign; favorable for travel, ventures and seeking wealth.",
+        tw: "三奇（乙丙丁）俱現，大吉之兆，利於出行、創業、求財。",
+      }, lang),
       gongNums: sanQiGongs.map(g => g.gongNum),
     });
   }
@@ -492,9 +581,17 @@ function detectGeju(
     const gongWx = NINE_GONG.find(ng => ng.num === g.gongNum)?.wuxing ?? "";
     const menWx = MEN_WUXING_MAP[g.men] ?? "";
     if (gongWx && menWx && WUXING_KE[gongWx] === menWx) {
+      const gWx = wuxingName(gongWx, lang);
+      const mWx = wuxingName(menWx, lang);
+      const menDisp = gateName(g.men, lang);
       results.push({
-        name: "门迫", type: "凶",
-        desc: `${g.gongNum}宫（${gongWx}）克制${g.men}（${menWx}），谋事受阻，门被迫压。`,
+        name: rsL({ zh: "门迫", en: "Gate Oppressed (Menpo)", tw: "門迫" }, lang),
+        type: "凶",
+        desc: lang === "en"
+          ? `Palace ${g.gongNum} (${gWx}) overcomes the ${menDisp} (${mWx}) — plans are obstructed and the gate is suppressed.`
+          : (lang === "tw"
+            ? `${g.gongNum}宮（${gWx}）克制${menDisp}（${mWx}），謀事受阻，門被迫壓。`
+            : `${g.gongNum}宫（${gWx}）克制${menDisp}（${mWx}），谋事受阻，门被迫压。`),
         gongNums: [g.gongNum],
       });
     }
@@ -504,52 +601,119 @@ function detectGeju(
 }
 
 // ===== 商业与出行分析 =====
-function analyzeForBusiness(gongs: GongData[]): string[] {
+function analyzeForBusiness(gongs: GongData[], lang: Lang): string[] {
   const tips: string[] = [];
 
   // 找生门、开门所在宫
   for (const g of gongs) {
     if (g.men === "生门" || g.men === "开门" || g.men === "休门") {
-      const tipBase = BUSINESS_TIPS[g.men] ?? "";
-      const isKongNote = g.isKong ? "（注意：该宫旬空，事情可能落空或延期）" : "";
-      const shenNote = g.shen === "值符" ? "，临值符，主事人信任背书，有利。"
-        : g.shen === "玄武" ? "，临玄武，防欺诈、信息不实。"
-        : g.shen === "白虎" ? "，临白虎，防合作破裂、官司纠纷。"
+      const tipObj = BUSINESS_TIPS[g.men];
+      const tipBase = tipObj ? rsL(tipObj, lang) : "";
+      const menDisp = gateName(g.men, lang);
+      const gongDisp = gongDisplayName(g.gongName, lang);
+      const fwDisp = fangweiName(g.fangwei, lang);
+      const isKongNote = g.isKong
+        ? (lang === "en" ? " (Note: this palace is void — the matter may fall through or be delayed.)"
+          : lang === "tw" ? "（注意：該宮旬空，事情可能落空或延期）"
+            : "（注意：该宫旬空，事情可能落空或延期）")
         : "";
-      tips.push(`【${g.men}】落${g.gongName}（${g.fangwei}方）— ${tipBase}${shenNote}${isKongNote}`);
+      const shenNote = g.shen === "值符"
+        ? (lang === "en" ? ", with the Chief Spirit — endorsement and trust from the decision-maker; favorable."
+          : lang === "tw" ? "，臨值符，主事人信任背書，有利。"
+            : "，临值符，主事人信任背书，有利。")
+        : g.shen === "玄武"
+          ? (lang === "en" ? ", with the Tortoise Spirit — beware deceit and false information."
+            : lang === "tw" ? "，臨玄武，防欺詐、信息不實。"
+              : "，临玄武，防欺诈、信息不实。")
+          : g.shen === "白虎"
+            ? (lang === "en" ? ", with the White Tiger — beware broken partnerships and litigation."
+              : lang === "tw" ? "，臨白虎，防合作破裂、官司糾紛。"
+                : "，临白虎，防合作破裂、官司纠纷。")
+            : "";
+      const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
+      const dash = lang === "en" ? " — " : "— ";
+      tips.push(`【${menDisp}】${lang === "en" ? "falls in " : "落"}${gongDisp}（${fwLabel}）${dash}${tipBase}${shenNote}${isKongNote}`);
     }
     if (g.men === "死门") {
-      tips.push(`【死门】落${g.gongName}（${g.fangwei}方）— 大凶，此方位本时段不利商业活动，防投资血本无归。`);
+      const menDisp = gateName(g.men, lang);
+      const gongDisp = gongDisplayName(g.gongName, lang);
+      const fwDisp = fangweiName(g.fangwei, lang);
+      const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
+      tips.push(
+        lang === "en"
+          ? `【${menDisp}】falls in ${gongDisp}（${fwLabel}） — highly inauspicious; this direction is unfavorable for business now; risk of total loss on investment.`
+          : lang === "tw"
+            ? `【${menDisp}】落${gongDisp}（${fwLabel}）— 大凶，此方位本時段不利商業活動，防投資血本無歸。`
+            : `【${menDisp}】落${gongDisp}（${fwLabel}）— 大凶，此方位本时段不利商业活动，防投资血本无归。`
+      );
     }
   }
 
   // 戊宫分析（甲遁戊，时干落宫）
   const wuGong = gongs.find(g => g.tiDiTianGan === "戊");
   if (wuGong) {
-    tips.push(`【值使宫】在${wuGong.gongName}（${wuGong.fangwei}方）— 时局主导，重点关注此方向的商机。`);
+    const gongDisp = gongDisplayName(wuGong.gongName, lang);
+    const fwDisp = fangweiName(wuGong.fangwei, lang);
+    const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
+    tips.push(
+      lang === "en"
+        ? `【Duty Gate Palace】in ${gongDisp}（${fwLabel}） — the dominant palace of the hour; focus on opportunities in this direction.`
+        : lang === "tw"
+          ? `【值使宮】在${gongDisp}（${fwLabel}）— 時局主導，重點關注此方向的商機。`
+          : `【值使宫】在${gongDisp}（${fwLabel}）— 时局主导，重点关注此方向的商机。`
+    );
   }
 
   if (tips.length === 0) {
-    tips.push("当前时局无明显特殊格局，诸事平顺，宜保守稳健行事。");
+    tips.push(
+      lang === "en"
+        ? "No notable special patterns in this chart — matters proceed smoothly; act conservatively and steadily."
+        : lang === "tw"
+          ? "當前時局無明顯特殊格局，諸事平順，宜保守穩健行事。"
+          : "当前时局无明显特殊格局，诸事平顺，宜保守稳健行事。"
+    );
   }
   return tips;
 }
 
-function analyzeForTravel(gongs: GongData[]): string[] {
+function analyzeForTravel(gongs: GongData[], lang: Lang): string[] {
   const tips: string[] = [];
 
   const jimen: BaMen[] = ["开门", "生门", "休门"];
   for (const g of gongs) {
     if (g.men && jimen.includes(g.men)) {
-      const isKongNote = g.isKong ? "（旬空，主事情落空，不宜前往）" : "";
-      const maNote = g.isMa ? "（马星临此，利于出行，快速达成）" : "";
+      const menDisp = gateName(g.men, lang);
+      const gongDisp = gongDisplayName(g.gongName, lang);
+      const fwDisp = fangweiName(g.fangwei, lang);
+      const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
+      const jxDisp = jixiongText(MEN_JIXIONG[g.men], lang);
+      const maNote = g.isMa
+        ? (lang === "en" ? " (Horse Star here — favorable for travel and swift results.)"
+          : lang === "tw" ? "（馬星臨此，利於出行，快速達成）"
+            : "（马星临此，利于出行，快速达成）")
+        : "";
+      const isKongNote = g.isKong
+        ? (lang === "en" ? " (Void — the matter falls through; do not go.)"
+          : lang === "tw" ? "（旬空，主事情落空，不宜前往）"
+            : "（旬空，主事情落空，不宜前往）")
+        : "";
       tips.push(
-        `【${g.men}】在${g.gongName}（${g.fangwei}方）— ${MEN_JIXIONG[g.men]}，往${g.fangwei}方出行吉。${maNote}${isKongNote}`
+        lang === "en"
+          ? `【${menDisp}】in ${gongDisp}（${fwLabel}） — ${jxDisp}; travel toward ${fwDisp} is favorable.${maNote}${isKongNote}`
+          : `【${menDisp}】在${gongDisp}（${fwLabel}）— ${jxDisp}，往${fwDisp}方出行吉。${maNote}${isKongNote}`
       );
     }
     if (g.men === "死门" || g.men === "伤门") {
+      const menDisp = gateName(g.men, lang);
+      const gongDisp = gongDisplayName(g.gongName, lang);
+      const fwDisp = fangweiName(g.fangwei, lang);
+      const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
       tips.push(
-        `【${g.men}】在${g.gongName}（${g.fangwei}方）— 凶，不宜前往${g.fangwei}方，防意外受阻。`
+        lang === "en"
+          ? `【${menDisp}】in ${gongDisp}（${fwLabel}） — inauspicious; avoid traveling toward ${fwDisp}; risk of obstruction and mishap.`
+          : lang === "tw"
+            ? `【${menDisp}】在${gongDisp}（${fwLabel}）— 凶，不宜前往${fwDisp}方，防意外受阻。`
+            : `【${menDisp}】在${gongDisp}（${fwLabel}）— 凶，不宜前往${fwDisp}方，防意外受阻。`
       );
     }
   }
@@ -557,13 +721,41 @@ function analyzeForTravel(gongs: GongData[]): string[] {
   // 马星宫
   const maGong = gongs.find(g => g.isMa);
   if (maGong) {
-    tips.push(`【马星】落${maGong.gongName}（${maGong.fangwei}方）— 行事迅速，出行从速。`);
+    const gongDisp = gongDisplayName(maGong.gongName, lang);
+    const fwDisp = fangweiName(maGong.fangwei, lang);
+    const fwLabel = lang === "en" ? `${fwDisp} sector` : `${fwDisp}方`;
+    tips.push(
+      lang === "en"
+        ? `【Horse Star】falls in ${gongDisp}（${fwLabel}） — matters move fast; travel promptly.`
+        : lang === "tw"
+          ? `【馬星】落${gongDisp}（${fwLabel}）— 行事迅速，出行從速。`
+          : `【马星】落${gongDisp}（${fwLabel}）— 行事迅速，出行从速。`
+    );
   }
 
   if (tips.length === 0) {
-    tips.push("当前时局出行无特别吉方，建议延迟或取消出行。");
+    tips.push(
+      lang === "en"
+        ? "No especially auspicious travel direction in this chart — consider delaying or canceling travel."
+        : lang === "tw"
+          ? "當前時局出行無特別吉方，建議延遲或取消出行。"
+          : "当前时局出行无特别吉方，建议延迟或取消出行。"
+    );
   }
   return tips;
+}
+
+// 吉凶枚举 → 解读文案（用于分析提示句中嵌入）
+function jixiongText(jx: string | undefined, lang: Lang): string {
+  const map: Record<string, L> = {
+    "大吉": { zh: "大吉", en: "very auspicious", tw: "大吉" },
+    "吉": { zh: "吉", en: "auspicious", tw: "吉" },
+    "中平": { zh: "中平", en: "neutral", tw: "中平" },
+    "凶": { zh: "凶", en: "inauspicious", tw: "凶" },
+    "大凶": { zh: "大凶", en: "very inauspicious", tw: "大凶" },
+  };
+  const e = jx ? map[jx] : undefined;
+  return e ? rsL(e, lang) : (jx ?? "");
 }
 
 // ===== 马星计算 =====
@@ -573,7 +765,7 @@ function getMaXing(riGanZhi: string): string {
 }
 
 // ===== 主排盘函数 =====
-export function buildQimenChart(input: QimenInput): QimenChart {
+export function buildQimenChart(input: QimenInput, lang: Lang = "zh"): QimenChart {
   // 1. 获取城市经度
   const coord = input.lng
     ? { lng: input.lng, lat: input.lat ?? 30 }
@@ -587,7 +779,8 @@ export function buildQimenChart(input: QimenInput): QimenChart {
   const trueSolarDate = calcTrueSolarTime(localDate, coord.lng);
   const tsh = trueSolarDate.getHours();
   const tsm = trueSolarDate.getMinutes();
-  const solarTimeStr = `${String(tsh).padStart(2, "0")}:${String(tsm).padStart(2, "0")} (真太阳时)`;
+  const solarSuffix = lang === "en" ? " (true solar time)" : lang === "tw" ? " (真太陽時)" : " (真太阳时)";
+  const solarTimeStr = `${String(tsh).padStart(2, "0")}:${String(tsm).padStart(2, "0")}${solarSuffix}`;
 
   // 3. 干支推算（用真太阳时的时辰）
   const tzYear = trueSolarDate.getFullYear();
@@ -650,11 +843,11 @@ export function buildQimenChart(input: QimenInput): QimenChart {
   });
 
   // 12. 格局检测
-  const globalGeju = detectGeju(gongs, yinyangJu);
+  const globalGeju = detectGeju(gongs, yinyangJu, lang);
 
   // 13. 商业/出行分析
-  const businessAnalysis = analyzeForBusiness(gongs);
-  const travelAnalysis = analyzeForTravel(gongs);
+  const businessAnalysis = analyzeForBusiness(gongs, lang);
+  const travelAnalysis = analyzeForTravel(gongs, lang);
 
   // 14. 农历描述（简化）
   const lunarStr = `${ganZhiYear}年 ${ganZhiMonth}月 ${ganZhiDay}日 ${ganZhiHour}时`;

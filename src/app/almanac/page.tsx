@@ -8,11 +8,17 @@ import LuckyDayList from "./components/LuckyDayList";
 import type { DayInfo, LuckyDay } from "./almanac-engine";
 import type { ShengXiao } from "./almanac-data";
 import { SELECT_EVENTS } from "./almanac-data";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./almanac-i18n";
 
 type Tab = "daily" | "select";
 type SelectStep = "form" | "results";
 
 export default function AlmanacPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [tab, setTab] = useState<Tab>("daily");
   const [dayInfo, setDayInfo] = useState<DayInfo | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -33,16 +39,16 @@ export default function AlmanacPage() {
       const y = date.getFullYear();
       const m = date.getMonth() + 1;
       const d = date.getDate();
-      const res = await fetch(`/api/almanac?action=day&year=${y}&month=${m}&day=${d}`);
+      const res = await fetch(`/api/almanac?action=day&year=${y}&month=${m}&day=${d}&lang=${lang}`);
       const json = await res.json() as { success: boolean; data: DayInfo; error?: string };
-      if (!json.success) throw new Error(json.error ?? "获取失败");
+      if (!json.success) throw new Error(json.error ?? t.fetchFailed);
       setDayInfo(json.data);
     } catch (e) {
       setError((e as Error).message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t, lang]);
 
   useEffect(() => {
     fetchDayInfo(currentDate);
@@ -66,15 +72,15 @@ export default function AlmanacPage() {
     setError(null);
     try {
       const ev = SELECT_EVENTS.find(e => e.key === params.event);
-      setSelectedEventName(ev?.name ?? params.event);
+      setSelectedEventName(ev?.name[lang] ?? params.event);
 
       const res = await fetch("/api/almanac", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
+        body: JSON.stringify({ ...params, lang }),
       });
       const json = await res.json() as { success: boolean; data: LuckyDay[]; error?: string };
-      if (!json.success) throw new Error(json.error ?? "择日失败");
+      if (!json.success) throw new Error(json.error ?? t.selectFailed);
       setLuckyDays(json.data);
       setSelectStep("results");
     } catch (e) {
@@ -96,24 +102,29 @@ export default function AlmanacPage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>{t.back}</a>
+
+      {/* 语言切换 —— fixed 右上角 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
 
       {/* 顶部标题 */}
       <header className="al-header">
         <div className="al-header-center">
           <div className="al-header-icon">📅</div>
-          <h1 className="al-header-title">老黄历</h1>
-          <p className="al-header-sub">择吉日 · 看宜忌 · 知时辰</p>
+          <h1 className="al-header-title">{t.title}</h1>
+          <p className="al-header-sub">{t.subtitle}</p>
         </div>
       </header>
 
       {/* Tab 切换 */}
       <div className="al-tabs">
         <button className={`al-tab ${tab === "daily" ? "al-tab-active" : ""}`} onClick={() => setTab("daily")}>
-          <span>📋</span>今日黄历
+          <span>📋</span>{t.tabDaily}
         </button>
         <button className={`al-tab ${tab === "select" ? "al-tab-active" : ""}`} onClick={() => setTab("select")}>
-          <span>✦</span>定制择日
+          <span>✦</span>{t.tabSelect}
         </button>
       </div>
 
@@ -123,17 +134,17 @@ export default function AlmanacPage() {
             {loading ? (
               <div className="al-loading">
                 <div className="al-loading-spinner">◎</div>
-                <p>正在推算今日黄历…</p>
+                <p>{t.dailyLoading}</p>
               </div>
             ) : error ? (
               <div className="al-error">
                 <p>{error}</p>
-                <button onClick={() => fetchDayInfo(currentDate)}>重试</button>
+                <button onClick={() => fetchDayInfo(currentDate)}>{t.retry}</button>
               </div>
             ) : dayInfo ? (
               <>
-                <DailyAlmanac dayInfo={dayInfo} onDateChange={handleDateChange} />
-                <HourTimeline dayInfo={dayInfo} />
+                <DailyAlmanac dayInfo={dayInfo} onDateChange={handleDateChange} t={t} lang={lang} />
+                <HourTimeline dayInfo={dayInfo} t={t} lang={lang} />
               </>
             ) : null}
           </div>
@@ -144,16 +155,18 @@ export default function AlmanacPage() {
             {error && selectStep === "form" && (
               <div className="al-error" style={{ marginBottom: 16 }}>
                 <p>{error}</p>
-                <button onClick={() => setError(null)}>关闭</button>
+                <button onClick={() => setError(null)}>{t.close}</button>
               </div>
             )}
             {selectStep === "form" ? (
-              <DateSelector onSearch={handleSelect} isLoading={selectLoading} />
+              <DateSelector onSearch={handleSelect} isLoading={selectLoading} t={t} lang={lang} />
             ) : (
               <LuckyDayList
                 days={luckyDays}
                 eventName={selectedEventName}
                 onReset={() => setSelectStep("form")}
+                t={t}
+                lang={lang}
               />
             )}
           </div>
@@ -162,7 +175,7 @@ export default function AlmanacPage() {
 
       {/* 底部装饰 */}
       <footer className="al-footer">
-        <p className="al-footer-text">黄历数据仅供参考，请结合实际情况理性使用</p>
+        <p className="al-footer-text">{t.footer}</p>
       </footer>
     </div>
   );

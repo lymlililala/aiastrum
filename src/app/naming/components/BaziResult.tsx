@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { WUXING_CONFIG, WUXING_TIPS, XIYONGSHEN_TEMPLATES, type WuXing } from "../naming-data";
+import { type NamingT } from "../naming-i18n";
 
 interface BaziPillar {
   label: string;
@@ -25,11 +26,12 @@ interface BaziResultProps {
   surname: string;
   gender: "male" | "female";
   onContinue?: () => void;
+  t: NamingT;
 }
 
 const WUXING_ORDER: WuXing[] = ["金", "木", "水", "火", "土"];
 
-export default function BaziResult({ bazi, surname, gender, onContinue }: BaziResultProps) {
+export default function BaziResult({ bazi, surname, gender, onContinue, t }: BaziResultProps) {
   const [showTip, setShowTip] = useState(false);
 
   const total = Object.values(bazi.wuxingScores).reduce((a, b) => a + b, 0);
@@ -40,15 +42,15 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
     <div className="bazi-result-container">
       {/* 标题 */}
       <div className="bazi-result-header">
-        <div className="bazi-result-badge">八字命盘</div>
+        <div className="bazi-result-badge">{t.bzBadge}</div>
         <h2 className="bazi-result-title">
-          {surname}家{gender === "male" ? "男" : "女"}宝宝的命局分析
+          {t.bzTitlePre}{surname}{t.bzTitleMid}{gender === "male" ? t.nlTitleMale : t.nlTitleFemale}{t.bzTitlePost}
         </h2>
       </div>
 
       {/* 四柱排盘 */}
       <div className="bazi-pillars-section">
-        <h3 className="bazi-section-label">⊞ 生辰四柱</h3>
+        <h3 className="bazi-section-label">{t.bzPillars}</h3>
         <div className="bazi-pillars-grid">
           {bazi.pillars.map((p) => (
             <div key={p.label} className="bazi-pillar-card">
@@ -84,12 +86,12 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
             </div>
           ))}
         </div>
-        <p className="bazi-pillars-tip">天干在上，地支在下，从左至右依次为年、月、日、时柱</p>
+        <p className="bazi-pillars-tip">{t.bzPillarsTip}</p>
       </div>
 
       {/* 五行可视化 */}
       <div className="bazi-wuxing-section">
-        <h3 className="bazi-section-label">◈ 五行旺衰分析</h3>
+        <h3 className="bazi-section-label">{t.bzWuxing}</h3>
         <div className="bazi-wuxing-bars">
           {WUXING_ORDER.map(wx => {
             const score = bazi.wuxingScores[wx] ?? 0;
@@ -107,9 +109,9 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
                     style={{ background: WUXING_CONFIG[wx].color }}
                   />
                   <span className="bazi-wx-name">{wx}</span>
-                  {isXiyong && <span className="bazi-wx-badge bazi-badge-xi">喜用</span>}
-                  {isDominant && !isXiyong && <span className="bazi-wx-badge bazi-badge-strong">旺</span>}
-                  {isWeak && !isXiyong && <span className="bazi-wx-badge bazi-badge-weak">弱</span>}
+                  {isXiyong && <span className="bazi-wx-badge bazi-badge-xi">{t.bzBadgeXi}</span>}
+                  {isDominant && !isXiyong && <span className="bazi-wx-badge bazi-badge-strong">{t.bzBadgeStrong}</span>}
+                  {isWeak && !isXiyong && <span className="bazi-wx-badge bazi-badge-weak">{t.bzBadgeWeak}</span>}
                 </div>
                 <div className="bazi-wx-bar-track">
                   <div
@@ -130,7 +132,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
 
       {/* 诊断文案 */}
       <div className="bazi-diagnosis-section">
-        <h3 className="bazi-section-label">✦ 命局诊断</h3>
+        <h3 className="bazi-section-label">{t.bzDiagnosis}</h3>
         <div className="bazi-diagnosis-card">
           <div
             className="bazi-diagnosis-text"
@@ -144,13 +146,13 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
       {/* 喜用神详解 */}
       <div className="bazi-xiyong-section">
         <h3 className="bazi-section-label">
-          ◎ 专属喜用神
+          {t.bzXiyongTitle}
           <button
             className="bazi-tip-btn"
             onClick={() => setShowTip(!showTip)}
-            aria-label="什么是喜用神"
+            aria-label={t.bzTipOpen}
           >
-            {showTip ? "收起" : "什么是喜用神？"}
+            {showTip ? t.bzTipCollapse : t.bzTipOpen}
           </button>
         </h3>
 
@@ -203,7 +205,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue }: BaziRe
       {/* 继续按钮 */}
       {onContinue && (
         <button className="bazi-continue-btn" onClick={onContinue}>
-          查看专属吉名推荐 →
+          {t.bzContinue}
         </button>
       )}
     </div>

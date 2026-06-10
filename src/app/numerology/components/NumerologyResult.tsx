@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import type { NumerologyResult } from "../numerology-engine";
 import { formatBirthdate } from "../numerology-engine";
+import type { NumT, Lang } from "../numerology-i18n";
 
 interface NumerologyResultProps {
+  t: NumT;
+  lang: Lang;
   result: NumerologyResult;
   onShare: () => void;
   onRecalculate: () => void;
@@ -13,6 +16,8 @@ interface NumerologyResultProps {
 type TabType = "overview" | "gifts" | "lessons" | "lucky";
 
 export function NumerologyResultPanel({
+  t,
+  lang,
   result,
   onShare,
   onRecalculate,
@@ -23,10 +28,10 @@ export function NumerologyResultPanel({
   const { profile, number, isMaster, birthdate, calculationSteps, keywords } = result;
 
   const tabs: Array<{ id: TabType; label: string; icon: string }> = [
-    { id: "overview", label: "性格特质", icon: "🌟" },
-    { id: "gifts", label: "潜能天赋", icon: "💎" },
-    { id: "lessons", label: "人生课题", icon: "🔮" },
-    { id: "lucky", label: "幸运指南", icon: "🍀" },
+    { id: "overview", label: t.tabOverview, icon: "🌟" },
+    { id: "gifts", label: t.tabGifts, icon: "💎" },
+    { id: "lessons", label: t.tabLessons, icon: "🔮" },
+    { id: "lucky", label: t.tabLucky, icon: "🍀" },
   ];
 
   return (
@@ -39,7 +44,7 @@ export function NumerologyResultPanel({
         {/* 卓越数标记 */}
         {isMaster && (
           <div className="num-master-badge">
-            ⚡ 卓越数字 · Master Number
+            {t.masterBadge}
           </div>
         )}
 
@@ -67,23 +72,23 @@ export function NumerologyResultPanel({
         {/* 出生日期 */}
         <div className="num-hero-birthdate">
           <span className="num-birthdate-icon">📅</span>
-          {formatBirthdate(birthdate.year, birthdate.month, birthdate.day)}
+          {formatBirthdate(birthdate.year, birthdate.month, birthdate.day, lang)}
         </div>
 
         {/* 元素信息行 */}
         <div className="num-hero-meta">
           <div className="num-meta-item">
-            <span className="num-meta-label">元素</span>
+            <span className="num-meta-label">{t.metaElement}</span>
             <span className="num-meta-value">{profile.element}</span>
           </div>
           <div className="num-meta-divider" />
           <div className="num-meta-item">
-            <span className="num-meta-label">守护星</span>
+            <span className="num-meta-label">{t.metaPlanet}</span>
             <span className="num-meta-value">{profile.planet}</span>
           </div>
           <div className="num-meta-divider" />
           <div className="num-meta-item">
-            <span className="num-meta-label">颜色</span>
+            <span className="num-meta-label">{t.metaColor}</span>
             <span className="num-meta-value">{profile.color}</span>
           </div>
         </div>
@@ -95,7 +100,7 @@ export function NumerologyResultPanel({
           className="num-calc-toggle"
           onClick={() => setShowCalc(!showCalc)}
         >
-          <span>🔢 查看计算过程</span>
+          <span>{t.calcToggle}</span>
           <span className={`num-calc-arrow ${showCalc ? "num-calc-arrow-open" : ""}`}>▾</span>
         </button>
         {showCalc && (
@@ -107,7 +112,7 @@ export function NumerologyResultPanel({
               </div>
             ))}
             <div className="num-calc-result">
-              <span>生命灵数 =</span>
+              <span>{t.calcResultLabel}</span>
               <span className="num-calc-final">{number}</span>
             </div>
           </div>
@@ -157,7 +162,7 @@ export function NumerologyResultPanel({
             <div className="num-challenges-section">
               <h3 className="num-section-title">
                 <span className="num-section-icon">⚡</span>
-                成长挑战
+                {t.growthChallenge}
               </h3>
               {profile.challenges.map((challenge, i) => (
                 <div key={i} className="num-challenge-card">
@@ -174,7 +179,7 @@ export function NumerologyResultPanel({
             <div className="num-love-section">
               <h3 className="num-section-title">
                 <span className="num-section-icon">💗</span>
-                爱情观
+                {t.loveView}
               </h3>
               <p className="num-love-text">{profile.loveInsight}</p>
             </div>
@@ -185,7 +190,7 @@ export function NumerologyResultPanel({
         {activeTab === "gifts" && (
           <div className="num-gifts">
             <p className="num-gifts-intro">
-              每一个生命灵数都带来独特的天赋，以下是属于你的核心礼物：
+              {t.giftsIntro}
             </p>
             {profile.gifts.map((gift, i) => (
               <div key={i} className="num-gift-card">
@@ -201,7 +206,7 @@ export function NumerologyResultPanel({
             <div className="num-career-section">
               <h3 className="num-section-title">
                 <span className="num-section-icon">🚀</span>
-                适合发展方向
+                {t.careerDirection}
               </h3>
               <div className="num-career-tags">
                 {profile.careerPaths.map((career) => (
@@ -216,7 +221,7 @@ export function NumerologyResultPanel({
             <div className="num-advice-card">
               <div className="num-advice-header">
                 <span>🌙</span>
-                <h3 className="num-advice-title">当下建议</h3>
+                <h3 className="num-advice-title">{t.currentAdvice}</h3>
               </div>
               <p className="num-advice-text">{profile.yearAdvice}</p>
             </div>
@@ -227,7 +232,7 @@ export function NumerologyResultPanel({
         {activeTab === "lessons" && (
           <div className="num-lessons">
             <p className="num-lessons-intro">
-              你的人生课题是灵魂选择这个数字降生的深层原因，是成长的方向：
+              {t.lessonsIntro}
             </p>
             {profile.lifeLessons.map((lesson, i) => (
               <div key={i} className="num-lesson-card">
@@ -251,7 +256,7 @@ export function NumerologyResultPanel({
             <div className="num-celebrities-section">
               <h3 className="num-section-title">
                 <span className="num-section-icon">🌟</span>
-                同灵数名人
+                {t.sameNumCeleb}
               </h3>
               <div className="num-celebrities-list">
                 {profile.celebrities.map((person) => (
@@ -270,24 +275,24 @@ export function NumerologyResultPanel({
             <div className="num-lucky-grid">
               <div className="num-lucky-item">
                 <div className="num-lucky-icon">🔢</div>
-                <div className="num-lucky-label">幸运数字</div>
+                <div className="num-lucky-label">{t.luckyNumber}</div>
                 <div className="num-lucky-value">
                   {profile.luckyNumber.join(" · ")}
                 </div>
               </div>
               <div className="num-lucky-item">
                 <div className="num-lucky-icon">🎨</div>
-                <div className="num-lucky-label">幸运颜色</div>
+                <div className="num-lucky-label">{t.luckyColor}</div>
                 <div className="num-lucky-value">{profile.luckyColor}</div>
               </div>
               <div className="num-lucky-item">
                 <div className="num-lucky-icon">📅</div>
-                <div className="num-lucky-label">幸运日</div>
+                <div className="num-lucky-label">{t.luckyDay}</div>
                 <div className="num-lucky-value">{profile.luckyDay}</div>
               </div>
               <div className="num-lucky-item">
                 <div className="num-lucky-icon">💎</div>
-                <div className="num-lucky-label">幸运宝石</div>
+                <div className="num-lucky-label">{t.luckyGem}</div>
                 <div className="num-lucky-value">{profile.luckyGem}</div>
               </div>
             </div>
@@ -298,7 +303,7 @@ export function NumerologyResultPanel({
                 className="num-color-block"
                 style={{ background: `linear-gradient(135deg, ${profile.colorHex}, ${profile.secondaryColorHex})` }}
               />
-              <p className="num-color-desc">你的灵数色彩：{profile.color}</p>
+              <p className="num-color-desc">{t.colorDescPrefix}{profile.color}</p>
             </div>
 
             {/* 灵性洞见 */}
@@ -314,11 +319,11 @@ export function NumerologyResultPanel({
       <div className="num-result-actions">
         <button className="num-share-btn" onClick={onShare}>
           <span>🎴</span>
-          <span>生成我的灵数卡片</span>
+          <span>{t.shareBtn}</span>
         </button>
         <button className="num-recalc-btn" onClick={onRecalculate}>
           <span>↩</span>
-          <span>重新计算</span>
+          <span>{t.recalcBtn}</span>
         </button>
       </div>
     </div>

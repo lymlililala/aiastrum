@@ -2,16 +2,52 @@
 
 import React, { useState } from "react";
 import type { RuneReadingResult } from "../rune-engine";
-import { getActiveReading, getElementColor, formatDrawTime } from "../rune-engine";
+import { getActiveReading, getElementColor, formatDrawTime, buildSynthesis } from "../rune-engine";
 import { RuneStone } from "./RuneStone";
+
+type Lang = "zh" | "en" | "tw";
+
+// ── 三语文案（仅 UI chrome） ───────────────────────────
+const RT = {
+  zh: {
+    badgeSingle: "☽ 奥丁之眼 · 单石占卜",
+    badgeThree:  "✦ 诺伦三女神 · 三石占卜",
+    revealSingle: "☽ 在心中默念你的问题，然后点击石头揭晓命运",
+    revealThree:  "✦ 心存疑问，点击任意石头，三段命运将为你展开",
+    synthesisTitle: "✦ 三石综合解读",
+    sharePoster: "生成符文石卡片",
+    again:       "再次占卜",
+  },
+  tw: {
+    badgeSingle: "☽ 奧丁之眼 · 單石占卜",
+    badgeThree:  "✦ 諾倫三女神 · 三石占卜",
+    revealSingle: "☽ 在心中默念你的問題，然後點擊石頭揭曉命運",
+    revealThree:  "✦ 心存疑問，點擊任意石頭，三段命運將為你展開",
+    synthesisTitle: "✦ 三石綜合解讀",
+    sharePoster: "生成符文石卡片",
+    again:       "再次占卜",
+  },
+  en: {
+    badgeSingle: "☽ Odin's Eye · Single Rune",
+    badgeThree:  "✦ The Three Norns · Three Runes",
+    revealSingle: "☽ Hold your question in mind, then tap the stone to reveal your fate",
+    revealThree:  "✦ Hold your question close, tap any stone, and three fates will unfold",
+    synthesisTitle: "✦ Three-Rune Synthesis",
+    sharePoster: "Generate Rune Stone Card",
+    again:       "Read Again",
+  },
+};
+// ───────────────────────────────────────────────────────
 
 interface RuneReadingProps {
   result: RuneReadingResult;
+  lang: Lang;
   onShare: () => void;
   onAgain: () => void;
 }
 
-export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
+export function RuneReading({ result, lang, onShare, onAgain }: RuneReadingProps) {
+  const t = RT[lang];
   const [allRevealed, setAllRevealed] = useState(false);
 
   const isSingle = result.spread === "single";
@@ -27,9 +63,9 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
       {/* 顶部：占卜模式标题 */}
       <div className="rune-reading-header">
         <div className="rune-reading-mode-badge">
-          {isSingle ? "☽ 奥丁之眼 · 单石占卜" : "✦ 诺伦三女神 · 三石占卜"}
+          {isSingle ? t.badgeSingle : t.badgeThree}
         </div>
-        <p className="rune-reading-time">{formatDrawTime(result.drawTime)}</p>
+        <p className="rune-reading-time">{formatDrawTime(result.drawTime, lang)}</p>
       </div>
 
       {/* ===== 单石占卜 ===== */}
@@ -41,10 +77,11 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
             revealed={allRevealed}
             onReveal={handleReveal}
             showDetail={allRevealed}
+            lang={lang}
           />
           {!allRevealed && (
             <p className="rune-reveal-hint">
-              ☽ 在心中默念你的问题，然后点击石头揭晓命运
+              {t.revealSingle}
             </p>
           )}
         </div>
@@ -62,6 +99,7 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
                 index={i}
                 revealed={allRevealed}
                 onReveal={handleReveal}
+                lang={lang}
                 compact
               />
             ))}
@@ -69,7 +107,7 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
 
           {!allRevealed && (
             <p className="rune-reveal-hint">
-              ✦ 心存疑问，点击任意石头，三段命运将为你展开
+              {t.revealThree}
             </p>
           )}
 
@@ -77,7 +115,7 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
           {allRevealed && (
             <div className="rune-three-details">
               {result.stones.map((stone, i) => {
-                const reading = getActiveReading(stone);
+                const reading = getActiveReading(stone, lang);
                 const colors = getElementColor(stone.rune.element);
                 return (
                   <div
@@ -145,9 +183,9 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
 
               {/* 综合解读 */}
               <div className="rune-synthesis-card">
-                <h3 className="rune-synthesis-title">✦ 三石综合解读</h3>
+                <h3 className="rune-synthesis-title">{t.synthesisTitle}</h3>
                 <p className="rune-synthesis-text">
-                  {buildSynthesis(result)}
+                  {buildSynthesis(result, lang)}
                 </p>
               </div>
             </div>
@@ -160,29 +198,14 @@ export function RuneReading({ result, onShare, onAgain }: RuneReadingProps) {
         <div className="rune-reading-actions">
           <button className="rune-share-btn" onClick={onShare}>
             <span>🪨</span>
-            <span>生成符文石卡片</span>
+            <span>{t.sharePoster}</span>
           </button>
           <button className="rune-again-btn" onClick={onAgain}>
             <span>↩</span>
-            <span>再次占卜</span>
+            <span>{t.again}</span>
           </button>
         </div>
       )}
     </div>
   );
-}
-
-// ===== 三石综合解读生成 =====
-function buildSynthesis(result: RuneReadingResult): string {
-  const [past, present, future] = result.stones;
-  if (!past || !present || !future) return "";
-
-  const pastR = getActiveReading(past);
-  const presentR = getActiveReading(present);
-  const futureR = getActiveReading(future);
-
-  return `【${past.rune.chineseName}】在过去的位置揭示了「${pastR.keywords[0]}」的根源，`
-    + `与当前【${present.rune.chineseName}】所呈现的「${presentR.keywords[0]}」状态相呼应。`
-    + `若顺应此能量流动，未来【${future.rune.chineseName}】将带来「${futureR.keywords[0]}」的趋势。`
-    + `三石提示你：${futureR.advice}`;
 }

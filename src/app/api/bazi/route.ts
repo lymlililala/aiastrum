@@ -18,9 +18,11 @@ import {
 interface BaziRequest extends BaziInput {
   // 额外的分析请求
   focusAspect?: "career" | "wealth" | "love" | "health" | "overall";
+  lang?: "zh" | "en" | "tw";
 }
 
 function buildBaziPrompt(input: BaziRequest, baziResult: BaziResult): string {
+  const lang = input.lang ?? "zh";
   const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, dayStem } = baziResult;
   const dominantElement = getDominantElement(elementScores);
   const missingElements = getMissingElements(elementScores);
@@ -39,12 +41,62 @@ function buildBaziPrompt(input: BaziRequest, baziResult: BaziResult): string {
     .join("、");
 
   const zodiacFortune = ZODIAC_2026_FORTUNE[zodiac];
+
+  if (lang === "en") {
+    const focusTextEn = input.focusAspect
+      ? {
+          career: "career fortune",
+          wealth: "wealth fortune",
+          love: "relationship fortune",
+          health: "health fortune",
+          overall: "overall destiny",
+        }[input.focusAspect]
+      : "overall destiny and the year-ahead fortune";
+
+    return `You are a seasoned Chinese metaphysics master well-versed in traditional BaZi (Four Pillars of Destiny), combined with the perspective of modern psychological counseling. Please provide a professional BaZi analysis for the chart below.
+
+NOTE: The BaZi data, pillars, Heavenly Stems, Earthly Branches, Five Elements and zodiac terms below are in Chinese for reference only. Your ENTIRE response MUST be written in English — explain the Chinese metaphysics concepts in clear English.
+
+【Basic Info】
+Birth time: ${input.year}-${input.month}-${input.day} ${input.hour >= 0 ? `hour ${input.hour}` : "(hour unknown)"}
+Gender: ${input.gender === "male" ? "Male" : "Female"}
+Zodiac: ${zodiac}
+
+【Four Pillars (BaZi)】
+${pillarsDesc}
+
+【Five Elements distribution】
+${elementDesc}
+Dominant element: ${dominantElement}
+${missingElements.length > 0 ? `Missing elements: ${missingElements.join("、")} (favorable-element direction)` : "The Five Elements are relatively balanced"}
+
+【2026 year-ahead info】
+2026 is the year of Bing-Wu (Fire Horse / 丙午年)
+Relation to the year's Tai Sui: ${baziResult.liuNianRelation}
+Zodiac yearly reference: ${zodiacFortune ? `${zodiacFortune.taishiRelation}, overall fortune ${zodiacFortune.overall} stars` : "stable"}
+
+Please focus your analysis on【${focusTextEn}】and include:
+
+1. **Chart Impression** (2-3 sentences): Describe in modern language the overall temperament and natural gifts this chart reveals
+2. **Five Elements Analysis**: The personality strengths brought by the dominant element, plus the shortcomings the missing elements may cause and how to compensate for them
+3. **Day Master Deep-dive**: Centering on the Day Master Heavenly Stem (${dayStem}, of the ${STEM_ELEMENT[dayStem]} element), analyze this person's core personality and life lessons
+4. **2026 Yearly Fortune**: Combining the energy of the Bing-Wu (Fire Horse) year, analyze this year's opportunities and challenges (focus on one of career, wealth, or relationships)
+5. **Practical Advice** (2-3 points): Concrete, actionable life guidance rather than vague generalities
+
+Tone: professional yet warm, carrying the depth of traditional metaphysics while keeping the rationality of a modern perspective. Avoid negativity or pessimism — frame the BaZi insights from a growth-oriented angle.
+Total length 350-500 words. Output the report content directly in English, with no title header.`;
+  }
+
   const focusText = input.focusAspect
     ? { career: "事业运势", wealth: "财运", love: "感情运势", health: "健康运势", overall: "综合命格" }[input.focusAspect]
     : "综合命格与流年运势";
 
-  return `你是一位精通传统命理学的资深命理师，同时具备现代心理咨询的视野。请为以下八字进行专业的命理分析。
+  const twInstruction = lang === "tw"
+    ? "\n請務必使用繁體中文（台灣用語）輸出全部內容。\n"
+    : "";
 
+  return `你是一位精通传统命理学的资深命理师，同时具备现代心理咨询的视野。请为以下八字进行专业的命理分析。
+${twInstruction}
 【基本信息】
 出生时间：${input.year}年${input.month}月${input.day}日 ${input.hour >= 0 ? `${input.hour}时` : "（时辰未知）"}
 性别：${input.gender === "male" ? "男" : "女"}
@@ -76,12 +128,54 @@ ${missingElements.length > 0 ? `缺失五行：${missingElements.join("、")}（
 }
 
 function generateMockBaziReport(input: BaziRequest, result: BaziResult): string {
+  const lang = input.lang ?? "zh";
   const { zodiac, dayStem, elementScores, liuNianRelation } = result;
   const dominantElement = getDominantElement(elementScores);
   const missingElements = getMissingElements(elementScores);
   const personality = ELEMENT_PERSONALITY[dominantElement];
   const dayStemReading = DAY_STEM_READING[dayStem];
   const zodiacFortune = ZODIAC_2026_FORTUNE[zodiac];
+
+  if (lang === "en") {
+    const missingTextEn = missingElements.length > 0
+      ? `Your chart is relatively weak in ${missingElements.join(", ")}. In daily life, intentionally engage with the energies these elements represent${
+          missingElements.includes("水") ? " — keep learning, reflecting, and cultivating flexibility;" : ";"
+        }${missingElements.includes("木") ? " spend time in nature and build planning habits;" : ""
+        }${missingElements.includes("火") ? " nurture passion and self-expression;" : ""
+        }${missingElements.includes("土") ? " strengthen grounded, practical execution;" : ""
+        }${missingElements.includes("金") ? " develop decisiveness and efficiency;" : ""} so as to complete your energy structure.`
+      : "Your Five Elements are relatively balanced, with fairly all-round development across areas of life.";
+
+    const liuNianTextEn = zodiacFortune
+      ? `\n**2026 Yearly Fortune**\n\nThis year, ${liuNianRelation}. ${zodiacFortune.summary}\n\n✦ **Career**: ${zodiacFortune.careerDetail}\n\n✦ **Wealth**: ${zodiacFortune.wealthDetail}\n\n✦ **Relationships**: ${zodiacFortune.loveDetail}`
+      : "";
+
+    return `**Chart Impression**
+
+${personality?.title ?? ""} — your BaZi reveals a chart with a strong ${dominantElement} element, marked by ${personality?.traits.join(", ") ?? ""}. This is a chart with a distinctive personality, full of inner energy and a clear sense of direction.
+
+**Day Master Analysis**
+
+${dayStemReading?.title ?? ""}. ${dayStemReading?.nature ?? ""}
+
+In career: ${dayStemReading?.career ?? ""}
+
+In relationships: ${dayStemReading?.relationship ?? ""}
+
+**Five Elements Analysis**
+
+${missingTextEn}
+
+${liuNianTextEn}
+
+**Practical Advice**
+
+✦ Lean into your natural ${dominantElement} traits and play to your gifts, rather than forcing yourself against your nature.
+✦ Consciously compensate for your weaker elements${missingElements.length > 0 ? ` (${missingElements.join(", ")})` : ""} to bring your overall energy into balance.
+✦ In 2026, ${liuNianRelation}, it is wise to ${zodiacFortune && zodiacFortune.overall >= 4 ? "move forward boldly and seize opportunities" : "stay prudent and grow steadily"}.
+
+🌸 *Destiny is the starting point; your choices are the destination. BaZi reveals the script of your gifts, but the pen that turns the page is always in your hands.*`;
+  }
 
   const missingText = missingElements.length > 0
     ? `命中${missingElements.join("、")}偏弱，生活中适当多接触这些元素所代表的能量——${
@@ -123,17 +217,30 @@ ${liuNianText}
 🌸 *命运是起点，选择才是终点。八字揭示的是你的天赋剧本，而翻篇的笔始终在你手中。*`;
 }
 
+const ERR_MESSAGES = {
+  invalidFormat: { zh: "请求格式错误", tw: "請求格式錯誤", en: "Invalid request format" },
+  missingInfo: { zh: "缺少必要的出生信息", tw: "缺少必要的出生資訊", en: "Missing required birth information" },
+  calcFailed: { zh: "排盘计算失败", tw: "排盤計算失敗", en: "Chart calculation failed" },
+  noReading: { zh: "无法获取解读", tw: "無法獲取解讀", en: "Unable to retrieve reading." },
+} as const;
+
+function pickLang(value: unknown): "zh" | "en" | "tw" {
+  return value === "en" || value === "tw" ? value : "zh";
+}
+
 export async function POST(request: NextRequest) {
   let body: BaziRequest | null = null;
 
   try {
     body = (await request.json()) as BaziRequest;
   } catch {
-    return NextResponse.json({ error: "请求格式错误" }, { status: 400 });
+    return NextResponse.json({ error: ERR_MESSAGES.invalidFormat.zh }, { status: 400 });
   }
 
+  const lang = pickLang(body.lang);
+
   if (!body.year || !body.month || !body.day || !body.gender) {
-    return NextResponse.json({ error: "缺少必要的出生信息" }, { status: 400 });
+    return NextResponse.json({ error: ERR_MESSAGES.missingInfo[lang] }, { status: 400 });
   }
 
   // 计算八字排盘
@@ -142,7 +249,7 @@ export async function POST(request: NextRequest) {
     baziResult = calculateBazi(body);
   } catch (err) {
     console.error("Bazi calculation error:", err);
-    return NextResponse.json({ error: "排盘计算失败" }, { status: 500 });
+    return NextResponse.json({ error: ERR_MESSAGES.calcFailed[lang] }, { status: 500 });
   }
 
   const apiKey = env.DEEPSEEK_API_KEY;
@@ -186,7 +293,7 @@ export async function POST(request: NextRequest) {
     const data = (await response.json()) as {
       choices: Array<{ message: { content: string } }>;
     };
-    const report = data.choices[0]?.message?.content ?? "无法获取解读";
+    const report = data.choices[0]?.message?.content ?? ERR_MESSAGES.noReading[lang];
 
     return NextResponse.json({ report, baziResult });
   } catch (error) {

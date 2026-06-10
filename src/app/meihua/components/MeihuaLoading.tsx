@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MEIHUA_LOADING_TEXTS } from "../meihua-data";
+import type { MeihuaT } from "../meihua-i18n";
 
-export default function MeihuaLoading() {
+interface MeihuaLoadingProps {
+  t: MeihuaT;
+}
+
+export default function MeihuaLoading({ t }: MeihuaLoadingProps) {
+  const loadingTexts = t.loadingTexts;
   const [textIdx, setTextIdx] = useState(0);
   const [dots, setDots] = useState("");
 
   useEffect(() => {
     // 滚动提示文字
     const textTimer = setInterval(() => {
-      setTextIdx(prev => (prev + 1) % MEIHUA_LOADING_TEXTS.length);
+      setTextIdx(prev => (prev + 1) % loadingTexts.length);
     }, 800);
 
     // 省略号动画
@@ -22,7 +27,7 @@ export default function MeihuaLoading() {
       clearInterval(textTimer);
       clearInterval(dotsTimer);
     };
-  }, []);
+  }, [loadingTexts.length]);
 
   return (
     <div className="meihua-loading-container">
@@ -63,12 +68,12 @@ export default function MeihuaLoading() {
 
       {/* 文字区 */}
       <div className="meihua-loading-text-block">
-        <p className="meihua-loading-title">卦象推演中</p>
+        <p className="meihua-loading-title">{t.loadingTitle}</p>
         <p className="meihua-loading-desc">
-          {MEIHUA_LOADING_TEXTS[textIdx]}{dots}
+          {loadingTexts[textIdx]}{dots}
         </p>
         <div className="meihua-loading-steps">
-          {MEIHUA_LOADING_TEXTS.map((t, i) => (
+          {loadingTexts.map((_, i) => (
             <div
               key={i}
               className={`meihua-step-dot ${i <= textIdx ? "meihua-step-done" : ""}`}
@@ -79,7 +84,7 @@ export default function MeihuaLoading() {
 
       {/* 底部诗句 */}
       <p className="meihua-loading-quote">
-        "一花一世界，一叶一菩提，一卦一天机"
+        {t.loadingQuote}
       </p>
     </div>
   );

@@ -3,12 +3,81 @@
 import React, { useState } from "react";
 import type { BaziInput } from "../bazi-engine";
 
+type Lang = "zh" | "en" | "tw";
+
+// ── 表单 UI 文案（三语）─────────────────────────────
+const FT = {
+  zh: {
+    solar:        "公历",
+    lunar:        "农历",
+    lunarTip:     "🌙 农历换算提示：MVP 阶段暂以公历处理，农历功能将在后续版本上线。请将农历日期换算成公历后填写，或直接使用公历。",
+    birthDate:    "出生日期",
+    yearUnit:     (y: number) => `${y}年`,
+    monthUnit:    (m: number) => `${m}月`,
+    dayUnit:      (d: number) => `${d}日`,
+    birthHour:    "出生时辰",
+    unknownHour:  "未知时辰",
+    unknownDesc:  "（影响时柱准确度）",
+    hourNote:     "※ 不知道出生时辰也可进行分析，但时柱解读将受影响",
+    gender:       "性别",
+    male:         "男",
+    maleSub:      "乾卦 · 阳刚之气",
+    female:       "女",
+    femaleSub:    "坤卦 · 阴柔之德",
+    submit:       "✦ 开始测算",
+    disclaimer:   "✦ 仅供娱乐参考，不作为人生决策依据 ✦",
+  },
+  tw: {
+    solar:        "國曆",
+    lunar:        "農曆",
+    lunarTip:     "🌙 農曆換算提示：MVP 階段暫以國曆處理，農曆功能將在後續版本上線。請將農曆日期換算成國曆後填寫，或直接使用國曆。",
+    birthDate:    "出生日期",
+    yearUnit:     (y: number) => `${y}年`,
+    monthUnit:    (m: number) => `${m}月`,
+    dayUnit:      (d: number) => `${d}日`,
+    birthHour:    "出生時辰",
+    unknownHour:  "未知時辰",
+    unknownDesc:  "（影響時柱準確度）",
+    hourNote:     "※ 不知道出生時辰也可進行分析，但時柱解讀將受影響",
+    gender:       "性別",
+    male:         "男",
+    maleSub:      "乾卦 · 陽剛之氣",
+    female:       "女",
+    femaleSub:    "坤卦 · 陰柔之德",
+    submit:       "✦ 開始測算",
+    disclaimer:   "✦ 僅供娛樂參考，不作為人生決策依據 ✦",
+  },
+  en: {
+    solar:        "Solar",
+    lunar:        "Lunar",
+    lunarTip:     "🌙 Lunar conversion note: during the MVP, dates are handled as solar. Lunar support is coming in a later version. Please convert your lunar date to solar before entering, or just use the solar calendar.",
+    birthDate:    "Birth date",
+    yearUnit:     (y: number) => `${y}`,
+    monthUnit:    (m: number) => `${m}`,
+    dayUnit:      (d: number) => `${d}`,
+    birthHour:    "Birth hour",
+    unknownHour:  "Unknown hour",
+    unknownDesc:  "(affects Hour Pillar accuracy)",
+    hourNote:     "※ You can still get a reading without your birth hour, but the Hour Pillar interpretation will be affected",
+    gender:       "Gender",
+    male:         "Male",
+    maleSub:      "Qian · Yang energy",
+    female:       "Female",
+    femaleSub:    "Kun · Yin energy",
+    submit:       "✦ Start Reading",
+    disclaimer:   "✦ For entertainment only, not a basis for life decisions ✦",
+  },
+};
+// ────────────────────────────────────────────────────
+
 interface BaziInputProps {
   onSubmit: (input: BaziInput) => void;
+  lang: Lang;
 }
 
-const HOURS = [
-  { value: -1, label: "未知时辰", desc: "（影响时柱准确度）" },
+// 时辰名（天干地支术语，不翻译）；未知时辰为 UI 选项，文案随语言变化
+const HOUR_DEFS: Array<{ value: number; label: string | null; desc: string }> = [
+  { value: -1, label: null, desc: "" },
   { value: 23, label: "子时", desc: "23:00–01:00" },
   { value: 1, label: "丑时", desc: "01:00–03:00" },
   { value: 3, label: "寅时", desc: "03:00–05:00" },
@@ -31,7 +100,8 @@ function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
 
-export function BaziInputForm({ onSubmit }: BaziInputProps) {
+export function BaziInputForm({ onSubmit, lang }: BaziInputProps) {
+  const t = FT[lang];
   const [year, setYear] = useState<number>(1990);
   const [month, setMonth] = useState<number>(1);
   const [day, setDay] = useState<number>(1);
@@ -39,6 +109,13 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
   const [gender, setGender] = useState<"male" | "female">("male");
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [showHourPicker, setShowHourPicker] = useState(false);
+
+  // 时辰选项：未知时辰的文案随语言变化，其余为固定术语
+  const HOURS = HOUR_DEFS.map((h) =>
+    h.value === -1
+      ? { value: h.value, label: t.unknownHour, desc: t.unknownDesc }
+      : { value: h.value, label: h.label as string, desc: h.desc }
+  );
 
   const maxDays = getDaysInMonth(year, month);
   const days = Array.from({ length: maxDays }, (_, i) => i + 1);
@@ -63,14 +140,14 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
             onClick={() => setCalendarType("solar")}
             className={`bazi-toggle-btn ${calendarType === "solar" ? "active" : ""}`}
           >
-            公历
+            {t.solar}
           </button>
           <button
             type="button"
             onClick={() => setCalendarType("lunar")}
             className={`bazi-toggle-btn ${calendarType === "lunar" ? "active" : ""}`}
           >
-            农历
+            {t.lunar}
           </button>
         </div>
       </div>
@@ -78,15 +155,14 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
       {calendarType === "lunar" && (
         <div className="text-center mb-6 px-4 py-3 rounded-xl bazi-tip-box">
           <p className="text-sm" style={{ color: "var(--vermillion-light)" }}>
-            🌙 农历换算提示：MVP 阶段暂以公历处理，农历功能将在后续版本上线。
-            请将农历日期换算成公历后填写，或直接使用公历。
+            {t.lunarTip}
           </p>
         </div>
       )}
 
       {/* 出生年月日 */}
       <div className="mb-6">
-        <label className="bazi-label">出生日期</label>
+        <label className="bazi-label">{t.birthDate}</label>
         <div className="grid grid-cols-3 gap-3">
           {/* 年 */}
           <div className="relative">
@@ -96,7 +172,7 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
               className="bazi-select w-full"
             >
               {YEARS.map((y) => (
-                <option key={y} value={y}>{y}年</option>
+                <option key={y} value={y}>{t.yearUnit(y)}</option>
               ))}
             </select>
           </div>
@@ -108,7 +184,7 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
               className="bazi-select w-full"
             >
               {MONTHS.map((m) => (
-                <option key={m} value={m}>{m}月</option>
+                <option key={m} value={m}>{t.monthUnit(m)}</option>
               ))}
             </select>
           </div>
@@ -120,7 +196,7 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
               className="bazi-select w-full"
             >
               {days.map((d) => (
-                <option key={d} value={d}>{d}日</option>
+                <option key={d} value={d}>{t.dayUnit(d)}</option>
               ))}
             </select>
           </div>
@@ -129,7 +205,7 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
 
       {/* 出生时辰 */}
       <div className="mb-6">
-        <label className="bazi-label">出生时辰</label>
+        <label className="bazi-label">{t.birthHour}</label>
         <div className="relative">
           <button
             type="button"
@@ -188,14 +264,14 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
         </div>
         {hour === -1 && (
           <p className="mt-2 text-xs" style={{ color: "rgba(200,180,150,0.5)" }}>
-            ※ 不知道出生时辰也可进行分析，但时柱解读将受影响
+            {t.hourNote}
           </p>
         )}
       </div>
 
       {/* 性别选择 */}
       <div className="mb-8">
-        <label className="bazi-label">性别</label>
+        <label className="bazi-label">{t.gender}</label>
         <div className="grid grid-cols-2 gap-4">
           <button
             type="button"
@@ -203,8 +279,8 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
             className={`bazi-gender-btn ${gender === "male" ? "active" : ""}`}
           >
             <span className="text-2xl mb-1">☰</span>
-            <span>男</span>
-            <span className="text-xs opacity-60 mt-0.5">乾卦 · 阳刚之气</span>
+            <span>{t.male}</span>
+            <span className="text-xs opacity-60 mt-0.5">{t.maleSub}</span>
           </button>
           <button
             type="button"
@@ -212,8 +288,8 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
             className={`bazi-gender-btn ${gender === "female" ? "active" : ""}`}
           >
             <span className="text-2xl mb-1">☷</span>
-            <span>女</span>
-            <span className="text-xs opacity-60 mt-0.5">坤卦 · 阴柔之德</span>
+            <span>{t.female}</span>
+            <span className="text-xs opacity-60 mt-0.5">{t.femaleSub}</span>
           </button>
         </div>
       </div>
@@ -223,11 +299,11 @@ export function BaziInputForm({ onSubmit }: BaziInputProps) {
         type="submit"
         className="w-full btn-vermillion py-4 rounded-2xl text-lg font-medium tracking-widest"
       >
-        ✦ 开始测算
+        {t.submit}
       </button>
 
       <p className="text-center mt-4 text-xs" style={{ color: "rgba(200,180,150,0.4)" }}>
-        ✦ 仅供娱乐参考，不作为人生决策依据 ✦
+        {t.disclaimer}
       </p>
     </form>
   );

@@ -2,22 +2,24 @@
 
 import React, { useState } from "react";
 import { DREAM_CATEGORIES, LEVEL_CONFIG, type DreamLevel } from "../dream-data";
+import type { DreamT } from "../dream-i18n";
 
 interface DreamCategoryProps {
+  t: DreamT;
   onKeywordClick: (keyword: string) => void;
 }
 
-export default function DreamCategory({ onKeywordClick }: DreamCategoryProps) {
+export default function DreamCategory({ t, onKeywordClick }: DreamCategoryProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   return (
     <div className="dream-category-container">
       <h2 className="dream-category-title">
         <span className="dream-category-icon">📚</span>
-        梦境分类库
+        {t.catTitle}
       </h2>
       <p className="dream-category-desc">
-        按分类探索常见梦境的含义
+        {t.catDesc}
       </p>
 
       <div className="dream-category-grid">

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateMockReport } from "~/app/face-reading/face-reading-data";
 import type { AnalysisMode } from "~/app/face-reading/face-reading-data";
 
+type Lang = "zh" | "en" | "tw";
+
 // ===== AI 面相/手相分析 API 路由 =====
 // MVP 策略：
 // 1. 接收图片与分析模式
@@ -10,10 +12,12 @@ import type { AnalysisMode } from "~/app/face-reading/face-reading-data";
 // ⚠️ 注意：照片仅用于分析，API 处理完成后立即丢弃，不保存任何图像数据
 
 export async function POST(request: NextRequest) {
+  let lang: Lang = "zh";
   try {
     const formData = await request.formData();
     const mode = (formData.get("mode") as AnalysisMode) ?? "face";
     const seed = (formData.get("seed") as string) ?? String(Date.now());
+    lang = ((formData.get("lang") as string) ?? "zh") as Lang;
     // const imageFile = formData.get("image") as File | null;
     // 图片已接收，仅用于本次分析，不保存
 
@@ -24,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (apiKey) {
       try {
-        aiEnhancedReport = await callAIForEnhancement(mode, seed, apiKey);
+        aiEnhancedReport = await callAIForEnhancement(mode, seed, apiKey, lang);
       } catch (aiError) {
         console.error("AI API 调用失败，使用 Mock 报告:", aiError);
       }
@@ -42,7 +46,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Face reading API error:", error);
     return NextResponse.json(
-      { error: "分析服务暂时不可用，请稍后重试" },
+      {
+        error:
+          lang === "en"
+            ? "The analysis service is temporarily unavailable, please try again later"
+            : lang === "tw"
+              ? "分析服務暫時無法使用，請稍後重試"
+              : "分析服务暂时不可用，请稍后重试",
+      },
       { status: 500 }
     );
   }
@@ -58,13 +69,33 @@ interface AIEnhancement {
 async function callAIForEnhancement(
   mode: AnalysisMode,
   seed: string,
-  apiKey: string
+  apiKey: string,
+  lang: Lang
 ): Promise<AIEnhancement | null> {
   const baseUrl = "https://api.deepseek.com";
   const model = "deepseek-v4-flash";
 
-  const modeName = mode === "face" ? "面相" : "手相";
-  const prompt = `你是一位融合东方面相学与现代心理学的AI命理师。
+  let prompt: string;
+
+  if (lang === "en") {
+    const modeName = mode === "face" ? "face reading" : "palm reading";
+    prompt = `You are an AI fortune teller blending Eastern physiognomy with modern psychology.
+Please generate the core copy for a ${modeName} analysis report for the user.
+
+Requirements:
+1. overview: an overall reading, within 150 words, positive and uplifting, using the Barnum effect (vague yet feels precise), with a sense of technology
+2. lifeQuote: a personal life motto, one sentence, within 20 words, full of power
+3. shareText: a social-media share caption, within 50 words, irresistibly shareable, including the keyword "AI ${modeName}"
+
+Analysis seed: ${seed} (used to ensure determinism)
+
+Note: The Eastern face/palm reading references are for inspiration only. Your entire response MUST be written in English.
+
+Return JSON format only:
+{"overview": "...", "lifeQuote": "...", "shareText": "..."}`;
+  } else {
+    const modeName = mode === "face" ? "面相" : "手相";
+    prompt = `你是一位融合东方面相学与现代心理学的AI命理师。
 请为用户生成一段${modeName}分析报告的核心文案。
 
 要求：
@@ -75,7 +106,8 @@ async function callAIForEnhancement(
 分析种子：${seed}（用于保证确定性）
 
 只返回 JSON 格式：
-{"overview": "...", "lifeQuote": "...", "shareText": "..."}`;
+{"overview": "...", "lifeQuote": "...", "shareText": "..."}${lang === "tw" ? "\n\n請務必使用繁體中文（台灣用語）輸出全部內容。" : ""}`;
+  }
 
   const response = await fetch(`${baseUrl}/v1/chat/completions`, {
     method: "POST",

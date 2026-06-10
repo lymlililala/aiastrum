@@ -3,12 +3,57 @@ import { interpretDream } from "~/app/dream/dream-engine";
 import { env } from "~/env.js";
 
 type InterpretResult = ReturnType<typeof interpretDream>;
+type Lang = "zh" | "en" | "tw";
 
-function buildDreamPrompt(result: InterpretResult): string {
-  const keywords = result.keywords.join("、");
+function buildDreamPrompt(result: InterpretResult, lang: Lang): string {
+  const keywords = result.keywords.join(lang === "en" ? ", " : "、");
   const primaryEntry = result.primaryEntry;
 
-  return `你是一位融合了中国传统周公解梦智慧与西方荣格/弗洛伊德心理学理论的释梦大师。
+  if (lang === "en") {
+    return `You are a master dream interpreter blending the wisdom of traditional Chinese Zhou Gong dream interpretation with Western Jungian/Freudian psychology.
+
+User's dream description: "${result.query}"
+Extracted core dream elements: ${keywords}
+Preliminary traditional Zhou Gong assessment: ${primaryEntry.level} (${primaryEntry.omen.slice(0, 60)}...)
+Psychological reference direction: ${primaryEntry.psychologyHint}
+
+Note: The traditional and psychological references above may be in Chinese — use them as inspiration only. Your entire response MUST be written in English.
+
+Using warm, professional, and insightful language, generate a dream interpretation report for the user.
+
+The report must contain:
+
+1. **Traditional Dream Interpretation**:
+   - Fortune verdict (one of: Very Auspicious / Auspicious / Neutral / Inauspicious / Very Inauspicious)
+   - Omen reading (~100 words, based on traditional symbolism, citing classic Zhou Gong interpretations where fitting)
+   - Specific do's and don'ts (format: Do: xxx; Don't: xxx)
+
+2. **Subconscious Psychological Analysis**:
+   - Core psychological state (~80 words, based on Jungian archetypes or Freudian theory)
+   - Real-life mapping (~60 words, connecting the dream to possible real situations)
+   - Soul growth advice (~60 words, inspiring and actionable)
+
+3. **One-line Dream Aphorism** (20-30 words, poetic and wise, distilling the essence of this dream)
+
+Return in JSON format (all string values MUST be in English):
+{
+  "level": "fortune level (one of: Very Auspicious / Auspicious / Neutral / Inauspicious / Very Inauspicious)",
+  "traditional": {
+    "omen": "omen reading",
+    "advice": "do's and don'ts"
+  },
+  "psychology": {
+    "coreState": "core psychological state",
+    "realMapping": "real-life mapping",
+    "growthTip": "soul growth advice"
+  },
+  "dreamQuote": "dream aphorism"
+}`;
+  }
+
+  const twLine = lang === "tw" ? "\n\n請務必使用繁體中文（台灣用語）輸出全部內容。" : "";
+
+  return `你是一位融合了中国传统周公解梦智慧与西方荣格/弗洛伊德心理学理论的释梦大师。${twLine}
 
 用户梦境描述：「${result.query}」
 提取到的核心梦境元素：${keywords}
@@ -47,7 +92,7 @@ function buildDreamPrompt(result: InterpretResult): string {
 }`;
 }
 
-function generateMockInterpretation(result: InterpretResult): {
+function generateMockInterpretation(result: InterpretResult, lang: Lang): {
   level: string;
   traditional: { omen: string; advice: string };
   psychology: { coreState: string; realMapping: string; growthTip: string };
@@ -55,6 +100,23 @@ function generateMockInterpretation(result: InterpretResult): {
 } {
   const entry = result.primaryEntry;
   const dreamName = result.keywords[0] ?? result.query.slice(0, 6);
+  const isAuspicious = entry.level === "大吉" || entry.level === "吉";
+
+  if (lang === "en") {
+    return {
+      level: entry.level,
+      traditional: {
+        omen: entry.omen,
+        advice: entry.advice,
+      },
+      psychology: {
+        coreState: `Dreaming of "${dreamName}" is a signal from your subconscious. ${entry.psychologyHint} Right now your inner world is processing some deeper emotions — the dream is how you integrate the day's experiences in sleep.`,
+        realMapping: `Seen against your current life, this dream may relate to a recent decision, emotional state, or source of stress. Your subconscious is symbolically helping you untangle your thoughts and find the answer your heart truly seeks.`,
+        growthTip: `Try to recall the details of the dream while awake, and record your feelings in a journal. The emotions in a dream often matter more than the plot — listen to that feeling, for it is guiding you to see what you truly need.`,
+      },
+      dreamQuote: `A dream is a mirror of the soul. ${isAuspicious ? "Fortune's light has arrived — ride the momentum forward." : "Wait calmly for the turning point; your heart already holds the answer."}`,
+    };
+  }
 
   return {
     level: entry.level,
@@ -67,27 +129,35 @@ function generateMockInterpretation(result: InterpretResult): {
       realMapping: `结合当下生活来看，这个梦境可能与你近期面临的某个决策、情感状态或压力来源有关。你的潜意识正在以象征性的方式帮助你理清思路，寻找内心真正的答案。`,
       growthTip: `尝试在清醒时回忆梦境细节，用日记记录你的感受。梦境中的情绪往往比情节更有意义，倾听那份情绪，它正在引导你向内看见自己真正的需要。`,
     },
-    dreamQuote: `梦境是灵魂的镜子，${entry.level === "大吉" || entry.level === "吉" ? "此刻吉光已至，乘势而为。" : "静待转机，内心自有答案。"}`,
+    dreamQuote: `梦境是灵魂的镜子，${isAuspicious ? "此刻吉光已至，乘势而为。" : "静待转机，内心自有答案。"}`,
   };
 }
 
 export async function POST(request: NextRequest) {
-  let body: { query?: string };
+  let body: { query?: string; lang?: Lang };
 
   try {
-    body = await request.json() as { query?: string };
+    body = await request.json() as { query?: string; lang?: Lang };
   } catch {
     return NextResponse.json({ error: "请求格式错误" }, { status: 400 });
   }
 
   const { query } = body;
+  const lang: Lang = body.lang ?? "zh";
+
+  const errInvalid =
+    lang === "en" ? "Please enter your dream" : "请输入梦境内容";
+  const errTooLong =
+    lang === "en"
+      ? "Dream description too long, please keep it under 500 characters"
+      : "梦境描述过长，请控制在500字以内";
 
   if (!query || typeof query !== "string" || query.trim().length < 1) {
-    return NextResponse.json({ error: "请输入梦境内容" }, { status: 400 });
+    return NextResponse.json({ error: errInvalid }, { status: 400 });
   }
 
   if (query.trim().length > 500) {
-    return NextResponse.json({ error: "梦境描述过长，请控制在500字以内" }, { status: 400 });
+    return NextResponse.json({ error: errTooLong }, { status: 400 });
   }
 
   // 运行解梦引擎
@@ -98,6 +168,11 @@ export async function POST(request: NextRequest) {
 
   const apiKey = env.DEEPSEEK_API_KEY;
   const baseUrl = "https://api.deepseek.com";
+
+  const systemContent =
+    lang === "en"
+      ? "You are a master dream interpreter blending traditional Chinese Zhou Gong dream interpretation with Western Jungian psychology, providing deep, warm, and inspiring dream readings. Respond entirely in English."
+      : "你是一位融合中国传统周公解梦与西方荣格心理学的释梦大师，能够为用户提供深刻、温暖且有启发性的梦境解读。";
 
   if (apiKey) {
     try {
@@ -115,12 +190,11 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: "system",
-              content:
-                "你是一位融合中国传统周公解梦与西方荣格心理学的释梦大师，能够为用户提供深刻、温暖且有启发性的梦境解读。",
+              content: systemContent,
             },
             {
               role: "user",
-              content: buildDreamPrompt(dreamResult),
+              content: buildDreamPrompt(dreamResult, lang),
             },
           ],
           temperature: 0.85,
@@ -158,7 +232,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const report = aiReport ?? generateMockInterpretation(dreamResult);
+  const report = aiReport ?? generateMockInterpretation(dreamResult, lang);
 
   return NextResponse.json({
     query: dreamResult.query,

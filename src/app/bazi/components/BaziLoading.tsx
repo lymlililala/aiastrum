@@ -2,20 +2,56 @@
 
 import React, { useEffect, useState } from "react";
 
-const LOADING_STEPS = [
-  "正在推算年柱天干地支...",
-  "正在排定月柱与节气...",
-  "正在演算日主命格...",
-  "正在分析五行生克...",
-  "正在查勘2026年流年太岁...",
-  "AI 命理师正在解读命盘...",
-];
+type Lang = "zh" | "en" | "tw";
+
+// ── 加载界面 UI 文案（三语）─────────────────────────
+const LT = {
+  zh: {
+    steps: [
+      "正在推算年柱天干地支...",
+      "正在排定月柱与节气...",
+      "正在演算日主命格...",
+      "正在分析五行生克...",
+      "正在查勘2026年流年太岁...",
+      "AI 命理师正在解读命盘...",
+    ],
+    corners: ["年", "月", "日", "时"],
+    footer: "天地玄黄，宇宙洪荒…",
+  },
+  tw: {
+    steps: [
+      "正在推算年柱天干地支...",
+      "正在排定月柱與節氣...",
+      "正在演算日主命格...",
+      "正在分析五行生剋...",
+      "正在查勘2026年流年太歲...",
+      "AI 命理師正在解讀命盤...",
+    ],
+    corners: ["年", "月", "日", "時"],
+    footer: "天地玄黃，宇宙洪荒…",
+  },
+  en: {
+    steps: [
+      "Calculating the Year Pillar's Stem and Branch...",
+      "Setting the Month Pillar and solar terms...",
+      "Working out the Day Master...",
+      "Analyzing the Five Elements' interactions...",
+      "Examining the 2026 yearly Tai Sui...",
+      "The AI master is interpreting your chart...",
+    ],
+    corners: ["Year", "Month", "Day", "Hour"],
+    footer: "Heaven and earth, the vast cosmos…",
+  },
+};
+// ────────────────────────────────────────────────────
 
 const BAGUA_SYMBOLS = ["☰", "☱", "☲", "☳", "☴", "☵", "☶", "☷"];
 const TIANGAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
 const DIZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
 
-export function BaziLoading() {
+export function BaziLoading({ lang }: { lang: Lang }) {
+  const t = LT[lang];
+  const LOADING_STEPS = t.steps;
   const [currentStep, setCurrentStep] = useState(0);
   const [flashChars, setFlashChars] = useState<string[]>([]);
 
@@ -147,7 +183,7 @@ export function BaziLoading() {
           </div>
 
           {/* 四角装饰 */}
-          {["年", "月", "日", "时"].map((label, i) => {
+          {t.corners.map((label, i) => {
             const positions = [
               { top: "-8px", left: "50%", transform: "translateX(-50%)" },
               { right: "-8px", top: "50%", transform: "translateY(-50%)" },
@@ -205,7 +241,7 @@ export function BaziLoading() {
           className="mt-8 text-xs"
           style={{ color: "rgba(200,180,150,0.4)" }}
         >
-          天地玄黄，宇宙洪荒…
+          {t.footer}
         </p>
       </div>
     </div>

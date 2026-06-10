@@ -3,14 +3,16 @@
 import React, { useEffect, useState } from "react";
 import type { ScanProgress } from "../face-reading-engine";
 import type { AnalysisMode } from "../face-reading-data";
+import type { FaceT } from "../face-reading-i18n";
 
 interface ScanAnimationProps {
+  t: FaceT;
   imageUrl: string;
   progress: ScanProgress;
   mode: AnalysisMode;
 }
 
-export function ScanAnimation({ imageUrl, progress, mode }: ScanAnimationProps) {
+export function ScanAnimation({ t, imageUrl, progress, mode }: ScanAnimationProps) {
   const [dots, setDots] = useState(".");
   const [glitchActive, setGlitchActive] = useState(false);
 
@@ -39,10 +41,10 @@ export function ScanAnimation({ imageUrl, progress, mode }: ScanAnimationProps) 
       <div className="fr-scan-header">
         <div className="fr-scan-badge">
           <span className="fr-scan-badge-dot" />
-          AI 分析中
+          {t.scanBadge}
         </div>
         <p className="fr-scan-title">
-          {mode === "face" ? "面相深度扫描" : "掌纹解码分析"}
+          {mode === "face" ? t.scanTitleFace : t.scanTitlePalm}
         </p>
       </div>
 
@@ -52,7 +54,7 @@ export function ScanAnimation({ imageUrl, progress, mode }: ScanAnimationProps) 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
-          alt="分析中"
+          alt={t.scanImageAlt}
           className={`fr-scan-image ${glitchActive ? "glitch" : ""}`}
         />
 
@@ -135,11 +137,11 @@ export function ScanAnimation({ imageUrl, progress, mode }: ScanAnimationProps) 
       {/* 分析阶段指示器 */}
       <div className="fr-phases">
         {[
-          { phase: "uploading", label: "上传" },
-          { phase: "detecting", label: "识别" },
-          { phase: "analyzing", label: "分析" },
-          { phase: "generating", label: "生成" },
-          { phase: "complete", label: "完成" },
+          { phase: "uploading", label: t.phaseUpload },
+          { phase: "detecting", label: t.phaseDetect },
+          { phase: "analyzing", label: t.phaseAnalyze },
+          { phase: "generating", label: t.phaseGenerate },
+          { phase: "complete", label: t.phaseComplete },
         ].map(({ phase, label }) => {
           const phases = ["uploading", "detecting", "analyzing", "generating", "complete"];
           const currentIdx = phases.indexOf(progress.phase);

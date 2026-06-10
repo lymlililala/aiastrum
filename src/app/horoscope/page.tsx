@@ -6,6 +6,9 @@ import { ZodiacGrid } from "./components/ZodiacGrid";
 import { FortuneDetail } from "./components/FortuneDetail";
 import { FortunePoster } from "./components/FortunePoster";
 import "./horoscope.css";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./horoscope-i18n";
 import {
   generateHoroscope,
   saveSelectedZodiac,
@@ -18,6 +21,9 @@ import type { ZodiacId, TimePeriod } from "./horoscope-data";
 type PageStep = "select" | "detail";
 
 export default function HoroscopePage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [step, setStep] = useState<PageStep>("select");
   const [selectedZodiac, setSelectedZodiac] = useState<ZodiacId | null>(null);
   const [period, setPeriod] = useState<TimePeriod>("today");
@@ -91,7 +97,12 @@ export default function HoroscopePage() {
           color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
           textDecoration: "none", letterSpacing: "0.06em",
           transition: "all 0.18s",
-        }}>← 返回</a>
+        }}>{t.back}</a>
+
+        {/* 语言切换 */}
+        <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+          <LangSwitcher />
+        </div>
 
         {/* 背景装饰 */}
         <div className="horoscope-bg">
@@ -105,16 +116,16 @@ export default function HoroscopePage() {
             {/* 顶部标题 */}
             <div className="horoscope-page-header">
               <div className="horoscope-page-icon">🌌</div>
-              <h1 className="horoscope-page-title">星座运势</h1>
-              <p className="horoscope-page-subtitle">选择你的星座，探索专属运势密码</p>
+              <h1 className="horoscope-page-title">{t.pageTitle}</h1>
+              <p className="horoscope-page-subtitle">{t.pageSubtitle}</p>
             </div>
 
             {/* 星座选择器 */}
-            <ZodiacGrid selected={selectedZodiac} onSelect={handleZodiacSelect} />
+            <ZodiacGrid selected={selectedZodiac} onSelect={handleZodiacSelect} t={t} />
 
             {/* 底部提示 */}
             <p className="horoscope-page-footer">
-              ✨ 选择星座后即可查看运势 · 你的选择会被记住
+              {t.pageFooter}
             </p>
           </div>
         ) : (
@@ -122,7 +133,7 @@ export default function HoroscopePage() {
             {/* 返回按钮 */}
             <button className="horoscope-back-btn" onClick={handleBack}>
               <span className="horoscope-back-arrow">←</span>
-              返回选择
+              {t.backToSelect}
             </button>
 
             {/* 运势详情 */}
@@ -131,6 +142,7 @@ export default function HoroscopePage() {
                 result={result}
                 onPeriodChange={handlePeriodChange}
                 onShare={() => setShowPoster(true)}
+                t={t}
               />
             )}
           </div>
@@ -142,6 +154,7 @@ export default function HoroscopePage() {
             result={result}
             visible={showPoster}
             onClose={() => setShowPoster(false)}
+            t={t}
           />
         )}
       </div>

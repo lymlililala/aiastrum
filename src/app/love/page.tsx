@@ -6,12 +6,18 @@ import LoveLoading from "./components/LoveLoading";
 import LoveFullReport from "./components/LoveFullReport";
 import type { LoveReport } from "./love-data";
 import type { LoveInput } from "./love-engine";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { LOVE_T, type LoveLang } from "./love-i18n";
 
 type Step = "input" | "loading" | "full-report";
 
 const STORAGE_KEY = "love_order_report";
 
 export default function LovePage() {
+  const lang = useLocale() as LoveLang;
+  const t = LOVE_T[lang];
+
   const [step, setStep] = useState<Step>("input");
   const [report, setReport] = useState<LoveReport | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -36,14 +42,14 @@ export default function LovePage() {
       const res = await fetch("/api/love", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ ...input, lang }),
       });
 
       await new Promise(r => setTimeout(r, 3500)); // 最短3.5秒loading，拉满仪式感
 
       if (!res.ok) {
         const err = await res.json() as { error?: string };
-        setErrMsg(err.error ?? "测算失败，请重试");
+        setErrMsg(err.error ?? t.errCalcFail);
         setStep("input");
         return;
       }
@@ -54,11 +60,11 @@ export default function LovePage() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data.report));
         setStep("full-report");
       } else {
-        setErrMsg("测算失败，请重试");
+        setErrMsg(t.errCalcFail);
         setStep("input");
       }
     } catch {
-      setErrMsg("网络连接失败，请检查网络后重试");
+      setErrMsg(t.errNetwork);
       setStep("input");
     }
   };
@@ -74,7 +80,7 @@ export default function LovePage() {
     <main className="love-main">
       {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
       <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
-        合婚配对测算 — AI 爱情缘分分析
+        {t.seoH1}
       </h1>
       {/* 返回首页 */}
       <a href="/" style={{
@@ -86,7 +92,12 @@ export default function LovePage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>{t.back}</a>
+
+      {/* 语言切换 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
 
       {/* 全局星空背景 */}
       <div className="love-bg-gradient" />
@@ -108,7 +119,7 @@ export default function LovePage() {
               <button onClick={() => setErrMsg(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: "1.1rem", padding: 0, lineHeight: 1 }}>×</button>
             </div>
           )}
-          <LoveInputComponent onSubmit={handleSubmit} isLoading={false} />
+          <LoveInputComponent t={t} onSubmit={handleSubmit} isLoading={false} />
         </>
       )}
 
@@ -116,6 +127,8 @@ export default function LovePage() {
 
       {step === "full-report" && report && (
         <LoveFullReport
+          lang={lang}
+          t={t}
           report={report}
           onReset={handleReset}
         />

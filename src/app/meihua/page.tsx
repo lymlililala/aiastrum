@@ -7,10 +7,16 @@ import MeihuaResultComponent from "./components/MeihuaResult";
 import MeihuaKnowledge from "./components/MeihuaKnowledge";
 import type { MeihuaInput } from "./meihua-engine";
 import type { MeihuaResult } from "./meihua-engine";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./meihua-i18n";
 
 type Step = "input" | "loading" | "result";
 
 export default function MeihuaPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [step, setStep] = useState<Step>("input");
   const [result, setResult] = useState<MeihuaResult | null>(null);
   const [aiReading, setAiReading] = useState<string | null>(null);
@@ -23,11 +29,11 @@ export default function MeihuaPage() {
       const response = await fetch("/api/meihua", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ ...input, lang }),
       });
 
       if (!response.ok) {
-        throw new Error("起卦请求失败");
+        throw new Error(t.reqFailed);
       }
 
       const data = await response.json() as {
@@ -44,11 +50,11 @@ export default function MeihuaPage() {
         await new Promise(resolve => setTimeout(resolve, 1800));
         setStep("result");
       } else {
-        throw new Error(data.error ?? "未知错误");
+        throw new Error(data.error ?? t.unknownErr);
       }
     } catch (err) {
       console.warn("梅花起卦错误:", err);
-      setErrorMsg("起卦失败，请稍后再试");
+      setErrorMsg(t.castFailed);
       setStep("input");
     }
   };
@@ -75,13 +81,15 @@ export default function MeihuaPage() {
       {/* 顶部导航 */}
       <nav className="meihua-nav">
         <a href="/" className="meihua-nav-back">
-          ← 返回首页
+          {t.back}
         </a>
         <div className="meihua-nav-brand">
           <span className="meihua-nav-icon">✿</span>
-          <span className="meihua-nav-title">梅花心易</span>
+          <span className="meihua-nav-title">{t.brand}</span>
         </div>
-        <div className="meihua-nav-placeholder" />
+        <div className="meihua-nav-placeholder">
+          <LangSwitcher />
+        </div>
       </nav>
 
       {/* 主内容区 */}
@@ -103,23 +111,25 @@ export default function MeihuaPage() {
                 <button onClick={() => setErrorMsg(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: "1rem", padding: "0 4px" }}>×</button>
               </div>
             )}
-            <MeihuaInputComponent onSubmit={handleSubmit} isLoading={false} />
-            <MeihuaKnowledge />
+            <MeihuaInputComponent lang={lang} t={t} onSubmit={handleSubmit} isLoading={false} />
+            <MeihuaKnowledge t={t} />
           </>
         )}
 
         {step === "loading" && (
-          <MeihuaLoading />
+          <MeihuaLoading t={t} />
         )}
 
         {step === "result" && result && (
           <>
             <MeihuaResultComponent
+              lang={lang}
+              t={t}
               result={result}
               aiReading={aiReading}
               onReset={handleReset}
             />
-            <MeihuaKnowledge />
+            <MeihuaKnowledge t={t} />
           </>
         )}
       </main>
@@ -127,9 +137,9 @@ export default function MeihuaPage() {
       {/* 底部 */}
       <footer className="meihua-footer">
         <p className="meihua-footer-text">
-          梅花心易 · 北宋邵雍传世之法 · 以国学文化为基，仅供参考赏玩
+          {t.footerText}
         </p>
-        <p className="meihua-footer-quote">"善易者不卜"——精通易理之人，以易道指导人生而非迷信卦象</p>
+        <p className="meihua-footer-quote">{t.footerQuote}</p>
       </footer>
     </div>
   );

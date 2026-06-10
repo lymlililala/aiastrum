@@ -3,29 +3,33 @@
 import { useEffect, useState } from "react";
 import type { RelationType } from "../synastry-data";
 import { RELATION_TYPES } from "../synastry-data";
+import type { SynT } from "../synastry-i18n";
 
 interface Props {
   personAName: string;
   personBName: string;
   relationType: RelationType;
+  t: SynT;
 }
 
-const LOADING_STEPS = [
-  { icon: "🌌", text: "正在读取星图..." },
-  { icon: "🪐", text: "计算行星轨迹..." },
-  { icon: "✨", text: "分析跨盘相位..." },
-  { icon: "💫", text: "测量灵魂频率..." },
-  { icon: "🔮", text: "生成专属解析..." },
-];
+const LOADING_ICONS = ["🌌", "🪐", "✨", "💫", "🔮"];
 
-export default function SynastryLoading({ personAName, personBName, relationType }: Props) {
+export default function SynastryLoading({ personAName, personBName, relationType, t }: Props) {
   const [phase, setPhase] = useState(0);
   const [dots, setDots] = useState(1);
   const rel = RELATION_TYPES[relationType];
 
+  const loadingSteps = [
+    { icon: LOADING_ICONS[0], text: t.loadStep0 },
+    { icon: LOADING_ICONS[1], text: t.loadStep1 },
+    { icon: LOADING_ICONS[2], text: t.loadStep2 },
+    { icon: LOADING_ICONS[3], text: t.loadStep3 },
+    { icon: LOADING_ICONS[4], text: t.loadStep4 },
+  ];
+
   useEffect(() => {
     const phaseTimer = setInterval(() => {
-      setPhase((p) => (p < LOADING_STEPS.length - 1 ? p + 1 : p));
+      setPhase((p) => (p < loadingSteps.length - 1 ? p + 1 : p));
     }, 800);
     const dotTimer = setInterval(() => {
       setDots((d) => (d % 3) + 1);
@@ -34,9 +38,9 @@ export default function SynastryLoading({ personAName, personBName, relationType
       clearInterval(phaseTimer);
       clearInterval(dotTimer);
     };
-  }, []);
+  }, [loadingSteps.length]);
 
-  const step = LOADING_STEPS[phase]!;
+  const step = loadingSteps[phase]!;
 
   return (
     <div className="syn-loading">
@@ -64,7 +68,7 @@ export default function SynastryLoading({ personAName, personBName, relationType
           className="syn-orb syn-orb-a"
           style={{ background: `radial-gradient(circle, ${rel.gradientFrom}, transparent)` }}
         >
-          <span className="syn-orb-name">{personAName || "你"}</span>
+          <span className="syn-orb-name">{personAName || t.loadYou}</span>
         </div>
         <div className="syn-orb-connector">
           <div className="syn-orb-beam" />
@@ -74,7 +78,7 @@ export default function SynastryLoading({ personAName, personBName, relationType
           className="syn-orb syn-orb-b"
           style={{ background: `radial-gradient(circle, ${rel.gradientTo}, transparent)` }}
         >
-          <span className="syn-orb-name">{personBName || "TA"}</span>
+          <span className="syn-orb-name">{personBName || t.loadTa}</span>
         </div>
       </div>
 
@@ -92,14 +96,14 @@ export default function SynastryLoading({ personAName, personBName, relationType
         <div
           className="syn-loading-bar"
           style={{
-            width: `${((phase + 1) / LOADING_STEPS.length) * 100}%`,
+            width: `${((phase + 1) / loadingSteps.length) * 100}%`,
             background: `linear-gradient(90deg, ${rel.gradientFrom}, ${rel.gradientTo})`,
           }}
         />
       </div>
 
       <p className="syn-loading-sub">
-        正在为 <strong>{personAName}</strong> × <strong>{personBName}</strong> 构建专属星盘…
+        {t.loadSubPre} <strong>{personAName}</strong> × <strong>{personBName}</strong> {t.loadSubPost}
       </p>
     </div>
   );

@@ -4,13 +4,15 @@ import React, { useState, useEffect, useRef } from "react";
 import type { AstroInput } from "../astro-engine";
 import { searchCities } from "../astro-data";
 import type { CityData } from "../astro-data";
+import type { AstroT } from "../astro-i18n";
 
 interface AstroInputProps {
   onSubmit: (input: AstroInput) => void;
   isLoading: boolean;
+  t: AstroT;
 }
 
-export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
+export function AstroInputForm({ onSubmit, isLoading, t }: AstroInputProps) {
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
@@ -66,19 +68,19 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
     setError("");
 
     if (!name.trim()) {
-      setError("请输入你的姓名或昵称");
+      setError(t.errName);
       return;
     }
     if (!birthDate) {
-      setError("请选择出生日期");
+      setError(t.errDate);
       return;
     }
     if (!unknownTime && !birthTime) {
-      setError("请输入出生时间，或勾选「不知道出生时间」");
+      setError(t.errTime);
       return;
     }
     if (!selectedCity) {
-      setError("请选择出生城市");
+      setError(t.errCity);
       return;
     }
 
@@ -110,8 +112,8 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
           ))}
         </div>
         <div className="text-6xl mb-4 animate-float">✨</div>
-        <h1 className="astro-input-title">遇见宇宙中的自己</h1>
-        <p className="astro-input-subtitle">获取你的专属本命星盘</p>
+        <h1 className="astro-input-title">{t.inputTitle}</h1>
+        <p className="astro-input-subtitle">{t.inputSubtitle}</p>
       </div>
 
       {/* 表单 */}
@@ -120,13 +122,13 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
         <div className="astro-form-group">
           <label className="astro-form-label">
             <span className="astro-form-label-icon">✨</span>
-            你的名字
+            {t.fieldName}
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="输入你的姓名或昵称"
+            placeholder={t.namePlaceholder}
             className="astro-form-input"
             maxLength={20}
           />
@@ -136,12 +138,12 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
         <div className="astro-form-group">
           <label className="astro-form-label">
             <span className="astro-form-label-icon">📅</span>
-            出生日期
+            {t.fieldDate}
           </label>
           <label className="astro-picker-card" style={{ cursor: "pointer" }}>
             <span className="astro-picker-icon">📅</span>
             <span className="astro-picker-value">
-              {birthDate ? birthDate.replace(/-/g, " / ") : "点击选择日期"}
+              {birthDate ? birthDate.replace(/-/g, " / ") : t.pickDate}
             </span>
             <span className="astro-picker-arrow">›</span>
             <input
@@ -159,8 +161,8 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
         <div className="astro-form-group">
           <label className="astro-form-label">
             <span className="astro-form-label-icon">🕐</span>
-            出生时间
-            <span className="astro-form-label-hint">（精确时间可计算上升星座）</span>
+            {t.fieldTime}
+            <span className="astro-form-label-hint">{t.timeHint}</span>
           </label>
           {/* 时间选择卡片 */}
           <label
@@ -169,7 +171,7 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
           >
             <span className="astro-picker-icon">🕐</span>
             <span className="astro-picker-value" style={{ opacity: unknownTime ? 0.35 : 1 }}>
-              {birthTime || "点击选择时间"}
+              {birthTime || t.pickTime}
             </span>
             <span className="astro-picker-arrow">›</span>
             <input
@@ -191,12 +193,12 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
           >
             <span className={`astro-toggle-dot ${unknownTime ? "astro-toggle-dot--on" : ""}`} />
             <span className="astro-toggle-label">
-              {unknownTime ? "已跳过时间（仅显示行星位置）" : "不知道出生时间"}
+              {unknownTime ? t.timeSkipped : t.timeUnknown}
             </span>
           </button>
           {unknownTime && (
             <p className="astro-form-notice">
-              ⚠️ 不知道出生时间将无法计算上升星座与宫位，星盘仅显示行星位置与相位
+              {t.timeNotice}
             </p>
           )}
         </div>
@@ -205,7 +207,7 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
         <div className="astro-form-group">
           <label className="astro-form-label">
             <span className="astro-form-label-icon">📍</span>
-            出生地点
+            {t.fieldCity}
           </label>
           <div className="astro-city-wrapper">
             <input
@@ -218,7 +220,7 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
                 setSelectedCity(null);
               }}
               onFocus={() => setShowCityDropdown(true)}
-              placeholder="搜索城市（如：上海、北京）"
+              placeholder={t.cityPlaceholder}
               className="astro-form-input"
             />
             {showCityDropdown && cityResults.length > 0 && (
@@ -233,7 +235,7 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
                     <span className="astro-city-name">{city.name}</span>
                     <span className="astro-city-country">{city.country}</span>
                     <span className="astro-city-coords">
-                      {city.lat.toFixed(2)}°N, {city.lng.toFixed(2)}°E
+                      {city.lat.toFixed(2)}{t.coordN}, {city.lng.toFixed(2)}{t.coordE}
                     </span>
                   </button>
                 ))}
@@ -244,8 +246,8 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
             <div className="astro-city-selected">
               <span>📍 {selectedCity.name}, {selectedCity.country}</span>
               <span className="astro-city-selected-coords">
-                {Math.abs(selectedCity.lat).toFixed(2)}{selectedCity.lat >= 0 ? "°N" : "°S"},
-                {Math.abs(selectedCity.lng).toFixed(2)}{selectedCity.lng >= 0 ? "°E" : "°W"}
+                {Math.abs(selectedCity.lat).toFixed(2)}{selectedCity.lat >= 0 ? t.coordN : t.coordS},
+                {Math.abs(selectedCity.lng).toFixed(2)}{selectedCity.lng >= 0 ? t.coordE : t.coordW}
               </span>
             </div>
           )}
@@ -269,15 +271,15 @@ export function AstroInputForm({ onSubmit, isLoading }: AstroInputProps) {
               <span className="astro-loading-dots">
                 <span>●</span><span>●</span><span>●</span>
               </span>
-              正在解析星空...
+              {t.submitting}
             </span>
           ) : (
-            <span>✨ 解读我的星盘</span>
+            <span>{t.submit}</span>
           )}
         </button>
 
         <p className="astro-form-footer">
-          星盘在你出生的瞬间定格，此刻为你揭示
+          {t.formFooter}
         </p>
       </form>
     </div>

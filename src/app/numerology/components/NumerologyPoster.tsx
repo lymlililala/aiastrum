@@ -3,14 +3,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import type { NumerologyResult } from "../numerology-engine";
 import { formatBirthdate } from "../numerology-engine";
+import type { NumT, Lang } from "../numerology-i18n";
 
 interface NumerologyPosterProps {
+  t: NumT;
+  lang: Lang;
   result: NumerologyResult;
   visible: boolean;
   onClose: () => void;
 }
 
-export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterProps) {
+export function NumerologyPoster({ t, lang, result, visible, onClose }: NumerologyPosterProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -84,7 +87,7 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
     ctx.font = "bold 22px serif";
     ctx.fillStyle = "rgba(201,168,76,0.7)";
     ctx.textAlign = "center";
-    ctx.fillText("命运密语 · 生命灵数", W / 2, 44);
+    ctx.fillText(t.posterBrand, W / 2, 44);
     ctx.restore();
 
     // ===== 卓越数标识 =====
@@ -102,7 +105,7 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
       ctx.font = "bold 13px sans-serif";
       ctx.fillStyle = secondaryColor;
       ctx.textAlign = "center";
-      ctx.fillText("⚡ 卓越数字 · MASTER NUMBER", W / 2, 97);
+      ctx.fillText(t.posterMaster, W / 2, 97);
       ctx.restore();
     }
 
@@ -167,7 +170,7 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
     ctx.fillStyle = "rgba(200,180,140,0.6)";
     ctx.textAlign = "center";
     ctx.fillText(
-      `📅 ${formatBirthdate(birthdate.year, birthdate.month, birthdate.day)}`,
+      `📅 ${formatBirthdate(birthdate.year, birthdate.month, birthdate.day, lang)}`,
       W / 2,
       dateY,
     );
@@ -302,7 +305,7 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
     ctx.font = "13px sans-serif";
     ctx.fillStyle = "rgba(201,168,76,0.4)";
     ctx.textAlign = "center";
-    ctx.fillText("✦ 命运密语 · numerology ✦", W / 2, H - 28);
+    ctx.fillText(t.posterFooter, W / 2, H - 28);
     ctx.restore();
 
     // 生成图片 URL
@@ -411,7 +414,7 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
         {/* 关闭按钮 */}
         <button className="num-poster-close" onClick={onClose}>✕</button>
 
-        <h3 className="num-poster-title">🎴 你的专属灵数卡片</h3>
+        <h3 className="num-poster-title">{t.posterTitle}</h3>
 
         {/* Canvas（隐藏，用于生成图片） */}
         <canvas ref={canvasRef} style={{ display: "none" }} />
@@ -421,13 +424,13 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
           {isGenerating ? (
             <div className="num-poster-generating">
               <span className="num-poster-gen-icon">✨</span>
-              <p>正在为你绘制专属卡片...</p>
+              <p>{t.posterGenerating}</p>
             </div>
           ) : imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={imageUrl}
-              alt={`生命灵数${result.number}卡片`}
+              alt={t.posterAlt}
               className="num-poster-image"
             />
           ) : null}
@@ -438,10 +441,10 @@ export function NumerologyPoster({ result, visible, onClose }: NumerologyPosterP
           <div className="num-poster-actions">
             <button className="num-poster-download-btn" onClick={handleDownload}>
               <span>⬇</span>
-              <span>保存图片</span>
+              <span>{t.posterDownload}</span>
             </button>
             <p className="num-poster-share-tip">
-              长按图片可直接分享到微信、朋友圈等
+              {t.posterShareTip}
             </p>
           </div>
         )}

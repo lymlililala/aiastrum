@@ -4,6 +4,37 @@ import React, { useState, useEffect } from "react";
 import type { DrawnRune } from "../rune-engine";
 import { getActiveReading, getElementColor } from "../rune-engine";
 
+type Lang = "zh" | "en" | "tw";
+
+// ── 三语文案（仅 UI chrome） ───────────────────────────
+const ST = {
+  zh: {
+    reversedBadge: "↓ 逆位",
+    flipHint:      "点击翻开",
+    elementPower:  (el: string) => `⚡ ${el}之力`,
+    deityPrefix:   "🏛 ",
+    revelation:    "符文启示",
+    mythology:     "📜 神话背景",
+  },
+  tw: {
+    reversedBadge: "↓ 逆位",
+    flipHint:      "點擊翻開",
+    elementPower:  (el: string) => `⚡ ${el}之力`,
+    deityPrefix:   "🏛 ",
+    revelation:    "符文啟示",
+    mythology:     "📜 神話背景",
+  },
+  en: {
+    reversedBadge: "↓ Reversed",
+    flipHint:      "Tap to reveal",
+    elementPower:  (el: string) => `⚡ Power of ${el}`,
+    deityPrefix:   "🏛 ",
+    revelation:    "Rune Revelation",
+    mythology:     "📜 Mythology",
+  },
+};
+// ───────────────────────────────────────────────────────
+
 interface RuneStoneProps {
   stone: DrawnRune;
   index?: number;
@@ -11,6 +42,7 @@ interface RuneStoneProps {
   onReveal?: () => void;       // 点击翻开
   showDetail?: boolean;        // 是否显示详情区域
   compact?: boolean;           // 紧凑模式（三石阵）
+  lang: Lang;
 }
 
 export function RuneStone({
@@ -20,7 +52,9 @@ export function RuneStone({
   onReveal,
   showDetail = false,
   compact = false,
+  lang,
 }: RuneStoneProps) {
+  const t = ST[lang];
   const [flipped, setFlipped] = useState(revealed);
   const [glowing, setGlowing] = useState(false);
 
@@ -36,7 +70,7 @@ export function RuneStone({
     }
   }, [revealed, index, flipped]);
 
-  const reading = getActiveReading(stone);
+  const reading = getActiveReading(stone, lang);
   const colors = getElementColor(stone.rune.element);
   const isReversed = stone.isReversed;
 
@@ -87,7 +121,7 @@ export function RuneStone({
             {stone.rune.symbol}
           </span>
           {/* 逆位标记 */}
-          {isReversed && <span className="rune-reversed-badge">↓ 逆位</span>}
+          {isReversed && <span className="rune-reversed-badge">{t.reversedBadge}</span>}
         </div>
 
         {/* 背面：未知状态 */}
@@ -97,7 +131,7 @@ export function RuneStone({
             <span className="rune-back-symbol">ᚠ</span>
             <div className="rune-back-ripple" />
           </div>
-          <p className="rune-back-hint">点击翻开</p>
+          <p className="rune-back-hint">{t.flipHint}</p>
         </div>
       </div>
 
@@ -150,14 +184,14 @@ export function RuneStone({
 
           {/* 元素与守护神 */}
           <div className="rune-detail-meta">
-            <span>⚡ {stone.rune.element}之力</span>
+            <span>{t.elementPower(stone.rune.element)}</span>
             <span className="rune-meta-dot" />
-            <span>🏛 {stone.rune.deity}</span>
+            <span>{t.deityPrefix}{stone.rune.deity}</span>
           </div>
 
           {/* 解读 */}
           <div className="rune-detail-section">
-            <h4 className="rune-detail-label">符文启示</h4>
+            <h4 className="rune-detail-label">{t.revelation}</h4>
             <p className="rune-detail-text">{reading.meaning}</p>
           </div>
 
@@ -169,7 +203,7 @@ export function RuneStone({
 
           {/* 神话背景折叠 */}
           <details className="rune-mythology">
-            <summary className="rune-mythology-summary">📜 神话背景</summary>
+            <summary className="rune-mythology-summary">{t.mythology}</summary>
             <p className="rune-mythology-text">{stone.rune.mythology}</p>
           </details>
         </div>

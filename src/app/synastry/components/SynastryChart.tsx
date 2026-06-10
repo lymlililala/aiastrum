@@ -3,12 +3,15 @@
 import { useMemo } from "react";
 import type { SynastryResult } from "../synastry-engine";
 import { getAspectInfo } from "../synastry-engine";
-import { RELATION_TYPES } from "../synastry-data";
+import { getRelationType } from "../synastry-data";
 import type { Planet, AspectType } from "../synastry-data";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP } from "../../astro/astro-data";
+import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
   result: SynastryResult;
+  t: SynT;
+  lang: SynLang;
 }
 
 // ===== 双层星盘 SVG =====
@@ -32,8 +35,8 @@ function getAspectColor(type: AspectType): string {
   return ASPECT_MAP[type]?.color ?? "#888";
 }
 
-export default function SynastryChart({ result }: Props) {
-  const rel = RELATION_TYPES[result.input.relationType];
+export default function SynastryChart({ result, t, lang }: Props) {
+  const rel = getRelationType(result.input.relationType, lang);
 
   // 重要行星（只显示太阳~土星的行星连线）
   const displayPlanets: Planet[] = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"];
@@ -82,8 +85,8 @@ export default function SynastryChart({ result }: Props) {
 
   return (
     <div className="syn-chart-wrap">
-      <h3 className="syn-section-title">双星盘相位图</h3>
-      <p className="syn-section-sub">内圈为 {result.input.personA.name}，外圈为 {result.input.personB.name}</p>
+      <h3 className="syn-section-title">{t.chartTitle}</h3>
+      <p className="syn-section-sub">{t.chartSubPre} {result.input.personA.name}{t.chartSubMid}{result.input.personB.name}</p>
 
       <div className="syn-chart-svg-wrap">
         <svg
@@ -206,11 +209,11 @@ export default function SynastryChart({ result }: Props) {
       <div className="syn-chart-legend">
         <div className="syn-legend-item">
           <span className="syn-legend-dot" style={{ borderColor: rel.gradientFrom }} />
-          <span>{result.input.personA.name}（内圈）</span>
+          <span>{result.input.personA.name}{t.legendInner}</span>
         </div>
         <div className="syn-legend-item">
           <span className="syn-legend-dot" style={{ borderColor: rel.gradientTo, borderStyle: "dashed" }} />
-          <span>{result.input.personB.name}（外圈）</span>
+          <span>{result.input.personB.name}{t.legendOuter}</span>
         </div>
       </div>
 
@@ -236,15 +239,15 @@ export default function SynastryChart({ result }: Props) {
       </div>
 
       {/* 雷达图（维度评分） */}
-      <RadarChart result={result} />
+      <RadarChart result={result} t={t} lang={lang} />
     </div>
   );
 }
 
 // ===== 雷达图 =====
-function RadarChart({ result }: { result: SynastryResult }) {
+function RadarChart({ result, t, lang }: { result: SynastryResult; t: SynT; lang: SynLang }) {
   const dims = result.dimensions;
-  const rel = RELATION_TYPES[result.input.relationType];
+  const rel = getRelationType(result.input.relationType, lang);
   const n = dims.length;
   const R = 80;
   const cx = 120;
@@ -276,7 +279,7 @@ function RadarChart({ result }: { result: SynastryResult }) {
 
   return (
     <div className="syn-radar-wrap">
-      <h4 className="syn-radar-title">契合度维度</h4>
+      <h4 className="syn-radar-title">{t.radarTitle}</h4>
       <svg width={240} height={240} viewBox="0 0 240 240" className="syn-radar-svg">
         <defs>
           <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">

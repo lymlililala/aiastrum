@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { STAR_COLORS, SI_HUA } from "../ziwei-data";
 import type { ZiweiChart, PalaceData } from "../ziwei-engine";
+import type { ZiweiT } from "../ziwei-i18n";
 
 interface ZiweiChartProps {
   chart: ZiweiChart;
   mode: "modern" | "classic";
   onModeChange: (mode: "modern" | "classic") => void;
+  t: ZiweiT;
 }
 
 // 十二宫在标准方格中的位置（传统样式：3x4布局，命宫在右下）
@@ -31,7 +33,7 @@ const GRID_POSITIONS: [number, number][] = [
 // 三合色
 const SANFANG_COLORS = ["#C77DFF", "#FFB703", "#48CAE4", "#FF99C8"];
 
-export default function ZiweiChartComponent({ chart, mode, onModeChange }: ZiweiChartProps) {
+export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: ZiweiChartProps) {
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
   const [expandedPalace, setExpandedPalace] = useState<number | null>(null);
 
@@ -55,41 +57,41 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange }: Ziwei
     <div className="zw-chart-container">
       {/* 模式切换 */}
       <div className="zw-mode-toggle">
-        <span className="zw-mode-label">显示模式</span>
+        <span className="zw-mode-label">{t.modeLabel}</span>
         <div className="zw-mode-btns">
           <button
             onClick={() => onModeChange("modern")}
             className={`zw-mode-btn ${mode === "modern" ? "zw-mode-active" : ""}`}
           >
-            🌟 小白模式
+            {t.modeModern}
           </button>
           <button
             onClick={() => onModeChange("classic")}
             className={`zw-mode-btn ${mode === "classic" ? "zw-mode-active" : ""}`}
           >
-            ☰ 专业模式
+            {t.modeClassic}
           </button>
         </div>
       </div>
 
       {/* 星盘信息 */}
       <div className="zw-chart-info">
-        <span>{chart.yearGan}{chart.yearZhi}年生</span>
+        <span>{chart.yearGan}{chart.yearZhi}{t.bornSuffix}</span>
         <span>·</span>
-        <span>{chart.gender === "female" ? "坤命" : "乾命"}</span>
+        <span>{chart.gender === "female" ? t.palaceFemale : t.palaceMale}</span>
         <span>·</span>
-        <span>{chart.wuXingJu} {chart.startAge}岁起运</span>
-        {chart.birthHour >= 0 && <><span>·</span><span>{chart.hourZhi}时</span></>}
+        <span>{chart.wuXingJu} {chart.startAge}{t.qiyunSuffix}</span>
+        {chart.birthHour >= 0 && <><span>·</span><span>{chart.hourZhi}{t.hourSuffix}</span></>}
       </div>
 
       {/* 模式说明 */}
       {mode === "modern" ? (
         <p className="zw-chart-mode-desc">
-          🌟 小白模式：以现代语言展示宫位含义，点击任意宫位查看三方四正
+          {t.modeModernDesc}
         </p>
       ) : (
         <p className="zw-chart-mode-desc">
-          ☰ 专业模式：传统十二宫格，完整星曜与四化，点击宫位高亮三方四正
+          {t.modeClassicDesc}
         </p>
       )}
 
@@ -150,7 +152,7 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange }: Ziwei
 
               {/* 大限 */}
               <div className="zw-palace-daxian">
-                {pd.daXian.startAge}-{pd.daXian.endAge}岁
+                {pd.daXian.startAge}-{pd.daXian.endAge}{t.ageSuffix}
               </div>
 
               {/* 主星 */}
@@ -178,23 +180,23 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange }: Ziwei
                   {pd.siHua.map(sh => (
                     <span key={sh} className="zw-sihua-badge"
                       style={{ color: SI_HUA[sh]?.color, borderColor: SI_HUA[sh]?.color }}>
-                      化{sh}
+                      {t.siHuaPrefix}{sh}
                     </span>
                   ))}
                 </div>
               )}
 
               {/* 三方四正标识 */}
-              {isSF && <div className="zw-sanfang-mark">三方</div>}
+              {isSF && <div className="zw-sanfang-mark">{t.sanFangMark}</div>}
             </div>
           );
         })}
       </div>
 
       {selectedPalace !== null && (
-        <p className="zw-chart-tip">已选中「{mode === "modern"
+        <p className="zw-chart-tip">{t.chartTipPre}{mode === "modern"
           ? chart.palaces[selectedPalace]?.palace.modernName
-          : chart.palaces[selectedPalace]?.palace.name}」，高亮显示三方四正宫位</p>
+          : chart.palaces[selectedPalace]?.palace.name}{t.chartTipPost}</p>
       )}
     </div>
   );

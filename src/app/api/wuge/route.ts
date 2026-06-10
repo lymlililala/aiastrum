@@ -3,8 +3,51 @@ import { calculateWuge } from "~/app/wuge/wuge-engine";
 import { getNumDetail } from "~/app/wuge/wuge-data";
 import { env } from "~/env.js";
 
-function buildWugePrompt(result: ReturnType<typeof calculateWuge>): string {
-  return `你是一位精通中国传统命名学与五格剖象法的命理师，请根据以下姓名五格数理分析，用温和、专业、有温度的语言，为用户生成一份完整的姓名解读报告。
+type Lang = "zh" | "en" | "tw";
+
+function buildWugePrompt(result: ReturnType<typeof calculateWuge>, lang: Lang): string {
+  if (lang === "en") {
+    return `You are a master of traditional Chinese name studies and the Five Grids (五格剖象法) numerology system. Based on the following name numerology analysis, generate a complete name interpretation report for the user in warm, professional, and heartfelt language.
+
+The analyzed name and its 五格 / 数理 (Five Grids / numerology) references below are in Chinese — they are inspiration only. Keep the analyzed Chinese name characters as-is, but write all explanations entirely in English. Your entire response MUST be in English.
+
+[Basic Information]
+- Name: ${result.name} (${result.gender === "male" ? "Male" : "Female"})
+- Strokes per character: ${result.chars.map((c, i) => `${c} (${result.strokes[i]} strokes)`).join(", ")}
+
+[Five Grids Numerology]
+- Heaven Grid (天格): ${result.tian.strokes} strokes (${result.tian.level} · ${result.tian.title})
+- Personality Grid (人格): ${result.ren.strokes} strokes (${result.ren.level} · ${result.ren.title}) — the primary fortune, most important
+- Earth Grid (地格): ${result.di.strokes} strokes (${result.di.level} · ${result.di.title})
+- External Grid (外格): ${result.wai.strokes} strokes (${result.wai.level} · ${result.wai.title})
+- Total Grid (总格): ${result.zong.strokes} strokes (${result.zong.level} · ${result.zong.title})
+
+[Three Talents Configuration] ${result.sanCai}
+
+[Overall Score] ${result.score} (${result.scoreLevel})
+
+Please generate in-depth interpretations of the following four aspects (each 100-150 words, in a warm and friendly tone, avoiding overly absolute negative statements):
+
+1. **Personality Traits**: Analyze the core personality, strengths, and aspects to watch, based on the Personality Grid numerology
+2. **Career & Wealth**: Analyze career development path and wealth trends, based on the Personality and Total Grids
+3. **Love & Marriage**: Analyze romantic affinity and marriage prospects, based on the Earth and External Grids
+4. **Health & Wellness**: Analyze health tendencies and wellness suggestions, based on the overall Five Grids
+
+Finally, give a "Life Motto" (within 30 words) as an essential summary of this name.
+
+Please return in JSON format:
+{
+  "personality": "Personality traits interpretation",
+  "career": "Career & wealth interpretation",
+  "love": "Love & marriage interpretation",
+  "health": "Health & wellness interpretation",
+  "lifeQuote": "Life motto"
+}`;
+  }
+
+  const twInstruction = lang === "tw" ? "\n\n請務必使用繁體中文（台灣用語）輸出全部內容。" : "";
+
+  return `你是一位精通中国传统命名学与五格剖象法的命理师，请根据以下姓名五格数理分析，用温和、专业、有温度的语言，为用户生成一份完整的姓名解读报告。${twInstruction}
 
 【基本信息】
 - 姓名：${result.name}（${result.gender === "male" ? "男" : "女"}）
@@ -40,7 +83,7 @@ function buildWugePrompt(result: ReturnType<typeof calculateWuge>): string {
 }`;
 }
 
-function generateMockReport(result: ReturnType<typeof calculateWuge>): {
+function generateMockReport(result: ReturnType<typeof calculateWuge>, lang: Lang): {
   personality: string;
   career: string;
   love: string;
@@ -51,6 +94,20 @@ function generateMockReport(result: ReturnType<typeof calculateWuge>): {
   const zongDetail = getNumDetail(result.zong.strokes);
 
   const isAuspicious = result.ren.level === "大吉" || result.ren.level === "吉";
+
+  if (lang === "en") {
+    return {
+      personality: `${result.name}'s Personality Grid numerology is ${result.ren.strokes} strokes (${result.ren.title}). This numerology grants you ${isAuspicious ? "outstanding leadership and approachability" : "a resilient will and an indomitable spirit"}, allowing you to ${isAuspicious ? "navigate challenges with composure and turn crises into opportunities" : "weather hardships with perseverance and grow stronger through adversity"}. Your character blends ${result.gender === "male" ? "masculine fortitude" : "feminine gentleness"} with intelligent flexibility, letting you adapt gracefully to the world around you.`,
+
+      career: `Your Total Grid is ${result.zong.strokes} strokes (${result.zong.title}). Combined with your Personality Grid, ${isAuspicious ? "your career outlook is bright; fortunes improve steadily after midlife, with benefactors lending support and wealth gradually accumulating" : "your career calls for a grounded, steady approach; through persistent effort, the rewards in later years will be abundant"}. In your career choices, ${isAuspicious ? "you may advance boldly and take on greater responsibilities" : "build a solid foundation first, then expand once your strength has accumulated"}. Wealth is best built through long-term planning.`,
+
+      love: `Your Earth Grid is ${result.di.strokes} strokes (${result.di.level}). ${isAuspicious ? "Your romantic fortune is generally favorable, and you are likely to meet a suitable partner through good affinity" : "Your romantic path may hold some twists, requiring extra patience and tolerance"}. In relationships you value sincerity and trust, longing for ${result.gender === "male" ? "a stable and dependable relationship" : "a bond in which you are understood and cherished"}. Express your feelings more openly rather than keeping them too reserved. For those married, communicate and understand one another — home will be your warmest harbor.`,
+
+      health: `Looking at the Five Grids as a whole, you should pay particular attention to ${result.ren.level === "凶" || result.ren.level === "大凶" ? "releasing psychological pressure and avoiding long-term tension that drains the body" : "keeping a regular routine and moderate exercise, and balancing work with rest especially during prosperous periods"}. Cultivate the habit of early to bed and early to rise, eat a balanced diet, and reduce spicy or stimulating foods. Gentle meditation or traditional wellness practices (such as Tai Chi or Baduanjin) will benefit your constitution. A positive and optimistic mindset is the best path to wellness.`,
+
+      lifeQuote: `${result.name}: blessed by ${result.ren.title}, ${isAuspicious ? "virtue and talent combined, embracing all flavors of life with a smile" : "pressing forward through trials, adversity forging true gold"}.`,
+    };
+  }
 
   return {
     personality: `${result.name}的人格数理为${result.ren.strokes}画（${result.ren.title}），${renDetail.personality}此数理赋予您${isAuspicious ? "出色的领导力与亲和力" : "坚韧的意志与不屈的精神"}，在面对挑战时能${isAuspicious ? "从容调度，化危机为机遇" : "以坚忍之心渡过难关，在逆境中淬炼成长"}。您的性格中兼具${result.gender === "male" ? "男性的刚毅" : "女性的温柔"}与智慧的灵活，处世时能随机应变。`,
@@ -66,28 +123,29 @@ function generateMockReport(result: ReturnType<typeof calculateWuge>): {
 }
 
 export async function POST(request: NextRequest) {
-  let body: { name?: string; gender?: string };
+  let body: { name?: string; gender?: string; lang?: "zh" | "en" | "tw" };
 
   try {
-    body = await request.json() as { name?: string; gender?: string };
+    body = await request.json() as { name?: string; gender?: string; lang?: "zh" | "en" | "tw" };
   } catch {
     return NextResponse.json({ error: "请求格式错误" }, { status: 400 });
   }
 
   const { name, gender } = body;
+  const lang: Lang = body.lang ?? "zh";
 
   if (!name || typeof name !== "string" || name.trim().length < 2) {
-    return NextResponse.json({ error: "姓名至少需要2个汉字" }, { status: 400 });
+    return NextResponse.json({ error: lang === "en" ? "Name must be at least 2 Chinese characters" : "姓名至少需要2个汉字" }, { status: 400 });
   }
 
   if (gender !== "male" && gender !== "female") {
-    return NextResponse.json({ error: "请选择性别" }, { status: 400 });
+    return NextResponse.json({ error: lang === "en" ? "Please select a gender" : "请选择性别" }, { status: 400 });
   }
 
   // 校验是否为汉字
   const nameClean = name.trim();
   if (!/^[\u4e00-\u9fff]+$/.test(nameClean)) {
-    return NextResponse.json({ error: "请输入纯中文姓名" }, { status: 400 });
+    return NextResponse.json({ error: lang === "en" ? "Please enter a name in Chinese characters" : "请输入纯中文姓名" }, { status: 400 });
   }
 
   // 计算五格
@@ -95,7 +153,7 @@ export async function POST(request: NextRequest) {
   try {
     wugeResult = calculateWuge({ name: nameClean, gender: gender as "male" | "female" });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "计算失败";
+    const msg = err instanceof Error ? err.message : (lang === "en" ? "Calculation failed" : "计算失败");
     return NextResponse.json({ error: msg }, { status: 400 });
   }
 
@@ -121,11 +179,13 @@ export async function POST(request: NextRequest) {
           messages: [
             {
               role: "system",
-              content: "你是一位精通中国传统命名学与五格剖象法的命理师，能够根据数理分析给出专业、温和、有温度的人生指导。",
+              content: lang === "en"
+                ? "You are a master of traditional Chinese name studies and the Five Grids (五格剖象法) numerology system, able to give professional, gentle, and heartfelt life guidance based on numerology analysis. Respond entirely in English."
+                : "你是一位精通中国传统命名学与五格剖象法的命理师，能够根据数理分析给出专业、温和、有温度的人生指导。",
             },
             {
               role: "user",
-              content: buildWugePrompt(wugeResult),
+              content: buildWugePrompt(wugeResult, lang),
             },
           ],
           temperature: 0.8,
@@ -160,7 +220,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const report = aiReport ?? generateMockReport(wugeResult);
+  const report = aiReport ?? generateMockReport(wugeResult, lang);
 
   // 构建最终返回数据
   return NextResponse.json({

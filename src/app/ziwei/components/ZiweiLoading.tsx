@@ -2,8 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { ZIWEI_LOADING_TEXTS } from "../ziwei-data";
+import type { ZiweiT } from "../ziwei-i18n";
 
-export default function ZiweiLoading() {
+interface ZiweiLoadingProps {
+  t: ZiweiT;
+}
+
+export default function ZiweiLoading({ t: _t }: ZiweiLoadingProps) {
   const [textIdx, setTextIdx]   = useState(0);
   const [progress, setProgress] = useState(0);
   const [angle, setAngle]       = useState(0);

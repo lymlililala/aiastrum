@@ -3,13 +3,16 @@
 import React, { useRef, useState } from "react";
 import type { AstroChart } from "../astro-engine";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP } from "../astro-data";
+import type { AstroT, Lang } from "../astro-i18n";
 
 interface AstroPosterProps {
   chart: AstroChart;
+  t: AstroT;
+  lang: Lang;
 }
 
 // 在 Canvas 上绘制星盘海报
-async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
+async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: AstroT, dateLocale: string) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -52,11 +55,11 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
   ctx.fillStyle = "#c9a84c";
   ctx.font = "bold 18px 'serif'";
   ctx.textAlign = "center";
-  ctx.fillText("✦ 命运密语 · 本命星盘 ✦", W / 2, 42);
+  ctx.fillText(t.posterBrandTop, W / 2, 42);
 
   ctx.fillStyle = "rgba(201,168,76,0.5)";
   ctx.font = "13px 'sans-serif'";
-  ctx.fillText("NATAL CHART READING", W / 2, 68);
+  ctx.fillText(t.posterBrandSub, W / 2, 68);
 
   // ===== 用户信息 =====
   ctx.fillStyle = "#e8d5a3";
@@ -81,9 +84,9 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
   const big3Y = 220;
   const { big3 } = chart;
   const big3Items = [
-    { label: "太阳", symbol: "☉", sign: big3.sun.sign, color: "#F39C12" },
-    { label: "月亮", symbol: "☽", sign: big3.moon.sign, color: "#BDC3C7" },
-    ...(big3.rising ? [{ label: "上升", symbol: "↑", sign: big3.rising.sign, color: "#9B59B6" }] : []),
+    { label: t.posterSun, symbol: "☉", sign: big3.sun.sign, color: "#F39C12" },
+    { label: t.posterMoon, symbol: "☽", sign: big3.moon.sign, color: "#BDC3C7" },
+    ...(big3.rising ? [{ label: t.posterRising, symbol: "↑", sign: big3.rising.sign, color: "#9B59B6" }] : []),
   ];
 
   const big3BlockW = big3Items.length === 3 ? 210 : 320;
@@ -233,7 +236,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
   ctx.fillStyle = "rgba(201,168,76,0.6)";
   ctx.font = "12px 'sans-serif'";
   ctx.textAlign = "left";
-  ctx.fillText("行星位置", 60, listY);
+  ctx.fillText(t.posterPlanetList, 60, listY);
 
   ctx.strokeStyle = "rgba(201,168,76,0.2)";
   ctx.lineWidth = 1;
@@ -277,7 +280,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
   ctx.fillStyle = "rgba(201,168,76,0.6)";
   ctx.font = "12px 'sans-serif'";
   ctx.textAlign = "left";
-  ctx.fillText("核心相位", 60, aspectListY);
+  ctx.fillText(t.posterAspectList, 60, aspectListY);
 
   ctx.strokeStyle = "rgba(201,168,76,0.2)";
   ctx.lineWidth = 1;
@@ -340,11 +343,11 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart) {
   ctx.fillStyle = "rgba(201,168,76,0.5)";
   ctx.font = "13px 'serif'";
   ctx.textAlign = "center";
-  ctx.fillText("✦ 命运密语 — 星盘解析 ✦", W / 2, H - 50);
+  ctx.fillText(t.posterFooter, W / 2, H - 50);
 
   ctx.fillStyle = "rgba(201,168,76,0.3)";
   ctx.font = "11px 'sans-serif'";
-  ctx.fillText(`由 AI 星盘引擎生成 · ${new Date().toLocaleDateString("zh-CN")}`, W / 2, H - 28);
+  ctx.fillText(`${t.posterGenBy} · ${new Date().toLocaleDateString(dateLocale)}`, W / 2, H - 28);
 }
 
 // 辅助：绘制圆角矩形
@@ -364,16 +367,17 @@ function roundRect(
   ctx.closePath();
 }
 
-export function AstroPoster({ chart }: AstroPosterProps) {
+export function AstroPoster({ chart, t, lang }: AstroPosterProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
+  const dateLocale = lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN";
 
   const handleGenerate = async () => {
     if (!canvasRef.current) return;
     setIsGenerating(true);
     try {
-      await drawAstroPoster(canvasRef.current, chart);
+      await drawAstroPoster(canvasRef.current, chart, t, dateLocale);
       setIsGenerated(true);
     } finally {
       setIsGenerating(false);
@@ -385,15 +389,15 @@ export function AstroPoster({ chart }: AstroPosterProps) {
     const url = canvasRef.current.toDataURL("image/png");
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${chart.input.name}的本命星盘.png`;
+    a.download = `${chart.input.name}${t.posterFileSuffix}.png`;
     a.click();
   };
 
   return (
     <div className="astro-poster-wrapper">
       <div className="astro-poster-header">
-        <h3 className="astro-poster-title">📸 生成星盘长图</h3>
-        <p className="astro-poster-subtitle">生成专属星盘图片，分享到朋友圈或小红书</p>
+        <h3 className="astro-poster-title">{t.posterTitle}</h3>
+        <p className="astro-poster-subtitle">{t.posterSubtitle}</p>
       </div>
 
       {/* 画布预览 */}
@@ -405,7 +409,7 @@ export function AstroPoster({ chart }: AstroPosterProps) {
         {!isGenerated && (
           <div className="astro-poster-placeholder">
             <div className="text-4xl mb-3">🌌</div>
-            <p>点击生成你的专属星盘长图</p>
+            <p>{t.posterPlaceholder}</p>
           </div>
         )}
       </div>
@@ -416,14 +420,14 @@ export function AstroPoster({ chart }: AstroPosterProps) {
           disabled={isGenerating}
           className="astro-poster-btn astro-poster-btn-generate"
         >
-          {isGenerating ? "⏳ 生成中..." : "🎨 生成星盘长图"}
+          {isGenerating ? t.posterGenerating : t.posterGenerate}
         </button>
         {isGenerated && (
           <button
             onClick={handleDownload}
             className="astro-poster-btn astro-poster-btn-download"
           >
-            ⬇️ 保存图片
+            {t.posterDownload}
           </button>
         )}
       </div>

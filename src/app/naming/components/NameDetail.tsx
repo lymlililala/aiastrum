@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WUXING_CONFIG, WUXING_GENERATE, type WuXing } from "../naming-data";
+import { type NamingT } from "../naming-i18n";
 
 interface NameCharDetail {
   char: string;
@@ -33,6 +34,7 @@ interface NameDetailProps {
   surname: string;
   xiyongshen: WuXing[];
   onBack?: () => void;
+  t: NamingT;
 }
 
 // 五格数理（简化版 - 天格、人格、地格）
@@ -83,16 +85,17 @@ function getToneAnalysis(chars: NameCharDetail[], surname: string): string {
   return `${pattern}，${desc}`;
 }
 
-export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: NameDetailProps) {
+export default function NameDetail({ suggestion, surname, xiyongshen, onBack, t }: NameDetailProps) {
   const wuGe = calcWuGe(surname, suggestion.name);
   const toneAnalysis = getToneAnalysis(suggestion.charDetails, surname);
+  const wugeLabel: Record<string, string> = { 天格: t.ndWugeTian, 人格: t.ndWugeRen, 地格: t.ndWugeDi };
 
   return (
     <div className="namedetail-container">
       {/* 返回按钮 */}
       {onBack && (
         <button className="namedetail-back-btn" onClick={onBack}>
-          ← 返回名单
+          {t.ndBack}
         </button>
       )}
 
@@ -129,13 +132,13 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
               {suggestion.score}
             </text>
           </svg>
-          <span className="namedetail-score-label">综合评分</span>
+          <span className="namedetail-score-label">{t.ndScoreLabel}</span>
         </div>
       </div>
 
       {/* 总寓意 */}
       <div className="namedetail-section">
-        <h3 className="namedetail-section-title">✦ 综合寓意</h3>
+        <h3 className="namedetail-section-title">{t.ndSecMeaning}</h3>
         <div className="namedetail-meaning-card">
           <p>{suggestion.overallMeaning}</p>
           <div className="namedetail-tags">
@@ -148,7 +151,7 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
 
       {/* 逐字解析 */}
       <div className="namedetail-section">
-        <h3 className="namedetail-section-title">◈ 逐字五行解析</h3>
+        <h3 className="namedetail-section-title">{t.ndSecChars}</h3>
         <div className="namedetail-chars-grid">
           {suggestion.charDetails.map((cd, i) => {
             const isXiyong = xiyongshen.includes(cd.wuxing);
@@ -170,19 +173,19 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
                 </div>
                 <div className="namedetail-char-pinyin">{cd.pinyin}</div>
                 <div className="namedetail-char-info">
-                  <span className="namedetail-char-strokes">{cd.strokes}画</span>
+                  <span className="namedetail-char-strokes">{cd.strokes}{t.ndStrokeSuffix}</span>
                   <span
                     className="namedetail-char-wuxing"
                     style={{ color: WUXING_CONFIG[cd.wuxing].color }}
                   >
-                    {cd.wuxing}行
+                    {cd.wuxing}{t.ndWxSuffix}
                   </span>
-                  {isXiyong && <span className="namedetail-xi-badge">喜用神✓</span>}
+                  {isXiyong && <span className="namedetail-xi-badge">{t.ndXiBadge}</span>}
                 </div>
                 <p className="namedetail-char-meaning">{cd.meaning}</p>
                 {generates && (
                   <p className="namedetail-char-tip">
-                    {generates[0]}生{cd.wuxing}，相生有助
+                    {generates[0]}{t.ndGenMid}{cd.wuxing}{t.ndGenPost}
                   </p>
                 )}
               </div>
@@ -193,16 +196,16 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
         {/* 五行搭配说明 */}
         <div className="namedetail-synergy-card">
           <span className="namedetail-synergy-icon">☯</span>
-          <strong>五行搭配：</strong>{suggestion.synergy}
+          <strong>{t.ndSynergyLabel}</strong>{suggestion.synergy}
         </div>
       </div>
 
       {/* 国学出处 */}
       {suggestion.source && (
         <div className="namedetail-section">
-          <h3 className="namedetail-section-title">📖 国学出处</h3>
+          <h3 className="namedetail-section-title">{t.ndSecSource}</h3>
           <div className="namedetail-source-card">
-            <div className="namedetail-source-from">出自：{suggestion.source}</div>
+            <div className="namedetail-source-from">{t.ndSourceFrom}{suggestion.source}</div>
             {suggestion.sourceText && (
               <blockquote className="namedetail-source-quote">
                 「{suggestion.sourceText}」
@@ -217,7 +220,7 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
 
       {/* 音律分析 */}
       <div className="namedetail-section">
-        <h3 className="namedetail-section-title">♩ 音律与平仄</h3>
+        <h3 className="namedetail-section-title">{t.ndSecTone}</h3>
         <div className="namedetail-tone-card">
           <p className="namedetail-tone-text">{toneAnalysis}</p>
           <div className="namedetail-tone-chars">
@@ -233,18 +236,18 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack }: 
 
       {/* 五格数理 */}
       <div className="namedetail-section">
-        <h3 className="namedetail-section-title">⊞ 五格数理（简）</h3>
+        <h3 className="namedetail-section-title">{t.ndSecWuge}</h3>
         <div className="namedetail-wuge-grid">
           {Object.entries(wuGe).map(([k, v]) => (
             <div key={k} className="namedetail-wuge-card">
-              <div className="namedetail-wuge-name">{k}</div>
+              <div className="namedetail-wuge-name">{wugeLabel[k] ?? k}</div>
               <div className="namedetail-wuge-val">{v.val}</div>
               <div className="namedetail-wuge-desc">{v.desc}</div>
             </div>
           ))}
         </div>
         <p className="namedetail-wuge-note">
-          * 五格剖象法仅供参考，名字的好坏以五行命理与诗意为主要依据
+          {t.ndWugeNote}
         </p>
       </div>
     </div>

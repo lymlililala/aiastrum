@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { LOADING_TEXTS } from "../dream-data";
+import type { DreamT } from "../dream-i18n";
 
 interface DreamLoadingProps {
+  t: DreamT;
   query: string;
 }
 
-export default function DreamLoading({ query }: DreamLoadingProps) {
+export default function DreamLoading({ t, query }: DreamLoadingProps) {
   const [textIndex, setTextIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [stars, setStars] = useState<Array<{ x: number; y: number; size: number; delay: number; dur: number }>>([]);
@@ -113,7 +115,7 @@ export default function DreamLoading({ query }: DreamLoadingProps) {
 
       {/* 底部提示 */}
       <p className="dream-loading-hint">
-        正在连接千年古籍与现代心理学...
+        {t.loadingHint}
       </p>
     </div>
   );

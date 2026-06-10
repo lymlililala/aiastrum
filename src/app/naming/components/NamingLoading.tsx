@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { NAMING_LOADING_TEXTS } from "../naming-data";
+import { type NamingT } from "../naming-i18n";
 
 interface NamingLoadingProps {
   surname: string;
   gender: "male" | "female";
+  t: NamingT;
 }
 
-export default function NamingLoading({ surname, gender }: NamingLoadingProps) {
+export default function NamingLoading({ surname, gender, t }: NamingLoadingProps) {
   const [textIndex, setTextIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -58,7 +60,7 @@ export default function NamingLoading({ surname, gender }: NamingLoadingProps) {
         <div className="naming-loading-info">
           <span className="naming-loading-surname">{surname}</span>
           <span className="naming-loading-gender-tag">
-            {gender === "male" ? "男宝宝" : "女宝宝"}
+            {gender === "male" ? t.genderMale : t.genderFemale}
           </span>
         </div>
 
@@ -77,7 +79,7 @@ export default function NamingLoading({ surname, gender }: NamingLoadingProps) {
           />
         </div>
 
-        <p className="naming-loading-hint">正在为{surname}家宝宝甄选吉名...</p>
+        <p className="naming-loading-hint">{t.loadHintPre}{surname}{t.loadHintPost}</p>
       </div>
     </div>
   );

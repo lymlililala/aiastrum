@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDayInfo, findLuckyDays, getMonthCalendar } from "../../almanac/almanac-engine";
-import type { AlmanacSearchParams } from "../../almanac/almanac-engine";
+import type { AlmanacSearchParams, Lang } from "../../almanac/almanac-engine";
 import type { ShengXiao } from "../../almanac/almanac-data";
 import { SHENG_XIAO } from "../../almanac/almanac-data";
+
+function parseLang(val: string | null | undefined): Lang {
+  return val === "en" || val === "tw" ? val : "zh";
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action") ?? "day";
+    const lang = parseLang(searchParams.get("lang"));
 
     if (action === "day") {
       // 获取指定日的黄历
@@ -20,7 +25,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "日期参数无效" }, { status: 400 });
       }
 
-      const info = getDayInfo(year, month, day);
+      const info = getDayInfo(year, month, day, lang);
       return NextResponse.json({ success: true, data: info });
     }
 
@@ -29,7 +34,7 @@ export async function GET(request: NextRequest) {
       const year  = parseInt(searchParams.get("year")  ?? String(new Date().getFullYear()));
       const month = parseInt(searchParams.get("month") ?? String(new Date().getMonth() + 1));
 
-      const calendar = getMonthCalendar(year, month);
+      const calendar = getMonthCalendar(year, month, lang);
       return NextResponse.json({ success: true, data: calendar });
     }
 
@@ -51,7 +56,10 @@ export async function POST(request: NextRequest) {
       userShengxiao?: string;
       partnerShengxiao?: string;
       weekendOnly?: boolean;
+      lang?: string;
     };
+
+    const lang = parseLang(body.lang);
 
     if (!body.event) {
       return NextResponse.json({ error: "请选择择日事项" }, { status: 400 });
@@ -89,7 +97,7 @@ export async function POST(request: NextRequest) {
       weekendOnly:       body.weekendOnly ?? false,
     };
 
-    const luckyDays = findLuckyDays(params);
+    const luckyDays = findLuckyDays(params, lang);
 
     return NextResponse.json({
       success: true,

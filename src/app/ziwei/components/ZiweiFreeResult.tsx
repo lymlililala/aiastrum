@@ -4,14 +4,16 @@ import { useState } from "react";
 import ZiweiChartComponent from "./ZiweiChart";
 import { PAYWALL_HINTS, STAR_COLORS } from "../ziwei-data";
 import type { ZiweiChart } from "../ziwei-engine";
+import type { ZiweiT } from "../ziwei-i18n";
 
 interface ZiweiFreeResultProps {
   chart: ZiweiChart;
   onUnlock: () => void;
   onReset: () => void;
+  t: ZiweiT;
 }
 
-export default function ZiweiFreeResult({ chart, onUnlock, onReset }: ZiweiFreeResultProps) {
+export default function ZiweiFreeResult({ chart, onUnlock, onReset, t }: ZiweiFreeResultProps) {
   const [mode, setMode] = useState<"modern" | "classic">("modern");
   const mingColor = STAR_COLORS[chart.mingStarName] ?? "#C77DFF";
 
@@ -22,11 +24,11 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset }: ZiweiFreeR
         <div className="zw-result-header-glow" />
         <div className="zw-result-header-content">
           <div className="zw-result-badge" style={{ color: mingColor, borderColor: mingColor }}>
-            ✦ {chart.mingStarName}坐命
+            {t.freeBadgePre}{chart.mingStarName}{t.zuoMingSuffix}
           </div>
-          <h1 className="zw-result-title">{chart.name} 的东方星盘</h1>
+          <h1 className="zw-result-title">{chart.name}{t.reportNameSuffix}</h1>
           <p className="zw-result-subtitle">
-            {chart.yearGan}{chart.yearZhi}年 · {chart.gender === "female" ? "坤命" : "乾命"} · {chart.wuXingJu}
+            {chart.yearGan}{chart.yearZhi}{t.unitYear} · {chart.gender === "female" ? t.palaceFemale : t.palaceMale} · {chart.wuXingJu}
           </p>
           {/* 性格标签 */}
           <div className="zw-personality-tags">
@@ -40,19 +42,19 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset }: ZiweiFreeR
       </div>
 
       {/* 星盘（免费展示完整星盘） */}
-      <ZiweiChartComponent chart={chart} mode={mode} onModeChange={setMode} />
+      <ZiweiChartComponent chart={chart} mode={mode} onModeChange={setMode} t={t} />
 
       {/* 命宫解读（免费） */}
       <div className="zw-free-section">
         <div className="zw-section-title">
           <span className="zw-section-icon" style={{ color: mingColor }}>◆</span>
-          命宫解读 · {chart.mingStarName}坐命
+          {t.freeMingReadingPre}{chart.mingStarName}{t.zuoMingSuffix}
         </div>
         <p className="zw-ming-reading">{chart.mingReading}</p>
 
         {chart.aiEnhanced && (
           <div className="zw-ai-preview">
-            <div className="zw-ai-preview-label">✦ AI 命格总评</div>
+            <div className="zw-ai-preview-label">{t.aiTitle}</div>
             <p className="zw-ai-preview-text">{chart.aiEnhanced}</p>
           </div>
         )}
@@ -60,37 +62,37 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset }: ZiweiFreeR
 
       {/* 付费墙 - 悬念诱饵 */}
       <div className="zw-paywall">
-        <div className="zw-paywall-title">✦ 你的命盘还隐藏着更多秘密</div>
+        <div className="zw-paywall-title">{t.paywallTitle}</div>
         <div className="zw-paywall-hints">
           {Object.entries(PAYWALL_HINTS).map(([key, hint]) => (
             <div key={key} className="zw-paywall-hint-card" onClick={onUnlock}>
               <div className="zw-hint-tag">{key}</div>
-              <div className="zw-hint-title">🔒 {hint.title}</div>
+              <div className="zw-hint-title">{t.hintLock}{hint.title}</div>
               <div className="zw-hint-teaser">{hint.teaser}</div>
-              <div className="zw-hint-unlock">点击解锁 →</div>
+              <div className="zw-hint-unlock">{t.hintUnlock}</div>
             </div>
           ))}
         </div>
 
         {/* CTA */}
         <div className="zw-paywall-cta">
-          <div className="zw-cta-users">已有 <strong>5W+</strong> 人解锁完整星盘报告</div>
+          <div className="zw-cta-users">{t.ctaUsersPre}<strong>{t.ctaUsersBold}</strong>{t.ctaUsersPost}</div>
           <button onClick={onUnlock} className="zw-unlock-btn">
-            <span className="zw-unlock-price">¥19.9</span>
-            <span className="zw-unlock-text">解锁完整东方星盘报告</span>
+            <span className="zw-unlock-price">{t.unlockPrice}</span>
+            <span className="zw-unlock-text">{t.unlockText}</span>
             <span className="zw-unlock-arrow">→</span>
           </button>
           <div className="zw-unlock-includes">
-            {["✦ 财帛宫财富格局", "✦ 官禄宫事业赛道", "✦ 夫妻宫正缘画像", "✦ 大限流年运势"].map(f => (
+            {[t.unlockFeat1, t.unlockFeat2, t.unlockFeat3, t.unlockFeat4].map(f => (
               <span key={f} className="zw-unlock-feature">{f}</span>
             ))}
           </div>
-          <p className="zw-unlock-note">一次性解锁 · 永久查看 · 支持分享精美图片</p>
+          <p className="zw-unlock-note">{t.unlockNote}</p>
         </div>
       </div>
 
       {/* 重新排盘 */}
-      <button onClick={onReset} className="zw-reset-btn">← 重新排盘</button>
+      <button onClick={onReset} className="zw-reset-btn">{t.freeReset}</button>
     </div>
   );
 }

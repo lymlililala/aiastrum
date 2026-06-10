@@ -2,13 +2,15 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { HOT_TAGS, DAILY_DREAMS } from "../dream-data";
+import type { DreamT } from "../dream-i18n";
 
 interface DreamInputProps {
+  t: DreamT;
   onSubmit: (query: string) => void;
   isLoading?: boolean;
 }
 
-export default function DreamInput({ onSubmit, isLoading = false }: DreamInputProps) {
+export default function DreamInput({ t, onSubmit, isLoading = false }: DreamInputProps) {
   const [query, setQuery] = useState("");
   const [dailyIndex] = useState(() => Math.floor(Math.random() * DAILY_DREAMS.length));
   const [showDaily, setShowDaily] = useState(true);
@@ -48,10 +50,10 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
           <span className="dream-moon-emoji">🌙</span>
           <div className="dream-moon-glow" />
         </div>
-        <h1 className="dream-title">周公解梦</h1>
-        <p className="dream-subtitle">解析梦境含义 · 探索潜意识</p>
+        <h1 className="dream-title">{t.heroTitle}</h1>
+        <p className="dream-subtitle">{t.heroSubtitle}</p>
         <p className="dream-desc">
-          输入你梦见的内容，获取传统周公解梦与心理学的双重解析
+          {t.heroDesc}
         </p>
       </div>
 
@@ -67,7 +69,7 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
               setShowDaily(false);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="输入关键词（如：蛇、水、飞翔）或描述你的梦境..."
+            placeholder={t.placeholder}
             className="dream-textarea"
             rows={3}
             maxLength={500}
@@ -77,7 +79,7 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
             <button
               className="dream-clear-btn"
               onClick={() => { setQuery(""); setShowDaily(true); }}
-              aria-label="清空"
+              aria-label={t.clearAria}
             >
               ✕
             </button>
@@ -93,10 +95,10 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
             {isLoading ? (
               <span className="dream-btn-loading">
                 <span className="dream-dot-pulse" />
-                解梦中
+                {t.submitting}
               </span>
             ) : (
-              "开始解梦 →"
+              t.submit
             )}
           </button>
         </div>
@@ -106,7 +108,7 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
       <div className="dream-hot-section">
         <p className="dream-section-label">
           <span className="dream-label-icon">🔥</span>
-          热门梦境
+          {t.hotLabel}
         </p>
         <div className="dream-tags">
           {HOT_TAGS.map((tag) => (
@@ -127,16 +129,16 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
       {showDaily && (
         <div className="dream-daily-card">
           <div className="dream-daily-header">
-            <span className="dream-daily-badge">今日推荐</span>
+            <span className="dream-daily-badge">{t.dailyBadge}</span>
             <span className="dream-daily-title">{dailyDream.title}</span>
           </div>
           <div className="dream-daily-content">
             <div className="dream-daily-row">
-              <span className="dream-daily-tag dream-trad-tag">周公</span>
+              <span className="dream-daily-tag dream-trad-tag">{t.tradTag}</span>
               <p className="dream-daily-text">{dailyDream.traditional}</p>
             </div>
             <div className="dream-daily-row">
-              <span className="dream-daily-tag dream-psych-tag">心理</span>
+              <span className="dream-daily-tag dream-psych-tag">{t.psychTag}</span>
               <p className="dream-daily-text">{dailyDream.psychology}</p>
             </div>
           </div>
@@ -144,7 +146,7 @@ export default function DreamInput({ onSubmit, isLoading = false }: DreamInputPr
             className="dream-daily-try"
             onClick={() => handleTagClick(dailyDream.keyword)}
           >
-            解析「{dailyDream.keyword}」的梦 →
+            {t.dailyTry(dailyDream.keyword)}
           </button>
         </div>
       )}

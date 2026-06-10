@@ -6,18 +6,20 @@ import {
   ELEMENT_COLORS,
 } from "../horoscope-data";
 import type { HoroscopeResult } from "../horoscope-engine";
+import type { HoroT } from "../horoscope-i18n";
 
 interface FortunePosterProps {
   result: HoroscopeResult;
   visible: boolean;
   onClose: () => void;
+  t: HoroT;
 }
 
 /** 海报画布尺寸 */
 const POSTER_WIDTH = 750;
 const POSTER_HEIGHT = 1334;
 
-export function FortunePoster({ result, visible, onClose }: FortunePosterProps) {
+export function FortunePoster({ result, visible, onClose, t }: FortunePosterProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -92,7 +94,7 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     // 星座名
     ctx.fillStyle = "#FFFFFF";
     ctx.font = "bold 48px sans-serif";
-    ctx.fillText(zodiac.name, POSTER_WIDTH / 2, 230);
+    ctx.fillText(t.signLabel[result.zodiac], POSTER_WIDTH / 2, 230);
 
     // 英文名 & 日期
     ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
@@ -112,18 +114,18 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     // === 五维指数区 ===
     const scoresY = 420;
     const dimensions = [
-      { key: "overall" as const, label: "综合", icon: "⭐" },
-      { key: "love" as const, label: "爱情", icon: "💕" },
-      { key: "career" as const, label: "事业", icon: "💼" },
-      { key: "wealth" as const, label: "财运", icon: "💰" },
-      { key: "health" as const, label: "健康", icon: "🌿" },
+      { key: "overall" as const, label: t.dimOverall, icon: "⭐" },
+      { key: "love" as const, label: t.dimLove, icon: "💕" },
+      { key: "career" as const, label: t.dimCareer, icon: "💼" },
+      { key: "wealth" as const, label: t.dimWealth, icon: "💰" },
+      { key: "health" as const, label: t.dimHealth, icon: "🌿" },
     ];
 
     // 分区标题
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
     ctx.font = "22px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("运势指数", 60, scoresY);
+    ctx.fillText(t.posterScores, 60, scoresY);
 
     // 绘制分数条
     dimensions.forEach((dim, index) => {
@@ -162,15 +164,15 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
     ctx.font = "22px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("幸运指南", 60, luckyY);
+    ctx.fillText(t.posterLucky, 60, luckyY);
 
     const luckyItems = [
-      { label: "幸运色", value: result.lucky.color },
-      { label: "幸运数字", value: String(result.lucky.number) },
-      { label: "幸运方位", value: result.lucky.direction },
-      { label: "幸运物品", value: result.lucky.item },
-      { label: "贵人星座", value: `${ZODIAC_MAP[result.lucky.noble].symbol} ${ZODIAC_MAP[result.lucky.noble].name}` },
-      { label: "最佳搭档", value: `${ZODIAC_MAP[result.lucky.ally].symbol} ${ZODIAC_MAP[result.lucky.ally].name}` },
+      { label: t.luckyColor, value: result.lucky.color },
+      { label: t.luckyNumber, value: String(result.lucky.number) },
+      { label: t.luckyDirection, value: result.lucky.direction },
+      { label: t.luckyItem, value: result.lucky.item },
+      { label: t.luckyNoble, value: `${ZODIAC_MAP[result.lucky.noble].symbol} ${t.signLabel[result.lucky.noble]}` },
+      { label: t.luckyAlly, value: `${ZODIAC_MAP[result.lucky.ally].symbol} ${t.signLabel[result.lucky.ally]}` },
     ];
 
     // 2列布局
@@ -195,7 +197,7 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
     ctx.font = "22px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("运势概述", 60, summaryY);
+    ctx.fillText(t.posterSummary, 60, summaryY);
 
     // 概述卡片
     ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
@@ -228,7 +230,7 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
     ctx.font = "20px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("✨ 星座运势 · 每日为你解读星空密码 ✨", POSTER_WIDTH / 2, POSTER_HEIGHT - 110);
+    ctx.fillText(t.posterBrand, POSTER_WIDTH / 2, POSTER_HEIGHT - 110);
 
     // 日期
     ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
@@ -238,13 +240,13 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
     // 底标
     ctx.fillStyle = elementColor;
     ctx.font = "16px sans-serif";
-    ctx.fillText("长按保存 · 分享好运 ✨", POSTER_WIDTH / 2, POSTER_HEIGHT - 30);
+    ctx.fillText(t.posterSaveHint, POSTER_WIDTH / 2, POSTER_HEIGHT - 30);
 
     // 导出图片
     const dataUrl = canvas.toDataURL("image/png");
     setPosterUrl(dataUrl);
     setIsGenerating(false);
-  }, [result, zodiac, elementColor, roundRect]);
+  }, [result, zodiac, elementColor, roundRect, t]);
 
   useEffect(() => {
     if (visible && result) {
@@ -256,7 +258,7 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
   const handleSave = () => {
     if (!posterUrl) return;
     const link = document.createElement("a");
-    link.download = `${zodiac.name}_运势_${result.date}.png`;
+    link.download = `${t.signLabel[result.zodiac]}_${t.posterFileTag}_${result.date}.png`;
     link.href = posterUrl;
     link.click();
   };
@@ -276,20 +278,20 @@ export function FortunePoster({ result, visible, onClose }: FortunePosterProps) 
               <span className="fortune-poster-loading-dots">
                 <span>●</span><span>●</span><span>●</span>
               </span>
-              <p>正在生成海报...</p>
+              <p>{t.posterGenerating}</p>
             </div>
           ) : posterUrl ? (
-            <img src={posterUrl} alt="运势海报" className="fortune-poster-img" />
+            <img src={posterUrl} alt={t.posterAlt} className="fortune-poster-img" />
           ) : null}
         </div>
 
         {/* 操作按钮 */}
         <div className="fortune-poster-actions">
           <button className="fortune-poster-save-btn" onClick={handleSave} disabled={!posterUrl}>
-            📥 保存海报
+            {t.posterSave}
           </button>
           <button className="fortune-poster-close-btn" onClick={onClose}>
-            关闭
+            {t.posterClose}
           </button>
         </div>
       </div>

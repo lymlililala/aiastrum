@@ -2,15 +2,87 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import type { RuneReadingResult } from "../rune-engine";
-import { getActiveReading, getElementColor, formatDrawTime } from "../rune-engine";
+import { getActiveReading, getElementColor, formatDrawTime, buildSynthesis } from "../rune-engine";
+
+type Lang = "zh" | "en" | "tw";
+
+// ── 三语文案（仅弹窗 DOM chrome） ──────────────────────
+const PT = {
+  zh: {
+    modalTitle:  "🪨 你的专属符文石卡片",
+    generating:  "古老符文正在刻入石头...",
+    imgAlt:      "卢恩符文占卜结果",
+    download:    "保存图片",
+    shareTip:    "长按图片可直接分享到微信、朋友圈等",
+    brand:       "RuneWhisper · 符文之语",
+    modeSingle:  "奥丁之眼  ·  单石占卜",
+    modeThree:   "诺伦三女神  ·  三石占卜",
+    upright:     "↑ 正位",
+    reversed:    "↓ 逆位",
+    uprightShort: "正位",
+    reversedShort: "逆位",
+    elementDeity: (el: string, deity: string) => `${el}之力  ·  守护神：${deity}`,
+    revelation:  "符文启示",
+    actionAdvice: "⚔  行动建议",
+    synthesisTitle: "✦  三石综合解读  ✦",
+    footer:      (time: string) => `✦  符文之语 RuneWhisper  ·  ${time}  ✦`,
+    fileSpread:  { single: "单石", three: "三石" },
+    fileName:    (name: string, spread: string) => `符文占卜-${name}-${spread}.png`,
+  },
+  tw: {
+    modalTitle:  "🪨 你的專屬符文石卡片",
+    generating:  "古老符文正在刻入石頭...",
+    imgAlt:      "盧恩符文占卜結果",
+    download:    "儲存圖片",
+    shareTip:    "長按圖片可直接分享到微信、朋友圈等",
+    brand:       "RuneWhisper · 符文之語",
+    modeSingle:  "奧丁之眼  ·  單石占卜",
+    modeThree:   "諾倫三女神  ·  三石占卜",
+    upright:     "↑ 正位",
+    reversed:    "↓ 逆位",
+    uprightShort: "正位",
+    reversedShort: "逆位",
+    elementDeity: (el: string, deity: string) => `${el}之力  ·  守護神：${deity}`,
+    revelation:  "符文啟示",
+    actionAdvice: "⚔  行動建議",
+    synthesisTitle: "✦  三石綜合解讀  ✦",
+    footer:      (time: string) => `✦  符文之語 RuneWhisper  ·  ${time}  ✦`,
+    fileSpread:  { single: "單石", three: "三石" },
+    fileName:    (name: string, spread: string) => `符文占卜-${name}-${spread}.png`,
+  },
+  en: {
+    modalTitle:  "🪨 Your Personal Rune Stone Card",
+    generating:  "Ancient runes are being carved into stone...",
+    imgAlt:      "Rune reading result",
+    download:    "Save Image",
+    shareTip:    "Press and hold the image to share it directly",
+    brand:       "RuneWhisper",
+    modeSingle:  "Odin's Eye  ·  Single Rune",
+    modeThree:   "The Three Norns  ·  Three Runes",
+    upright:     "↑ Upright",
+    reversed:    "↓ Reversed",
+    uprightShort: "Upright",
+    reversedShort: "Reversed",
+    elementDeity: (el: string, deity: string) => `Power of ${el}  ·  Patron: ${deity}`,
+    revelation:  "Rune Revelation",
+    actionAdvice: "⚔  Action Advice",
+    synthesisTitle: "✦  Three-Rune Synthesis  ✦",
+    footer:      (time: string) => `✦  RuneWhisper  ·  ${time}  ✦`,
+    fileSpread:  { single: "Single", three: "Three" },
+    fileName:    (name: string, spread: string) => `rune-reading-${name}-${spread}.png`,
+  },
+};
+// ───────────────────────────────────────────────────────
 
 interface RunePosterProps {
   result: RuneReadingResult;
+  lang: Lang;
   visible: boolean;
   onClose: () => void;
 }
 
-export function RunePoster({ result, visible, onClose }: RunePosterProps) {
+export function RunePoster({ result, lang, visible, onClose }: RunePosterProps) {
+  const t = PT[lang];
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -37,7 +109,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     if (!ctx) return;
 
     const mainStone = result.stones[0]!;
-    const mainReading = getActiveReading(mainStone);
+    const mainReading = getActiveReading(mainStone, lang);
     const mainColors = getElementColor(mainStone.rune.element);
 
     // ===== 背景 =====
@@ -113,11 +185,11 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "bold 20px serif";
     ctx.fillStyle = "rgba(180,200,240,0.55)";
     ctx.textAlign = "center";
-    ctx.fillText("RuneWhisper · 符文之语", W / 2, 46);
+    ctx.fillText(t.brand, W / 2, 46);
     ctx.restore();
 
     // ===== 占卜模式标题 =====
-    const modeName = result.spread === "single" ? "奥丁之眼  ·  单石占卜" : "诺伦三女神  ·  三石占卜";
+    const modeName = result.spread === "single" ? t.modeSingle : t.modeThree;
     ctx.save();
     ctx.font = "bold 15px sans-serif";
     ctx.fillStyle = `${mainColors.secondary}99`;
@@ -152,7 +224,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "13px sans-serif";
     ctx.fillStyle = "rgba(140,170,220,0.35)";
     ctx.textAlign = "center";
-    ctx.fillText(`✦  符文之语 RuneWhisper  ·  ${formatDrawTime(result.drawTime)}  ✦`, W / 2, H - 26);
+    ctx.fillText(t.footer(formatDrawTime(result.drawTime, lang)), W / 2, H - 26);
     ctx.restore();
 
     setImageUrl(canvas.toDataURL("image/png"));
@@ -238,7 +310,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.fillStyle = isReversed ? "#F87171" : "#6EE7B7";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(isReversed ? "↓ 逆位" : "↑ 正位", W / 2, orientationY);
+    ctx.fillText(isReversed ? t.reversed : t.upright, W / 2, orientationY);
     ctx.restore();
 
     // ===== 符文名称 =====
@@ -266,7 +338,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "15px sans-serif";
     ctx.fillStyle = "rgba(160,180,230,0.5)";
     ctx.textAlign = "center";
-    ctx.fillText(`${rune.element}之力  ·  守护神：${rune.deity}`, W / 2, nameY + 68);
+    ctx.fillText(t.elementDeity(rune.element, rune.deity), W / 2, nameY + 68);
     ctx.restore();
 
     // ===== 分隔线 =====
@@ -307,7 +379,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "bold 16px sans-serif";
     ctx.fillStyle = `${activeColors.secondary}cc`;
     ctx.textAlign = "left";
-    ctx.fillText("符文启示", 60, meaningTitleY);
+    ctx.fillText(t.revelation, 60, meaningTitleY);
     ctx.restore();
 
     // 解读文字（带换行）
@@ -338,7 +410,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "bold 14px sans-serif";
     ctx.fillStyle = `${activeColors.secondary}bb`;
     ctx.textAlign = "left";
-    ctx.fillText("⚔  行动建议", 64, adviceStartY + 24);
+    ctx.fillText(t.actionAdvice, 64, adviceStartY + 24);
     ctx.restore();
 
     ctx.save();
@@ -437,7 +509,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
       ctx.fillStyle = "rgba(160,180,220,0.5)";
       ctx.fillText(stone.rune.name, x, y + stoneR + 38);
       // 正逆位
-      const orientLabel = stone.isReversed ? "逆位" : "正位";
+      const orientLabel = stone.isReversed ? t.reversedShort : t.uprightShort;
       ctx.font = "11px sans-serif";
       ctx.fillStyle = stone.isReversed ? "#F87171" : "#6EE7B7";
       ctx.fillText(orientLabel, x, y + stoneR + 54);
@@ -448,14 +520,14 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     let detailY = stoneAreaY + stoneR * 2 + 130;
 
     // 分隔线
-    const mainColors = getElementColor(stones[1]?.rune.element ?? "风");
+    const mainColors = getElementColor(stones[1]?.rune.element ?? "");
     drawDivider(ctx, W, detailY, mainColors);
     detailY += 30;
 
     // 每个符文详情卡片
     stones.forEach((stone, i) => {
       const colors = getElementColor(stone.rune.element);
-      const reading = getActiveReading(stone);
+      const reading = getActiveReading(stone, lang);
 
       // 卡片背景
       const cardH = 185;
@@ -527,7 +599,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
 
     // ===== 综合解读卡片 =====
     detailY += 8;
-    const synthText = buildSynthesisText();
+    const synthText = buildSynthesis(result, lang);
     const synthLines = estimateLines(ctx, synthText, W - 140, "16px serif");
     const synthH = 60 + synthLines * 26 + 16;
 
@@ -547,7 +619,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.font = "bold 16px sans-serif";
     ctx.fillStyle = "rgba(200,180,255,0.85)";
     ctx.textAlign = "center";
-    ctx.fillText("✦  三石综合解读  ✦", W / 2, detailY + 26);
+    ctx.fillText(t.synthesisTitle, W / 2, detailY + 26);
     ctx.restore();
 
     ctx.save();
@@ -558,18 +630,6 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
     ctx.restore();
 
     return Promise.resolve();
-  }
-
-  function buildSynthesisText(): string {
-    const [past, present, future] = result.stones;
-    if (!past || !present || !future) return "";
-    const pastR = getActiveReading(past);
-    const presentR = getActiveReading(present);
-    const futureR = getActiveReading(future);
-    return `【${past.rune.chineseName}】在过去揭示了「${pastR.keywords[0]}」的根源，`
-      + `与当前【${present.rune.chineseName}】所呈现的「${presentR.keywords[0]}」相呼应。`
-      + `若顺应此能量流动，未来【${future.rune.chineseName}】将带来「${futureR.keywords[0]}」的趋势。`
-      + `三石提示：${futureR.advice}`;
   }
 
   // ===== 工具函数 =====
@@ -673,9 +733,9 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
   const handleDownload = () => {
     if (!imageUrl) return;
     const mainStone = result.stones[0]!;
-    const spreadName = result.spread === "single" ? "单石" : "三石";
+    const spreadName = result.spread === "single" ? t.fileSpread.single : t.fileSpread.three;
     const link = document.createElement("a");
-    link.download = `符文占卜-${mainStone.rune.chineseName}-${spreadName}.png`;
+    link.download = t.fileName(mainStone.rune.chineseName, spreadName);
     link.href = imageUrl;
     link.click();
   };
@@ -688,7 +748,7 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
         {/* 关闭 */}
         <button className="rune-poster-close" onClick={onClose}>✕</button>
 
-        <h3 className="rune-poster-title">🪨 你的专属符文石卡片</h3>
+        <h3 className="rune-poster-title">{t.modalTitle}</h3>
 
         {/* Canvas（隐藏，用于生成） */}
         <canvas ref={canvasRef} style={{ display: "none" }} />
@@ -698,13 +758,13 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
           {isGenerating ? (
             <div className="rune-poster-generating">
               <span className="rune-poster-gen-icon">ᚠ</span>
-              <p>古老符文正在刻入石头...</p>
+              <p>{t.generating}</p>
             </div>
           ) : imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={imageUrl}
-              alt="卢恩符文占卜结果"
+              alt={t.imgAlt}
               className="rune-poster-image"
             />
           ) : null}
@@ -715,10 +775,10 @@ export function RunePoster({ result, visible, onClose }: RunePosterProps) {
           <div className="rune-poster-actions">
             <button className="rune-poster-download-btn" onClick={handleDownload}>
               <span>⬇</span>
-              <span>保存图片</span>
+              <span>{t.download}</span>
             </button>
             <p className="rune-poster-share-tip">
-              长按图片可直接分享到微信、朋友圈等
+              {t.shareTip}
             </p>
           </div>
         )}

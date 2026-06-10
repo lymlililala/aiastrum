@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import type { FaceReadingReport } from "../face-reading-data";
+import type { FaceT } from "../face-reading-i18n";
 
 interface FaceReportProps {
+  t: FaceT;
   report: FaceReadingReport;
   imageUrl: string;
   onShare: () => void;
@@ -11,7 +13,7 @@ interface FaceReportProps {
 }
 
 // 分数弧形组件
-function ScoreArc({ score }: { score: number }) {
+function ScoreArc({ score, label }: { score: number; label: string }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (score / 100) * circumference;
@@ -51,7 +53,7 @@ function ScoreArc({ score }: { score: number }) {
       </svg>
       <div className="fr-score-center">
         <span className="fr-score-number">{score}</span>
-        <span className="fr-score-label">命运指数</span>
+        <span className="fr-score-label">{label}</span>
       </div>
     </div>
   );
@@ -100,9 +102,9 @@ function DimensionBar({ name, icon, score, label, insight, index }: {
   );
 }
 
-export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportProps) {
+export function FaceReport({ t, report, imageUrl, onShare, onRetry }: FaceReportProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "dimensions" | "advice">("overview");
-  const modeName = report.mode === "face" ? "面相" : "手相";
+  const modeName = report.mode === "face" ? t.reportFace : t.reportPalm;
 
   return (
     <div className="fr-report-container">
@@ -117,7 +119,7 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
         {/* 照片 + 天赋标签 */}
         <div className="fr-hero-photo-wrapper">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt="分析照片" className="fr-hero-photo" />
+          <img src={imageUrl} alt={t.photoAlt} className="fr-hero-photo" />
           <div className="fr-hero-photo-ring" />
         </div>
 
@@ -131,18 +133,21 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
             {report.talentLabel.rarity === "史诗" && "💎"}
             {report.talentLabel.rarity === "稀有" && "✨"}
             {report.talentLabel.rarity === "普通" && "🌟"}
-            {report.talentLabel.rarity}
+            {report.talentLabel.rarity === "传说" && t.rarityLegend}
+            {report.talentLabel.rarity === "史诗" && t.rarityEpic}
+            {report.talentLabel.rarity === "稀有" && t.rarityRare}
+            {report.talentLabel.rarity === "普通" && t.rarityCommon}
           </div>
           <div className="fr-talent-icon">{report.talentLabel.icon}</div>
           <div className="fr-talent-name">{report.talentLabel.name}</div>
         </div>
 
         {/* 总分 */}
-        <ScoreArc score={report.overallScore} />
+        <ScoreArc score={report.overallScore} label={t.previewScoreLabel} />
 
         {/* 标题 */}
         <div className="fr-hero-title">
-          <h2>AI {modeName}分析报告</h2>
+          <h2>{t.reportTitlePre}{modeName}{t.reportTitlePost}</h2>
           <p className="fr-hero-subtitle">{report.talentLabel.description}</p>
         </div>
       </div>
@@ -150,9 +155,9 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
       {/* Tab 导航 */}
       <div className="fr-report-tabs">
         {[
-          { id: "overview", label: "总览" },
-          { id: "dimensions", label: "维度评分" },
-          { id: "advice", label: "天赋解析" },
+          { id: "overview", label: t.tabOverview },
+          { id: "dimensions", label: t.tabDimensions },
+          { id: "advice", label: t.tabAdvice },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -172,7 +177,7 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
             {/* AI 解读 */}
             <div className="fr-overview-card">
               <div className="fr-card-title">
-                <span>🤖</span> AI 深度解读
+                <span>🤖</span> {t.cardAiTitle}
               </div>
               <p className="fr-overview-text">{report.overview}</p>
             </div>
@@ -180,7 +185,7 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
             {/* 三大优势 */}
             <div className="fr-overview-card">
               <div className="fr-card-title">
-                <span>⚡</span> 你的三大隐藏天赋
+                <span>⚡</span> {t.cardStrengths}
               </div>
               <div className="fr-strengths-list">
                 {report.strengths.map((s, i) => (
@@ -205,7 +210,7 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
         {activeTab === "dimensions" && (
           <div className="fr-dimensions">
             <p className="fr-dimensions-hint">
-              点击每个维度查看详细解读 👇
+              {t.dimensionsHint}
             </p>
             {report.dimensions.map((dim, i) => (
               <DimensionBar
@@ -223,7 +228,7 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
             {/* 机遇提示 */}
             <div className="fr-overview-card">
               <div className="fr-card-title">
-                <span>🌟</span> 近期机遇预测
+                <span>🌟</span> {t.cardOpportunities}
               </div>
               <div className="fr-opportunities-list">
                 {report.opportunities.map((opp, i) => (
@@ -254,13 +259,13 @@ export function FaceReport({ report, imageUrl, onShare, onRetry }: FaceReportPro
         {/* 分享按钮 */}
         <button className="fr-btn-share" onClick={onShare}>
           <span>📤</span>
-          <span>生成专属海报 · 晒朋友圈</span>
+          <span>{t.btnSharePoster}</span>
         </button>
 
         {/* 重测按钮 */}
         <button className="fr-btn-retry" onClick={onRetry}>
           <span>🔄</span>
-          <span>换{report.mode === "face" ? "张照片" : "只手"}再测</span>
+          <span>{t.btnRetryPre}{report.mode === "face" ? t.btnRetryFace : t.btnRetryPalm}{t.btnRetryPost}</span>
         </button>
       </div>
     </div>

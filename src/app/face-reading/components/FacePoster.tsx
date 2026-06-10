@@ -2,14 +2,17 @@
 
 import React, { useRef, useState, useCallback } from "react";
 import type { FaceReadingReport } from "../face-reading-data";
+import type { FaceT, FaceLang } from "../face-reading-i18n";
 
 interface FacePosterProps {
+  t: FaceT;
+  lang: FaceLang;
   report: FaceReadingReport;
   imageUrl: string;
   onClose: () => void;
 }
 
-export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
+export function FacePoster({ t, lang, report, imageUrl, onClose }: FacePosterProps) {
   const posterRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -30,7 +33,7 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
       });
 
       const link = document.createElement("a");
-      link.download = `AI面相分析_${report.talentLabel.name}_${Date.now()}.png`;
+      link.download = `${t.posterFileName}_${report.talentLabel.name}_${Date.now()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
 
@@ -43,14 +46,17 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
     } finally {
       setSaving(false);
     }
-  }, [saving, report.talentLabel.name]);
+  }, [saving, report.talentLabel.name, t.posterFileName]);
 
-  const modeName = report.mode === "face" ? "面相" : "手相";
-  const today = new Date().toLocaleDateString("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const modeName = report.mode === "face" ? t.reportFace : t.reportPalm;
+  const today = new Date().toLocaleDateString(
+    lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   return (
     <div className="fr-poster-overlay" onClick={onClose}>
@@ -73,9 +79,9 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
           <div className="fr-poster-header">
             <div className="fr-poster-logo">
               <span className="fr-poster-logo-icon">🔬</span>
-              <span className="fr-poster-logo-text">赛博算命</span>
+              <span className="fr-poster-logo-text">{t.posterLogo}</span>
             </div>
-            <div className="fr-poster-subtitle-text">AI {modeName}分析</div>
+            <div className="fr-poster-subtitle-text">{t.posterSubPre}{modeName}{t.posterSubPost}</div>
           </div>
 
           {/* 照片区 */}
@@ -109,9 +115,9 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
           <div className="fr-poster-score-row">
             <div className="fr-poster-score-main">
               <span className="fr-poster-score-num">{report.overallScore}</span>
-              <span className="fr-poster-score-unit">分</span>
+              <span className="fr-poster-score-unit">{t.posterScoreUnit}</span>
             </div>
-            <div className="fr-poster-score-label">命运综合指数</div>
+            <div className="fr-poster-score-label">{t.posterScoreLabel}</div>
           </div>
 
           {/* 五维评分 */}
@@ -144,7 +150,7 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
           {/* 底部信息 */}
           <div className="fr-poster-footer">
             <div className="fr-poster-date">{today}</div>
-            <div className="fr-poster-disclaimer">本分析仅供娱乐参考</div>
+            <div className="fr-poster-disclaimer">{t.posterDisclaimer}</div>
           </div>
         </div>
 
@@ -155,16 +161,16 @@ export function FacePoster({ report, imageUrl, onClose }: FacePosterProps) {
           onClick={handleSave}
           disabled={saving}
         >
-          {saving ? "⏳ 生成中..." : saveError ? "⚠ 生成失败，请截图保存" : saved ? "✅ 已保存！去发朋友圈" : "💾 保存海报"}
+          {saving ? t.posterGenerating : saveError ? t.posterError : saved ? t.posterSaved : t.posterSave}
         </button>
           <button className="fr-poster-close-btn" onClick={onClose}>
-            关闭
+            {t.posterClose}
           </button>
         </div>
 
         {/* 分享提示 */}
         <p className="fr-poster-share-tip">
-          💬 保存后发到朋友圈，让朋友也来测测看！
+          {t.posterShareTip}
         </p>
       </div>
     </div>

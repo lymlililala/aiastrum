@@ -2,14 +2,16 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import type { AnalysisMode } from "../face-reading-data";
+import type { FaceT } from "../face-reading-i18n";
 
 interface UploadPhotoProps {
+  t: FaceT;
   onImageSelect: (file: File, previewUrl: string) => void;
   onModeChange: (mode: AnalysisMode) => void;
   mode: AnalysisMode;
 }
 
-export function UploadPhoto({ onImageSelect, onModeChange, mode }: UploadPhotoProps) {
+export function UploadPhoto({ t, onImageSelect, onModeChange, mode }: UploadPhotoProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,23 +61,23 @@ export function UploadPhoto({ onImageSelect, onModeChange, mode }: UploadPhotoPr
           onClick={() => onModeChange("face")}
         >
           <span className="fr-mode-icon">👁️</span>
-          <span>AI 面相分析</span>
+          <span>{t.tabFace}</span>
         </button>
         <button
           className={`fr-mode-tab ${mode === "palm" ? "active" : ""}`}
           onClick={() => onModeChange("palm")}
         >
           <span className="fr-mode-icon">✋</span>
-          <span>AI 手相分析</span>
+          <span>{t.tabPalm}</span>
         </button>
       </div>
 
       {/* 模式提示 */}
       <div className="fr-mode-hint">
         {mode === "face" ? (
-          <p>📸 拍摄或上传你的<strong>正面清晰照片</strong>，AI 将深度解析你的面部特征</p>
+          <p>{t.hintFacePre}<strong>{t.hintFaceStrong}</strong>{t.hintFacePost}</p>
         ) : (
-          <p>✋ 拍摄或上传你的<strong>左手掌心照片</strong>，AI 将解读你的掌纹密码</p>
+          <p>{t.hintPalmPre}<strong>{t.hintPalmStrong}</strong>{t.hintPalmPost}</p>
         )}
       </div>
 
@@ -108,9 +110,9 @@ export function UploadPhoto({ onImageSelect, onModeChange, mode }: UploadPhotoPr
           <div className="fr-upload-icon">
             {mode === "face" ? "🤳" : "🖐️"}
           </div>
-          <p className="fr-upload-title">点击上传照片</p>
-          <p className="fr-upload-subtitle">或拖拽图片到此处</p>
-          <p className="fr-upload-format">支持 JPG、PNG、WebP · 最大 10MB</p>
+          <p className="fr-upload-title">{t.uploadTitle}</p>
+          <p className="fr-upload-subtitle">{t.uploadSubtitle}</p>
+          <p className="fr-upload-format">{t.uploadFormat}</p>
         </div>
       </div>
 
@@ -119,22 +121,18 @@ export function UploadPhoto({ onImageSelect, onModeChange, mode }: UploadPhotoPr
         <div className="fr-tip-item good">
           <span className="fr-tip-icon">✅</span>
           <div>
-            <p className="fr-tip-title">最佳效果</p>
+            <p className="fr-tip-title">{t.tipBest}</p>
             <p className="fr-tip-desc">
-              {mode === "face"
-                ? "正面、光线充足、无遮挡"
-                : "摊开手掌、光线充足、清晰拍摄"}
+              {mode === "face" ? t.tipBestFace : t.tipBestPalm}
             </p>
           </div>
         </div>
         <div className="fr-tip-item bad">
           <span className="fr-tip-icon">❌</span>
           <div>
-            <p className="fr-tip-title">避免</p>
+            <p className="fr-tip-title">{t.tipAvoid}</p>
             <p className="fr-tip-desc">
-              {mode === "face"
-                ? "侧脸、戴口罩、过暗"
-                : "握拳、反手、模糊"}
+              {mode === "face" ? t.tipAvoidFace : t.tipAvoidPalm}
             </p>
           </div>
         </div>
@@ -144,13 +142,13 @@ export function UploadPhoto({ onImageSelect, onModeChange, mode }: UploadPhotoPr
       <div className="fr-privacy-notice">
         <span className="fr-privacy-icon">🔒</span>
         <p>
-          照片仅用于本次 AI 分析，<strong>分析完成后立即删除</strong>，不会留存任何图像数据。
+          {t.privacyNoticePre}<strong>{t.privacyNoticeStrong}</strong>{t.privacyNoticePost}
         </p>
       </div>
 
       {/* 免责声明 */}
       <div className="fr-disclaimer">
-        ⚠️ 本分析仅供娱乐参考，不代表专业指导意见
+        {t.uploadDisclaimer}
       </div>
     </div>
   );

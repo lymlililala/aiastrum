@@ -1,7 +1,69 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
 import "./ai-mystic.css";
+
+// ── 三语文案（UI chrome） ────────────────────────────
+type Lang = "zh" | "en" | "tw";
+const T = {
+  zh: {
+    back:          "← 返回",
+    heroTag:       "AI Mystic · 解忧馆",
+    heroTitle:     "AI 专属解忧馆",
+    heroSub:       "向塔罗 AI 倾诉你的烦恼，获得洞察与指引",
+    quickLabel:    "✦ 快速提问",
+    quickQuestions: [
+      "我最近感情运势怎么样？",
+      "我该换工作吗？",
+      "我最近总是睡不好，是什么信号？",
+      "我的财运今年如何？",
+      "我和某人的关系能有进展吗？",
+    ],
+    inputThinking: "小云正在思考…",
+    inputPlaceholder: "说出你的烦恼…（Enter 发送，Shift+Enter 换行）",
+    disclaimer:    "仅供娱乐与心理探索参考，请理性看待，切勿迷信",
+    welcome:       "你好，我是小云，你的专属塔罗解忧师。🔮\n\n不论是感情困惑、职场迷茫，还是说不清楚的焦虑，都可以跟我说。我会认真倾听，并用塔罗牌为你指引方向。\n\n今天，你想聊什么？",
+  },
+  tw: {
+    back:          "← 返回",
+    heroTag:       "AI Mystic · 解憂館",
+    heroTitle:     "AI 專屬解憂館",
+    heroSub:       "向塔羅 AI 傾訴你的煩惱，獲得洞察與指引",
+    quickLabel:    "✦ 快速提問",
+    quickQuestions: [
+      "我最近感情運勢怎麼樣？",
+      "我該換工作嗎？",
+      "我最近總是睡不好，是什麼信號？",
+      "我今年的財運如何？",
+      "我和某人的關係能有進展嗎？",
+    ],
+    inputThinking: "小雲正在思考…",
+    inputPlaceholder: "說出你的煩惱…（Enter 發送，Shift+Enter 換行）",
+    disclaimer:    "僅供娛樂與心理探索參考，請理性看待，切勿迷信",
+    welcome:       "你好，我是小雲，你的專屬塔羅解憂師。🔮\n\n不論是感情困惑、職場迷茫，還是說不清楚的焦慮，都可以跟我說。我會認真傾聽，並用塔羅牌為你指引方向。\n\n今天，你想聊什麼？",
+  },
+  en: {
+    back:          "← Back",
+    heroTag:       "AI Mystic · Oracle Lounge",
+    heroTitle:     "Your AI Oracle Lounge",
+    heroSub:       "Share what's on your mind with the tarot AI, and receive insight and guidance",
+    quickLabel:    "✦ Quick questions",
+    quickQuestions: [
+      "How does my love life look lately?",
+      "Should I change jobs?",
+      "I keep sleeping badly lately — what is it telling me?",
+      "How is my fortune with money this year?",
+      "Can things move forward with a certain someone?",
+    ],
+    inputThinking: "Cloudy is thinking…",
+    inputPlaceholder: "Tell me what's troubling you… (Enter to send, Shift+Enter for a new line)",
+    disclaimer:    "For entertainment and self-reflection only — take it lightly and don't be superstitious",
+    welcome:       "Hi, I'm Cloudy, your personal tarot companion. 🔮\n\nWhether it's matters of the heart, career confusion, or an anxiety you can't quite name, you can tell me. I'll listen closely and use the tarot to point the way.\n\nWhat would you like to talk about today?",
+  },
+};
+// ────────────────────────────────────────────────────
 
 // ===== 数据定义 =====
 // 冷却时间（ms）：两条消息之间的最短间隔，防止刷屏
@@ -17,14 +79,6 @@ interface Message {
   cardRef?: string;
   time: string;
 }
-
-const QUICK_QUESTIONS = [
-  "我最近感情运势怎么样？",
-  "我该换工作吗？",
-  "我最近总是睡不好，是什么信号？",
-  "我的财运今年如何？",
-  "我和某人的关系能有进展吗？",
-];
 
 const TAROT_CARDS_MINI = [
   { name: "愚人", emoji: "🃏", msg: "新旅程正在开始，请勇敢踏出第一步，不必想太多" },
@@ -279,15 +333,16 @@ function nowTime(): string {
   return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
 }
 
-const WELCOME_MESSAGE: Message = {
-  id: "welcome",
-  role: "ai",
-  content: "你好，我是小云，你的专属塔罗解忧师。🔮\n\n不论是感情困惑、职场迷茫，还是说不清楚的焦虑，都可以跟我说。我会认真倾听，并用塔罗牌为你指引方向。\n\n今天，你想聊什么？",
-  time: nowTime(),
-};
-
 export default function AIMysticPage() {
-  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
+  const [messages, setMessages] = useState<Message[]>(() => [{
+    id: "welcome",
+    role: "ai",
+    content: t.welcome,
+    time: nowTime(),
+  }]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [cooldown, setCooldown] = useState(false); // 发送冷却保护
@@ -304,6 +359,15 @@ export default function AIMysticPage() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  // 语言切换时，若仍处于初始欢迎语阶段（尚未开始对话），同步欢迎语文案
+  useEffect(() => {
+    setMessages((prev) =>
+      prev.length === 1 && prev[0]?.id === "welcome"
+        ? [{ ...prev[0], content: t.welcome }]
+        : prev,
+    );
+  }, [t.welcome]);
 
   const handleSend = useCallback(async (msg?: string) => {
     const text = (msg ?? input).trim();
@@ -374,16 +438,21 @@ export default function AIMysticPage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>{t.back}</a>
+
+      {/* 语言切换 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
 
       {/* Hero */}
       <div className="mystic-hero">
         <div className="mystic-hero-bg" />
-        <div className="mystic-hero-tag">AI Mystic · 解忧馆</div>
+        <div className="mystic-hero-tag">{t.heroTag}</div>
         <h1 className="mystic-hero-title">
-          <span className="mystic-crystal">🔮</span> AI 专属解忧馆
+          <span className="mystic-crystal">🔮</span> {t.heroTitle}
         </h1>
-        <p className="mystic-hero-sub">向塔罗 AI 倾诉你的烦恼，获得洞察与指引</p>
+        <p className="mystic-hero-sub">{t.heroSub}</p>
       </div>
 
       {/* 聊天消息 */}
@@ -432,9 +501,9 @@ export default function AIMysticPage() {
       {/* 快捷问题（仅在对话开始阶段显示） */}
       {messages.length <= 2 && (
         <div className="mystic-quick-questions">
-          <div className="mystic-quick-label">✦ 快速提问</div>
+          <div className="mystic-quick-label">{t.quickLabel}</div>
           <div className="mystic-quick-list">
-            {QUICK_QUESTIONS.map((q) => (
+            {t.quickQuestions.map((q) => (
               <button
                 key={q}
                 className="mystic-quick-btn"
@@ -457,7 +526,7 @@ export default function AIMysticPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isTyping ? "小云正在思考…" : "说出你的烦恼…（Enter 发送，Shift+Enter 换行）"}
+            placeholder={isTyping ? t.inputThinking : t.inputPlaceholder}
             disabled={isDisabled}
             rows={1}
           />
@@ -473,7 +542,7 @@ export default function AIMysticPage() {
 
       {/* 免责声明 */}
       <div className="mystic-disclaimer">
-        仅供娱乐与心理探索参考，请理性看待，切勿迷信
+        {t.disclaimer}
       </div>
     </div>
   );

@@ -3,8 +3,11 @@
 import { useState } from "react";
 import type { MeihuaResult } from "../meihua-engine";
 import { BA_GUA, QUESTION_CATEGORIES } from "../meihua-data";
+import type { Lang, MeihuaT } from "../meihua-i18n";
 
 interface MeihuaResultProps {
+  lang: Lang;
+  t: MeihuaT;
   result: MeihuaResult;
   aiReading?: string | null;
   onReset: () => void;
@@ -20,12 +23,14 @@ const LEVEL_COLORS: Record<string, string> = {
   大吉: "#C04851", 中吉: "#E07B39", 吉: "#5B8A4A", 平: "#7A8B8B", 泄气: "#9B6B3A", 凶: "#6B3A4A",
 };
 
-export default function MeihuaResultComponent({ result, aiReading, onReset }: MeihuaResultProps) {
+export default function MeihuaResultComponent({ t, result, aiReading, onReset }: MeihuaResultProps) {
 const [activeTab, setActiveTab] = useState<"overview" | "guaci" | "detail">("overview");
 const [showCalc, setShowCalc] = useState(false);
 const [copied, setCopied] = useState(false);
 
-  const catLabel = QUESTION_CATEGORIES.find(c => c.id === result.category)?.label ?? "综合";
+  const catLabel = t.catLabels[result.category]
+    ?? QUESTION_CATEGORIES.find(c => c.id === result.category)?.label
+    ?? t.catLabels.general;
   const catIcon = QUESTION_CATEGORIES.find(c => c.id === result.category)?.icon ?? "☯";
 
   const tiGuaInfo = result.tiGua === "upper"
@@ -53,15 +58,15 @@ const [copied, setCopied] = useState(false);
             <span>{catLabel}：{result.question}</span>
           </div>
         )}
-        <p className="meihua-result-time">{result.divineTime} 占</p>
+        <p className="meihua-result-time">{result.divineTime}{t.divineSuffix}</p>
       </div>
 
       {/* 三卦并排展示 */}
       <div className="meihua-three-gua">
         {[
-          { gua: result.mainGua, label: "本卦", sub: "当下之象", highlight: true },
-          { gua: result.huGua, label: "互卦", sub: "内在过程", highlight: false },
-          { gua: result.changeGua, label: "变卦", sub: "未来走势", highlight: false },
+          { gua: result.mainGua, label: t.guaMain, sub: t.guaMainSub, highlight: true },
+          { gua: result.huGua, label: t.guaHu, sub: t.guaHuSub, highlight: false },
+          { gua: result.changeGua, label: t.guaChange, sub: t.guaChangeSub, highlight: false },
         ].map(({ gua, label, sub, highlight }) => (
           <div key={label} className={`meihua-gua-card ${highlight ? "meihua-gua-main" : ""}`}>
             <div className="meihua-gua-label-row">
@@ -85,12 +90,12 @@ const [copied, setCopied] = useState(false);
       <div className="meihua-tiyong-block">
         <div className="meihua-tiyong-title">
           <span className="meihua-section-dot">◆</span>
-          体用分析
-          <span className="meihua-dong-yao">动爻：第 {result.dongYao} 爻</span>
+          {t.tiyongTitle}
+          <span className="meihua-dong-yao">{t.dongYaoPre}{result.dongYao}{t.dongYaoPost}</span>
         </div>
         <div className="meihua-tiyong-cards">
           <div className="meihua-ti-card">
-            <div className="meihua-tiyong-tag meihua-ti-tag">体卦</div>
+            <div className="meihua-tiyong-tag meihua-ti-tag">{t.tiTag}</div>
             <div className="meihua-tiyong-sym">{tiGuaInfo.symbol}</div>
             <div className="meihua-tiyong-name">{tiGuaInfo.name}（{tiGuaInfo.nature}）</div>
             <div
@@ -99,9 +104,9 @@ const [copied, setCopied] = useState(false);
             >
               ● {result.tiWuXing}
             </div>
-            <div className="meihua-tiyong-role">代表自身·主体</div>
+            <div className="meihua-tiyong-role">{t.tiRole}</div>
             <div className="meihua-tiyong-pos">
-              {result.tiGua === "upper" ? "上卦（4-6爻）" : "下卦（1-3爻）"}
+              {result.tiGua === "upper" ? t.posUpper : t.posLower}
             </div>
           </div>
 
@@ -118,7 +123,7 @@ const [copied, setCopied] = useState(false);
           </div>
 
           <div className="meihua-yong-card">
-            <div className="meihua-tiyong-tag meihua-yong-tag">用卦</div>
+            <div className="meihua-tiyong-tag meihua-yong-tag">{t.yongTag}</div>
             <div className="meihua-tiyong-sym">{yongGuaInfo.symbol}</div>
             <div className="meihua-tiyong-name">{yongGuaInfo.name}（{yongGuaInfo.nature}）</div>
             <div
@@ -127,9 +132,9 @@ const [copied, setCopied] = useState(false);
             >
               ● {result.yongWuXing}
             </div>
-            <div className="meihua-tiyong-role">代表事物·客体</div>
+            <div className="meihua-tiyong-role">{t.yongRole}</div>
             <div className="meihua-tiyong-pos">
-              {result.yongGua === "upper" ? "上卦（4-6爻）" : "下卦（1-3爻）"}
+              {result.yongGua === "upper" ? t.posUpper : t.posLower}
             </div>
           </div>
         </div>
@@ -138,9 +143,9 @@ const [copied, setCopied] = useState(false);
       {/* Tab 切换 */}
       <div className="meihua-tab-bar">
         {[
-          { key: "overview", label: "断卦解析" },
-          { key: "guaci",    label: "卦辞爻辞" },
-          { key: "detail",   label: "详细说明" },
+          { key: "overview", label: t.tabOverview },
+          { key: "guaci",    label: t.tabGuaci },
+          { key: "detail",   label: t.tabDetail },
         ].map(tab => (
           <button
             key={tab.key}
@@ -172,7 +177,7 @@ const [copied, setCopied] = useState(false);
             <div className="meihua-advice-block">
               <div className="meihua-advice-label">
                 <span className="meihua-section-dot">◈</span>
-                行事建议
+                {t.adviceLabel}
               </div>
               <p className="meihua-advice-text">{result.relation.advice}</p>
             </div>
@@ -182,7 +187,7 @@ const [copied, setCopied] = useState(false);
               <div className="meihua-cat-advice">
                 <div className="meihua-advice-label">
                   <span className="meihua-section-dot">◈</span>
-                  {catIcon} {catLabel}专项分析
+                  {catIcon} {catLabel}{t.catAdviceSuffix}
                 </div>
                 <p className="meihua-advice-text">{result.categoryAdvice}</p>
               </div>
@@ -192,7 +197,7 @@ const [copied, setCopied] = useState(false);
             {aiReading && (
               <div className="meihua-ai-block">
                 <div className="meihua-ai-label">
-                  <span className="meihua-ai-badge">✦ AI 解读</span>
+                  <span className="meihua-ai-badge">{t.aiBadge}</span>
                 </div>
                 <p className="meihua-ai-text">{aiReading}</p>
               </div>
@@ -202,11 +207,11 @@ const [copied, setCopied] = useState(false);
             <div className="meihua-imagery-block">
               <div className="meihua-advice-label">
                 <span className="meihua-section-dot">◈</span>
-                本卦象意
+                {t.imageryLabel}
               </div>
               <p className="meihua-imagery-text">{result.guaCiInfo.overall}</p>
               <div className="meihua-change-gua-hint">
-                <span>变卦 {result.changeGua.guaName}：</span>
+                <span>{t.changeGuaPre}{result.changeGua.guaName}{t.changeGuaColon}</span>
                 <span>{result.changeGuaCiInfo.overall}</span>
               </div>
             </div>
@@ -220,10 +225,10 @@ const [copied, setCopied] = useState(false);
               <div className="meihua-guaci-header">
                 <span className="meihua-guaci-sym">{result.mainGua.symbol}</span>
                 <span className="meihua-guaci-name">{result.mainGua.guaName}</span>
-                <span className="meihua-guaci-tag">本卦</span>
+                <span className="meihua-guaci-tag">{t.guaciTagMain}</span>
               </div>
               <div className="meihua-guaci-original">
-                <span className="meihua-guaci-orig-label">《周易》原文：</span>
+                <span className="meihua-guaci-orig-label">{t.guaciOrigLabel}</span>
                 <p className="meihua-guaci-orig-text">{result.guaCiInfo.gua_ci}</p>
               </div>
               <p className="meihua-guaci-baihua">{result.guaCiInfo.gua_ci_baihua}</p>
@@ -231,7 +236,7 @@ const [copied, setCopied] = useState(false);
               {/* 动爻爻辞 */}
               <div className="meihua-yaoci-block">
                 <div className="meihua-yaoci-label">
-                  动爻（第 {result.dongYao} 爻）：
+                  {t.yaociPre}{result.dongYao}{t.yaociPost}
                 </div>
                 <p className="meihua-yaoci-original">{result.guaCiInfo.yao_ci[result.dongYao - 1]}</p>
                 <p className="meihua-yaoci-baihua">{result.guaCiInfo.yao_ci_baihua[result.dongYao - 1]}</p>
@@ -243,10 +248,10 @@ const [copied, setCopied] = useState(false);
               <div className="meihua-guaci-header">
                 <span className="meihua-guaci-sym">{result.changeGua.symbol}</span>
                 <span className="meihua-guaci-name">{result.changeGua.guaName}</span>
-                <span className="meihua-guaci-tag meihua-change-tag">变卦</span>
+                <span className="meihua-guaci-tag meihua-change-tag">{t.guaciTagChange}</span>
               </div>
               <div className="meihua-guaci-original">
-                <span className="meihua-guaci-orig-label">《周易》原文：</span>
+                <span className="meihua-guaci-orig-label">{t.guaciOrigLabel}</span>
                 <p className="meihua-guaci-orig-text">{result.changeGuaCiInfo.gua_ci}</p>
               </div>
               <p className="meihua-guaci-baihua">{result.changeGuaCiInfo.gua_ci_baihua}</p>
@@ -258,20 +263,20 @@ const [copied, setCopied] = useState(false);
           <div className="meihua-detail-tab">
             {/* 五行生克详解 */}
             <div className="meihua-detail-section">
-              <div className="meihua-detail-section-title">五行生克详解</div>
+              <div className="meihua-detail-section-title">{t.wuxingDetailTitle}</div>
               <div className="meihua-wuxing-detail">
                 <div className="meihua-wuxing-row">
                   <span className="meihua-wuxing-item" style={{ color: WUXING_COLORS[result.tiWuXing] }}>
-                    体（{tiGuaInfo.name}·{result.tiWuXing}）
+                    {t.tiPre}{tiGuaInfo.name}·{result.tiWuXing}{t.guaWxClose}
                   </span>
                   <span className="meihua-wuxing-rel">{result.relation.type}</span>
                   <span className="meihua-wuxing-item" style={{ color: WUXING_COLORS[result.yongWuXing] }}>
-                    用（{yongGuaInfo.name}·{result.yongWuXing}）
+                    {t.yongPre}{yongGuaInfo.name}·{result.yongWuXing}{t.guaWxClose}
                   </span>
                 </div>
                 <div className="meihua-wuxing-explains">
                   <p>
-                    {result.tiWuXing}（体）与{result.yongWuXing}（用）之间：
+                    {result.tiWuXing}{t.wuxingBetweenMid}{result.yongWuXing}{t.wuxingBetweenSuffix}
                     {getWuXingExplain(result.tiWuXing, result.yongWuXing)}
                   </p>
                 </div>
@@ -280,11 +285,11 @@ const [copied, setCopied] = useState(false);
 
             {/* 三卦详解 */}
             <div className="meihua-detail-section">
-              <div className="meihua-detail-section-title">三卦详解</div>
+              <div className="meihua-detail-section-title">{t.threeGuaTitle}</div>
               {[
-                { gua: result.mainGua, label: "本卦", desc: "当下的状态与环境，代表事情的本质与现实情况。" },
-                { gua: result.huGua,   label: "互卦", desc: "事情发展的内在过程，代表事情的核心与中间阶段。" },
-                { gua: result.changeGua, label: "变卦", desc: "动爻变化后的未来走向，代表事情最终的结果与趋势。" },
+                { gua: result.mainGua, label: t.guaMain, desc: t.detailMainDesc },
+                { gua: result.huGua,   label: t.guaHu, desc: t.detailHuDesc },
+                { gua: result.changeGua, label: t.guaChange, desc: t.detailChangeDesc },
               ].map(({ gua, label, desc }) => (
                 <div key={label} className="meihua-gua-detail-row">
                   <div className="meihua-gua-detail-header">
@@ -295,13 +300,13 @@ const [copied, setCopied] = useState(false);
                   <p className="meihua-gua-detail-desc">{desc}</p>
                   <div className="meihua-gua-parts-detail">
                     <div className="meihua-gua-part-item">
-                      <span>{BA_GUA[gua.upper]!.symbol} 上卦 {gua.upperName}</span>
+                      <span>{BA_GUA[gua.upper]!.symbol} {t.detailUpper} {gua.upperName}</span>
                       <span className="meihua-gua-part-wx" style={{ color: WUXING_COLORS[BA_GUA[gua.upper]!.wuxing] }}>
                         {BA_GUA[gua.upper]!.wuxing} · {BA_GUA[gua.upper]!.nature}
                       </span>
                     </div>
                     <div className="meihua-gua-part-item">
-                      <span>{BA_GUA[gua.lower]!.symbol} 下卦 {gua.lowerName}</span>
+                      <span>{BA_GUA[gua.lower]!.symbol} {t.detailLower} {gua.lowerName}</span>
                       <span className="meihua-gua-part-wx" style={{ color: WUXING_COLORS[BA_GUA[gua.lower]!.wuxing] }}>
                         {BA_GUA[gua.lower]!.wuxing} · {BA_GUA[gua.lower]!.nature}
                       </span>
@@ -317,24 +322,24 @@ const [copied, setCopied] = useState(false);
                 className="meihua-calc-toggle"
                 onClick={() => setShowCalc(!showCalc)}
               >
-                {showCalc ? "▾" : "▸"} 查看起卦计算过程
+                {showCalc ? "▾" : "▸"} {t.calcToggle}
               </button>
               {showCalc && (
                 <div className="meihua-calc-detail">
                   <div className="meihua-calc-row">
-                    <span className="meihua-calc-label">上卦推算</span>
+                    <span className="meihua-calc-label">{t.calcUpper}</span>
                     <span className="meihua-calc-formula">{result.calcDetail.upperCalc}</span>
                     <span className="meihua-calc-result">→ {result.mainGua.upperName}（{result.mainGua.upper}）</span>
                   </div>
                   <div className="meihua-calc-row">
-                    <span className="meihua-calc-label">下卦推算</span>
+                    <span className="meihua-calc-label">{t.calcLower}</span>
                     <span className="meihua-calc-formula">{result.calcDetail.lowerCalc}</span>
                     <span className="meihua-calc-result">→ {result.mainGua.lowerName}（{result.mainGua.lower}）</span>
                   </div>
                   <div className="meihua-calc-row">
-                    <span className="meihua-calc-label">动爻推算</span>
+                    <span className="meihua-calc-label">{t.calcDong}</span>
                     <span className="meihua-calc-formula">{result.calcDetail.dongYaoCalc}</span>
-                    <span className="meihua-calc-result">→ 第 {result.dongYao} 爻</span>
+                    <span className="meihua-calc-result">{t.calcDongResult}{result.dongYao}{t.calcDongResultPost}</span>
                   </div>
                 </div>
               )}
@@ -346,12 +351,12 @@ const [copied, setCopied] = useState(false);
       {/* 底部操作区 */}
       <div className="meihua-result-actions">
         <button className="meihua-action-btn meihua-reset-btn" onClick={onReset}>
-          ✿ 重新起卦
+          {t.resetBtn}
         </button>
         <button
           className="meihua-action-btn meihua-share-btn"
           onClick={() => {
-            const text = `【梅花心易排盘】\n本卦：${result.mainGua.guaName} ${result.mainGua.symbol}\n${result.relation.summary}\n占问：${result.question || "无"}\n来源：梅花心易`;
+            const text = `${t.shareTitle}\n${t.shareMainPre}${result.mainGua.guaName} ${result.mainGua.symbol}\n${result.relation.summary}\n${t.shareQuestionPre}${result.question || t.shareQuestionNone}\n${t.shareSource}`;
             if (navigator.clipboard) {
               void navigator.clipboard.writeText(text).then(() => {
                 setCopied(true);
@@ -360,13 +365,13 @@ const [copied, setCopied] = useState(false);
             }
           }}
         >
-          {copied ? "✓ 已复制" : "↗ 复制分享"}
+          {copied ? t.shareCopied : t.shareBtn}
         </button>
       </div>
 
       {/* 免责声明 */}
       <p className="meihua-disclaimer">
-        ⚠ 占卜仅供国学文化赏玩与心理参考，切勿迷信。"善易者不卜"——真正懂易的人，用易理指导人生而非迷信卦象。
+        {t.disclaimer}
       </p>
     </div>
   );

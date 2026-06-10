@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import type { AstroChart, PlanetPosition } from "../astro-engine";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, ASPECT_LIST } from "../astro-data";
 import type { ZodiacSign } from "../astro-data";
+import type { AstroT } from "../astro-i18n";
 
 interface AstroChartProps {
   chart: AstroChart;
+  t: AstroT;
 }
 
 // 星座环颜色（元素色）
@@ -17,7 +19,7 @@ const ELEMENT_COLORS: Record<string, string> = {
   water: "#6EC5E9",
 };
 
-export function AstroChartSVG({ chart }: AstroChartProps) {
+export function AstroChartSVG({ chart, t }: AstroChartProps) {
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
 
   // SVG 尺寸参数
@@ -156,7 +158,7 @@ export function AstroChartSVG({ chart }: AstroChartProps) {
           {zodiacInfo.symbol} {zodiacInfo.name} {planet.degree}°{planet.minute.toString().padStart(2, "0")}{"'"}
         </text>
         <text x={tooltipX + 45} y={tooltipY + 42} textAnchor="middle" fontSize="8" fill="rgba(232,213,163,0.6)">
-          第{planet.house}宫
+          {t.houseLabelPre}{planet.house}{t.houseLabelPost}
         </text>
       </g>
     );
@@ -317,13 +319,13 @@ export function AstroChartSVG({ chart }: AstroChartProps) {
 }
 
 // 元素分布饼图（简单文字版）
-export function ElementBreakdown({ chart }: AstroChartProps) {
+export function ElementBreakdown({ chart, t }: AstroChartProps) {
   const elementCount: Record<string, number> = { fire: 0, earth: 0, air: 0, water: 0 };
   const elementNames: Record<string, string> = {
-    fire: "火象 🔥",
-    earth: "土象 🌿",
-    air: "风象 💨",
-    water: "水象 💧",
+    fire: t.elemFire,
+    earth: t.elemEarth,
+    air: t.elemAir,
+    water: t.elemWater,
   };
 
   for (const p of chart.planets) {

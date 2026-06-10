@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { QUESTION_CATEGORIES, type WuXing } from "../meihua-data";
+import { QUESTION_CATEGORIES } from "../meihua-data";
 import type { DivinationMethod, MeihuaInput } from "../meihua-engine";
+import type { Lang, MeihuaT } from "../meihua-i18n";
 
 interface MeihuaInputProps {
+  lang: Lang;
+  t: MeihuaT;
   onSubmit: (input: MeihuaInput) => void;
   isLoading: boolean;
 }
 
-export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInputProps) {
+export default function MeihuaInputComponent({ lang, t, onSubmit, isLoading }: MeihuaInputProps) {
   const [method, setMethod] = useState<DivinationMethod>("time");
   const [question, setQuestion] = useState("");
   const [category, setCategory] = useState("general");
@@ -18,11 +21,13 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
   const [currentTime, setCurrentTime] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
 
+  const dateLocale = lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN";
+
   // 实时更新当前时间
   useEffect(() => {
     const update = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleString("zh-CN", {
+      setCurrentTime(now.toLocaleString(dateLocale, {
         month: "long", day: "numeric",
         hour: "2-digit", minute: "2-digit", second: "2-digit",
       }));
@@ -30,14 +35,14 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
     update();
     const timer = setInterval(update, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [dateLocale]);
 
   const handleSubmit = () => {
     if (method === "number") {
       const n1 = parseInt(num1);
       const n2 = parseInt(num2);
       if (!num1 || !num2 || isNaN(n1) || isNaN(n2) || n1 <= 0 || n2 <= 0) {
-        setInputError("请输入两个正整数");
+        setInputError(t.numberErr);
         return;
       }
       setInputError(null);
@@ -61,12 +66,12 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
       {/* 标题区 */}
       <div className="meihua-title-block">
         <div className="meihua-plum-icon">✿</div>
-        <h1 className="meihua-main-title">梅花心易</h1>
-        <p className="meihua-subtitle">北宋邵雍传世之法 · 心动即卦 · 随时起占</p>
+        <h1 className="meihua-main-title">{t.inputTitle}</h1>
+        <p className="meihua-subtitle">{t.inputSubtitle}</p>
         <div className="meihua-divider-ornament">— ✦ —</div>
         <p className="meihua-intro">
-          梅花易数，观物取象，随心起卦。<br />
-          心中默念所问之事，以一念之机，感天地之气。
+          {t.inputIntroL1}<br />
+          {t.inputIntroL2}
         </p>
       </div>
 
@@ -74,12 +79,12 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
       <div className="meihua-field-group">
         <label className="meihua-label">
           <span className="meihua-label-icon">◎</span>
-          占问事项
-          <span className="meihua-optional">（可选，心中默念亦可）</span>
+          {t.questionLabel}
+          <span className="meihua-optional">{t.questionOptional}</span>
         </label>
         <input
           type="text"
-          placeholder="如：此次出行是否顺利？/ 感情近况如何？"
+          placeholder={t.questionPlaceholder}
           value={question}
           onChange={e => setQuestion(e.target.value)}
           maxLength={50}
@@ -91,7 +96,7 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
       <div className="meihua-field-group">
         <label className="meihua-label">
           <span className="meihua-label-icon">◈</span>
-          事项分类
+          {t.categoryLabel}
         </label>
         <div className="meihua-category-grid">
           {QUESTION_CATEGORIES.map(cat => (
@@ -101,7 +106,7 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
               className={`meihua-category-btn ${category === cat.id ? "meihua-category-active" : ""}`}
             >
               <span className="meihua-category-icon">{cat.icon}</span>
-              <span>{cat.label}</span>
+              <span>{t.catLabels[cat.id] ?? cat.label}</span>
             </button>
           ))}
         </div>
@@ -111,13 +116,13 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
       <div className="meihua-field-group">
         <label className="meihua-label">
           <span className="meihua-label-icon">☯</span>
-          起卦方式
+          {t.methodLabel}
         </label>
         <div className="meihua-method-tabs">
           {[
-            { key: "time",   label: "时间起卦", sub: "以此刻天时起卦" },
-            { key: "number", label: "数字起卦", sub: "输入随心数字" },
-            { key: "random", label: "随机起卦", sub: "心动即机" },
+            { key: "time",   label: t.methodTime,   sub: t.methodTimeSub },
+            { key: "number", label: t.methodNumber, sub: t.methodNumberSub },
+            { key: "random", label: t.methodRandom, sub: t.methodRandomSub },
           ].map(m => (
             <button
               key={m.key}
@@ -139,8 +144,8 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
             <span className="meihua-time-text">{currentTime}</span>
           </div>
           <p className="meihua-method-desc">
-            以当前时刻的年月日时推算卦象。<br />
-            起卦公式：(年支数+农历月+农历日) ÷ 8 为上卦；加时支数 ÷ 8 为下卦；总和 ÷ 6 为动爻。
+            {t.timeDesc}<br />
+            {t.timeFormula}
           </p>
         </div>
       )}
@@ -148,15 +153,15 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
       {method === "number" && (
         <div className="meihua-method-info">
           <p className="meihua-method-desc">
-            凭直觉输入两个正整数（如门牌号、车牌数字、随心想到的数），以此起卦。
+            {t.numberDesc}
           </p>
           <div className="meihua-number-inputs">
             <div className="meihua-number-field">
-              <label className="meihua-number-label">第一个数（上卦）</label>
+              <label className="meihua-number-label">{t.numFirstLabel}</label>
               <input
                 type="number"
                 min="1"
-                placeholder="随心输入正整数"
+                placeholder={t.numPlaceholder}
                 value={num1}
                 onChange={e => setNum1(e.target.value)}
                 className="meihua-num-input"
@@ -164,11 +169,11 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
             </div>
             <div className="meihua-number-divider">×</div>
             <div className="meihua-number-field">
-              <label className="meihua-number-label">第二个数（下卦）</label>
+              <label className="meihua-number-label">{t.numSecondLabel}</label>
               <input
                 type="number"
                 min="1"
-                placeholder="随心输入正整数"
+                placeholder={t.numPlaceholder}
                 value={num2}
                 onChange={e => setNum2(e.target.value)}
                 className="meihua-num-input"
@@ -179,7 +184,7 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
             <p style={{ color: "rgba(255,140,120,0.9)", fontSize: "0.78rem", marginTop: 6 }}>⚠ {inputError}</p>
           )}
           <p className="meihua-method-calc">
-            第一数 ÷ 8 余数 → 上卦 · 第二数 ÷ 8 余数 → 下卦 · 两数之和 ÷ 6 余数 → 动爻
+            {t.numberCalc}
           </p>
         </div>
       )}
@@ -188,11 +193,11 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
         <div className="meihua-method-info meihua-random-info">
           <div className="meihua-taiji-spin">☯</div>
           <p className="meihua-method-desc">
-            闭目冥想，心中默念所问之事，<br />
-            感受内心的感应，点击下方按钮，<br />
-            以心动之机起卦，模拟邵雍"观梅起卦"。
+            {t.randomDescL1}<br />
+            {t.randomDescL2}<br />
+            {t.randomDescL3}
           </p>
-          <p className="meihua-quote">"天下之事，皆可以一念感之。"——邵雍《梅花易数》</p>
+          <p className="meihua-quote">{t.randomQuote}</p>
         </div>
       )}
 
@@ -205,18 +210,18 @@ export default function MeihuaInputComponent({ onSubmit, isLoading }: MeihuaInpu
         {isLoading ? (
           <span className="meihua-btn-loading">
             <span className="meihua-spin-icon">✿</span>
-            推算中...
+            {t.casting}
           </span>
         ) : (
           <span>
-            {method === "time" ? "以此刻起卦" : method === "number" ? "以此数起卦" : "心动即卦"}
+            {method === "time" ? t.castTime : method === "number" ? t.castNumber : t.castRandom}
           </span>
         )}
       </button>
 
       {/* 先天八卦数诀小卡 */}
       <div className="meihua-quick-ref">
-        <p className="meihua-quick-ref-title">先天八卦数诀</p>
+        <p className="meihua-quick-ref-title">{t.quickRefTitle}</p>
         <div className="meihua-bagua-row">
           {[
             { sym: "☰", name: "乾", num: "一", wx: "金" },

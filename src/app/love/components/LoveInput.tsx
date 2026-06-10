@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { TRUST_REVIEWS } from "../love-data";
 import type { LoveInput } from "../love-engine";
+import type { LoveT } from "../love-i18n";
 
 interface LoveInputProps {
+  t: LoveT;
   onSubmit: (input: LoveInput) => void;
   isLoading: boolean;
 }
@@ -12,7 +14,7 @@ interface LoveInputProps {
 const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: 61 }, (_, i) => CURRENT_YEAR - 16 - i); // 16~76岁
 
-export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputProps) {
+export default function LoveInputComponent({ t, onSubmit, isLoading }: LoveInputProps) {
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"female" | "male">("female");
   const [birthYear, setBirthYear] = useState(1995);
@@ -34,7 +36,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const handleSubmit = () => {
-    onSubmit({ name: name || "匿名", gender, birthYear, birthMonth, birthDay });
+    onSubmit({ name: name || t.anonName, gender, birthYear, birthMonth, birthDay });
   };
 
   const review = TRUST_REVIEWS[reviewIdx]!;
@@ -62,21 +64,21 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
 
         <div className="love-hero-content">
           <div className="love-hero-symbol">✦</div>
-          <h1 className="love-hero-title">揭秘你的命中注定</h1>
-          <p className="love-hero-subtitle">星盘 · 八字 · 紫微 · 三维感情解析</p>
+          <h1 className="love-hero-title">{t.heroTitle}</h1>
+          <p className="love-hero-subtitle">{t.heroSubtitle}</p>
           <div className="love-hero-divider">— ✦ —</div>
           <p className="love-hero-desc">
-            结合东方命理与西方占星，
+            {t.heroDescL1}
             <br />
-            为你解读专属姻缘密码，找到命中注定的那个人
+            {t.heroDescL2}
           </p>
 
           {/* 数据标签 */}
           <div className="love-hero-stats">
             {[
-              { num: "98.6%", label: "用户觉得准确" },
-              { num: "10W+", label: "已测算人数" },
-              { num: "4.9★", label: "综合评分" },
+              { num: "98.6%", label: t.statAccurate },
+              { num: "10W+", label: t.statUsers },
+              { num: "4.9★", label: t.statRating },
             ].map(s => (
               <div key={s.label} className="love-stat-item">
                 <span className="love-stat-num">{s.num}</span>
@@ -91,16 +93,16 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
       <div className="love-form-card">
         <div className="love-form-title">
           <span className="love-form-icon">✦</span>
-          填写你的信息
+          {t.formTitle}
         </div>
-        <p className="love-form-subtitle">支持化名，信息仅用于生成专属报告</p>
+        <p className="love-form-subtitle">{t.formSubtitle}</p>
 
         {/* 姓名 */}
         <div className="love-field">
-          <label className="love-label">称呼/姓名（可填化名）</label>
+          <label className="love-label">{t.labelName}</label>
           <input
             type="text"
-            placeholder="如：小鱼、阿晴… 或你的真实姓名"
+            placeholder={t.namePlaceholder}
             value={name}
             onChange={e => setName(e.target.value)}
             maxLength={10}
@@ -110,11 +112,11 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
 
         {/* 性别 */}
         <div className="love-field">
-          <label className="love-label">性别</label>
+          <label className="love-label">{t.labelGender}</label>
           <div className="love-gender-row">
             {[
-              { value: "female", label: "♀ 女生", icon: "🌸" },
-              { value: "male",   label: "♂ 男生", icon: "🌙" },
+              { value: "female", label: t.genderFemale, icon: "🌸" },
+              { value: "male",   label: t.genderMale, icon: "🌙" },
             ].map(g => (
               <button
                 key={g.value}
@@ -130,7 +132,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
 
         {/* 出生日期 */}
         <div className="love-field">
-          <label className="love-label">公历出生日期</label>
+          <label className="love-label">{t.labelBirth}</label>
           <div className="love-date-row">
             <div className="love-date-field">
               <select
@@ -139,7 +141,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
                 className="love-select"
               >
                 {YEARS.map(y => (
-                  <option key={y} value={y}>{y}年</option>
+                  <option key={y} value={y}>{y}{t.unitYear}</option>
                 ))}
               </select>
             </div>
@@ -150,7 +152,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
                 className="love-select"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                  <option key={m} value={m}>{m}月</option>
+                  <option key={m} value={m}>{m}{t.unitMonth}</option>
                 ))}
               </select>
             </div>
@@ -161,7 +163,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
                 className="love-select"
               >
                 {days.map(d => (
-                  <option key={d} value={d}>{d}日</option>
+                  <option key={d} value={d}>{d}{t.unitDay}</option>
                 ))}
               </select>
             </div>
@@ -177,15 +179,15 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
           {isLoading ? (
             <span className="love-btn-loading">
               <span className="love-spin">✦</span>
-              正在测算中…
+              {t.submitting}
             </span>
           ) : (
-            "✦ 免费测算我的姻缘"
+            t.submitBtn
           )}
         </button>
 
         <p className="love-form-note">
-          测算结果包含：姻缘指数 · 性格特质 · 近期桃花运 · 正缘画像（部分内容需解锁）
+          {t.formNote}
         </p>
       </div>
 
@@ -202,10 +204,10 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
       {/* 特性说明 */}
       <div className="love-features">
         {[
-          { icon: "🔮", title: "三维星盘解析", desc: "融合东西方命理，多维度精准解读你的姻缘密码" },
-          { icon: "💫", title: "专属正缘画像", desc: "基于你的命盘描绘命中注定之人的特征与相遇方式" },
-          { icon: "🌸", title: "近期桃花预报", desc: "解析未来3个月感情走势，把握最佳相遇时机" },
-          { icon: "✨", title: "情感提升建议", desc: "量身定制的感情修炼方向，帮你遇见更好的自己" },
+          { icon: "🔮", title: t.feat1Title, desc: t.feat1Desc },
+          { icon: "💫", title: t.feat2Title, desc: t.feat2Desc },
+          { icon: "🌸", title: t.feat3Title, desc: t.feat3Desc },
+          { icon: "✨", title: t.feat4Title, desc: t.feat4Desc },
         ].map(f => (
           <div key={f.title} className="love-feature-item">
             <div className="love-feature-icon">{f.icon}</div>
@@ -219,7 +221,7 @@ export default function LoveInputComponent({ onSubmit, isLoading }: LoveInputPro
 
       {/* 底部免责 */}
       <p className="love-disclaimer">
-        ⚠ 本测试结果仅供情感心理参考与娱乐，请理性看待，切勿过度依赖占卜结果进行重大决策。
+        {t.disclaimer}
       </p>
     </div>
   );

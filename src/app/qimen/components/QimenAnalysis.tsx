@@ -3,8 +3,79 @@
 import React, { useState } from "react";
 import type { QimenChart } from "../qimen-engine";
 
+type Lang = "zh" | "en" | "tw";
+
+// ── 解析 UI 文案（三语）─────────────────────────────
+const AT = {
+  zh: {
+    overviewJi:     "吉格",
+    overviewTotal:  "总格局",
+    overviewXiong:  "凶格",
+    tabGeju:        "格局总览",
+    tabBusiness:    "商业决策",
+    tabTravel:      "出行方位",
+    gongUnit:       (n: number) => `${n}宫`,
+    emptyGeju:      "本局未见明显特殊格局，诸事平顺。",
+    bizHead:        "商业决策分析",
+    bizSub:         "基于时局门神星神综合研判",
+    bizDisclaimer:  "⚠ 格局仅供参考，重大决策请结合实际情况综合研判。",
+    travelHead:     "出行方位分析",
+    travelSub:      "开休生三吉门方位导引",
+    travelDisclaimer: "⚠ 出行方位依据门神旺衰，空亡方位不宜轻动。",
+    jxDaji: "大吉", jxJi: "吉", jxZhong: "中平", jxXiong: "凶", jxDaxiong: "大凶",
+  },
+  tw: {
+    overviewJi:     "吉格",
+    overviewTotal:  "總格局",
+    overviewXiong:  "凶格",
+    tabGeju:        "格局總覽",
+    tabBusiness:    "商業決策",
+    tabTravel:      "出行方位",
+    gongUnit:       (n: number) => `${n}宮`,
+    emptyGeju:      "本局未見明顯特殊格局，諸事平順。",
+    bizHead:        "商業決策分析",
+    bizSub:         "基於時局門神星神綜合研判",
+    bizDisclaimer:  "⚠ 格局僅供參考，重大決策請結合實際情況綜合研判。",
+    travelHead:     "出行方位分析",
+    travelSub:      "開休生三吉門方位導引",
+    travelDisclaimer: "⚠ 出行方位依據門神旺衰，空亡方位不宜輕動。",
+    jxDaji: "大吉", jxJi: "吉", jxZhong: "中平", jxXiong: "凶", jxDaxiong: "大凶",
+  },
+  en: {
+    overviewJi:     "Auspicious",
+    overviewTotal:  "Total",
+    overviewXiong:  "Inauspicious",
+    tabGeju:        "Patterns",
+    tabBusiness:    "Business",
+    tabTravel:      "Travel",
+    gongUnit:       (n: number) => `Palace ${n}`,
+    emptyGeju:      "No notable special patterns in this chart — generally smooth.",
+    bizHead:        "Business Decision Analysis",
+    bizSub:         "Synthesized from time, gates, stars and spirits",
+    bizDisclaimer:  "⚠ Patterns are for reference only; weigh major decisions against real circumstances.",
+    travelHead:     "Travel Direction Analysis",
+    travelSub:      "Guidance from the three auspicious gates: Open, Rest, Life",
+    travelDisclaimer: "⚠ Travel directions follow gate strength; avoid moving toward void directions.",
+    jxDaji: "Very Auspicious", jxJi: "Auspicious", jxZhong: "Neutral", jxXiong: "Inauspicious", jxDaxiong: "Very Inauspicious",
+  },
+};
+
+// 吉凶枚举 → 本地化标签
+function jixiongLabel(type: string, a: (typeof AT)[Lang]): string {
+  switch (type) {
+    case "大吉": return a.jxDaji;
+    case "吉": return a.jxJi;
+    case "中平": return a.jxZhong;
+    case "凶": return a.jxXiong;
+    case "大凶": return a.jxDaxiong;
+    default: return type;
+  }
+}
+// ────────────────────────────────────────────────────
+
 interface QimenAnalysisProps {
   chart: QimenChart;
+  lang: Lang;
 }
 
 type AnalysisTab = "business" | "travel" | "geju";
@@ -39,11 +110,12 @@ function gejuTypeIcon(type: string): string {
 }
 
 // 单个格局卡片
-function GejuCard({ name, type, desc, gongNums }: {
+function GejuCard({ name, type, desc, gongNums, a }: {
   name: string;
   type: string;
   desc: string;
   gongNums: number[];
+  a: (typeof AT)[Lang];
 }) {
   const [expanded, setExpanded] = useState(false);
   const style = gejuTypeStyle(type);
@@ -67,14 +139,14 @@ function GejuCard({ name, type, desc, gongNums }: {
             color: style.color,
             border: `1px solid ${style.borderColor}`,
           }}>
-            {type}
+            {jixiongLabel(type, a)}
           </span>
         </div>
         {gongNums.length > 0 && (
           <div className="qm-geju-gongs">
             {gongNums.map(n => (
               <span key={n} className="qm-geju-gong-num" style={{ color: style.color }}>
-                {n}宫
+                {a.gongUnit(n)}
               </span>
             ))}
           </div>
@@ -119,7 +191,8 @@ function AnalysisTip({ tip }: { tip: string }) {
   );
 }
 
-export function QimenAnalysis({ chart }: QimenAnalysisProps) {
+export function QimenAnalysis({ chart, lang }: QimenAnalysisProps) {
+  const a = AT[lang];
   const [tab, setTab] = useState<AnalysisTab>(
     chart.input.event === "travel" ? "travel"
       : chart.input.event === "business" ? "business"
@@ -136,17 +209,17 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
       <div className="qm-analysis-overview">
         <div className="qm-overview-item" style={{ color: "#d4a820" }}>
           <span className="qm-overview-num">{jiCount}</span>
-          <span className="qm-overview-label">吉格</span>
+          <span className="qm-overview-label">{a.overviewJi}</span>
         </div>
         <div className="qm-overview-sep" />
         <div className="qm-overview-item" style={{ color: "#8899aa" }}>
           <span className="qm-overview-num">{gejuCount}</span>
-          <span className="qm-overview-label">总格局</span>
+          <span className="qm-overview-label">{a.overviewTotal}</span>
         </div>
         <div className="qm-overview-sep" />
         <div className="qm-overview-item" style={{ color: "#c03030" }}>
           <span className="qm-overview-num">{xiongCount}</span>
-          <span className="qm-overview-label">凶格</span>
+          <span className="qm-overview-label">{a.overviewXiong}</span>
         </div>
       </div>
 
@@ -157,7 +230,7 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
           onClick={() => setTab("geju")}
         >
           <span>☯</span>
-          <span>格局总览</span>
+          <span>{a.tabGeju}</span>
           {gejuCount > 0 && (
             <span className="qm-tab-badge">{gejuCount}</span>
           )}
@@ -167,14 +240,14 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
           onClick={() => setTab("business")}
         >
           <span>💼</span>
-          <span>商业决策</span>
+          <span>{a.tabBusiness}</span>
         </button>
         <button
           className={`qm-analysis-tab ${tab === "travel" ? "active" : ""}`}
           onClick={() => setTab("travel")}
         >
           <span>🧭</span>
-          <span>出行方位</span>
+          <span>{a.tabTravel}</span>
         </button>
       </div>
 
@@ -186,7 +259,7 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
             {chart.globalGeju.length === 0 ? (
               <div className="qm-analysis-empty">
                 <span>·</span>
-                <p>本局未见明显特殊格局，诸事平顺。</p>
+                <p>{a.emptyGeju}</p>
               </div>
             ) : (
               chart.globalGeju.map((g, i) => (
@@ -196,6 +269,7 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
                   type={g.type}
                   desc={g.desc}
                   gongNums={g.gongNums}
+                  a={a}
                 />
               ))
             )}
@@ -207,14 +281,14 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
           <div className="qm-analysis-tips">
             <div className="qm-analysis-section-head">
               <span className="qm-section-head-icon" style={{ color: "#d4a820" }}>◆</span>
-              <span className="qm-section-head-title">商业决策分析</span>
-              <span className="qm-section-head-sub">基于时局门神星神综合研判</span>
+              <span className="qm-section-head-title">{a.bizHead}</span>
+              <span className="qm-section-head-sub">{a.bizSub}</span>
             </div>
             {chart.businessAnalysis.map((tip, i) => (
               <AnalysisTip key={i} tip={tip} />
             ))}
             <div className="qm-analysis-disclaimer">
-              ⚠ 格局仅供参考，重大决策请结合实际情况综合研判。
+              {a.bizDisclaimer}
             </div>
           </div>
         )}
@@ -224,14 +298,14 @@ export function QimenAnalysis({ chart }: QimenAnalysisProps) {
           <div className="qm-analysis-tips">
             <div className="qm-analysis-section-head">
               <span className="qm-section-head-icon" style={{ color: "#5aaa6a" }}>◆</span>
-              <span className="qm-section-head-title">出行方位分析</span>
-              <span className="qm-section-head-sub">开休生三吉门方位导引</span>
+              <span className="qm-section-head-title">{a.travelHead}</span>
+              <span className="qm-section-head-sub">{a.travelSub}</span>
             </div>
             {chart.travelAnalysis.map((tip, i) => (
               <AnalysisTip key={i} tip={tip} />
             ))}
             <div className="qm-analysis-disclaimer">
-              ⚠ 出行方位依据门神旺衰，空亡方位不宜轻动。
+              {a.travelDisclaimer}
             </div>
           </div>
         )}

@@ -5,6 +5,9 @@ import Head from "next/head";
 import { NumerologyInput } from "./components/NumerologyInput";
 import { NumerologyResultPanel } from "./components/NumerologyResult";
 import { NumerologyPoster } from "./components/NumerologyPoster";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./numerology-i18n";
 import "./numerology.css";
 import {
   getNumerologyReading,
@@ -15,6 +18,9 @@ import {
 type PageStep = "input" | "result";
 
 export default function NumerologyPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [step, setStep] = useState<PageStep>("input");
   const [result, setResult] = useState<NumerologyResult | null>(null);
   const [showPoster, setShowPoster] = useState(false);
@@ -24,7 +30,7 @@ export default function NumerologyPage() {
     setIsLoading(true);
     // 模拟计算动画（给用户仪式感）
     setTimeout(() => {
-      const reading = getNumerologyReading(year, month, day);
+      const reading = getNumerologyReading(year, month, day, lang);
       setResult(reading);
       setStep("result");
       setIsLoading(false);
@@ -41,10 +47,10 @@ export default function NumerologyPage() {
 
   const tdk = useMemo(() => {
     if (result) {
-      return generateNumerologyTDK(result.number);
+      return generateNumerologyTDK(result.number, lang);
     }
-    return generateNumerologyTDK();
-  }, [result]);
+    return generateNumerologyTDK(undefined, lang);
+  }, [result, lang]);
 
   return (
     <>
@@ -68,7 +74,12 @@ export default function NumerologyPage() {
           color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
           textDecoration: "none", letterSpacing: "0.06em",
           transition: "all 0.18s",
-        }}>← 返回</a>
+        }}>← {t.back}</a>
+
+        {/* 语言切换 */}
+        <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+          <LangSwitcher />
+        </div>
 
         {/* 背景装饰光晕 */}
         <div className="num-bg">
@@ -81,23 +92,27 @@ export default function NumerologyPage() {
           {/* 页面头部 */}
           <div className="num-page-header">
             <div className="num-page-icon">🔢</div>
-            <h1 className="num-page-title">生命灵数</h1>
+            <h1 className="num-page-title">{t.pageTitle}</h1>
             <p className="num-page-subtitle">
-              NUMEROLOGY · 数字命理
+              {t.pageSubtitle1}
               <br />
-              你的生日数字，隐藏着灵魂的秘密
+              {t.pageSubtitle2}
             </p>
           </div>
 
           {/* 步骤：输入 or 结果 */}
           {step === "input" ? (
             <NumerologyInput
+              t={t}
+              lang={lang}
               onCalculate={handleCalculate}
               isLoading={isLoading}
             />
           ) : (
             result && (
               <NumerologyResultPanel
+                t={t}
+                lang={lang}
                 result={result}
                 onShare={() => setShowPoster(true)}
                 onRecalculate={handleRecalculate}
@@ -109,6 +124,8 @@ export default function NumerologyPage() {
         {/* 海报弹窗 */}
         {result && (
           <NumerologyPoster
+            t={t}
+            lang={lang}
             result={result}
             visible={showPoster}
             onClose={() => setShowPoster(false)}

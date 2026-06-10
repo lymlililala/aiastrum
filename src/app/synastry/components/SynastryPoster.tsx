@@ -2,20 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { SynastryResult } from "../synastry-engine";
-import { RELATION_TYPES } from "../synastry-data";
+import { getRelationType } from "../synastry-data";
 import { PLANET_MAP } from "../../astro/astro-data";
+import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
   result: SynastryResult;
   onClose: () => void;
+  t: SynT;
+  lang: SynLang;
 }
 
-export default function SynastryPoster({ result, onClose }: Props) {
+export default function SynastryPoster({ result, onClose, t, lang }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [generating, setGenerating] = useState(true);
 
-  const rel = RELATION_TYPES[result.input.relationType];
+  const rel = getRelationType(result.input.relationType, lang);
   const nameA = result.input.personA.name;
   const nameB = result.input.personB.name;
   const tier = result.tier;
@@ -23,12 +26,12 @@ export default function SynastryPoster({ result, onClose }: Props) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    drawPoster(canvas, result);
+    drawPoster(canvas, result, t, lang);
     setTimeout(() => {
       setDataUrl(canvas.toDataURL("image/png"));
       setGenerating(false);
     }, 200);
-  }, [result]);
+  }, [result, t, lang]);
 
   const handleDownload = () => {
     if (!dataUrl) return;
@@ -42,17 +45,17 @@ export default function SynastryPoster({ result, onClose }: Props) {
     <div className="syn-poster-overlay" onClick={onClose}>
       <div className="syn-poster-modal" onClick={(e) => e.stopPropagation()}>
         <button className="syn-poster-close" onClick={onClose}>✕</button>
-        <h3 className="syn-poster-title">专属合盘海报</h3>
+        <h3 className="syn-poster-title">{t.posterTitle}</h3>
 
         {generating ? (
           <div className="syn-poster-loading">
             <div className="syn-spinner" />
-            <p>正在生成海报…</p>
+            <p>{t.posterGenerating}</p>
           </div>
         ) : (
           <>
             {dataUrl && (
-              <img src={dataUrl} alt="合盘海报" className="syn-poster-preview" />
+              <img src={dataUrl} alt={t.posterAlt} className="syn-poster-preview" />
             )}
             <div className="syn-poster-actions">
               <button
@@ -60,9 +63,9 @@ export default function SynastryPoster({ result, onClose }: Props) {
                 onClick={handleDownload}
                 style={{ background: `linear-gradient(135deg, ${rel.gradientFrom}, ${rel.gradientTo})` }}
               >
-                ⬇ 保存图片
+                {t.posterDownload}
               </button>
-              <p className="syn-poster-hint">长按图片保存 / 点击按钮下载</p>
+              <p className="syn-poster-hint">{t.posterHint}</p>
             </div>
           </>
         )}
@@ -75,12 +78,12 @@ export default function SynastryPoster({ result, onClose }: Props) {
 }
 
 // ===== Canvas 绘制函数 =====
-function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult) {
+function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult, t: SynT, lang: SynLang) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   const W = canvas.width;
   const H = canvas.height;
-  const rel = RELATION_TYPES[result.input.relationType];
+  const rel = getRelationType(result.input.relationType, lang);
   const nameA = result.input.personA.name;
   const nameB = result.input.personB.name;
   const tier = result.tier;
@@ -192,7 +195,7 @@ function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult) {
   ctx.font = "bold 14px sans-serif";
   ctx.fillStyle = "#ffffff80";
   ctx.textAlign = "center";
-  ctx.fillText("契合度维度", cx, 468);
+  ctx.fillText(t.dimensionsTitle, cx, 468);
 
   const dims = result.dimensions;
   const dimW = (W - 80) / dims.length;
@@ -244,7 +247,7 @@ function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult) {
   ctx.font = "bold 14px sans-serif";
   ctx.fillStyle = "#ffffff80";
   ctx.textAlign = "center";
-  ctx.fillText("核心相位", cx, 648);
+  ctx.fillText(t.posterKeyAspects, cx, 648);
 
   const keyAspects = result.topAspects.filter((a) => a.isKeyPlanet).slice(0, 4);
   keyAspects.forEach((asp, i) => {
@@ -284,8 +287,8 @@ function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult) {
   ctx.font = "12px sans-serif";
   ctx.fillStyle = "#ffffff30";
   ctx.textAlign = "center";
-  ctx.fillText("By Celestial Tarot · 星盘合盘报告", cx, H - 52);
-  ctx.fillText(new Date().toLocaleDateString("zh-CN"), cx, H - 28);
+  ctx.fillText(t.posterFooter, cx, H - 52);
+  ctx.fillText(new Date().toLocaleDateString(lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN"), cx, H - 28);
 }
 
 // ===== 伪随机数生成器（seeded，用于星星位置稳定）=====

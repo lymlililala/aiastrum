@@ -5,12 +5,18 @@ import ZiweiInputComponent from "./components/ZiweiInput";
 import ZiweiLoading from "./components/ZiweiLoading";
 import ZiweiFullReport from "./components/ZiweiFullReport";
 import type { ZiweiInput, ZiweiChart } from "./ziwei-engine";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./ziwei-i18n";
 
 type Stage = "input" | "loading" | "full";
 
 const STORAGE_KEY_CHART = "ziwei_chart";
 
 export default function ZiweiPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [stage, setStage]   = useState<Stage>("input");
   const [chart, setChart]   = useState<ZiweiChart | null>(null);
   const [error, setError]   = useState<string | null>(null);
@@ -40,14 +46,14 @@ export default function ZiweiPage() {
         fetch("/api/ziwei", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(input),
+          body: JSON.stringify({ ...input, lang }),
         }),
         minDelay,
       ]);
 
       if (!res.ok) {
         const err = await res.json() as { error?: string };
-        throw new Error(err.error ?? "排盘失败");
+        throw new Error(err.error ?? t.errCalcFailed);
       }
 
       const data = await res.json() as { success: boolean; chart: ZiweiChart };
@@ -57,7 +63,7 @@ export default function ZiweiPage() {
       localStorage.setItem(STORAGE_KEY_CHART, JSON.stringify(data.chart));
       setStage("full");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "排盘失败，请稍后再试");
+      setError(e instanceof Error ? e.message : t.errCalcRetry);
       setStage("input");
     }
   };
@@ -73,7 +79,7 @@ export default function ZiweiPage() {
     <main className="zw-page">
       {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
       <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
-        紫微斗数排盘 — AI 紫微命盘解析
+        {t.seoH1}
       </h1>
       {/* 返回首页 */}
       <a href="/" style={{
@@ -85,12 +91,17 @@ export default function ZiweiPage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>← {t.back}</a>
+
+      {/* 语言切换 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
 
       {error && (
         <div className="zw-error-banner">
           ⚠ {error}
-          <button onClick={() => setError(null)} className="zw-error-close">×</button>
+          <button onClick={() => setError(null)} className="zw-error-close" aria-label={t.errClose}>×</button>
         </div>
       )}
 
@@ -98,15 +109,19 @@ export default function ZiweiPage() {
         <ZiweiInputComponent
           onSubmit={handleSubmit}
           isLoading={false}
+          t={t}
+          lang={lang}
         />
       )}
 
-      {stage === "loading" && <ZiweiLoading />}
+      {stage === "loading" && <ZiweiLoading t={t} />}
 
       {stage === "full" && chart && (
         <ZiweiFullReport
           chart={chart}
           onReset={handleReset}
+          t={t}
+          lang={lang}
         />
       )}
     </main>

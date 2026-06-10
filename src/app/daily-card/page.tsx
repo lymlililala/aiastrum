@@ -2,8 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import "./daily-card.css";
-import { getDailyCard, getTodayString } from "./daily-card-data";
-import type { DailyCard } from "./daily-card-data";
+import {
+  getDailyCard,
+  getTodayString,
+  getFileDateString,
+  DAILY_CARD_UI,
+} from "./daily-card-data";
+import type { DailyCard, DailyCardText, DailyCardUI } from "./daily-card-data";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import type { Locale } from "~/lib/i18n";
 
 // 生成随机星点
 interface Star {
@@ -29,6 +37,9 @@ function generateStars(count: number): Star[] {
 const STARS = generateStars(60);
 
 export default function DailyCardPage() {
+  const locale = useLocale();
+  const ui = DAILY_CARD_UI[locale];
+
   const [card, setCard] = useState<DailyCard | null>(null);
   const [dateStr, setDateStr] = useState("");
   const [isFlipped, setIsFlipped] = useState(false);
@@ -37,8 +48,8 @@ export default function DailyCardPage() {
 
   useEffect(() => {
     setCard(getDailyCard());
-    setDateStr(getTodayString());
-  }, []);
+    setDateStr(getTodayString(locale));
+  }, [locale]);
 
   const handleFlip = useCallback(() => {
     if (isFlipped) return;
@@ -52,6 +63,8 @@ export default function DailyCardPage() {
   }, []);
 
   if (!card) return null;
+
+  const text = card.text[locale];
 
   return (
     <div className="dc-page">
@@ -69,7 +82,13 @@ export default function DailyCardPage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>{ui.back}</a>
+
+      {/* 语言切换 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
+
 
       {/* 动态背景 */}
       <div
@@ -100,7 +119,7 @@ export default function DailyCardPage() {
       <div className="dc-content">
         {/* 日期 */}
         <div className="dc-date-area">
-          <div className="dc-date-tag">Daily Cosmic Card</div>
+          <div className="dc-date-tag">{ui.dateTag}</div>
           <div className="dc-date-text">{dateStr}</div>
         </div>
 
@@ -111,7 +130,7 @@ export default function DailyCardPage() {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleFlip(); }}
-          aria-label="点击翻开今日宇宙提示卡"
+          aria-label={ui.cardAria}
         >
           <div className="dc-card-flipper">
             {/* 卡背 */}
@@ -119,7 +138,7 @@ export default function DailyCardPage() {
               <div className="dc-card-back-pattern" />
               <div className="dc-card-back-border" />
               <span className="dc-card-back-star">✦</span>
-              <span className="dc-card-back-hint">点击翻开今日提示</span>
+              <span className="dc-card-back-hint">{ui.backHint}</span>
             </div>
 
             {/* 卡正面 */}
@@ -130,19 +149,19 @@ export default function DailyCardPage() {
                 ["--card-glow" as string]: `${card.accentColor}33`,
               }}
             >
-              <span className="dc-front-tag">✦ 今日宇宙提示 ✦</span>
+              <span className="dc-front-tag">✦ {ui.frontTag} ✦</span>
               <span className="dc-front-emoji">{card.emoji}</span>
               <span className="dc-front-title" style={{ color: card.accentColor }}>
-                {card.title}
+                {text.title}
               </span>
-              <p className="dc-front-message">{card.message}</p>
+              <p className="dc-front-message">{text.message}</p>
               <div className="dc-front-divider" />
-              <p className="dc-front-sub">{card.subMessage}</p>
+              <p className="dc-front-sub">{text.subMessage}</p>
               <span
                 className="dc-front-category"
                 style={{ borderColor: card.accentColor + "44", color: card.accentColor + "bb" }}
               >
-                #{card.category}
+                #{text.category}
               </span>
             </div>
           </div>
@@ -151,23 +170,23 @@ export default function DailyCardPage() {
         {/* 翻转提示 */}
         <div className={`dc-flip-hint ${isFlipped ? "hidden" : ""}`}>
           <span className="dc-flip-arrow">👆</span>
-          <span className="dc-flip-text">轻触卡牌，聆听宇宙的声音</span>
+          <span className="dc-flip-text">{ui.flipHint}</span>
         </div>
 
         {/* 操作按钮 */}
         <div className={`dc-actions ${showActions ? "show" : ""}`}>
           <button className="dc-share-btn" onClick={() => setShowPoster(true)}>
-            📸 保存今日宇宙卡片
+            {ui.saveCard}
           </button>
           <button className="dc-again-btn" onClick={handleReset}>
-            ↺ 再看一眼卡背
+            {ui.again}
           </button>
         </div>
       </div>
 
       {/* 海报弹窗 */}
       {showPoster && (
-        <CardPoster card={card} dateStr={dateStr} onClose={() => setShowPoster(false)} />
+        <CardPoster card={card} text={text} ui={ui} locale={locale} dateStr={dateStr} onClose={() => setShowPoster(false)} />
       )}
     </div>
   );
@@ -176,10 +195,16 @@ export default function DailyCardPage() {
 // ===== 海报组件 =====
 function CardPoster({
   card,
+  text,
+  ui,
+  locale,
   dateStr,
   onClose,
 }: {
   card: DailyCard;
+  text: DailyCardText;
+  ui: DailyCardUI;
+  locale: Locale;
   dateStr: string;
   onClose: () => void;
 }) {
@@ -233,7 +258,7 @@ function CardPoster({
     ctx.font = "10px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.3)";
     ctx.textAlign = "center";
-    ctx.fillText("✦  每日宇宙提示卡  ✦", W / 2, 58);
+    ctx.fillText(`✦  ${ui.posterTitle}  ✦`, W / 2, 58);
 
     // 日期
     ctx.font = "11px sans-serif";
@@ -257,7 +282,7 @@ function CardPoster({
     // 卡片标题
     ctx.font = `13px sans-serif`;
     ctx.fillStyle = card.accentColor;
-    ctx.fillText(card.title, W / 2, 235);
+    ctx.fillText(text.title, W / 2, 235);
 
     // 分割
     ctx.strokeStyle = card.accentColor + "44";
@@ -268,58 +293,35 @@ function CardPoster({
     ctx.stroke();
 
     // 主文案（分行）
+    const isCJK = locale !== "en";
     ctx.font = "bold 20px serif";
     ctx.fillStyle = "#ffffff";
-    const mainText = card.message;
     const maxW = W - 80;
-    let line = "";
     let lineY = 290;
-    for (const char of mainText) {
-      const test = line + char;
-      if (ctx.measureText(test).width > maxW) {
-        ctx.fillText(line, W / 2, lineY);
-        line = char;
-        lineY += 32;
-      } else {
-        line = test;
-      }
-    }
-    ctx.fillText(line, W / 2, lineY);
+    lineY = wrapText(ctx, text.message, W / 2, lineY, maxW, 32, isCJK);
 
     // 副文案（分行）
     ctx.font = "13px serif";
     ctx.fillStyle = "rgba(255,255,255,0.6)";
-    const subText = card.subMessage;
-    let sline = "";
     let slineY = lineY + 44;
-    for (const char of subText) {
-      const test = sline + char;
-      if (ctx.measureText(test).width > maxW) {
-        ctx.fillText(sline, W / 2, slineY);
-        sline = char;
-        slineY += 22;
-      } else {
-        sline = test;
-      }
-    }
-    ctx.fillText(sline, W / 2, slineY);
+    slineY = wrapText(ctx, text.subMessage, W / 2, slineY, maxW, 22, isCJK);
 
     // 分类标签
     ctx.font = "10px sans-serif";
     ctx.fillStyle = card.accentColor + "aa";
-    ctx.fillText(`#${card.category}`, W / 2, slineY + 32);
+    ctx.fillText(`#${text.category}`, W / 2, slineY + 32);
 
     // 底部
     ctx.font = "10px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.2)";
-    ctx.fillText("命运密语 · 每日宇宙提示", W / 2, H - 32);
-  }, [card, dateStr]);
+    ctx.fillText(ui.posterFooter, W / 2, H - 32);
+  }, [card, text, ui, locale, dateStr]);
 
   const handleSave = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement("a");
-    link.download = `今日宇宙提示卡_${new Date().toLocaleDateString("zh-CN").replace(/\//g, "-")}.png`;
+    link.download = `${ui.fileName}_${getFileDateString(locale)}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
@@ -329,10 +331,41 @@ function CardPoster({
       <div className="dc-poster-wrap" onClick={(e) => e.stopPropagation()}>
         <canvas ref={canvasRef} className="dc-poster-canvas" />
         <div className="dc-poster-actions">
-          <button className="dc-poster-save" onClick={handleSave}>📥 保存卡片</button>
-          <button className="dc-poster-close" onClick={onClose}>关闭</button>
+          <button className="dc-poster-save" onClick={handleSave}>{ui.posterSave}</button>
+          <button className="dc-poster-close" onClick={onClose}>{ui.posterClose}</button>
         </div>
       </div>
     </div>
   );
+}
+
+/**
+ * 在 canvas 上换行绘制文本，返回最后一行的 y 坐标。
+ * CJK 文本逐字断行；西文（英文）按单词（空格）断行，避免把单词切断。
+ */
+function wrapText(
+  ctx: CanvasRenderingContext2D,
+  content: string,
+  x: number,
+  startY: number,
+  maxW: number,
+  lineHeight: number,
+  isCJK: boolean,
+): number {
+  const tokens = isCJK ? Array.from(content) : content.split(" ");
+  const sep = isCJK ? "" : " ";
+  let line = "";
+  let y = startY;
+  for (const token of tokens) {
+    const test = line ? line + sep + token : token;
+    if (ctx.measureText(test).width > maxW && line) {
+      ctx.fillText(line, x, y);
+      line = token;
+      y += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line, x, y);
+  return y;
 }

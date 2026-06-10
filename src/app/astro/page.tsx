@@ -8,20 +8,11 @@ import { AstroReport } from "./components/AstroReport";
 import { AstroPoster } from "./components/AstroPoster";
 import { buildAstroChart } from "./astro-engine";
 import type { AstroInput, AstroChart } from "./astro-engine";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./astro-i18n";
 
 type Phase = "landing" | "input" | "loading" | "result";
-
-// 加载动画文字
-const LOADING_TEXTS = [
-  "正在定位你的出生星空…",
-  "计算太阳在黄道上的位置…",
-  "追踪月亮的轨迹…",
-  "计算行星经度…",
-  "确定宫位边界…",
-  "探索行星间的相位…",
-  "解读你的星盘密码…",
-  "星盘解析完成，宇宙的秘密即将揭晓…",
-];
 
 // 历史记录（LocalStorage）
 const HISTORY_KEY = "astro_history";
@@ -59,10 +50,14 @@ function loadHistory(): HistoryItem[] {
 }
 
 export default function AstroPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+  const dateLocale = lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN";
+
   const [phase, setPhase] = useState<Phase>("landing");
   const [chart, setChart] = useState<AstroChart | null>(null);
   const [error, setError] = useState("");
-  const [loadingText, setLoadingText] = useState(LOADING_TEXTS[0]);
+  const [loadingText, setLoadingText] = useState(t.loadingTexts[0]);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
@@ -74,13 +69,14 @@ export default function AstroPage() {
   // 加载动画文字轮播
   useEffect(() => {
     if (phase !== "loading") return;
+    setLoadingText(t.loadingTexts[0]);
     let idx = 0;
     const timer = setInterval(() => {
-      idx = (idx + 1) % LOADING_TEXTS.length;
-      setLoadingText(LOADING_TEXTS[idx]);
+      idx = (idx + 1) % t.loadingTexts.length;
+      setLoadingText(t.loadingTexts[idx]);
     }, 1200);
     return () => clearInterval(timer);
-  }, [phase]);
+  }, [phase, t]);
 
   const handleInputSubmit = useCallback(async (input: AstroInput) => {
     setPhase("loading");
@@ -97,10 +93,10 @@ export default function AstroPage() {
       setPhase("result");
     } catch (err) {
       console.error(err);
-      setError("星盘计算失败，请检查输入信息后重试");
+      setError(t.errCalcFailed);
       setPhase("input");
     }
-  }, []);
+  }, [t]);
 
   const handleRestart = useCallback(() => {
     setPhase("input");
@@ -121,13 +117,16 @@ export default function AstroPage() {
         <div className="stars-bg" />
         <nav className="astro-nav">
           <Link href="/" className="astro-nav-back">
-            ← 返回主页
+            {t.navBackHome}
           </Link>
-          {history.length > 0 && (
-            <button onClick={() => setShowHistory(true)} className="astro-nav-history">
-              📋 历史记录
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {history.length > 0 && (
+              <button onClick={() => setShowHistory(true)} className="astro-nav-history">
+                {t.navHistory}
+              </button>
+            )}
+            <LangSwitcher />
+          </div>
         </nav>
 
         {/* 历史面板 */}
@@ -135,7 +134,7 @@ export default function AstroPage() {
           <div className="astro-history-panel">
             <div className="astro-history-content">
               <div className="astro-history-header">
-                <h3>历史星盘</h3>
+                <h3>{t.historyTitle}</h3>
                 <button onClick={() => setShowHistory(false)}>✕</button>
               </div>
               {history.map((item, i) => (
@@ -147,7 +146,7 @@ export default function AstroPage() {
                   <span className="astro-history-name">{item.name}</span>
                   <span className="astro-history-date">{item.birthDate} · {item.cityName}</span>
                   <span className="astro-history-time">
-                    {new Date(item.generatedAt).toLocaleDateString("zh-CN")}
+                    {new Date(item.generatedAt).toLocaleDateString(dateLocale)}
                   </span>
                 </button>
               ))}
@@ -180,23 +179,23 @@ export default function AstroPage() {
 
           {/* 文字区 */}
           <h1 className="astro-landing-title">
-            遇见宇宙中的自己
+            {t.landTitle}
           </h1>
           <p className="astro-landing-subtitle">
-            NATAL CHART · 本命星盘解析
+            {t.landSubtitle}
           </p>
           <p className="astro-landing-desc">
-            在你出生的那一刻，宇宙中所有星体的排列，
+            {t.landDescL1}
             <br />
-            构成了一张独一无二的星空地图——这就是你的本命星盘
+            {t.landDescL2}
           </p>
 
           {/* 功能特点 */}
           <div className="astro-landing-features">
             {[
-              { icon: "☉", title: "精准计算", desc: "VSOP87 天文算法，精确追踪十大星体位置" },
-              { icon: "♎", title: "三巨头解读", desc: "太阳·月亮·上升，揭秘你性格的核心密码" },
-              { icon: "△", title: "相位分析", desc: "五大核心相位，解析行星间的能量连结" },
+              { icon: "☉", title: t.feat1Title, desc: t.feat1Desc },
+              { icon: "♎", title: t.feat2Title, desc: t.feat2Desc },
+              { icon: "△", title: t.feat3Title, desc: t.feat3Desc },
             ].map((f) => (
               <div key={f.title} className="astro-feature-card">
                 <div className="astro-feature-icon">{f.icon}</div>
@@ -211,11 +210,11 @@ export default function AstroPage() {
             onClick={() => setPhase("input")}
             className="astro-landing-cta"
           >
-            ✨ 解读我的本命星盘
+            {t.landCta}
           </button>
 
           <p className="astro-landing-note">
-            完全免费 · 无需注册 · 数据不上传
+            {t.landNote}
           </p>
         </div>
       </div>
@@ -229,20 +228,23 @@ export default function AstroPage() {
         <div className="stars-bg" />
         <nav className="astro-nav">
           <button onClick={() => setPhase("landing")} className="astro-nav-back">
-            ← 返回
+            {t.navBack}
           </button>
-          {history.length > 0 && (
-            <button onClick={() => setShowHistory(true)} className="astro-nav-history">
-              📋 历史
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {history.length > 0 && (
+              <button onClick={() => setShowHistory(true)} className="astro-nav-history">
+                {t.navHistoryShort}
+              </button>
+            )}
+            <LangSwitcher />
+          </div>
         </nav>
 
         {showHistory && (
           <div className="astro-history-panel">
             <div className="astro-history-content">
               <div className="astro-history-header">
-                <h3>历史星盘</h3>
+                <h3>{t.historyTitle}</h3>
                 <button onClick={() => setShowHistory(false)}>✕</button>
               </div>
               {history.map((item, i) => (
@@ -259,7 +261,7 @@ export default function AstroPage() {
           {error && (
             <div className="astro-error-banner">⚠️ {error}</div>
           )}
-          <AstroInputForm onSubmit={handleInputSubmit} isLoading={false} />
+          <AstroInputForm t={t} onSubmit={handleInputSubmit} isLoading={false} />
         </div>
       </div>
     );
@@ -307,40 +309,43 @@ export default function AstroPage() {
         {/* 顶部导航 */}
         <nav className="astro-result-nav">
           <button onClick={handleRestart} className="astro-nav-back">
-            ← 重新解盘
+            {t.navRestart}
           </button>
           <div className="astro-result-nav-title">
             <span className="text-gold">✦</span>
-            <span>{chart.input.name} 的星盘</span>
+            <span>{chart.input.name}{t.chartOfSuffix}</span>
           </div>
-          <Link href="/" className="astro-nav-home">🏠</Link>
+          <div className="flex items-center gap-2">
+            <LangSwitcher />
+            <Link href="/" className="astro-nav-home">🏠</Link>
+          </div>
         </nav>
 
         <div className="astro-result-content">
           {/* 左侧：星盘图 */}
           <div className="astro-result-left">
-            <AstroChartSVG chart={chart} />
-            <ElementBreakdown chart={chart} />
+            <AstroChartSVG chart={chart} t={t} />
+            <ElementBreakdown chart={chart} t={t} />
           </div>
 
           {/* 右侧：解析报告 */}
           <div className="astro-result-right">
-            <AstroReport chart={chart} />
+            <AstroReport chart={chart} t={t} />
           </div>
         </div>
 
         {/* 海报生成区 */}
         <div className="astro-result-poster-section">
-          <AstroPoster chart={chart} />
+          <AstroPoster chart={chart} t={t} lang={lang} />
         </div>
 
         {/* 底部 CTA */}
         <div className="astro-result-footer">
           <button onClick={handleRestart} className="astro-result-restart-btn">
-            ✨ 解读另一个人的星盘
+            {t.resultRestart}
           </button>
           <Link href="/" className="astro-result-home-link">
-            探索更多命理解析 →
+            {t.resultHomeLink}
           </Link>
         </div>
       </div>

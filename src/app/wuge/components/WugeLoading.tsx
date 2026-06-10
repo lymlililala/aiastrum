@@ -1,27 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LOADING_TEXTS } from "../wuge-data";
+import type { WugeT } from "../wuge-i18n";
 
 interface WugeLoadingProps {
+  t: WugeT;
   name: string;
 }
 
-export default function WugeLoading({ name }: WugeLoadingProps) {
+export default function WugeLoading({ t, name }: WugeLoadingProps) {
   const [textIndex, setTextIndex] = useState(0);
   const [dots, setDots] = useState("");
   const [progress, setProgress] = useState(0);
   const [visibleChars, setVisibleChars] = useState<string[]>([]);
 
   const chars = Array.from(name);
+  const loadingTexts = t.loadingTexts;
 
   // 循环显示加载文案
   useEffect(() => {
     const interval = setInterval(() => {
-      setTextIndex((i) => (i + 1) % LOADING_TEXTS.length);
+      setTextIndex((i) => (i + 1) % loadingTexts.length);
     }, 800);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadingTexts.length]);
 
   // 省略号动画
   useEffect(() => {
@@ -111,7 +113,7 @@ export default function WugeLoading({ name }: WugeLoadingProps) {
                 style={{ transitionDelay: `${i * 0.1}s` }}
               >
                 <span className="wuge-char-glyph">{char}</span>
-                <span className="wuge-char-label">第{["一", "二", "三", "四", "五"][i] ?? i + 1}字</span>
+                <span className="wuge-char-label">{t.charLabelPre}{t.charOrdinals[i] ?? i + 1}{t.charLabelPost}</span>
               </div>
             ))}
           </div>
@@ -120,7 +122,7 @@ export default function WugeLoading({ name }: WugeLoadingProps) {
         {/* 加载文案 */}
         <div className="wuge-loading-text-area">
           <p className="wuge-loading-text">
-            {LOADING_TEXTS[textIndex] ?? LOADING_TEXTS[0]}{dots}
+            {loadingTexts[textIndex] ?? loadingTexts[0]}{dots}
           </p>
         </div>
 
@@ -137,7 +139,7 @@ export default function WugeLoading({ name }: WugeLoadingProps) {
 
         {/* 底部步骤提示 */}
         <div className="wuge-loading-steps">
-          {["查字典", "算五格", "对数理", "出报告"].map((step, i) => (
+          {t.loadSteps.map((step, i) => (
             <div
               key={i}
               className={`wuge-loading-step ${progress > (i + 1) * 22 ? "wuge-step-done" : progress > i * 22 ? "wuge-step-active" : ""}`}

@@ -2,6 +2,9 @@
 
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./dream-i18n";
 import DreamInput from "./components/DreamInput";
 import DreamLoading from "./components/DreamLoading";
 import DreamResult, { type DreamResultData } from "./components/DreamResult";
@@ -10,6 +13,9 @@ import DreamCategory from "./components/DreamCategory";
 type DreamPhase = "input" | "loading" | "result";
 
 export default function DreamPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [phase, setPhase] = useState<DreamPhase>("input");
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<DreamResultData | null>(null);
@@ -24,7 +30,7 @@ export default function DreamPage() {
       const response = await fetch("/api/dream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: inputQuery }),
+        body: JSON.stringify({ query: inputQuery, lang }),
       });
 
       const data = await response.json() as DreamResultData & { error?: string };
@@ -40,7 +46,7 @@ export default function DreamPage() {
       setError(msg);
       setPhase("input");
     }
-  }, []);
+  }, [lang]);
 
   const handleReset = useCallback(() => {
     setPhase("input");
@@ -66,13 +72,15 @@ export default function DreamPage() {
       {/* 顶部导航 */}
       <nav className="dream-nav">
         <Link href="/" className="dream-nav-back">
-          ← 返回
+          {t.back}
         </Link>
         <div className="dream-nav-brand">
           <span className="dream-nav-moon">🌙</span>
-          <span className="dream-nav-title">周公解梦</span>
+          <span className="dream-nav-title">{t.brand}</span>
         </div>
-        <div className="dream-nav-right" />
+        <div className="dream-nav-right">
+          <LangSwitcher />
+        </div>
       </nav>
 
       {/* 主内容 */}
@@ -84,15 +92,15 @@ export default function DreamPage() {
                 ⚠️ {error}
               </div>
             )}
-            <DreamInput onSubmit={handleSubmit} isLoading={false} />
-            <DreamCategory onKeywordClick={handleSubmit} />
+            <DreamInput t={t} onSubmit={handleSubmit} isLoading={false} />
+            <DreamCategory t={t} onKeywordClick={handleSubmit} />
           </div>
         )}
 
-        {phase === "loading" && <DreamLoading query={query} />}
+        {phase === "loading" && <DreamLoading t={t} query={query} />}
 
         {phase === "result" && result && (
-          <DreamResult data={result} onReset={handleReset} />
+          <DreamResult t={t} data={result} onReset={handleReset} />
         )}
       </main>
     </div>

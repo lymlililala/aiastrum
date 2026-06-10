@@ -2,6 +2,7 @@
 
 import { useRef, useCallback } from "react";
 import { LEVEL_ICONS, LEVEL_COLORS, getPosterQuote } from "../wuge-data";
+import type { WugeT } from "../wuge-i18n";
 
 interface WugeGe {
   strokes: number;
@@ -39,14 +40,15 @@ interface WugeReportData {
 }
 
 interface WugeReportProps {
+  t: WugeT;
   data: WugeReportData;
   onReset: () => void;
 }
 
 // 五格雷达图（SVG实现）
-function WugeRadarChart({ data }: { data: WugeReportData }) {
+function WugeRadarChart({ data, t }: { data: WugeReportData; t: WugeT }) {
   const geKeys: Array<keyof typeof data.wuge> = ["tian", "ren", "di", "wai", "zong"];
-  const labels = ["天格", "人格", "地格", "外格", "总格"];
+  const labels = [t.geLabels.tian, t.geLabels.ren, t.geLabels.di, t.geLabels.wai, t.geLabels.zong];
   const scores = geKeys.map((k) => data.wuge[k].score);
 
   const cx = 120;
@@ -145,7 +147,7 @@ function WugeRadarChart({ data }: { data: WugeReportData }) {
 }
 
 // 单个五格卡片
-function GeCard({ label, ge, isMain = false }: { label: string; ge: WugeGe; isMain?: boolean }) {
+function GeCard({ label, ge, t, isMain = false }: { label: string; ge: WugeGe; t: WugeT; isMain?: boolean }) {
   const colors = LEVEL_COLORS[ge.level] ?? LEVEL_COLORS["半吉"]!;
   const icon = LEVEL_ICONS[ge.level] ?? "○";
 
@@ -154,11 +156,11 @@ function GeCard({ label, ge, isMain = false }: { label: string; ge: WugeGe; isMa
       <div className="wuge-ge-card-header">
         <div className="wuge-ge-label-row">
           <span className="wuge-ge-label">{label}</span>
-          {isMain && <span className="wuge-ge-main-badge">主运</span>}
+          {isMain && <span className="wuge-ge-main-badge">{t.mainBadge}</span>}
         </div>
         <div className="wuge-ge-strokes">
           <span className="wuge-ge-num">{ge.strokes}</span>
-          <span className="wuge-ge-unit">画</span>
+          <span className="wuge-ge-unit">{t.strokeUnit}</span>
         </div>
       </div>
       <div className="wuge-ge-level-row">
@@ -172,16 +174,16 @@ function GeCard({ label, ge, isMain = false }: { label: string; ge: WugeGe; isMa
   );
 }
 
-export default function WugeReport({ data, onReset }: WugeReportProps) {
+export default function WugeReport({ t, data, onReset }: WugeReportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const geList: Array<{ label: string; key: keyof typeof data.wuge; isMain?: boolean }> = [
-    { label: "天格", key: "tian" },
-    { label: "人格", key: "ren", isMain: true },
-    { label: "地格", key: "di" },
-    { label: "外格", key: "wai" },
-    { label: "总格", key: "zong" },
+    { label: t.geLabels.tian, key: "tian" },
+    { label: t.geLabels.ren, key: "ren", isMain: true },
+    { label: t.geLabels.di, key: "di" },
+    { label: t.geLabels.wai, key: "wai" },
+    { label: t.geLabels.zong, key: "zong" },
   ];
 
   // 生成分享海报
@@ -217,7 +219,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
     ctx.fillStyle = "rgba(200,130,50,0.9)";
     ctx.font = "bold 18px serif";
     ctx.textAlign = "center";
-    ctx.fillText("✦ 姓名五格剖象 ✦", W / 2, 70);
+    ctx.fillText(t.posterTitle, W / 2, 70);
 
     // 姓名大字
     ctx.fillStyle = "#f5e6c8";
@@ -237,15 +239,15 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
     ctx.fillStyle = "rgba(200,130,50,0.9)";
     ctx.font = "16px serif";
     ctx.textAlign = "center";
-    ctx.fillText(`综合评分：${data.score}分 · ${data.scoreLevel}`, W / 2, 215);
+    ctx.fillText(`${t.posterScorePre}${data.score}${t.posterScoreUnit}${data.scoreLevel}`, W / 2, 215);
 
     // 五格笔画
     const geOrder = [
-      { label: "天格", val: data.wuge.tian },
-      { label: "人格", val: data.wuge.ren },
-      { label: "地格", val: data.wuge.di },
-      { label: "外格", val: data.wuge.wai },
-      { label: "总格", val: data.wuge.zong },
+      { label: t.geLabels.tian, val: data.wuge.tian },
+      { label: t.geLabels.ren, val: data.wuge.ren },
+      { label: t.geLabels.di, val: data.wuge.di },
+      { label: t.geLabels.wai, val: data.wuge.wai },
+      { label: t.geLabels.zong, val: data.wuge.zong },
     ];
 
     const geY = 270;
@@ -282,7 +284,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
     ctx.fillStyle = "rgba(200,130,50,0.8)";
     ctx.font = "14px serif";
     ctx.textAlign = "center";
-    ctx.fillText(`人格 ${data.wuge.ren.strokes}画 · ${data.wuge.ren.title}（主运）`, W / 2, 375);
+    ctx.fillText(`${t.posterRenPre}${data.wuge.ren.strokes}${t.posterRenMid}${data.wuge.ren.title}${t.posterRenPost}`, W / 2, 375);
 
     // Life Quote
     ctx.fillStyle = "#f5e6c8";
@@ -334,17 +336,17 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
     ctx.fillStyle = "rgba(200,130,50,0.6)";
     ctx.font = "14px serif";
     ctx.textAlign = "center";
-    ctx.fillText("姓名五格剖象 · 笔画藏玄机，五格测人生", W / 2, H - 65);
+    ctx.fillText(t.posterFooter1, W / 2, H - 65);
     ctx.font = "12px serif";
     ctx.fillStyle = "rgba(200,130,50,0.4)";
-    ctx.fillText("三才五格 · 康熙字典 · 81数理灵动", W / 2, H - 42);
+    ctx.fillText(t.posterFooter2, W / 2, H - 42);
 
     // 下载
     const link = document.createElement("a");
-    link.download = `${data.name}-五格测算.png`;
+    link.download = `${data.name}${t.posterFileSuffix}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
-  }, [data]);
+  }, [data, t]);
 
   // 获取综合分数颜色
   const getScoreColor = (score: number) => {
@@ -367,7 +369,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
             {data.chars.map((char, i) => (
               <div key={i} className="wuge-report-char-item">
                 <span className="wuge-report-char">{char}</span>
-                <span className="wuge-report-char-strokes">{data.strokes[i]}画</span>
+                <span className="wuge-report-char-strokes">{data.strokes[i]}{t.strokeUnit}</span>
               </div>
             ))}
           </div>
@@ -375,11 +377,11 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
         <div className="wuge-score-row">
           <div className="wuge-score-circle">
             <span className={`wuge-score-num ${getScoreColor(data.score)}`}>{data.score}</span>
-            <span className="wuge-score-label">分</span>
+            <span className="wuge-score-label">{t.scoreUnit}</span>
           </div>
           <div className="wuge-score-info">
             <p className="wuge-score-level">{data.scoreLevel}</p>
-            <p className="wuge-score-sub">{data.gender === "male" ? "乾命" : "坤命"} · 综合五格评定</p>
+            <p className="wuge-score-sub">{data.gender === "male" ? t.fateMale : t.fateFemale} · {t.scoreSub}</p>
           </div>
         </div>
 
@@ -398,7 +400,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
       <section className="wuge-section">
         <h2 className="wuge-section-title">
           <span className="wuge-section-icon">☵</span>
-          三才五格 · 笔画拆解
+          {t.sectionBreakdown}
         </h2>
         <div className="wuge-ge-breakdown">
           <div className="wuge-ge-formula">
@@ -428,12 +430,12 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
       <section className="wuge-section">
         <h2 className="wuge-section-title">
           <span className="wuge-section-icon">⊕</span>
-          五格雷达 · 运势全览
+          {t.sectionRadar}
         </h2>
         <div className="wuge-radar-section">
-          <WugeRadarChart data={data} />
+          <WugeRadarChart data={data} t={t} />
           <div className="wuge-sancai-info">
-            <div className="wuge-sancai-badge">三才：{data.sanCai}</div>
+            <div className="wuge-sancai-badge">{t.sanCaiLabel}{data.sanCai}</div>
             <p className="wuge-sancai-desc">{data.sanCaiDesc}</p>
           </div>
         </div>
@@ -443,7 +445,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
       <section className="wuge-section">
         <h2 className="wuge-section-title">
           <span className="wuge-section-icon">☰</span>
-          五格详解
+          {t.sectionGeDetail}
         </h2>
         <div className="wuge-ge-cards-grid">
           {geList.map(({ label, key, isMain }) => (
@@ -451,6 +453,7 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
               key={key}
               label={label}
               ge={data.wuge[key]}
+              t={t}
               isMain={isMain}
             />
           ))}
@@ -461,14 +464,14 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
       <section className="wuge-section">
         <h2 className="wuge-section-title">
           <span className="wuge-section-icon">☲</span>
-          命格解析
+          {t.sectionAnalysis}
         </h2>
         <div className="wuge-analysis-cards">
           {[
-            { icon: "✦", label: "性格特征", content: data.analysis.personality },
-            { icon: "◈", label: "事业财运", content: data.analysis.career },
-            { icon: "♡", label: "感情婚姻", content: data.analysis.love },
-            { icon: "◉", label: "健康运势", content: data.analysis.health },
+            { icon: "✦", label: t.analysisPersonality, content: data.analysis.personality },
+            { icon: "◈", label: t.analysisCareer, content: data.analysis.career },
+            { icon: "♡", label: t.analysisLove, content: data.analysis.love },
+            { icon: "◉", label: t.analysisHealth, content: data.analysis.health },
           ].map((item, i) => (
             <div key={i} className="wuge-analysis-card">
               <div className="wuge-analysis-card-header">
@@ -487,23 +490,22 @@ export default function WugeReport({ data, onReset }: WugeReportProps) {
         <blockquote className="wuge-life-quote">
           &ldquo;{data.lifeQuote}&rdquo;
         </blockquote>
-        <p className="wuge-quote-sub">— 基于 {data.wuge.ren.strokes}画人格 · {data.wuge.ren.title}</p>
+        <p className="wuge-quote-sub">{t.quoteSubPre}{data.wuge.ren.strokes}{t.quoteSubMid}{data.wuge.ren.title}</p>
       </section>
 
       {/* 操作按钮 */}
       <div className="wuge-action-row">
         <button onClick={generatePoster} className="wuge-btn-poster">
-          <span>⬇</span> 生成命运海报
+          <span>⬇</span> {t.btnPoster}
         </button>
         <button onClick={onReset} className="wuge-btn-reset">
-          <span>↺</span> 重新测算
+          <span>↺</span> {t.btnReset}
         </button>
       </div>
 
       {/* 免责声明 */}
       <p className="wuge-disclaimer">
-        ※ 本测算基于中国传统命名学五格剖象法，结果仅供参考，不构成任何人生建议。
-        姓名运势需结合出生八字、个人努力等综合因素考量。
+        {t.disclaimer}
       </p>
     </div>
   );

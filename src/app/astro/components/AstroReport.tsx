@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import type { AstroChart } from "../astro-engine";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, HOUSE_LIST } from "../astro-data";
 import type { ZodiacSign } from "../astro-data";
+import type { AstroT } from "../astro-i18n";
 
 interface AstroReportProps {
   chart: AstroChart;
+  t: AstroT;
 }
 
 type TabType = "big3" | "planets" | "aspects";
@@ -31,7 +33,7 @@ function ZodiacBadge({ sign }: { sign: ZodiacSign }) {
 }
 
 // Big3 三巨头卡片
-function Big3Card({ chart }: { chart: AstroChart }) {
+function Big3Card({ chart, t }: { chart: AstroChart; t: AstroT }) {
   const { big3 } = chart;
   const sunPlanet = PLANET_MAP.Sun;
   const moonPlanet = PLANET_MAP.Moon;
@@ -39,8 +41,8 @@ function Big3Card({ chart }: { chart: AstroChart }) {
   const cards = [
     {
       planet: sunPlanet,
-      label: "太阳星座",
-      sublabel: "外在性格与人生追求",
+      label: t.big3Sun,
+      sublabel: t.big3SunSub,
       sign: big3.sun.sign,
       text: big3.sun.text,
       gradient: "linear-gradient(135deg, rgba(243,156,18,0.15), rgba(243,156,18,0.05))",
@@ -48,17 +50,17 @@ function Big3Card({ chart }: { chart: AstroChart }) {
     },
     {
       planet: moonPlanet,
-      label: "月亮星座",
-      sublabel: "内在情绪与安全感",
+      label: t.big3Moon,
+      sublabel: t.big3MoonSub,
       sign: big3.moon.sign,
       text: big3.moon.text,
       gradient: "linear-gradient(135deg, rgba(189,195,199,0.15), rgba(189,195,199,0.05))",
       border: "rgba(189,195,199,0.3)",
     },
     ...(big3.rising ? [{
-      planet: { symbol: "↑", name: "上升", color: "#9B59B6", id: "rising" as const },
-      label: "上升星座",
-      sublabel: "外在气质与第一印象",
+      planet: { symbol: "↑", name: t.risingName, color: "#9B59B6", id: "rising" as const },
+      label: t.big3Rising,
+      sublabel: t.big3RisingSub,
       sign: big3.rising.sign,
       text: big3.rising.text,
       gradient: "linear-gradient(135deg, rgba(155,89,182,0.15), rgba(155,89,182,0.05))",
@@ -69,15 +71,15 @@ function Big3Card({ chart }: { chart: AstroChart }) {
   return (
     <div className="astro-big3-section">
       <div className="astro-section-header">
-        <h2 className="astro-section-title">⭐ Big 3 三巨头</h2>
-        <p className="astro-section-subtitle">你性格的核心支柱</p>
+        <h2 className="astro-section-title">{t.big3Title}</h2>
+        <p className="astro-section-subtitle">{t.big3Subtitle}</p>
       </div>
 
       {/* 一句话总结 */}
       <div className="astro-big3-summary">
         {big3.rising
-          ? `${ZODIAC_LIST.find(z => z.id === big3.rising!.sign)?.name}上升 · ${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}太阳 · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}月亮`
-          : `${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}太阳 · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}月亮`}
+          ? `${ZODIAC_LIST.find(z => z.id === big3.rising!.sign)?.name}${t.risingSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}${t.sunSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}${t.moonSuffix}`
+          : `${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}${t.sunSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}${t.moonSuffix}`}
       </div>
 
       <div className="astro-big3-cards">
@@ -104,7 +106,7 @@ function Big3Card({ chart }: { chart: AstroChart }) {
 
       {!big3.rising && (
         <div className="astro-no-time-notice">
-          💡 提供出生时间可解锁上升星座解读，了解你展现给世界的外在气质
+          {t.big3NoTime}
         </div>
       )}
     </div>
@@ -112,7 +114,7 @@ function Big3Card({ chart }: { chart: AstroChart }) {
 }
 
 // 行星宫位解读
-function PlanetHouseSection({ chart }: { chart: AstroChart }) {
+function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const mainPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
@@ -120,8 +122,8 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
   return (
     <div className="astro-planets-section">
       <div className="astro-section-header">
-        <h2 className="astro-section-title">🪐 行星星座与宫位</h2>
-        <p className="astro-section-subtitle">点击行星了解详细解读</p>
+        <h2 className="astro-section-title">{t.planetsTitle}</h2>
+        <p className="astro-section-subtitle">{t.planetsSubtitle}</p>
       </div>
 
       <div className="astro-planet-list">
@@ -153,7 +155,7 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
                       {planetPos.degree}°{planetPos.minute.toString().padStart(2, "0")}&apos;
                     </span>
                     {chart.hasTimeData && (
-                      <span className="astro-planet-house">第 {planetPos.house} 宫</span>
+                      <span className="astro-planet-house">{t.houseNumPre}{planetPos.house}{t.houseNumPost}</span>
                     )}
                   </div>
                 </div>
@@ -163,13 +165,13 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
               {isExpanded && (
                 <div className="astro-planet-detail">
                   <div className="astro-planet-meaning">
-                    <span className="astro-detail-label">行星含义</span>
+                    <span className="astro-detail-label">{t.detailMeaning}</span>
                     <p>{planetInfo.meaning}</p>
                   </div>
                   {planetInterpret?.signKeyword && (
                     <div className="astro-planet-sign-interp">
                       <span className="astro-detail-label">
-                        在{zodiacInfo.name}
+                        {t.detailInPre}{zodiacInfo.name}
                       </span>
                       <p>{planetInterpret.signKeyword}</p>
                     </div>
@@ -177,7 +179,7 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
                   {chart.hasTimeData && planetInterpret?.houseText && houseInfo && (
                     <div className="astro-planet-house-interp">
                       <span className="astro-detail-label">
-                        落入第 {planetPos.house} 宫（{houseInfo.domain}）
+                        {t.detailHousePre}{planetPos.house}{t.detailHouseMid}{houseInfo.domain}{t.detailHousePost}
                       </span>
                       <p>{planetInterpret.houseText}</p>
                     </div>
@@ -191,7 +193,7 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
 
       {/* 外行星简报 */}
       <div className="astro-outer-planets">
-        <h3 className="astro-outer-title">外行星（世代影响）</h3>
+        <h3 className="astro-outer-title">{t.outerTitle}</h3>
         <div className="astro-outer-grid">
           {(["Uranus", "Neptune", "Pluto"] as const).map((pid) => {
             const planetPos = chart.planets.find((p) => p.planet === pid);
@@ -208,7 +210,7 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
           })}
         </div>
         <p className="astro-outer-note">
-          外行星在一个星座停留多年，代表整个世代共同的精神能量特征
+          {t.outerNote}
         </p>
       </div>
     </div>
@@ -216,16 +218,16 @@ function PlanetHouseSection({ chart }: { chart: AstroChart }) {
 }
 
 // 核心相位解读
-function AspectsSection({ chart }: { chart: AstroChart }) {
+function AspectsSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
   return (
     <div className="astro-aspects-section">
       <div className="astro-section-header">
-        <h2 className="astro-section-title">🔗 核心相位</h2>
-        <p className="astro-section-subtitle">行星间的能量连结（最紧密的 {chart.topAspects.length} 个）</p>
+        <h2 className="astro-section-title">{t.aspectsTitle}</h2>
+        <p className="astro-section-subtitle">{t.aspectsSubPre}{chart.topAspects.length}{t.aspectsSubPost}</p>
       </div>
 
       {chart.topAspects.length === 0 ? (
-        <div className="astro-no-aspects">暂无紧密相位</div>
+        <div className="astro-no-aspects">{t.noAspects}</div>
       ) : (
         <div className="astro-aspect-list">
           {chart.topAspects.map((aspect, i) => {
@@ -265,9 +267,9 @@ function AspectsSection({ chart }: { chart: AstroChart }) {
                           : "#F1C40F",
                       }}
                     >
-                      {aspectInfo.nature === "harmonious" ? "和谐"
-                        : aspectInfo.nature === "challenging" ? "挑战"
-                        : "中性"}
+                      {aspectInfo.nature === "harmonious" ? t.natureHarmonious
+                        : aspectInfo.nature === "challenging" ? t.natureChallenging
+                        : t.natureNeutral}
                     </span>
                   </div>
                 </div>
@@ -282,13 +284,13 @@ function AspectsSection({ chart }: { chart: AstroChart }) {
 }
 
 // 主报告组件
-export function AstroReport({ chart }: AstroReportProps) {
+export function AstroReport({ chart, t }: AstroReportProps) {
   const [activeTab, setActiveTab] = useState<TabType>("big3");
 
   const tabs: Array<{ id: TabType; label: string; icon: string }> = [
-    { id: "big3", label: "三巨头", icon: "⭐" },
-    { id: "planets", label: "行星宫位", icon: "🪐" },
-    { id: "aspects", label: "核心相位", icon: "🔗" },
+    { id: "big3", label: t.tabBig3, icon: "⭐" },
+    { id: "planets", label: t.tabPlanets, icon: "🪐" },
+    { id: "aspects", label: t.tabAspects, icon: "🔗" },
   ];
 
   return (
@@ -303,7 +305,7 @@ export function AstroReport({ chart }: AstroReportProps) {
         </p>
         {!chart.hasTimeData && (
           <div className="astro-report-no-time">
-            ℹ️ 未提供出生时间，宫位数据不可用
+            {t.reportNoTime}
           </div>
         )}
       </div>
@@ -324,9 +326,9 @@ export function AstroReport({ chart }: AstroReportProps) {
 
       {/* Tab 内容 */}
       <div className="astro-report-content">
-        {activeTab === "big3" && <Big3Card chart={chart} />}
-        {activeTab === "planets" && <PlanetHouseSection chart={chart} />}
-        {activeTab === "aspects" && <AspectsSection chart={chart} />}
+        {activeTab === "big3" && <Big3Card chart={chart} t={t} />}
+        {activeTab === "planets" && <PlanetHouseSection chart={chart} t={t} />}
+        {activeTab === "aspects" && <AspectsSection chart={chart} t={t} />}
       </div>
     </div>
   );

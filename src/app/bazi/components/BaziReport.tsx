@@ -5,11 +5,223 @@ import type { BaziResult } from "../bazi-engine";
 import { ELEMENT_PERSONALITY, ZODIAC_2026_FORTUNE, PILLAR_READINGS, DAY_STEM_READING } from "../bazi-data";
 import { getDominantElement, getMissingElements } from "../bazi-engine";
 
+type Lang = "zh" | "en" | "tw";
+
+// ── 报告 UI 文案（三语）。注：命理解读/数据派生文案不在此处，保持原文。
+const RT = {
+  zh: {
+    elementChart:   "五行能量图谱",
+    fortuneChart:   "2026年运势图谱",
+    radarCareer:    "事业",
+    radarWealth:    "财运",
+    radarLove:      "感情",
+    radarHealth:    "健康",
+    radarOverall:   "综合",
+    mingge:         "命格",
+    zodiacPrefix:   "生肖",
+    reportTitleFallback: "命理报告",
+    maleLife:       "男命",
+    femaleLife:     "女命",
+    fourPillars:    "四 柱 八 字",
+    pillarYear:     "年柱",
+    pillarMonth:    "月柱",
+    pillarDay:      "日柱",
+    pillarHour:     "时柱",
+    unknown:        "未知",
+    dayMaster:      "日主：",
+    fiveElement:    "五行：",
+    flourish:       "旺",
+    lacking:        "缺：",
+    year2026:       "2026：",
+    tabOverview:    "命格总览",
+    tabPillars:     "四柱解析",
+    tabFortune:     "2026运势",
+    tabReport:      "AI解读",
+    energyPattern:  "五行能量格局",
+    personaTitle:   "性格画像",
+    traits:         "✦ 性格特质",
+    strengths:      "✦ 天赋优势",
+    growth:         "✦ 成长课题",
+    stemElementPrefix:   "天干",
+    branchElementPrefix: "地支",
+    nayinPrefix:    "纳音：",
+    hourUnknownNote: "※ 未知时辰，时柱无法精准计算",
+    bingwuYear:     "2026丙午年 · 生肖",
+    overallFortune: "整体运势",
+    careerLuck:     "事业运",
+    wealthLuck:     "财运",
+    loveLuck:       "感情运",
+    healthLuck:     "健康运",
+    yearSummary:    "年度总结",
+    careerDetailLabel: "事业运势",
+    wealthDetailLabel: "财运分析",
+    loveDetailLabel:   "感情运势",
+    healthDetailLabel: "健康运势",
+    luckyAdvice:    "2026年开运建议",
+    luckyDirection: "幸运方位",
+    luckyColor:     "开运颜色",
+    luckyNumber:    "幸运数字",
+    aiReading:      "AI 命理师解读",
+    writing:        "正在书写...",
+    savePoster:     "📤 保存海报",
+    restart:        "✦ 重新测算",
+    posterTitle:    "生辰八字命理报告",
+    posterMale:     "男",
+    posterFemale:   "女",
+    posterLifeSuffix: "命",
+    posterPillarSuffix: "柱",
+    posterNayin:    "纳音",
+    posterZodiac:   "生肖",
+    posterDominant: "主导五行",
+    posterAISummary: "AI 命理解读摘要",
+    posterFooter:   "天命 · 仅供娱乐参考",
+    posterFilename: "八字命理报告",
+  },
+  tw: {
+    elementChart:   "五行能量圖譜",
+    fortuneChart:   "2026年運勢圖譜",
+    radarCareer:    "事業",
+    radarWealth:    "財運",
+    radarLove:      "感情",
+    radarHealth:    "健康",
+    radarOverall:   "綜合",
+    mingge:         "命格",
+    zodiacPrefix:   "生肖",
+    reportTitleFallback: "命理報告",
+    maleLife:       "男命",
+    femaleLife:     "女命",
+    fourPillars:    "四 柱 八 字",
+    pillarYear:     "年柱",
+    pillarMonth:    "月柱",
+    pillarDay:      "日柱",
+    pillarHour:     "時柱",
+    unknown:        "未知",
+    dayMaster:      "日主：",
+    fiveElement:    "五行：",
+    flourish:       "旺",
+    lacking:        "缺：",
+    year2026:       "2026：",
+    tabOverview:    "命格總覽",
+    tabPillars:     "四柱解析",
+    tabFortune:     "2026運勢",
+    tabReport:      "AI解讀",
+    energyPattern:  "五行能量格局",
+    personaTitle:   "性格畫像",
+    traits:         "✦ 性格特質",
+    strengths:      "✦ 天賦優勢",
+    growth:         "✦ 成長課題",
+    stemElementPrefix:   "天干",
+    branchElementPrefix: "地支",
+    nayinPrefix:    "納音：",
+    hourUnknownNote: "※ 未知時辰，時柱無法精準計算",
+    bingwuYear:     "2026丙午年 · 生肖",
+    overallFortune: "整體運勢",
+    careerLuck:     "事業運",
+    wealthLuck:     "財運",
+    loveLuck:       "感情運",
+    healthLuck:     "健康運",
+    yearSummary:    "年度總結",
+    careerDetailLabel: "事業運勢",
+    wealthDetailLabel: "財運分析",
+    loveDetailLabel:   "感情運勢",
+    healthDetailLabel: "健康運勢",
+    luckyAdvice:    "2026年開運建議",
+    luckyDirection: "幸運方位",
+    luckyColor:     "開運顏色",
+    luckyNumber:    "幸運數字",
+    aiReading:      "AI 命理師解讀",
+    writing:        "正在書寫...",
+    savePoster:     "📤 儲存海報",
+    restart:        "✦ 重新測算",
+    posterTitle:    "生辰八字命理報告",
+    posterMale:     "男",
+    posterFemale:   "女",
+    posterLifeSuffix: "命",
+    posterPillarSuffix: "柱",
+    posterNayin:    "納音",
+    posterZodiac:   "生肖",
+    posterDominant: "主導五行",
+    posterAISummary: "AI 命理解讀摘要",
+    posterFooter:   "天命 · 僅供娛樂參考",
+    posterFilename: "八字命理報告",
+  },
+  en: {
+    elementChart:   "Five Elements Energy Map",
+    fortuneChart:   "2026 Fortune Map",
+    radarCareer:    "Career",
+    radarWealth:    "Wealth",
+    radarLove:      "Love",
+    radarHealth:    "Health",
+    radarOverall:   "Overall",
+    mingge:         "Destiny",
+    zodiacPrefix:   "Zodiac ",
+    reportTitleFallback: "Destiny Report",
+    maleLife:       "Male",
+    femaleLife:     "Female",
+    fourPillars:    "F O U R   P I L L A R S",
+    pillarYear:     "Year",
+    pillarMonth:    "Month",
+    pillarDay:      "Day",
+    pillarHour:     "Hour",
+    unknown:        "Unknown",
+    dayMaster:      "Day Master: ",
+    fiveElement:    "Element: ",
+    flourish:       " strong",
+    lacking:        "Lacking: ",
+    year2026:       "2026: ",
+    tabOverview:    "Overview",
+    tabPillars:     "Pillars",
+    tabFortune:     "2026 Fortune",
+    tabReport:      "AI Reading",
+    energyPattern:  "Five Elements Energy Pattern",
+    personaTitle:   "Personality Profile",
+    traits:         "✦ Traits",
+    strengths:      "✦ Strengths",
+    growth:         "✦ Growth Areas",
+    stemElementPrefix:   "Stem ",
+    branchElementPrefix: "Branch ",
+    nayinPrefix:    "Na Yin: ",
+    hourUnknownNote: "※ Hour unknown — the Hour Pillar cannot be calculated precisely",
+    bingwuYear:     "2026 Bing-Wu Year · Zodiac ",
+    overallFortune: "Overall Fortune",
+    careerLuck:     "Career",
+    wealthLuck:     "Wealth",
+    loveLuck:       "Love",
+    healthLuck:     "Health",
+    yearSummary:    "Yearly Summary",
+    careerDetailLabel: "Career Fortune",
+    wealthDetailLabel: "Wealth Outlook",
+    loveDetailLabel:   "Love Fortune",
+    healthDetailLabel: "Health Fortune",
+    luckyAdvice:    "2026 Lucky Tips",
+    luckyDirection: "Lucky Direction",
+    luckyColor:     "Lucky Color",
+    luckyNumber:    "Lucky Number",
+    aiReading:      "AI Master's Reading",
+    writing:        "Writing...",
+    savePoster:     "📤 Save Poster",
+    restart:        "✦ Restart",
+    posterTitle:    "BaZi Destiny Report",
+    posterMale:     "Male",
+    posterFemale:   "Female",
+    posterLifeSuffix: "",
+    posterPillarSuffix: "",
+    posterNayin:    "Na Yin",
+    posterZodiac:   "Zodiac",
+    posterDominant: "Dominant Element",
+    posterAISummary: "AI Reading Summary",
+    posterFooter:   "Destiny · For entertainment only",
+    posterFilename: "BaZi_Report",
+  },
+};
+// ────────────────────────────────────────────────────
+
 interface BaziReportProps {
   baziResult: BaziResult;
   report: string;
   birthInfo: { year: number; month: number; day: number; hour: number; gender: "male" | "female" };
   onRestart: () => void;
+  lang: Lang;
 }
 
 // 五行颜色映射
@@ -39,7 +251,7 @@ function Stars({ count, max = 5 }: { count: number; max?: number }) {
 }
 
 // 五行雷达图（SVG 实现）
-function ElementRadar({ scores }: { scores: Record<string, number> }) {
+function ElementRadar({ scores, t }: { scores: Record<string, number>; t: (typeof RT)[Lang] }) {
   const elements = ["木", "火", "土", "金", "水"];
   const maxScore = 4;
   const size = 160;
@@ -137,20 +349,20 @@ function ElementRadar({ scores }: { scores: Record<string, number> }) {
         })}
       </svg>
       <p className="text-xs mt-2" style={{ color: "rgba(200,180,150,0.5)" }}>
-        五行能量图谱
+        {t.elementChart}
       </p>
     </div>
   );
 }
 
 // 运势雷达图
-function FortuneRadar({ fortune }: { fortune: (typeof ZODIAC_2026_FORTUNE)[string] }) {
+function FortuneRadar({ fortune, t }: { fortune: (typeof ZODIAC_2026_FORTUNE)[string]; t: (typeof RT)[Lang] }) {
   const aspects = [
-    { key: "career" as const, label: "事业" },
-    { key: "wealth" as const, label: "财运" },
-    { key: "love" as const, label: "感情" },
-    { key: "health" as const, label: "健康" },
-    { key: "overall" as const, label: "综合" },
+    { key: "career" as const, label: t.radarCareer },
+    { key: "wealth" as const, label: t.radarWealth },
+    { key: "love" as const, label: t.radarLove },
+    { key: "health" as const, label: t.radarHealth },
+    { key: "overall" as const, label: t.radarOverall },
   ];
   const size = 160;
   const cx = size / 2;
@@ -195,13 +407,14 @@ function FortuneRadar({ fortune }: { fortune: (typeof ZODIAC_2026_FORTUNE)[strin
         })}
       </svg>
       <p className="text-xs mt-2" style={{ color: "rgba(200,180,150,0.5)" }}>
-        2026年运势图谱
+        {t.fortuneChart}
       </p>
     </div>
   );
 }
 
-export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziReportProps) {
+export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: BaziReportProps) {
+  const t = RT[lang];
   const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, dayStem, nayin, liuNianRelation } = baziResult;
   const dominantElement = getDominantElement(elementScores);
   const missingElements = getMissingElements(elementScores);
@@ -265,7 +478,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
     ctx.font = "bold 36px serif";
     ctx.fillStyle = "#d4832a";
     ctx.textAlign = "center";
-    ctx.fillText("生辰八字命理报告", canvas.width / 2, 90);
+    ctx.fillText(t.posterTitle, canvas.width / 2, 90);
 
     // 分隔线
     ctx.strokeStyle = "rgba(180,100,50,0.5)";
@@ -278,19 +491,21 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
     // 出生信息
     ctx.font = "22px serif";
     ctx.fillStyle = "#c8a878";
-    ctx.fillText(
-      `${birthInfo.year}年${birthInfo.month}月${birthInfo.day}日  ${birthInfo.gender === "male" ? "男" : "女"}命`,
-      canvas.width / 2, 150
-    );
+    const posterGender = birthInfo.gender === "male" ? t.posterMale : t.posterFemale;
+    const posterBirth =
+      lang === "en"
+        ? `${birthInfo.year}-${birthInfo.month}-${birthInfo.day}  ${posterGender}`
+        : `${birthInfo.year}年${birthInfo.month}月${birthInfo.day}日  ${posterGender}${t.posterLifeSuffix}`;
+    ctx.fillText(posterBirth, canvas.width / 2, 150);
 
     // 四柱八字框
     ctx.font = "bold 28px serif";
     ctx.fillStyle = "#e8d5a3";
     const pillarsData = [
-      { label: "年", stem: yearPillar.stem, branch: yearPillar.branch },
-      { label: "月", stem: monthPillar.stem, branch: monthPillar.branch },
-      { label: "日", stem: dayPillar.stem, branch: dayPillar.branch },
-      { label: "时", stem: hourPillar?.stem ?? "?", branch: hourPillar?.branch ?? "?" },
+      { label: t.pillarYear, stem: yearPillar.stem, branch: yearPillar.branch },
+      { label: t.pillarMonth, stem: monthPillar.stem, branch: monthPillar.branch },
+      { label: t.pillarDay, stem: dayPillar.stem, branch: dayPillar.branch },
+      { label: t.pillarHour, stem: hourPillar?.stem ?? "?", branch: hourPillar?.branch ?? "?" },
     ];
 
     pillarsData.forEach((pillar, i) => {
@@ -303,7 +518,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
       // 柱标签
       ctx.font = "16px serif";
       ctx.fillStyle = "rgba(200,150,80,0.7)";
-      ctx.fillText(`${pillar.label}柱`, x, y - 10);
+      ctx.fillText(`${pillar.label}${t.posterPillarSuffix}`, x, y - 10);
       // 天干
       ctx.font = "bold 36px serif";
       ctx.fillStyle = "#e8d5a3";
@@ -316,7 +531,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
     // 纳音和生肖
     ctx.font = "20px serif";
     ctx.fillStyle = "rgba(200,150,80,0.8)";
-    ctx.fillText(`纳音：${nayin}  ·  生肖：${zodiac}  ·  主导五行：${dominantElement}`, canvas.width / 2, 360);
+    ctx.fillText(`${t.posterNayin}：${nayin}  ·  ${t.posterZodiac}：${zodiac}  ·  ${t.posterDominant}：${dominantElement}`, canvas.width / 2, 360);
 
     // 分隔线
     ctx.strokeStyle = "rgba(180,100,50,0.3)";
@@ -329,7 +544,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
     // AI 解读摘要
     ctx.font = "bold 22px serif";
     ctx.fillStyle = "#d4832a";
-    ctx.fillText("AI 命理解读摘要", canvas.width / 2, 420);
+    ctx.fillText(t.posterAISummary, canvas.width / 2, 420);
 
     // 报告文字（截取前200字）
     const reportText = report.replace(/\*\*/g, "").replace(/✦/g, "·").slice(0, 220);
@@ -364,25 +579,25 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
     ctx.textAlign = "center";
     ctx.font = "16px serif";
     ctx.fillStyle = "rgba(200,150,80,0.5)";
-    ctx.fillText("天命 · 仅供娱乐参考", canvas.width / 2, canvas.height - 60);
+    ctx.fillText(t.posterFooter, canvas.width / 2, canvas.height - 60);
     ctx.fillText("✦ ✦ ✦", canvas.width / 2, canvas.height - 35);
 
     try {
       const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = `八字命理报告_${birthInfo.year}${birthInfo.month}${birthInfo.day}.png`;
+      link.download = `${t.posterFilename}_${birthInfo.year}${birthInfo.month}${birthInfo.day}.png`;
       link.href = dataUrl;
       link.click();
     } catch {
       console.error("生成海报失败");
     }
-  }, [baziResult, birthInfo, report, nayin, zodiac, dominantElement, yearPillar, monthPillar, dayPillar, hourPillar]);
+  }, [baziResult, birthInfo, report, nayin, zodiac, dominantElement, yearPillar, monthPillar, dayPillar, hourPillar, lang, t]);
 
   const pillars = [
-    { key: "year", data: yearPillar, label: "年柱" },
-    { key: "month", data: monthPillar, label: "月柱" },
-    { key: "day", data: dayPillar, label: "日柱" },
-    { key: "hour", data: hourPillar, label: "时柱" },
+    { key: "year", data: yearPillar, label: t.pillarYear },
+    { key: "month", data: monthPillar, label: t.pillarMonth },
+    { key: "day", data: dayPillar, label: t.pillarDay },
+    { key: "hour", data: hourPillar, label: t.pillarHour },
   ] as const;
 
   return (
@@ -398,11 +613,11 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
             border: "1px solid rgba(180, 60, 30, 0.3)",
           }}
         >
-          <span style={{ color: "var(--vermillion)" }} className="text-sm">命格</span>
+          <span style={{ color: "var(--vermillion)" }} className="text-sm">{t.mingge}</span>
           <span className="w-px h-3 bg-current opacity-30" style={{ color: "var(--vermillion)" }} />
           <span style={{ color: "var(--ink-gold)" }} className="text-sm font-bold">{nayin}</span>
           <span className="w-px h-3 bg-current opacity-30" style={{ color: "var(--vermillion)" }} />
-          <span style={{ color: "var(--vermillion)" }} className="text-sm">生肖{zodiac}</span>
+          <span style={{ color: "var(--vermillion)" }} className="text-sm">{t.zodiacPrefix}{zodiac}</span>
         </div>
 
         <h1
@@ -415,10 +630,10 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
             fontFamily: "serif",
           }}
         >
-          {personality?.title ?? "命理报告"}
+          {personality?.title ?? t.reportTitleFallback}
         </h1>
         <p className="text-sm" style={{ color: "rgba(200,180,150,0.6)" }}>
-          {birthInfo.year}年{birthInfo.month}月{birthInfo.day}日 · {birthInfo.gender === "male" ? "男" : "女"}命
+          {birthInfo.year}{lang === "en" ? "-" : "年"}{birthInfo.month}{lang === "en" ? "-" : "月"}{birthInfo.day}{lang === "en" ? "" : "日"} · {birthInfo.gender === "male" ? t.maleLife : t.femaleLife}
         </p>
       </div>
 
@@ -436,7 +651,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
             className="text-center text-xs mb-4 tracking-widest"
             style={{ color: "rgba(200,180,150,0.5)" }}
           >
-            四 柱 八 字
+            {t.fourPillars}
           </p>
           <div className="grid grid-cols-4 gap-3">
             {pillars.map(({ key, data, label }) => (
@@ -472,7 +687,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                   </span>
                 </div>
                 <div className="mt-2 text-xs" style={{ color: "rgba(200,180,150,0.4)" }}>
-                  {data ? data.nayin : "未知"}
+                  {data ? data.nayin : t.unknown}
                 </div>
               </div>
             ))}
@@ -482,18 +697,18 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
             style={{ borderTop: "1px solid rgba(180,100,50,0.2)" }}
           >
             <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-              日主：<span style={{ color: "var(--vermillion)" }} className="font-bold">{dayStem}</span>
+              {t.dayMaster}<span style={{ color: "var(--vermillion)" }} className="font-bold">{dayStem}</span>
             </span>
             <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-              五行：<span style={{ color: ELEMENT_COLORS[dominantElement]?.text }} className="font-bold">{dominantElement}</span>旺
+              {t.fiveElement}<span style={{ color: ELEMENT_COLORS[dominantElement]?.text }} className="font-bold">{dominantElement}</span>{t.flourish}
             </span>
             {missingElements.length > 0 && (
               <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-                缺：<span style={{ color: "rgba(200,100,60,0.8)" }}>{missingElements.join("")}</span>
+                {t.lacking}<span style={{ color: "rgba(200,100,60,0.8)" }}>{missingElements.join("")}</span>
               </span>
             )}
             <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-              2026：<span style={{ color: "var(--ink-gold)" }}>{liuNianRelation}</span>
+              {t.year2026}<span style={{ color: "var(--ink-gold)" }}>{liuNianRelation}</span>
             </span>
           </div>
         </div>
@@ -505,10 +720,10 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
           style={{ background: "rgba(20, 8, 2, 0.6)", border: "1px solid rgba(180,100,50,0.2)" }}
         >
           {[
-            { id: "overview" as const, label: "命格总览" },
-            { id: "pillars" as const, label: "四柱解析" },
-            { id: "fortune" as const, label: "2026运势" },
-            { id: "report" as const, label: "AI解读" },
+            { id: "overview" as const, label: t.tabOverview },
+            { id: "pillars" as const, label: t.tabPillars },
+            { id: "fortune" as const, label: t.tabFortune },
+            { id: "report" as const, label: t.tabReport },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -541,10 +756,10 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                 }}
               >
                 <p className="text-sm font-bold mb-4" style={{ color: "var(--ink-gold)" }}>
-                  五行能量格局
+                  {t.energyPattern}
                 </p>
                 <div className="flex items-center justify-between gap-4">
-                  <ElementRadar scores={elementScores} />
+                  <ElementRadar scores={elementScores} t={t} />
                   <div className="flex-1">
                     {Object.entries(elementScores).map(([el, score]) => (
                       <div key={el} className="flex items-center gap-2 mb-2">
@@ -586,25 +801,25 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                   }}
                 >
                   <p className="text-sm font-bold mb-3" style={{ color: "var(--ink-gold)" }}>
-                    性格画像
+                    {t.personaTitle}
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-xs mb-2" style={{ color: "var(--vermillion)", opacity: 0.8 }}>✦ 性格特质</p>
-                      {personality.traits.map((t, i) => (
+                      <p className="text-xs mb-2" style={{ color: "var(--vermillion)", opacity: 0.8 }}>{t.traits}</p>
+                      {personality.traits.map((tr, i) => (
                         <p key={i} className="text-xs mb-1" style={{ color: "var(--ink-light)", opacity: 0.8 }}>
-                          · {t}
+                          · {tr}
                         </p>
                       ))}
                     </div>
                     <div>
-                      <p className="text-xs mb-2" style={{ color: "#4caf50", opacity: 0.8 }}>✦ 天赋优势</p>
+                      <p className="text-xs mb-2" style={{ color: "#4caf50", opacity: 0.8 }}>{t.strengths}</p>
                       {personality.strengths.slice(0, 2).map((s, i) => (
                         <p key={i} className="text-xs mb-1" style={{ color: "var(--ink-light)", opacity: 0.8 }}>
                           · {s}
                         </p>
                       ))}
-                      <p className="text-xs mb-2 mt-2" style={{ color: "rgba(200,100,60,0.8)" }}>✦ 成长课题</p>
+                      <p className="text-xs mb-2 mt-2" style={{ color: "rgba(200,100,60,0.8)" }}>{t.growth}</p>
                       {personality.weaknesses.slice(0, 1).map((w, i) => (
                         <p key={i} className="text-xs mb-1" style={{ color: "var(--ink-light)", opacity: 0.8 }}>
                           · {w}
@@ -638,7 +853,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
           {/* 四柱解析 */}
           {activeTab === "pillars" && (
             <div style={{ animation: "bazi-fade-in 0.5s ease-out" }}>
-              {pillars.map(({ key, data, label }) => {
+              {pillars.map(({ key, data }) => {
                 const reading = PILLAR_READINGS[key as keyof typeof PILLAR_READINGS];
                 return (
                   <div
@@ -682,7 +897,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                             border: `1px solid ${ELEMENT_COLORS[data.stemElement]?.border ?? "transparent"}`,
                           }}
                         >
-                          天干{data.stemElement}
+                          {t.stemElementPrefix}{data.stemElement}
                         </span>
                         <span
                           className="text-xs px-2 py-1 rounded-full"
@@ -692,7 +907,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                             border: `1px solid ${ELEMENT_COLORS[data.branchElement]?.border ?? "transparent"}`,
                           }}
                         >
-                          地支{data.branchElement}
+                          {t.branchElementPrefix}{data.branchElement}
                         </span>
                         <span
                           className="text-xs px-2 py-1 rounded-full"
@@ -702,13 +917,13 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                             border: "1px solid rgba(200,150,80,0.2)",
                           }}
                         >
-                          纳音：{data.nayin}
+                          {t.nayinPrefix}{data.nayin}
                         </span>
                       </div>
                     )}
-                    {!data && label === "时柱" && (
+                    {!data && key === "hour" && (
                       <p className="text-xs" style={{ color: "rgba(200,100,60,0.7)" }}>
-                        ※ 未知时辰，时柱无法精准计算
+                        {t.hourUnknownNote}
                       </p>
                     )}
                   </div>
@@ -733,7 +948,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                 }}
               >
                 <p className="text-xs mb-2" style={{ color: "rgba(200,180,150,0.6)" }}>
-                  2026丙午年 · 生肖{zodiac}
+                  {t.bingwuYear}{zodiac}
                 </p>
                 <p
                   className="text-xl font-bold mb-1"
@@ -742,7 +957,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                   {zodiacFortune.taishiRelation}
                 </p>
                 <p className="text-sm" style={{ color: "var(--ink-light)", opacity: 0.8 }}>
-                  整体运势
+                  {t.overallFortune}
                 </p>
                 <Stars count={zodiacFortune.overall} />
               </div>
@@ -758,7 +973,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     {(["career", "wealth", "love", "health"] as const).map((asp) => {
-                      const labels = { career: "事业运", wealth: "财运", love: "感情运", health: "健康运" };
+                      const labels = { career: t.careerLuck, wealth: t.wealthLuck, love: t.loveLuck, health: t.healthLuck };
                       return (
                         <div key={asp} className="flex items-center gap-3 mb-3">
                           <span className="text-xs w-12 text-right" style={{ color: "rgba(200,180,150,0.6)" }}>
@@ -769,7 +984,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                       );
                     })}
                   </div>
-                  <FortuneRadar fortune={zodiacFortune} />
+                  <FortuneRadar fortune={zodiacFortune} t={t} />
                 </div>
               </div>
 
@@ -781,7 +996,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                   border: "1px solid rgba(180,100,50,0.2)",
                 }}
               >
-                <p className="text-sm font-bold mb-3" style={{ color: "var(--ink-gold)" }}>年度总结</p>
+                <p className="text-sm font-bold mb-3" style={{ color: "var(--ink-gold)" }}>{t.yearSummary}</p>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--ink-light)", opacity: 0.85 }}>
                   {zodiacFortune.summary}
                 </p>
@@ -789,7 +1004,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
 
               {/* 分类运势详情 */}
               {(["career", "wealth", "love", "health"] as const).map((asp) => {
-                const labels = { career: "事业运势", wealth: "财运分析", love: "感情运势", health: "健康运势" };
+                const labels = { career: t.careerDetailLabel, wealth: t.wealthDetailLabel, love: t.loveDetailLabel, health: t.healthDetailLabel };
                 const details = { career: zodiacFortune.careerDetail, wealth: zodiacFortune.wealthDetail, love: zodiacFortune.loveDetail, health: zodiacFortune.healthDetail };
                 return (
                   <div
@@ -820,23 +1035,23 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                 }}
               >
                 <p className="text-sm font-bold mb-3" style={{ color: "var(--ink-gold)" }}>
-                  2026年开运建议
+                  {t.luckyAdvice}
                 </p>
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div>
-                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>幸运方位</p>
+                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>{t.luckyDirection}</p>
                     <p className="text-sm font-bold" style={{ color: "var(--vermillion)" }}>
                       {zodiacFortune.luckyDirection}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>开运颜色</p>
+                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>{t.luckyColor}</p>
                     <p className="text-sm font-bold" style={{ color: "var(--vermillion)" }}>
                       {zodiacFortune.luckyColor}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>幸运数字</p>
+                    <p className="text-xs mb-1" style={{ color: "rgba(200,180,150,0.5)" }}>{t.luckyNumber}</p>
                     <p className="text-sm font-bold" style={{ color: "var(--vermillion)" }}>
                       {zodiacFortune.luckyNumber}
                     </p>
@@ -865,11 +1080,11 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
                     }}
                   />
                   <p className="text-sm font-bold" style={{ color: "var(--ink-gold)" }}>
-                    AI 命理师解读
+                    {t.aiReading}
                   </p>
                   {isTyping && (
                     <span className="text-xs" style={{ color: "rgba(200,180,150,0.5)" }}>
-                      正在书写...
+                      {t.writing}
                     </span>
                   )}
                 </div>
@@ -914,13 +1129,13 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart }: BaziRep
               color: "var(--ink-light)",
             }}
           >
-            📤 保存海报
+            {t.savePoster}
           </button>
           <button
             onClick={onRestart}
             className="flex-1 py-3 rounded-xl text-sm font-medium tracking-wide btn-vermillion"
           >
-            ✦ 重新测算
+            {t.restart}
           </button>
         </div>
       </div>

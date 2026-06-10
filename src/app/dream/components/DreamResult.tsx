@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { LEVEL_CONFIG, POSTER_QUOTES, type DreamLevel } from "../dream-data";
+import type { DreamT } from "../dream-i18n";
 
 export interface DreamResultData {
   query: string;
@@ -15,11 +16,12 @@ export interface DreamResultData {
 }
 
 interface DreamResultProps {
+  t: DreamT;
   data: DreamResultData;
   onReset: () => void;
 }
 
-export default function DreamResult({ data, onReset }: DreamResultProps) {
+export default function DreamResult({ t, data, onReset }: DreamResultProps) {
   const [liked, setLiked] = useState<"up" | "down" | null>(null);
   const [showPosterTip, setShowPosterTip] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -79,7 +81,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
     // 品牌名
     ctx.font = "bold 32px sans-serif";
     ctx.fillStyle = "rgba(200,180,255,0.9)";
-    ctx.fillText("周公解梦", W / 2, 260);
+    ctx.fillText(t.posterBrand, W / 2, 260);
 
     // 梦境内容
     ctx.font = "24px sans-serif";
@@ -104,7 +106,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
     ctx.font = "bold 22px sans-serif";
     ctx.fillStyle = "#f59e0b";
     ctx.textAlign = "left";
-    ctx.fillText("◆ 周公解梦", 80, 445);
+    ctx.fillText(t.posterTrad, 80, 445);
 
     ctx.font = "20px sans-serif";
     ctx.fillStyle = "rgba(220,200,255,0.85)";
@@ -115,7 +117,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
     const psychY = 480 + omenLines.length * 30 + 50;
     ctx.font = "bold 22px sans-serif";
     ctx.fillStyle = "#818cf8";
-    ctx.fillText("◆ 潜意识解析", 80, psychY);
+    ctx.fillText(t.posterPsych, 80, psychY);
 
     ctx.font = "20px sans-serif";
     ctx.fillStyle = "rgba(220,200,255,0.85)";
@@ -139,11 +141,11 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
     // 底部
     ctx.font = "18px sans-serif";
     ctx.fillStyle = "rgba(160,140,220,0.4)";
-    ctx.fillText("命运密语 · 探索你的潜意识", W / 2, H - 50);
+    ctx.fillText(t.posterFooter, W / 2, H - 50);
 
     // 下载
     const link = document.createElement("a");
-    link.download = `周公解梦-${data.query.slice(0, 6)}.png`;
+    link.download = `${t.posterFileName}-${data.query.slice(0, 6)}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 
@@ -185,8 +187,8 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
           <div className="dream-track-header">
             <span className="dream-track-icon">📜</span>
             <div>
-              <h2 className="dream-track-title">传统周公解梦</h2>
-              <p className="dream-track-sub">吉凶宜忌 · 千年智慧</p>
+              <h2 className="dream-track-title">{t.tradTitle}</h2>
+              <p className="dream-track-sub">{t.tradSub}</p>
             </div>
             <span
               className="dream-level-tag"
@@ -205,7 +207,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
                   <span
                     className={part.startsWith("宜") ? "dream-yi" : "dream-ji"}
                   >
-                    {part.startsWith("宜") ? "宜" : "忌"}
+                    {part.startsWith("宜") ? t.yi : t.ji}
                   </span>
                   <span className="dream-advice-text">
                     {part.replace(/^[宜忌]：?/, "")}
@@ -221,8 +223,8 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
           <div className="dream-track-header">
             <span className="dream-track-icon">🧠</span>
             <div>
-              <h2 className="dream-track-title">潜意识探索</h2>
-              <p className="dream-track-sub">荣格心理学 · 内心投影</p>
+              <h2 className="dream-track-title">{t.psychTitle}</h2>
+              <p className="dream-track-sub">{t.psychSub}</p>
             </div>
           </div>
 
@@ -230,7 +232,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
             <div className="dream-psych-section">
               <div className="dream-psych-label">
                 <span className="dream-psych-dot dream-dot-purple" />
-                核心心理状态
+                {t.psychCore}
               </div>
               <p className="dream-psych-text">{data.psychology.coreState}</p>
             </div>
@@ -238,7 +240,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
             <div className="dream-psych-section">
               <div className="dream-psych-label">
                 <span className="dream-psych-dot dream-dot-blue" />
-                现实生活映射
+                {t.psychMap}
               </div>
               <p className="dream-psych-text">{data.psychology.realMapping}</p>
             </div>
@@ -246,7 +248,7 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
             <div className="dream-psych-section">
               <div className="dream-psych-label">
                 <span className="dream-psych-dot dream-dot-teal" />
-                心灵成长建议
+                {t.psychGrow}
               </div>
               <p className="dream-psych-text">{data.psychology.growthTip}</p>
             </div>
@@ -263,41 +265,41 @@ export default function DreamResult({ data, onReset }: DreamResultProps) {
 
       {/* 互动区 */}
       <div className="dream-interaction">
-        <p className="dream-interaction-label">这个解析准确吗？</p>
+        <p className="dream-interaction-label">{t.feedbackQ}</p>
         <div className="dream-like-btns">
           <button
             className={`dream-like-btn ${liked === "up" ? "dream-liked" : ""}`}
             onClick={() => setLiked(liked === "up" ? null : "up")}
           >
-            👍 准确
+            {t.likeUp}
           </button>
           <button
             className={`dream-like-btn ${liked === "down" ? "dream-disliked" : ""}`}
             onClick={() => setLiked(liked === "down" ? null : "down")}
           >
-            👎 不准
+            {t.likeDown}
           </button>
         </div>
         {liked === "up" && (
-          <p className="dream-feedback-msg dream-fb-good">感谢反馈！周公大人欣慰 ✨</p>
+          <p className="dream-feedback-msg dream-fb-good">{t.fbGood}</p>
         )}
         {liked === "down" && (
-          <p className="dream-feedback-msg dream-fb-bad">已记录，我们会持续优化 🙏</p>
+          <p className="dream-feedback-msg dream-fb-bad">{t.fbBad}</p>
         )}
       </div>
 
       {/* 操作按钮 */}
       <div className="dream-action-btns">
         <button className="dream-poster-btn" onClick={handleGeneratePoster}>
-          🌙 生成解梦海报
+          {t.posterBtn}
         </button>
         <button className="dream-reset-btn" onClick={onReset}>
-          ↩ 解析另一个梦
+          {t.resetBtn}
         </button>
       </div>
 
       {showPosterTip && (
-        <div className="dream-poster-tip">✨ 海报已生成，正在下载...</div>
+        <div className="dream-poster-tip">{t.posterTip}</div>
       )}
     </div>
   );

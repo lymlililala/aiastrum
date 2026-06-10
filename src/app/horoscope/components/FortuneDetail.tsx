@@ -7,33 +7,35 @@ import {
   type TimePeriod,
 } from "../horoscope-data";
 import type { HoroscopeResult } from "../horoscope-engine";
+import type { HoroT } from "../horoscope-i18n";
 
 interface FortuneDetailProps {
   result: HoroscopeResult;
   onPeriodChange: (period: TimePeriod) => void;
   onShare: () => void;
+  t: HoroT;
 }
 
-/** 时间段标签 */
-const PERIOD_LABELS: Record<TimePeriod, { label: string; icon: string }> = {
-  today: { label: "今日", icon: "☀️" },
-  tomorrow: { label: "明日", icon: "🌅" },
-  week: { label: "本周", icon: "📅" },
-  month: { label: "本月", icon: "🗓️" },
-};
-
-/** 运势维度配置 */
-const SCORE_DIMENSIONS = [
-  { key: "overall" as const, label: "综合", icon: "⭐" },
-  { key: "love" as const, label: "爱情", icon: "💕" },
-  { key: "career" as const, label: "事业", icon: "💼" },
-  { key: "wealth" as const, label: "财运", icon: "💰" },
-  { key: "health" as const, label: "健康", icon: "🌿" },
-];
-
-export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetailProps) {
+export function FortuneDetail({ result, onPeriodChange, onShare, t }: FortuneDetailProps) {
   const zodiac = ZODIAC_MAP[result.zodiac];
   const elementColor = ELEMENT_COLORS[zodiac.element] ?? "#c9a84c";
+
+  /** 时间段标签 */
+  const PERIOD_LABELS: Record<TimePeriod, { label: string; icon: string }> = {
+    today: { label: t.periodToday, icon: "☀️" },
+    tomorrow: { label: t.periodTomorrow, icon: "🌅" },
+    week: { label: t.periodWeek, icon: "📅" },
+    month: { label: t.periodMonth, icon: "🗓️" },
+  };
+
+  /** 运势维度配置 */
+  const SCORE_DIMENSIONS = [
+    { key: "overall" as const, label: t.dimOverall, icon: "⭐" },
+    { key: "love" as const, label: t.dimLove, icon: "💕" },
+    { key: "career" as const, label: t.dimCareer, icon: "💼" },
+    { key: "wealth" as const, label: t.dimWealth, icon: "💰" },
+    { key: "health" as const, label: t.dimHealth, icon: "🌿" },
+  ];
 
   return (
     <div className="fortune-detail-wrapper">
@@ -61,7 +63,7 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
         <div className="fortune-header-content">
           <div className="fortune-zodiac-symbol">{zodiac.symbol}</div>
           <div className="fortune-zodiac-info">
-            <h2 className="fortune-zodiac-name">{zodiac.name}</h2>
+            <h2 className="fortune-zodiac-name">{t.signLabel[result.zodiac]}</h2>
             <p className="fortune-zodiac-en">{zodiac.enName}</p>
             <p className="fortune-zodiac-date">{zodiac.dateRange}</p>
           </div>
@@ -94,7 +96,7 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
       <div className="fortune-scores-section">
         <h3 className="fortune-section-title">
           <span className="fortune-section-icon">📊</span>
-          运势指数
+          {t.scoresTitle}
         </h3>
         <div className="fortune-scores-grid">
           {SCORE_DIMENSIONS.map(({ key, label, icon }) => {
@@ -125,43 +127,48 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
       <div className="fortune-texts-section">
         <h3 className="fortune-section-title">
           <span className="fortune-section-icon">🔮</span>
-          运势详解
+          {t.textsTitle}
         </h3>
 
         {/* 综合 */}
         <FortuneTextBlock
           icon="⭐"
-          title="综合运势"
+          title={t.textOverall}
           text={result.content.overall}
           color={elementColor}
+          t={t}
         />
         {/* 爱情 */}
         <FortuneTextBlock
           icon="💕"
-          title="爱情运势"
+          title={t.textLove}
           text={result.content.love}
           color="#FF6B9D"
+          t={t}
         />
         {/* 事业 */}
         <FortuneTextBlock
           icon="💼"
-          title="事业运势"
+          title={t.textCareer}
           text={result.content.career}
           color="#4ECDC4"
+          t={t}
         />
         {/* 财运 */}
         <FortuneTextBlock
           icon="💰"
-          title="财富运势"
+          title={t.textWealth}
           text={result.content.wealth}
           color="#FFD93D"
+          t={t}
         />
         {/* 健康 */}
         <FortuneTextBlock
           icon="🌿"
-          title="健康运势"
+          title={t.textHealth}
           text={result.content.health}
           color="#82C46C"
+          t={t}
         />
       </div>
 
@@ -169,23 +176,23 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
       <div className="fortune-lucky-section">
         <h3 className="fortune-section-title">
           <span className="fortune-section-icon">🍀</span>
-          幸运指南
+          {t.luckyTitle}
         </h3>
         <div className="fortune-lucky-grid">
-          <LuckyItem icon="🎨" label="幸运色" value={result.lucky.color} />
-          <LuckyItem icon="🔢" label="幸运数字" value={String(result.lucky.number)} />
-          <LuckyItem icon="🧭" label="幸运方位" value={result.lucky.direction} />
-          <LuckyItem icon="🎁" label="幸运物品" value={result.lucky.item} />
+          <LuckyItem icon="🎨" label={t.luckyColor} value={result.lucky.color} />
+          <LuckyItem icon="🔢" label={t.luckyNumber} value={String(result.lucky.number)} />
+          <LuckyItem icon="🧭" label={t.luckyDirection} value={result.lucky.direction} />
+          <LuckyItem icon="🎁" label={t.luckyItem} value={result.lucky.item} />
           <LuckyItem
             icon="🤝"
-            label="最佳搭档"
-            value={ZODIAC_MAP[result.lucky.ally].name}
+            label={t.luckyAlly}
+            value={t.signLabel[result.lucky.ally]}
             sub={ZODIAC_MAP[result.lucky.ally].symbol}
           />
           <LuckyItem
             icon="⭐"
-            label="贵人星座"
-            value={ZODIAC_MAP[result.lucky.noble].name}
+            label={t.luckyNoble}
+            value={t.signLabel[result.lucky.noble]}
             sub={ZODIAC_MAP[result.lucky.noble].symbol}
           />
         </div>
@@ -195,7 +202,7 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
       <div className="fortune-advice-section">
         <h3 className="fortune-section-title">
           <span className="fortune-section-icon">💡</span>
-          贴心建议
+          {t.adviceTitle}
         </h3>
         <div className="fortune-advice-card">
           <p className="fortune-advice-text">{result.content.advice}</p>
@@ -206,7 +213,7 @@ export function FortuneDetail({ result, onPeriodChange, onShare }: FortuneDetail
       <div className="fortune-share-section">
         <button className="fortune-share-btn" onClick={onShare}>
           <span className="fortune-share-icon">🖼️</span>
-          生成运势海报
+          {t.sharePoster}
         </button>
       </div>
     </div>
@@ -219,11 +226,13 @@ function FortuneTextBlock({
   title,
   text,
   color,
+  t,
 }: {
   icon: string;
   title: string;
   text: string;
   color: string;
+  t: HoroT;
 }) {
   const [expanded, setExpanded] = React.useState(false);
   const isLong = text.length > 80;
@@ -241,7 +250,7 @@ function FortuneTextBlock({
           className="fortune-text-expand-btn"
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "收起 ▲" : "展开全文 ▼"}
+          {expanded ? t.collapse : t.expand}
         </button>
       )}
     </div>

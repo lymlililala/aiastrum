@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { getYearOptions, getMonthOptions, getDayOptions } from "../numerology-engine";
+import type { NumT, Lang } from "../numerology-i18n";
 
 interface NumerologyInputProps {
+  t: NumT;
+  lang: Lang;
   onCalculate: (year: number, month: number, day: number) => void;
   isLoading?: boolean;
 }
 
-export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyInputProps) {
+export function NumerologyInput({ t, lang, onCalculate, isLoading = false }: NumerologyInputProps) {
   const [year, setYear] = useState<number>(1990);
   const [month, setMonth] = useState<number>(1);
   const [day, setDay] = useState<number>(1);
@@ -64,11 +67,11 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
       {/* 标题 */}
       <div className="num-input-header">
         <div className="num-input-icon">🔢</div>
-        <h2 className="num-input-title">输入你的出生日期</h2>
+        <h2 className="num-input-title">{t.inputTitle}</h2>
         <p className="num-input-subtitle">
-          生命灵数通过你的生日数字计算而来，
+          {t.inputSubtitle1}
           <br />
-          揭示你灵魂选择降生的密码
+          {t.inputSubtitle2}
         </p>
       </div>
 
@@ -76,7 +79,7 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
       <div className="num-date-picker">
         {/* 年份 */}
         <div className="num-date-field">
-          <label className="num-date-label">年</label>
+          <label className="num-date-label">{t.labelYear}</label>
           <div className="num-select-wrapper">
             <select
               className="num-select"
@@ -97,7 +100,7 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
 
         {/* 月份 */}
         <div className="num-date-field">
-          <label className="num-date-label">月</label>
+          <label className="num-date-label">{t.labelMonth}</label>
           <div className="num-select-wrapper">
             <select
               className="num-select num-select-sm"
@@ -118,7 +121,7 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
 
         {/* 日期 */}
         <div className="num-date-field">
-          <label className="num-date-label">日</label>
+          <label className="num-date-label">{t.labelDay}</label>
           <div className="num-select-wrapper">
             <select
               className="num-select num-select-sm"
@@ -139,7 +142,10 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
       {/* 预览 */}
       <div className="num-date-preview">
         <span className="num-date-preview-text">
-          {year}年{month.toString().padStart(2, "0")}月{day.toString().padStart(2, "0")}日
+          {new Date(year, month - 1, day).toLocaleDateString(
+            lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN",
+            { year: "numeric", month: "long", day: "numeric" },
+          )}
         </span>
       </div>
 
@@ -158,14 +164,14 @@ export function NumerologyInput({ onCalculate, isLoading = false }: NumerologyIn
         ) : (
           <>
             <span className="num-calc-btn-icon">✨</span>
-            <span>揭示我的生命灵数</span>
+            <span>{t.calcBtn}</span>
           </>
         )}
       </button>
 
       {/* 说明文字 */}
       <p className="num-input-note">
-        * 生命灵数基于皮格塔斯数字命理学体系 · 仅供探索与娱乐
+        {t.inputNote}
       </p>
     </div>
   );

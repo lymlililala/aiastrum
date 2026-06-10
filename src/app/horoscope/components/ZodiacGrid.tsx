@@ -2,20 +2,22 @@
 
 import React from "react";
 import { ZODIAC_LIST, ELEMENT_COLORS, type ZodiacId } from "../horoscope-data";
+import type { HoroT } from "../horoscope-i18n";
 
 interface ZodiacGridProps {
   selected: ZodiacId | null;
   onSelect: (id: ZodiacId) => void;
+  t: HoroT;
 }
 
-export function ZodiacGrid({ selected, onSelect }: ZodiacGridProps) {
+export function ZodiacGrid({ selected, onSelect, t }: ZodiacGridProps) {
   return (
     <div className="zodiac-grid-wrapper">
       <h2 className="zodiac-grid-title">
         <span className="zodiac-grid-title-icon">✨</span>
-        选择你的星座
+        {t.gridTitle}
       </h2>
-      <p className="zodiac-grid-subtitle">探索属于你的星座运势密码</p>
+      <p className="zodiac-grid-subtitle">{t.gridSubtitle}</p>
 
       <div className="zodiac-grid">
         {ZODIAC_LIST.map((zodiac) => {
@@ -33,7 +35,7 @@ export function ZodiacGrid({ selected, onSelect }: ZodiacGridProps) {
               } as React.CSSProperties}
             >
               <div className="zodiac-card-symbol">{zodiac.symbol}</div>
-              <div className="zodiac-card-name">{zodiac.name}</div>
+              <div className="zodiac-card-name">{t.signLabel[zodiac.id]}</div>
               <div className="zodiac-card-date">{zodiac.dateRange}</div>
               {isSelected && (
                 <div className="zodiac-card-badge">✓</div>
@@ -47,10 +49,10 @@ export function ZodiacGrid({ selected, onSelect }: ZodiacGridProps) {
       <div className="zodiac-element-legend">
         {(["fire", "earth", "air", "water"] as const).map((element) => {
           const labels: Record<string, string> = {
-            fire: "🔥 火象",
-            earth: "🌍 土象",
-            air: "💨 风象",
-            water: "💧 水象",
+            fire: t.elementFire,
+            earth: t.elementEarth,
+            air: t.elementAir,
+            water: t.elementWater,
           };
           return (
             <span

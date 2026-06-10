@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WUXING_CONFIG, type WuXing } from "../naming-data";
+import { type NamingT } from "../naming-i18n";
 
 interface NameCharDetail {
   char: string;
@@ -47,16 +48,19 @@ interface NameListProps {
   aiNames?: AIName[];
   onUnlock?: () => void;
   onSelectName?: (name: NameSuggestion) => void;
+  t: NamingT;
 }
 
 function NameCard({
   suggestion,
   surname,
   onClick,
+  t,
 }: {
   suggestion: NameSuggestion;
   surname: string;
   onClick?: () => void;
+  t: NamingT;
 }) {
   return (
     <div
@@ -85,7 +89,7 @@ function NameCard({
         </div>
         <div className="name-card-score">
           <span className="name-card-score-val">{suggestion.score}</span>
-          <span className="name-card-score-unit">分</span>
+          <span className="name-card-score-unit">{t.nlScoreUnit}</span>
         </div>
       </div>
 
@@ -101,7 +105,7 @@ function NameCard({
               color: WUXING_CONFIG[wx].color,
             }}
           >
-            {suggestion.chars[i]}{wx}行
+            {suggestion.chars[i]}{wx}{t.nlWxSuffix}
           </span>
         ))}
         <span className="name-card-synergy">{suggestion.synergy}</span>
@@ -114,25 +118,25 @@ function NameCard({
       {suggestion.source && (
         <div className="name-card-source">
           <span className="name-card-source-icon">📖</span>
-          出自 {suggestion.source}
+          {t.nlSourcePre}{suggestion.source}
         </div>
       )}
 
       {/* 标签 */}
       <div className="name-card-tags">
-        {suggestion.tags.map(t => (
-          <span key={t} className="name-card-tag">{t}</span>
+        {suggestion.tags.map(t2 => (
+          <span key={t2} className="name-card-tag">{t2}</span>
         ))}
-        {onClick && <span className="name-card-detail-link">查看详情 →</span>}
+        {onClick && <span className="name-card-detail-link">{t.nlDetailLink}</span>}
       </div>
     </div>
   );
 }
 
-function AINameCard({ aiName, surname }: { aiName: AIName; surname: string }) {
+function AINameCard({ aiName, surname, t }: { aiName: AIName; surname: string; t: NamingT }) {
   return (
     <div className="name-card name-card-ai">
-      <div className="name-card-ai-badge">AI 精选</div>
+      <div className="name-card-ai-badge">{t.nlAiBadge}</div>
       <div className="name-card-top">
         <div className="name-card-fullname">
           <span className="name-card-surname">{surname}</span>
@@ -158,7 +162,7 @@ function AINameCard({ aiName, surname }: { aiName: AIName; surname: string }) {
                   color: WUXING_CONFIG[wxKey].color,
                 }}
               >
-                {wx}行
+                {wx}{t.nlWxSuffix}
               </span>
             ) : null;
           })}
@@ -186,18 +190,19 @@ export default function NameList({
   aiNames = [],
   onUnlock,
   onSelectName,
+  t,
 }: NameListProps) {
 
   return (
     <div className="namelist-container">
       {/* 标题 */}
       <div className="namelist-header">
-        <div className="namelist-header-badge">吉名推荐</div>
+        <div className="namelist-header-badge">{t.nlBadge}</div>
         <h2 className="namelist-title">
-          为{surname}家{gender === "male" ? "男" : "女"}宝宝精选的吉名
+          {t.nlTitlePre}{surname}{t.nlTitleMid}{gender === "male" ? t.nlTitleMale : t.nlTitleFemale}{t.nlTitlePost}
         </h2>
         <p className="namelist-subtitle">
-          每一个名字都经过五行契合度、诗意品格、音律和谐三重甄选
+          {t.nlSubtitle}
         </p>
       </div>
 
@@ -205,8 +210,8 @@ export default function NameList({
       <section className="namelist-free-section">
         <div className="namelist-section-title">
           <span className="namelist-section-icon">✦</span>
-          精选吉名
-          <span className="namelist-section-count">{freeSuggestions.length} 个</span>
+          {t.nlSectionFree}
+          <span className="namelist-section-count">{freeSuggestions.length} {t.nlCount}</span>
         </div>
         <div className="namelist-grid">
           {freeSuggestions.map(s => (
@@ -215,6 +220,7 @@ export default function NameList({
               suggestion={s}
               surname={surname}
               onClick={onSelectName ? () => onSelectName(s) : undefined}
+              t={t}
             />
           ))}
         </div>
@@ -225,13 +231,13 @@ export default function NameList({
         <section className="namelist-ai-section">
           <div className="namelist-section-title">
             <span className="namelist-section-icon">✨</span>
-            AI 精选推荐
-            <span className="namelist-section-count">{aiNames.length} 个</span>
+            {t.nlSectionAi}
+            <span className="namelist-section-count">{aiNames.length} {t.nlCount}</span>
             <span className="namelist-ai-tag">GPT-4o</span>
           </div>
           <div className="namelist-grid">
             {aiNames.map(n => (
-              <AINameCard key={n.name} aiName={n} surname={surname} />
+              <AINameCard key={n.name} aiName={n} surname={surname} t={t} />
             ))}
           </div>
         </section>

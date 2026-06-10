@@ -8,10 +8,120 @@ import {
   getMBTIZodiacProfile,
 } from "./mbti-data";
 import type { MBTIType, ZodiacSign, MBTIZodiacProfile } from "./mbti-data";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+
+// ── 三语文案 ────────────────────────────────────────
+const T = {
+  zh: {
+    back:           "返回",
+    trending:       "🔥 流行",
+    heroTitle:      "星球碰撞",
+    heroSub:        "当 MBTI 遇上星座，你是什么宇宙限定款？",
+    selectTitle:    "✨ 选择你的 MBTI 和星座，解锁专属档案",
+    mbtiStep:       "① 你的 MBTI 人格类型",
+    zodiacStep:     "② 你的星座",
+    generateBtn:    "🪐 解锁我的宇宙档案",
+    traitsTitle:    "⚡ 人格特质解析",
+    superpower:     "✨ 超能力",
+    weakness:       "💀 致命弱点",
+    career:         "💼 事业方向",
+    love:           "💕 爱情模式",
+    friendStyle:    "🤝 友情风格",
+    lifeVibe:       "🌌 人生气场",
+    moodTitle:      "🧠 今日内心 OS",
+    dangerTitle:    "⚠️ 危险模式解锁条件",
+    compatLabel:    "💞 最配类型",
+    celebsLabel:    "🌟 同类代表人物",
+    posterBtn:      "📸 生成专属宇宙海报",
+    resetBtn:       "↺ 换一个组合",
+    posterSave:     "📥 保存海报",
+    posterClose:    "关闭",
+    posterCompat:   "最配类型：",
+    posterFooter:   "命运密语 · MBTI星球碰撞",
+    posterFileName: "MBTI星球碰撞",
+    zodiacLabel: {
+      "白羊座": "白羊座", "金牛座": "金牛座", "双子座": "双子座", "巨蟹座": "巨蟹座",
+      "狮子座": "狮子座", "处女座": "处女座", "天秤座": "天秤座", "天蝎座": "天蝎座",
+      "射手座": "射手座", "摩羯座": "摩羯座", "水瓶座": "水瓶座", "双鱼座": "双鱼座",
+    } as Record<ZodiacSign, string>,
+  },
+  tw: {
+    back:           "返回",
+    trending:       "🔥 流行",
+    heroTitle:      "星球碰撞",
+    heroSub:        "當 MBTI 遇上星座，你是什麼宇宙限定款？",
+    selectTitle:    "✨ 選擇你的 MBTI 和星座，解鎖專屬檔案",
+    mbtiStep:       "① 你的 MBTI 人格類型",
+    zodiacStep:     "② 你的星座",
+    generateBtn:    "🪐 解鎖我的宇宙檔案",
+    traitsTitle:    "⚡ 人格特質解析",
+    superpower:     "✨ 超能力",
+    weakness:       "💀 致命弱點",
+    career:         "💼 事業方向",
+    love:           "💕 愛情模式",
+    friendStyle:    "🤝 友情風格",
+    lifeVibe:       "🌌 人生氣場",
+    moodTitle:      "🧠 今日內心 OS",
+    dangerTitle:    "⚠️ 危險模式解鎖條件",
+    compatLabel:    "💞 最配類型",
+    celebsLabel:    "🌟 同類代表人物",
+    posterBtn:      "📸 生成專屬宇宙海報",
+    resetBtn:       "↺ 換一個組合",
+    posterSave:     "📥 儲存海報",
+    posterClose:    "關閉",
+    posterCompat:   "最配類型：",
+    posterFooter:   "命運密語 · MBTI星球碰撞",
+    posterFileName: "MBTI星球碰撞",
+    zodiacLabel: {
+      "白羊座": "牡羊座", "金牛座": "金牛座", "双子座": "雙子座", "巨蟹座": "巨蟹座",
+      "狮子座": "獅子座", "处女座": "處女座", "天秤座": "天秤座", "天蝎座": "天蠍座",
+      "射手座": "射手座", "摩羯座": "摩羯座", "水瓶座": "水瓶座", "双鱼座": "雙魚座",
+    } as Record<ZodiacSign, string>,
+  },
+  en: {
+    back:           "Back",
+    trending:       "🔥 Trending",
+    heroTitle:      "Planet Collision",
+    heroSub:        "When MBTI meets the zodiac, which cosmic limited edition are you?",
+    selectTitle:    "✨ Pick your MBTI and zodiac sign to unlock your profile",
+    mbtiStep:       "① Your MBTI personality type",
+    zodiacStep:     "② Your zodiac sign",
+    generateBtn:    "🪐 Unlock my cosmic profile",
+    traitsTitle:    "⚡ Personality Traits",
+    superpower:     "✨ Superpower",
+    weakness:       "💀 Fatal Flaw",
+    career:         "💼 Career Path",
+    love:           "💕 Love Style",
+    friendStyle:    "🤝 Friendship Style",
+    lifeVibe:       "🌌 Life Vibe",
+    moodTitle:      "🧠 Today's Inner OS",
+    dangerTitle:    "⚠️ Danger Mode Unlock Conditions",
+    compatLabel:    "💞 Best Match",
+    celebsLabel:    "🌟 Famous Examples",
+    posterBtn:      "📸 Generate cosmic poster",
+    resetBtn:       "↺ Try another combo",
+    posterSave:     "📥 Save Poster",
+    posterClose:    "Close",
+    posterCompat:   "Best Match: ",
+    posterFooter:   "Mystic Whispers · MBTI Planet Collision",
+    posterFileName: "MBTI_PlanetCollision",
+    zodiacLabel: {
+      "白羊座": "Aries", "金牛座": "Taurus", "双子座": "Gemini", "巨蟹座": "Cancer",
+      "狮子座": "Leo", "处女座": "Virgo", "天秤座": "Libra", "天蝎座": "Scorpio",
+      "射手座": "Sagittarius", "摩羯座": "Capricorn", "水瓶座": "Aquarius", "双鱼座": "Pisces",
+    } as Record<ZodiacSign, string>,
+  },
+};
+type Lang = "zh" | "en" | "tw";
+// ────────────────────────────────────────────────────
 
 type Phase = "select" | "result";
 
 export default function MBTIPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [phase, setPhase] = useState<Phase>("select");
   const [selectedMBTI, setSelectedMBTI] = useState<MBTIType | null>(null);
   const [selectedZodiac, setSelectedZodiac] = useState<ZodiacSign | null>(null);
@@ -20,7 +130,7 @@ export default function MBTIPage() {
 
   const handleGenerate = () => {
     if (!selectedMBTI || !selectedZodiac) return;
-    const p = getMBTIZodiacProfile(selectedMBTI, selectedZodiac);
+    const p = getMBTIZodiacProfile(selectedMBTI, selectedZodiac, lang);
     setProfile(p);
     setPhase("result");
     setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
@@ -43,21 +153,27 @@ export default function MBTIPage() {
         color: "rgba(201,168,76,0.85)", fontSize: "0.8rem",
         textDecoration: "none", letterSpacing: "0.06em",
         transition: "all 0.18s",
-      }}>← 返回</a>
+      }}>← {t.back}</a>
+
+      {/* 语言切换 */}
+      <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+        <LangSwitcher />
+      </div>
 
       <div className="mbti-hero">
         <div className="mbti-hero-bg" />
         <div className="mbti-hero-tag">
           MBTI × Zodiac
-          <span className="mbti-trending">🔥 流行</span>
+          <span className="mbti-trending">{t.trending}</span>
         </div>
-        <h1 className="mbti-hero-title">星球碰撞</h1>
-        <p className="mbti-hero-sub">当 MBTI 遇上星座，你是什么宇宙限定款？</p>
+        <h1 className="mbti-hero-title">{t.heroTitle}</h1>
+        <p className="mbti-hero-sub">{t.heroSub}</p>
       </div>
 
       <div className="mbti-content">
         {phase === "select" && (
           <SelectPhase
+            t={t}
             selectedMBTI={selectedMBTI}
             selectedZodiac={selectedZodiac}
             onSelectMBTI={setSelectedMBTI}
@@ -69,6 +185,7 @@ export default function MBTIPage() {
         {phase === "result" && profile && selectedMBTI && selectedZodiac && (
           <>
             <ResultPhase
+              t={t}
               profile={profile}
               mbti={selectedMBTI}
               zodiac={selectedZodiac}
@@ -81,6 +198,7 @@ export default function MBTIPage() {
 
       {showPoster && profile && selectedMBTI && selectedZodiac && (
         <PosterOverlay
+          t={t}
           profile={profile}
           mbti={selectedMBTI}
           zodiac={selectedZodiac}
@@ -93,12 +211,14 @@ export default function MBTIPage() {
 
 // ===== 选择阶段 =====
 function SelectPhase({
+  t,
   selectedMBTI,
   selectedZodiac,
   onSelectMBTI,
   onSelectZodiac,
   onGenerate,
 }: {
+  t: (typeof T)[Lang];
   selectedMBTI: MBTIType | null;
   selectedZodiac: ZodiacSign | null;
   onSelectMBTI: (m: MBTIType) => void;
@@ -107,11 +227,11 @@ function SelectPhase({
 }) {
   return (
     <div className="mbti-select-card mbti-fade-in">
-      <p className="mbti-select-title">✨ 选择你的 MBTI 和星座，解锁专属档案</p>
+      <p className="mbti-select-title">{t.selectTitle}</p>
 
       {/* MBTI 选择 */}
       <div className="mbti-select-group">
-        <span className="mbti-select-label">① 你的 MBTI 人格类型</span>
+        <span className="mbti-select-label">{t.mbtiStep}</span>
         <div className="mbti-type-grid">
           {MBTI_TYPES.map((type) => (
             <button
@@ -127,7 +247,7 @@ function SelectPhase({
 
       {/* 星座选择 */}
       <div className="mbti-select-group">
-        <span className="mbti-select-label">② 你的星座</span>
+        <span className="mbti-select-label">{t.zodiacStep}</span>
         <div className="mbti-zodiac-grid">
           {ZODIAC_SIGNS.map((zodiac) => (
             <button
@@ -135,7 +255,7 @@ function SelectPhase({
               className={`mbti-zodiac-btn ${selectedZodiac === zodiac ? "selected" : ""}`}
               onClick={() => onSelectZodiac(zodiac)}
             >
-              {zodiac}
+              {t.zodiacLabel[zodiac]}
             </button>
           ))}
         </div>
@@ -146,7 +266,7 @@ function SelectPhase({
         onClick={onGenerate}
         disabled={!selectedMBTI || !selectedZodiac}
       >
-        🪐 解锁我的宇宙档案
+        {t.generateBtn}
       </button>
     </div>
   );
@@ -154,12 +274,14 @@ function SelectPhase({
 
 // ===== 结果阶段 =====
 function ResultPhase({
+  t,
   profile,
   mbti,
   zodiac,
   onReset,
   onShowPoster,
 }: {
+  t: (typeof T)[Lang];
   profile: MBTIZodiacProfile;
   mbti: MBTIType;
   zodiac: ZodiacSign;
@@ -179,7 +301,7 @@ function ResultPhase({
             background: `radial-gradient(ellipse at 30% 30%, ${profile.color}22 0%, transparent 60%)`,
           }}
         />
-        <span className="mbti-combo-label">{mbti} × {zodiac}</span>
+        <span className="mbti-combo-label">{mbti} × {t.zodiacLabel[zodiac]}</span>
         <span className="mbti-profile-icon">{profile.icon}</span>
         <div className="mbti-profile-title">{profile.title}</div>
         <div className="mbti-tagline">&ldquo;{profile.tagline}&rdquo;</div>
@@ -188,30 +310,30 @@ function ResultPhase({
 
       {/* 特质网格 */}
       <div className="mbti-traits-card">
-        <div className="mbti-card-title">⚡ 人格特质解析</div>
+        <div className="mbti-card-title">{t.traitsTitle}</div>
         <div className="mbti-traits-grid">
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">✨ 超能力</div>
+            <div className="mbti-trait-label">{t.superpower}</div>
             <div className="mbti-trait-value">{profile.superpower}</div>
           </div>
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">💀 致命弱点</div>
+            <div className="mbti-trait-label">{t.weakness}</div>
             <div className="mbti-trait-value">{profile.weakness}</div>
           </div>
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">💼 事业方向</div>
+            <div className="mbti-trait-label">{t.career}</div>
             <div className="mbti-trait-value">{profile.career}</div>
           </div>
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">💕 爱情模式</div>
+            <div className="mbti-trait-label">{t.love}</div>
             <div className="mbti-trait-value">{profile.love.slice(0, 40)}…</div>
           </div>
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">🤝 友情风格</div>
+            <div className="mbti-trait-label">{t.friendStyle}</div>
             <div className="mbti-trait-value">{profile.friendStyle}</div>
           </div>
           <div className="mbti-trait-item">
-            <div className="mbti-trait-label">🌌 人生气场</div>
+            <div className="mbti-trait-label">{t.lifeVibe}</div>
             <div className="mbti-trait-value">{profile.lifeVibe}</div>
           </div>
         </div>
@@ -219,25 +341,25 @@ function ResultPhase({
 
       {/* 内心 OS */}
       <div className="mbti-mood-card">
-        <div className="mbti-card-title">🧠 今日内心 OS</div>
+        <div className="mbti-card-title">{t.moodTitle}</div>
         <p className="mbti-mood-text">&ldquo;{profile.dailyMood}&rdquo;</p>
       </div>
 
       {/* 危险模式 */}
       <div className="mbti-danger-card">
-        <div className="mbti-card-title">⚠️ 危险模式解锁条件</div>
+        <div className="mbti-card-title">{t.dangerTitle}</div>
         <p className="mbti-danger-text">{profile.dangerMode}</p>
       </div>
 
       {/* 最配 & 名人 */}
       <div className="mbti-compat-card">
         <div className="mbti-compat-item">
-          <div className="mbti-compat-label">💞 最配类型</div>
+          <div className="mbti-compat-label">{t.compatLabel}</div>
           <div className="mbti-compat-value">{profile.compatibleWith}</div>
         </div>
         <div className="mbti-compat-divider" />
         <div className="mbti-compat-item">
-          <div className="mbti-compat-label">🌟 同类代表人物</div>
+          <div className="mbti-compat-label">{t.celebsLabel}</div>
           <div className="mbti-compat-value" style={{ fontSize: "0.85rem" }}>
             {profile.celebs.join(" / ")}
           </div>
@@ -247,10 +369,10 @@ function ResultPhase({
       {/* 操作 */}
       <div className="mbti-actions">
         <button className="mbti-poster-btn" onClick={onShowPoster}>
-          📸 生成专属宇宙海报
+          {t.posterBtn}
         </button>
         <button className="mbti-reset-btn" onClick={onReset}>
-          ↺ 换一个组合
+          {t.resetBtn}
         </button>
       </div>
     </div>
@@ -259,11 +381,13 @@ function ResultPhase({
 
 // ===== 海报弹窗 =====
 function PosterOverlay({
+  t,
   profile,
   mbti,
   zodiac,
   onClose,
 }: {
+  t: (typeof T)[Lang];
   profile: MBTIZodiacProfile;
   mbti: MBTIType;
   zodiac: ZodiacSign;
@@ -311,7 +435,7 @@ function PosterOverlay({
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.5)";
     ctx.textAlign = "center";
-    ctx.fillText(`${mbti} × ${zodiac}`, W / 2, 48);
+    ctx.fillText(`${mbti} × ${t.zodiacLabel[zodiac]}`, W / 2, 48);
 
     // 图标
     ctx.font = "40px sans-serif";
@@ -362,10 +486,10 @@ function PosterOverlay({
 
     ctx.font = "10px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.45)";
-    ctx.fillText("✨ 超能力", W / 2 - 80, traitY + 24);
-    ctx.fillText("⚠️ 弱点", W / 2 + 80, traitY + 24);
-    ctx.fillText("💕 爱情", W / 2 - 80, traitY + 72);
-    ctx.fillText("💼 事业", W / 2 + 80, traitY + 72);
+    ctx.fillText(t.superpower, W / 2 - 80, traitY + 24);
+    ctx.fillText(t.weakness, W / 2 + 80, traitY + 24);
+    ctx.fillText(t.love, W / 2 - 80, traitY + 72);
+    ctx.fillText(t.career, W / 2 + 80, traitY + 72);
 
     ctx.font = "bold 11px serif";
     ctx.fillStyle = "rgba(255,255,255,0.85)";
@@ -389,19 +513,19 @@ function PosterOverlay({
     const compatY = osY + 32;
     ctx.font = "11px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.45)";
-    ctx.fillText(`最配类型：${profile.compatibleWith}`, W / 2, compatY);
+    ctx.fillText(`${t.posterCompat}${profile.compatibleWith}`, W / 2, compatY);
 
     // 底部
     ctx.font = "11px sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.25)";
-    ctx.fillText("命运密语 · MBTI星球碰撞", W / 2, H - 24);
-  }, [profile, mbti, zodiac]);
+    ctx.fillText(t.posterFooter, W / 2, H - 24);
+  }, [t, profile, mbti, zodiac]);
 
   const handleSave = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement("a");
-    link.download = `MBTI星球碰撞_${mbti}x${zodiac}.png`;
+    link.download = `${t.posterFileName}_${mbti}x${zodiac}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
@@ -412,10 +536,10 @@ function PosterOverlay({
         <canvas ref={canvasRef} className="mbti-poster-canvas" />
         <div className="mbti-poster-actions">
           <button className="mbti-poster-save" onClick={handleSave}>
-            📥 保存海报
+            {t.posterSave}
           </button>
           <button className="mbti-poster-close" onClick={onClose}>
-            关闭
+            {t.posterClose}
           </button>
         </div>
       </div>

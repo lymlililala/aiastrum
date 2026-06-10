@@ -7,6 +7,9 @@ import BaziResult from "./components/BaziResult";
 import NameList from "./components/NameList";
 import NameDetail from "./components/NameDetail";
 import { type WuXing } from "./naming-data";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang, type NamingT } from "./naming-i18n";
 
 // ===== 类型定义 =====
 type Step = "input" | "loading" | "bazi" | "names" | "detail";
@@ -72,12 +75,12 @@ interface NamingApiResult {
 }
 
 // ===== 进度指示器 =====
-function StepIndicator({ step }: { step: Step }) {
+function StepIndicator({ step, t }: { step: Step; t: NamingT }) {
   const steps: { key: Step; label: string }[] = [
-    { key: "input", label: "填写信息" },
-    { key: "bazi", label: "八字解析" },
-    { key: "names", label: "吉名推荐" },
-    { key: "detail", label: "名字详情" },
+    { key: "input", label: t.stepInput },
+    { key: "bazi", label: t.stepBazi },
+    { key: "names", label: t.stepNames },
+    { key: "detail", label: t.stepDetail },
   ];
 
   const activeSteps: Step[] = ["bazi", "names", "detail"];
@@ -109,6 +112,9 @@ function StepIndicator({ step }: { step: Step }) {
 
 // ===== 主页面 =====
 export default function NamingPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [step, setStep] = useState<Step>("input");
   const [apiResult, setApiResult] = useState<NamingApiResult | null>(null);
   const [selectedName, setSelectedName] = useState<NameSuggestion | null>(null);
@@ -133,19 +139,19 @@ export default function NamingPage() {
       const res = await fetch("/api/naming", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, lang }),
       });
 
       if (!res.ok) {
         const errData = await res.json() as { error?: string };
-        throw new Error(errData.error ?? "请求失败");
+        throw new Error(errData.error ?? t.reqFailed);
       }
 
       const result = await res.json() as NamingApiResult;
       setApiResult(result);
       setStep("bazi");
     } catch (e) {
-      setErrorMsg(e instanceof Error ? e.message : "推算出错，请稍后再试");
+      setErrorMsg(e instanceof Error ? e.message : t.calcFailed);
       setStep("input");
     }
   };
@@ -172,15 +178,18 @@ export default function NamingPage() {
 
       {/* 顶部导航 */}
       <header className="naming-nav">
-        <a href="/" className="naming-nav-back">← 返回首页</a>
-        <div className="naming-nav-title">墨韵起名</div>
-        {step !== "input" && (
-          <button className="naming-nav-reset" onClick={handleReset}>重新测算</button>
-        )}
+        <a href="/" className="naming-nav-back">{t.back}</a>
+        <div className="naming-nav-title">{t.brand}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {step !== "input" && (
+            <button className="naming-nav-reset" onClick={handleReset}>{t.restart}</button>
+          )}
+          <LangSwitcher />
+        </div>
       </header>
 
       {/* 步骤指示器 */}
-      <StepIndicator step={step} />
+      <StepIndicator step={step} t={t} />
 
       {/* 内容区 */}
       <div className="naming-page-content">
@@ -189,6 +198,7 @@ export default function NamingPage() {
           <NamingInput
             onSubmit={handleSubmit}
             isLoading={false}
+            t={t}
           />
         )}
 
@@ -204,6 +214,7 @@ export default function NamingPage() {
           <NamingLoading
             surname={inputData.surname}
             gender={inputData.gender}
+            t={t}
           />
         )}
 
@@ -214,6 +225,7 @@ export default function NamingPage() {
             surname={apiResult.surname}
             gender={apiResult.gender}
             onContinue={() => setStep("names")}
+            t={t}
           />
         )}
 
@@ -231,6 +243,7 @@ export default function NamingPage() {
               setSelectedName(name);
               setStep("detail");
             }}
+            t={t}
           />
         )}
 
@@ -241,14 +254,15 @@ export default function NamingPage() {
             surname={apiResult.surname}
             xiyongshen={apiResult.bazi.xiyongshen}
             onBack={() => setStep("names")}
+            t={t}
           />
         )}
       </div>
 
       {/* 底部 */}
       <footer className="naming-footer">
-        <p>墨韵起名 · 结合传统命理与诗词审美</p>
-        <p className="naming-footer-note">本工具仅供参考，名字最终选择以父母意愿为准</p>
+        <p>{t.footerL1}</p>
+        <p className="naming-footer-note">{t.footerNote}</p>
       </footer>
     </main>
   );

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { POPULAR_SURNAMES } from "../naming-data";
+import { type NamingT } from "../naming-i18n";
 
 interface NamingInputProps {
   onSubmit: (data: {
@@ -13,9 +14,10 @@ interface NamingInputProps {
     hour: number;
   }) => void;
   isLoading?: boolean;
+  t: NamingT;
 }
 
-export default function NamingInput({ onSubmit, isLoading = false }: NamingInputProps) {
+export default function NamingInput({ onSubmit, isLoading = false, t }: NamingInputProps) {
   const [surname, setSurname] = useState("");
   const [gender, setGender] = useState<"male" | "female">("male");
   const [year, setYear] = useState<string>("");
@@ -36,21 +38,15 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
     return Array.from({ length: days }, (_, i) => i + 1);
   };
 
-  const hourOptions = [
-    { label: "子时 23-01", value: 23 }, { label: "丑时 01-03", value: 1 },
-    { label: "寅时 03-05", value: 3 }, { label: "卯时 05-07", value: 5 },
-    { label: "辰时 07-09", value: 7 }, { label: "巳时 09-11", value: 9 },
-    { label: "午时 11-13", value: 11 }, { label: "未时 13-15", value: 13 },
-    { label: "申时 15-17", value: 15 }, { label: "酉时 17-19", value: 17 },
-    { label: "戌时 19-21", value: 19 }, { label: "亥时 21-23", value: 21 },
-  ];
+  const hourValues = [23, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21];
+  const hourOptions = hourValues.map((value, i) => ({ label: t.shichen[i] ?? "", value }));
 
   const handleSubmit = () => {
     setError(null);
     const trimSurname = surname.trim();
-    if (!trimSurname) { setError("请输入姓氏"); return; }
-    if (!/^[\u4e00-\u9fff]{1,2}$/.test(trimSurname)) { setError("请输入1-2个汉字的姓氏"); return; }
-    if (!year || !month || !day) { setError("请选择完整出生日期"); return; }
+    if (!trimSurname) { setError(t.errSurnameEmpty); return; }
+    if (!/^[\u4e00-\u9fff]{1,2}$/.test(trimSurname)) { setError(t.errSurnameFmt); return; }
+    if (!year || !month || !day) { setError(t.errDate); return; }
     onSubmit({ surname: trimSurname, gender, year: parseInt(year), month: parseInt(month), day: parseInt(day), hour: parseInt(hour) || 8 });
   };
 
@@ -59,32 +55,32 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
       {/* 标题区 */}
       <div className="naming-hero">
         <div className="naming-hero-symbol">墨</div>
-        <h1 className="naming-title">墨韵起名</h1>
-        <p className="naming-subtitle">结合传统命理与诗词审美的起名神器</p>
+        <h1 className="naming-title">{t.heroTitle}</h1>
+        <p className="naming-subtitle">{t.heroSubtitle}</p>
         <div className="naming-divider-line" />
         <p className="naming-desc">
-          基于生辰八字精算喜用神，结合《诗经》《楚辞》等国学经典，
+          {t.heroDescL1}
           <br className="hidden sm:block" />
-          为宝宝甄选兼具命理与诗意的美好名字
+          {t.heroDescL2}
         </p>
       </div>
 
       {/* 表单 */}
       <div className="naming-form-card">
         <div className="naming-form-title">
-          <span className="naming-form-num">一</span>
-          填写宝宝信息
+          <span className="naming-form-num">{t.formNum}</span>
+          {t.formTitle}
         </div>
 
         {/* 姓氏 */}
         <div className="naming-field">
-          <label className="naming-label">宝宝姓氏</label>
+          <label className="naming-label">{t.labelSurname}</label>
           <div className="naming-surname-row">
             <input
               type="text"
               value={surname}
               onChange={e => setSurname(e.target.value)}
-              placeholder="请输入姓氏，如：王"
+              placeholder={t.surnamePlaceholder}
               className="naming-input"
               maxLength={2}
               disabled={isLoading}
@@ -107,7 +103,7 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
 
         {/* 性别 */}
         <div className="naming-field">
-          <label className="naming-label">宝宝性别</label>
+          <label className="naming-label">{t.labelGender}</label>
           <div className="naming-gender-row">
             <button
               className={`naming-gender-btn ${gender === "male" ? "naming-gender-active naming-male" : ""}`}
@@ -115,7 +111,7 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               disabled={isLoading}
             >
               <span className="naming-gender-icon">♂</span>
-              男宝宝
+              {t.genderMale}
             </button>
             <button
               className={`naming-gender-btn ${gender === "female" ? "naming-gender-active naming-female" : ""}`}
@@ -123,14 +119,14 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               disabled={isLoading}
             >
               <span className="naming-gender-icon">♀</span>
-              女宝宝
+              {t.genderFemale}
             </button>
           </div>
         </div>
 
         {/* 出生日期 */}
         <div className="naming-field">
-          <label className="naming-label">出生日期（公历）</label>
+          <label className="naming-label">{t.labelBirth}</label>
           <div className="naming-date-row">
             <select
               value={year}
@@ -138,9 +134,9 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               className="naming-select naming-select-year"
               disabled={isLoading}
             >
-              <option value="">年份</option>
+              <option value="">{t.optYear}</option>
               {years.map(y => (
-                <option key={y} value={y}>{y}年</option>
+                <option key={y} value={y}>{y}{t.yearSuffix}</option>
               ))}
             </select>
             <select
@@ -149,9 +145,9 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               className="naming-select naming-select-month"
               disabled={isLoading}
             >
-              <option value="">月份</option>
+              <option value="">{t.optMonth}</option>
               {months.map(m => (
-                <option key={m} value={m}>{m}月</option>
+                <option key={m} value={m}>{m}{t.monthSuffix}</option>
               ))}
             </select>
             <select
@@ -160,9 +156,9 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               className="naming-select naming-select-day"
               disabled={isLoading}
             >
-              <option value="">日期</option>
+              <option value="">{t.optDay}</option>
               {getDays().map(d => (
-                <option key={d} value={d}>{d}日</option>
+                <option key={d} value={d}>{d}{t.daySuffix}</option>
               ))}
             </select>
           </div>
@@ -171,8 +167,8 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
         {/* 出生时辰 */}
         <div className="naming-field">
           <label className="naming-label">
-            出生时辰
-            <span className="naming-label-tip">（影响时柱，若不确定可选辰时）</span>
+            {t.labelHour}
+            <span className="naming-label-tip">{t.hourTip}</span>
           </label>
           <div className="naming-shichen-grid">
             {hourOptions.map(opt => (
@@ -204,10 +200,10 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
               <span className="naming-loading-dot" />
               <span className="naming-loading-dot" />
               <span className="naming-loading-dot" />
-              推算中...
+              {t.submitLoading}
             </span>
           ) : (
-            "✦ 免费测算八字与吉名 ✦"
+            t.submitBtn
           )}
         </button>
 
@@ -216,9 +212,9 @@ export default function NamingInput({ onSubmit, isLoading = false }: NamingInput
       {/* 功能说明 */}
       <div className="naming-features">
         {[
-          { icon: "☯", title: "正宗八字排盘", desc: "天干地支四柱排盘，精算五行旺衰" },
-          { icon: "⚡", title: "喜用神分析", desc: "打破误区，专业研判命局所需五行" },
-          { icon: "📖", title: "诗词经典出处", desc: "名字出自诗经、楚辞等国学经典" },
+          { icon: "☯", title: t.feat1Title, desc: t.feat1Desc },
+          { icon: "⚡", title: t.feat2Title, desc: t.feat2Desc },
+          { icon: "📖", title: t.feat3Title, desc: t.feat3Desc },
         ].map(f => (
           <div key={f.title} className="naming-feature-card">
             <div className="naming-feature-icon">{f.icon}</div>

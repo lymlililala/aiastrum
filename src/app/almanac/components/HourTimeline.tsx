@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import type { DayInfo, HourInfo } from "../almanac-engine";
+import type { AlmanacT, Lang } from "../almanac-i18n";
+import { SHENGXIAO_L } from "../almanac-data";
 
 interface HourTimelineProps {
   dayInfo: DayInfo;
+  t: AlmanacT;
+  lang: Lang;
 }
 
-export default function HourTimeline({ dayInfo }: HourTimelineProps) {
+export default function HourTimeline({ dayInfo, t, lang }: HourTimelineProps) {
   const [selectedHour, setSelectedHour] = useState<HourInfo | null>(null);
 
-  const luckLabel: Record<string, string> = { 吉: "吉时", 凶: "凶时", 平: "平时" };
+  const luckLabel: Record<string, string> = { 吉: t.luckJi, 凶: t.luckXiong, 平: t.luckPing };
 
   // 获取当前时辰
   const now = new Date();
@@ -38,8 +42,8 @@ export default function HourTimeline({ dayInfo }: HourTimelineProps) {
     <div className="al-timeline">
       <div className="al-timeline-title">
         <span className="al-section-icon">◷</span>
-        吉凶时辰
-        <span className="al-timeline-hint">点击时辰查看详情</span>
+        {t.hourTitle}
+        <span className="al-timeline-hint">{t.hourHint}</span>
       </div>
 
       {/* 时辰轴 */}
@@ -73,7 +77,7 @@ export default function HourTimeline({ dayInfo }: HourTimelineProps) {
         <div className={`al-hour-detail al-detail-${selectedHour.luck}`}>
           <div className="al-hour-detail-header">
             <span className="al-hour-detail-name">{selectedHour.period.name}</span>
-            <span className="al-hour-detail-animal">({selectedHour.period.animal})</span>
+            <span className="al-hour-detail-animal">({SHENGXIAO_L[selectedHour.period.animal]?.[lang] ?? selectedHour.period.animal})</span>
             <span className={`al-hour-detail-luck al-luck-${selectedHour.luck}`}>
               {luckLabel[selectedHour.luck]}
             </span>
@@ -88,9 +92,9 @@ export default function HourTimeline({ dayInfo }: HourTimelineProps) {
       {/* 图例 */}
       <div className="al-hour-legend">
         {[
-          { luck: "吉", label: "吉时", color: "#E74C3C" },
-          { luck: "平", label: "平时", color: "#D5C9B0" },
-          { luck: "凶", label: "凶时", color: "#BDC3C7" },
+          { luck: "吉", label: t.luckJi, color: "#E74C3C" },
+          { luck: "平", label: t.luckPing, color: "#D5C9B0" },
+          { luck: "凶", label: t.luckXiong, color: "#BDC3C7" },
         ].map(l => (
           <div key={l.luck} className="al-legend-item">
             <span className="al-legend-dot" style={{ background: l.color } as React.CSSProperties} />
@@ -100,7 +104,7 @@ export default function HourTimeline({ dayInfo }: HourTimelineProps) {
         {isToday && (
           <div className="al-legend-item">
             <span className="al-legend-now" />
-            <span className="al-legend-label">当前时辰</span>
+            <span className="al-legend-label">{t.legendNow}</span>
           </div>
         )}
       </div>

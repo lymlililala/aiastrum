@@ -4,6 +4,9 @@ import { useState } from "react";
 import WugeInput from "./components/WugeInput";
 import WugeLoading from "./components/WugeLoading";
 import WugeReport from "./components/WugeReport";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./wuge-i18n";
 
 type Phase = "input" | "loading" | "result";
 
@@ -34,6 +37,9 @@ interface WugeApiResponse {
 }
 
 export default function WugePage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [phase, setPhase] = useState<Phase>("input");
   const [currentName, setCurrentName] = useState("");
   const [reportData, setReportData] = useState<WugeApiResponse | null>(null);
@@ -50,12 +56,12 @@ export default function WugePage() {
     const fetchPromise = fetch("/api/wuge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, gender }),
+      body: JSON.stringify({ name, gender, lang }),
     })
       .then(async (res) => {
         if (!res.ok) {
           const err = await res.json() as { error?: string };
-          throw new Error(err.error ?? "测算失败，请稍后重试");
+          throw new Error(err.error ?? t.calcFailed);
         }
         return res.json() as Promise<WugeApiResponse>;
       });
@@ -65,7 +71,7 @@ export default function WugePage() {
       setReportData(data);
       setPhase("result");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "测算失败，请稍后重试";
+      const msg = err instanceof Error ? err.message : t.calcFailed;
       setError(msg);
       setPhase("input");
     }
@@ -94,18 +100,19 @@ export default function WugePage() {
       <nav className="wuge-nav">
         <a href="/" className="wuge-nav-back">
           <span className="wuge-nav-back-icon">←</span>
-          返回首页
+          {t.back}
         </a>
         <div className="wuge-nav-title">
           <span className="wuge-nav-logo">☯</span>
-          <span>姓名五格</span>
+          <span>{t.brand}</span>
         </div>
         <div className="wuge-nav-right">
           {phase === "result" && (
             <button onClick={handleReset} className="wuge-nav-new-btn">
-              重新测算
+              {t.restart}
             </button>
           )}
+          <LangSwitcher />
         </div>
       </nav>
 
@@ -119,19 +126,19 @@ export default function WugePage() {
                 <button onClick={() => setError(null)}>×</button>
               </div>
             )}
-            <WugeInput onSubmit={handleSubmit} isLoading={false} />
+            <WugeInput t={t} onSubmit={handleSubmit} isLoading={false} />
           </div>
         )}
 
         {phase === "loading" && (
           <div className="wuge-phase-container">
-            <WugeLoading name={currentName} />
+            <WugeLoading t={t} name={currentName} />
           </div>
         )}
 
         {phase === "result" && reportData && (
           <div className="wuge-phase-container wuge-result-phase">
-            <WugeReport data={reportData} onReset={handleReset} />
+            <WugeReport t={t} data={reportData} onReset={handleReset} />
           </div>
         )}
       </main>

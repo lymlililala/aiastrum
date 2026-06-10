@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { SELECT_EVENTS, SHENG_XIAO } from "../almanac-data";
+import { SELECT_EVENTS, SHENG_XIAO, SHENGXIAO_L } from "../almanac-data";
 import type { ShengXiao } from "../almanac-data";
+import type { AlmanacT, Lang } from "../almanac-i18n";
 
 interface DateSelectorProps {
   onSearch: (params: {
@@ -16,13 +17,15 @@ interface DateSelectorProps {
     weekendOnly: boolean;
   }) => void;
   isLoading: boolean;
+  t: AlmanacT;
+  lang: Lang;
 }
 
 const now = new Date();
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const YEARS  = [now.getFullYear(), now.getFullYear() + 1, now.getFullYear() + 2];
 
-export default function DateSelector({ onSearch, isLoading }: DateSelectorProps) {
+export default function DateSelector({ onSearch, isLoading, t, lang }: DateSelectorProps) {
   const [selectedEvent, setSelectedEvent] = useState<string>("marriage");
   const [startYear,  setStartYear]  = useState(now.getFullYear());
   const [startMonth, setStartMonth] = useState(now.getMonth() + 1);
@@ -49,7 +52,7 @@ export default function DateSelector({ onSearch, isLoading }: DateSelectorProps)
       <div className="al-selector-step">
         <div className="al-step-header">
           <span className="al-step-num">①</span>
-          <span className="al-step-title">选择办理事项</span>
+          <span className="al-step-title">{t.step1Title}</span>
         </div>
         <div className="al-event-grid">
           {SELECT_EVENTS.map(ev => (
@@ -59,7 +62,7 @@ export default function DateSelector({ onSearch, isLoading }: DateSelectorProps)
               onClick={() => setSelectedEvent(ev.key)}
             >
               <span className="al-event-btn-icon">{ev.icon}</span>
-              <span className="al-event-btn-name">{ev.name}</span>
+              <span className="al-event-btn-name">{ev.name[lang]}</span>
             </button>
           ))}
         </div>
@@ -69,29 +72,29 @@ export default function DateSelector({ onSearch, isLoading }: DateSelectorProps)
       <div className="al-selector-step">
         <div className="al-step-header">
           <span className="al-step-num">②</span>
-          <span className="al-step-title">选择时间范围</span>
+          <span className="al-step-title">{t.step2Title}</span>
         </div>
         <div className="al-time-range">
           <div className="al-time-group">
-            <label className="al-time-label">开始</label>
+            <label className="al-time-label">{t.timeStart}</label>
             <div className="al-time-selects">
               <select value={startYear} onChange={e => setStartYear(Number(e.target.value))} className="al-select al-select-year">
-                {YEARS.map(y => <option key={y} value={y}>{y}年</option>)}
+                {YEARS.map(y => <option key={y} value={y}>{y}{t.yearSuffix}</option>)}
               </select>
               <select value={startMonth} onChange={e => setStartMonth(Number(e.target.value))} className="al-select">
-                {MONTHS.map(m => <option key={m} value={m}>{m}月</option>)}
+                {MONTHS.map(m => <option key={m} value={m}>{m}{t.monthSuffix}</option>)}
               </select>
             </div>
           </div>
           <div className="al-time-dash">—</div>
           <div className="al-time-group">
-            <label className="al-time-label">结束</label>
+            <label className="al-time-label">{t.timeEnd}</label>
             <div className="al-time-selects">
               <select value={endYear} onChange={e => setEndYear(Number(e.target.value))} className="al-select al-select-year">
-                {YEARS.map(y => <option key={y} value={y}>{y}年</option>)}
+                {YEARS.map(y => <option key={y} value={y}>{y}{t.yearSuffix}</option>)}
               </select>
               <select value={endMonth} onChange={e => setEndMonth(Number(e.target.value))} className="al-select">
-                {MONTHS.map(m => <option key={m} value={m}>{m}月</option>)}
+                {MONTHS.map(m => <option key={m} value={m}>{m}{t.monthSuffix}</option>)}
               </select>
             </div>
           </div>
@@ -102,32 +105,32 @@ export default function DateSelector({ onSearch, isLoading }: DateSelectorProps)
       <div className="al-selector-step">
         <div className="al-step-header">
           <span className="al-step-num">③</span>
-          <span className="al-step-title">生肖避冲（选填）</span>
-          <span className="al-step-hint">系统自动剔除与您相冲的日期</span>
+          <span className="al-step-title">{t.step3Title}</span>
+          <span className="al-step-hint">{t.step3Hint}</span>
         </div>
         <div className="al-shengxiao-row">
           <div className="al-shengxiao-group">
-            <label className="al-sx-label">本人生肖</label>
+            <label className="al-sx-label">{t.sxUser}</label>
             <div className="al-sx-grid">
               {SHENG_XIAO.map(sx => (
                 <button key={sx}
                   className={`al-sx-btn ${userShengxiao === sx ? "al-sx-active" : ""}`}
                   onClick={() => setUserShengxiao(userShengxiao === sx ? "" : sx)}
                 >
-                  {sx}
+                  {SHENGXIAO_L[sx][lang]}
                 </button>
               ))}
             </div>
           </div>
           <div className="al-shengxiao-group">
-            <label className="al-sx-label">伴侣/同行生肖</label>
+            <label className="al-sx-label">{t.sxPartner}</label>
             <div className="al-sx-grid">
               {SHENG_XIAO.map(sx => (
                 <button key={sx}
                   className={`al-sx-btn ${partnerShengxiao === sx ? "al-sx-active" : ""}`}
                   onClick={() => setPartnerShengxiao(partnerShengxiao === sx ? "" : sx)}
                 >
-                  {sx}
+                  {SHENGXIAO_L[sx][lang]}
                 </button>
               ))}
             </div>
@@ -139,21 +142,21 @@ export default function DateSelector({ onSearch, isLoading }: DateSelectorProps)
       <div className="al-selector-step">
         <div className="al-step-header">
           <span className="al-step-num">④</span>
-          <span className="al-step-title">其他偏好</span>
+          <span className="al-step-title">{t.step4Title}</span>
         </div>
         <label className="al-checkbox-row" onClick={() => setWeekendOnly(p => !p)}>
           <span className={`al-checkbox ${weekendOnly ? "al-checkbox-checked" : ""}`}>
             {weekendOnly && "✓"}
           </span>
-          <span className="al-checkbox-label">仅看周六、周日（适合上班族）</span>
+          <span className="al-checkbox-label">{t.weekendOnly}</span>
         </label>
       </div>
 
       {/* 搜索按钮 */}
       <button className="al-search-btn" onClick={handleSearch} disabled={isLoading}>
         {isLoading ? (
-          <span className="al-btn-loading"><span className="al-spin">◎</span>择日推算中…</span>
-        ) : "✦ 开始择日推算"}
+          <span className="al-btn-loading"><span className="al-spin">◎</span>{t.searchLoading}</span>
+        ) : t.searchBtn}
       </button>
     </div>
   );

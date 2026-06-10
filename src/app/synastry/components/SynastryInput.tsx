@@ -3,13 +3,16 @@
 import { useState, useRef, useEffect } from "react";
 import type { PersonInput, SynastryInput } from "../synastry-engine";
 import type { RelationType } from "../synastry-data";
-import { RELATION_TYPES } from "../synastry-data";
+import { RELATION_TYPES, getRelationType } from "../synastry-data";
 import { CITY_DATABASE } from "../../astro/astro-data";
 import type { CityData } from "../../astro/astro-data";
+import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
   onSubmit: (data: SynastryInput) => void;
   loading?: boolean;
+  t: SynT;
+  lang: SynLang;
 }
 
 type Step = "relation" | "personA" | "personB" | "confirm";
@@ -24,7 +27,7 @@ const EMPTY_PERSON: PersonInput = {
   city: DEFAULT_CITY,
 };
 
-export default function SynastryInput({ onSubmit, loading }: Props) {
+export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
   const [step, setStep] = useState<Step>("relation");
   const [relationType, setRelationType] = useState<RelationType>("love");
   const [personA, setPersonA] = useState<PersonInput>({ ...EMPTY_PERSON });
@@ -60,14 +63,14 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
   const validate = (current: Step): boolean => {
     const errs: Record<string, string> = {};
     if (current === "personA") {
-      if (!personA.name.trim()) errs.aName = "请输入你的昵称";
-      if (!personA.birthDate) errs.aDate = "请选择出生日期";
-      if (!personA.unknownTime && !personA.birthTime) errs.aTime = "请输入出生时间或勾选'不知道'";
+      if (!personA.name.trim()) errs.aName = t.errAName;
+      if (!personA.birthDate) errs.aDate = t.errADate;
+      if (!personA.unknownTime && !personA.birthTime) errs.aTime = t.errATime;
     }
     if (current === "personB") {
-      if (!personB.name.trim()) errs.bName = "请输入TA的昵称";
-      if (!personB.birthDate) errs.bDate = "请选择TA的出生日期";
-      if (!personB.unknownTime && !personB.birthTime) errs.bTime = "请输入出生时间或勾选'不知道'";
+      if (!personB.name.trim()) errs.bName = t.errBName;
+      if (!personB.birthDate) errs.bDate = t.errBDate;
+      if (!personB.unknownTime && !personB.birthTime) errs.bTime = t.errBTime;
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -98,10 +101,10 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
 
   // 步骤指示器
   const steps: { key: Step; label: string }[] = [
-    { key: "relation", label: "关系" },
-    { key: "personA", label: "你" },
-    { key: "personB", label: "TA" },
-    { key: "confirm", label: "确认" },
+    { key: "relation", label: t.stepRelation },
+    { key: "personA", label: t.stepYou },
+    { key: "personB", label: t.stepTa },
+    { key: "confirm", label: t.stepConfirm },
   ];
   const stepIdx = steps.findIndex((s) => s.key === step);
 
@@ -122,10 +125,12 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
         {/* ===== STEP 1: 选择关系类型 ===== */}
         {step === "relation" && (
           <div className="syn-step-content">
-            <h2 className="syn-step-title">你们是什么关系？</h2>
-            <p className="syn-step-subtitle">选择想要探索的关系维度，星盘会为你量身解析</p>
+            <h2 className="syn-step-title">{t.relationTitle}</h2>
+            <p className="syn-step-subtitle">{t.relationSubtitle}</p>
             <div className="syn-relation-grid">
-              {(Object.entries(RELATION_TYPES) as [RelationType, typeof RELATION_TYPES[RelationType]][]).map(([key, rel]) => (
+              {(Object.keys(RELATION_TYPES) as RelationType[]).map((key) => {
+                const rel = getRelationType(key, lang);
+                return (
                 <button
                   key={key}
                   className={`syn-relation-card ${relationType === key ? "selected" : ""}`}
@@ -140,7 +145,8 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
                   <span className="syn-rel-label">{rel.label}</span>
                   <span className="syn-rel-desc">{rel.desc}</span>
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -149,8 +155,8 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
         {step === "personA" && (
           <PersonForm
             who="a"
-            label="你的信息"
-            subtitle="输入你自己的出生信息"
+            label={t.personATitle}
+            subtitle={t.personASubtitle}
             person={personA}
             onChange={setPersonA}
             cityQuery={cityQuery.a}
@@ -159,6 +165,7 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
             onSelectCity={(c) => selectCity("a", c)}
             errors={errors}
             prefix="a"
+            t={t}
           />
         )}
 
@@ -166,8 +173,8 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
         {step === "personB" && (
           <PersonForm
             who="b"
-            label="TA 的信息"
-            subtitle="输入对方的出生信息"
+            label={t.personBTitle}
+            subtitle={t.personBSubtitle}
             person={personB}
             onChange={setPersonB}
             cityQuery={cityQuery.b}
@@ -176,26 +183,27 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
             onSelectCity={(c) => selectCity("b", c)}
             errors={errors}
             prefix="b"
+            t={t}
           />
         )}
 
         {/* ===== STEP 4: 确认 ===== */}
         {step === "confirm" && (
           <div className="syn-step-content">
-            <h2 className="syn-step-title">开始合盘？</h2>
-            <p className="syn-step-subtitle">确认信息无误后，星盘将为你解析两人的宇宙缘分</p>
+            <h2 className="syn-step-title">{t.confirmTitle}</h2>
+            <p className="syn-step-subtitle">{t.confirmSubtitle}</p>
 
             <div className="syn-confirm-cards">
-              <ConfirmCard person={personA} label="你" />
+              <ConfirmCard person={personA} side="a" t={t} />
               <div className="syn-confirm-vs">
                 <span className="syn-vs-text">{RELATION_TYPES[relationType].icon}</span>
-                <span className="syn-vs-label">{RELATION_TYPES[relationType].label}</span>
+                <span className="syn-vs-label">{getRelationType(relationType, lang).label}</span>
               </div>
-              <ConfirmCard person={personB} label="TA" />
+              <ConfirmCard person={personB} side="b" t={t} />
             </div>
 
             <p className="syn-confirm-note">
-              ✨ 合盘将分析两人的行星相位、计算契合度评分，并生成专属解析
+              {t.confirmNote}
             </p>
           </div>
         )}
@@ -204,7 +212,7 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
         <div className="syn-nav-btns">
           {step !== "relation" && (
             <button className="syn-btn-back" onClick={prevStep}>
-              ← 上一步
+              {t.btnBack}
             </button>
           )}
           <button
@@ -218,10 +226,10 @@ export default function SynastryInput({ onSubmit, loading }: Props) {
             }}
           >
             {loading
-              ? "计算中..."
+              ? t.btnCalc
               : step === "confirm"
-              ? "✨ 开始合盘"
-              : "下一步 →"}
+              ? t.btnStart
+              : t.btnNext}
           </button>
         </div>
       </div>
@@ -242,10 +250,11 @@ interface PersonFormProps {
   onSelectCity: (c: CityData) => void;
   errors: Record<string, string>;
   prefix: "a" | "b";
+  t: SynT;
 }
 
 function PersonForm({
-  label, subtitle, person, onChange, cityQuery, onCitySearch, citySuggestions, onSelectCity, errors, prefix,
+  label, subtitle, person, onChange, cityQuery, onCitySearch, citySuggestions, onSelectCity, errors, prefix, t,
 }: PersonFormProps) {
   const [showCityDrop, setShowCityDrop] = useState(false);
 
@@ -264,10 +273,10 @@ function PersonForm({
       <div className="syn-form">
         {/* 昵称 */}
         <div className="syn-form-row">
-          <label className="syn-label">昵称</label>
+          <label className="syn-label">{t.fieldNickname}</label>
           <input
             className={`syn-input ${errors[`${prefix}Name`] ? "error" : ""}`}
-            placeholder="输入昵称（如：小雨）"
+            placeholder={t.nicknamePlaceholder}
             value={person.name}
             onChange={(e) => onChange({ ...person, name: e.target.value })}
             maxLength={10}
@@ -277,11 +286,11 @@ function PersonForm({
 
         {/* 出生日期 */}
         <div className="syn-form-row">
-          <label className="syn-label">出生日期</label>
+          <label className="syn-label">{t.fieldBirthDate}</label>
           <label className={`syn-picker-card ${errors[`${prefix}Date`] ? "error" : ""}`} style={{ cursor: "pointer" }}>
             <span className="syn-picker-icon">📅</span>
             <span className={`syn-picker-value ${!person.birthDate ? "syn-picker-value--placeholder" : ""}`}>
-              {person.birthDate ? person.birthDate.replace(/-/g, " / ") : "点击选择日期"}
+              {person.birthDate ? person.birthDate.replace(/-/g, " / ") : t.pickDate}
             </span>
             <span className="syn-picker-arrow">›</span>
             <input
@@ -297,7 +306,7 @@ function PersonForm({
 
         {/* 出生时间 */}
         <div className="syn-form-row">
-          <label className="syn-label">出生时间</label>
+          <label className="syn-label">{t.fieldBirthTime}</label>
           <label
             className={`syn-picker-card ${person.unknownTime ? "disabled" : ""} ${errors[`${prefix}Time`] ? "error" : ""}`}
             style={{ cursor: person.unknownTime ? "not-allowed" : "pointer" }}
@@ -305,7 +314,7 @@ function PersonForm({
             <span className="syn-picker-icon">🕐</span>
             <span className={`syn-picker-value ${!person.birthTime ? "syn-picker-value--placeholder" : ""}`}
               style={{ opacity: person.unknownTime ? 0.35 : 1 }}>
-              {person.birthTime || "点击选择时间"}
+              {person.birthTime || t.pickTime}
             </span>
             <span className="syn-picker-arrow">›</span>
             <input
@@ -323,22 +332,22 @@ function PersonForm({
           >
             <span className={`syn-toggle-dot ${person.unknownTime ? "on" : ""}`} />
             <span className="syn-toggle-label">
-              {person.unknownTime ? "已跳过时间（仍可解析核心相位）" : "不知道出生时间"}
+              {person.unknownTime ? t.timeSkipped : t.timeUnknown}
             </span>
           </button>
           {!person.unknownTime && (
-            <p className="syn-hint">输入时间可计算上升星座，让解析更精准</p>
+            <p className="syn-hint">{t.timeHint}</p>
           )}
           {errors[`${prefix}Time`] && <span className="syn-error">{errors[`${prefix}Time`]}</span>}
         </div>
 
         {/* 出生城市 */}
         <div className="syn-form-row">
-          <label className="syn-label">出生城市</label>
+          <label className="syn-label">{t.fieldBirthCity}</label>
           <div className="syn-city-wrap" onClick={(e) => e.stopPropagation()}>
             <input
               className="syn-input"
-              placeholder="搜索城市..."
+              placeholder={t.cityPlaceholder}
               value={cityQuery}
               onChange={(e) => {
                 onCitySearch(e.target.value);
@@ -367,7 +376,7 @@ function PersonForm({
               </ul>
             )}
           </div>
-          <p className="syn-hint">影响宫位和上升星座的计算</p>
+          <p className="syn-hint">{t.cityHint}</p>
         </div>
       </div>
     </div>
@@ -375,11 +384,11 @@ function PersonForm({
 }
 
 // ===== 确认卡片 =====
-function ConfirmCard({ person, label }: { person: PersonInput; label: string }) {
+function ConfirmCard({ person, side, t }: { person: PersonInput; side: "a" | "b"; t: SynT }) {
   return (
     <div className="syn-confirm-person">
-      <div className="syn-confirm-avatar">{label === "你" ? "🌙" : "⭐"}</div>
-      <div className="syn-confirm-name">{person.name || "（未填写）"}</div>
+      <div className="syn-confirm-avatar">{side === "a" ? "🌙" : "⭐"}</div>
+      <div className="syn-confirm-name">{person.name || t.confirmEmpty}</div>
       <div className="syn-confirm-date">{person.birthDate || "—"}</div>
       {!person.unknownTime && person.birthTime && (
         <div className="syn-confirm-time">{person.birthTime}</div>

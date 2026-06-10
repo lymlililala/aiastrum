@@ -5,7 +5,115 @@ import {
   NUMBER_KEYWORDS,
   type LifeNumber,
   type NumerologyProfile,
+  type RawNumerologyProfile,
+  type L,
+  type LArr,
 } from "./numerology-data";
+
+// ===== 语言解析 =====
+
+export type Lang = "zh" | "en" | "tw";
+
+/** 解析单条本地化字符串 */
+function rs(v: L, lang: Lang): string {
+  return v[lang];
+}
+
+/** 解析本地化字符串数组 */
+function ra(v: LArr, lang: Lang): string[] {
+  return v[lang];
+}
+
+/**
+ * 将原始（多语言）档案解析为面向组件的纯字符串档案。
+ * NumerologyResult 的字段类型保持 string / string[] 不变。
+ */
+function resolveProfile(
+  raw: RawNumerologyProfile,
+  lang: Lang,
+): NumerologyProfile {
+  return {
+    number: raw.number,
+    name: rs(raw.name, lang),
+    title: rs(raw.title, lang),
+    element: rs(raw.element, lang),
+    planet: rs(raw.planet, lang),
+    color: rs(raw.color, lang),
+    colorHex: raw.colorHex,
+    secondaryColorHex: raw.secondaryColorHex,
+    symbol: raw.symbol,
+    emoji: raw.emoji,
+    isMaster: raw.isMaster,
+    tagline: rs(raw.tagline, lang),
+    traits: ra(raw.traits, lang),
+    positiveTraits: raw.positiveTraits.map((t) => ({
+      title: rs(t.title, lang),
+      description: rs(t.description, lang),
+    })),
+    challenges: raw.challenges.map((c) => ({
+      title: rs(c.title, lang),
+      description: rs(c.description, lang),
+    })),
+    gifts: raw.gifts.map((g) => ({
+      title: rs(g.title, lang),
+      description: rs(g.description, lang),
+      icon: g.icon,
+    })),
+    lifeLessons: raw.lifeLessons.map((l) => ({
+      title: rs(l.title, lang),
+      description: rs(l.description, lang),
+    })),
+    careerPaths: ra(raw.careerPaths, lang),
+    loveInsight: rs(raw.loveInsight, lang),
+    yearAdvice: rs(raw.yearAdvice, lang),
+    luckyNumber: raw.luckyNumber,
+    luckyColor: rs(raw.luckyColor, lang),
+    luckyDay: rs(raw.luckyDay, lang),
+    luckyGem: rs(raw.luckyGem, lang),
+    spiritualMessage: rs(raw.spiritualMessage, lang),
+    celebrities: ra(raw.celebrities, lang),
+  };
+}
+
+// ===== 计算步骤标签文案（三语） =====
+
+const STEP_LABELS: Record<Lang, {
+  birthdate: string;
+  yearSum: string;
+  monthSum: string;
+  daySum: string;
+  totalSum: string;
+  reduce: string;
+  finalNumber: string;
+}> = {
+  zh: {
+    birthdate: "出生日期",
+    yearSum: "年份数字之和",
+    monthSum: "月份数字之和",
+    daySum: "日期数字之和",
+    totalSum: "三部分之和",
+    reduce: "继续缩减",
+    finalNumber: "最终数字",
+  },
+  tw: {
+    birthdate: "出生日期",
+    yearSum: "年份數字之和",
+    monthSum: "月份數字之和",
+    daySum: "日期數字之和",
+    totalSum: "三部分之和",
+    reduce: "繼續縮減",
+    finalNumber: "最終數字",
+  },
+  en: {
+    birthdate: "Birth Date",
+    yearSum: "Sum of Year Digits",
+    monthSum: "Sum of Month Digits",
+    daySum: "Sum of Day Digits",
+    totalSum: "Sum of All Three Parts",
+    reduce: "Reduce Further",
+    finalNumber: "Final Number",
+  },
+};
 
 // ===== 核心计算算法 =====
 
@@ -113,13 +221,15 @@ export function getCalculationSteps(
   year: number,
   month: number,
   day: number,
+  lang: Lang = "zh",
 ): CalculationStep[] {
   const steps: CalculationStep[] = [];
+  const labels = STEP_LABELS[lang];
 
   // 步骤1：展示原始数据
   steps.push({
-    label: "出生日期",
-    value: `${year}年${month}月${day}日`,
+    label: labels.birthdate,
+    value: formatBirthdate(year, month, day, lang),
   });
 
   // 步骤2：各部分数字相加
@@ -132,21 +242,21 @@ export function getCalculationSteps(
   const daySum = dayDigits.reduce((a, b) => a + b, 0);
 
   steps.push({
-    label: "年份数字之和",
+    label: labels.yearSum,
     digits: yearDigits,
     result: yearSum,
     value: `${yearDigits.join(" + ")} = ${yearSum}`,
   });
 
   steps.push({
-    label: "月份数字之和",
+    label: labels.monthSum,
     digits: monthDigits,
     result: monthSum,
     value: `${monthDigits.join(" + ")} = ${monthSum}`,
   });
 
   steps.push({
-    label: "日期数字之和",
+    label: labels.daySum,
     digits: dayDigits,
     result: daySum,
     value: `${dayDigits.join(" + ")} = ${daySum}`,
@@ -155,7 +265,7 @@ export function getCalculationSteps(
   // 步骤3：三者相加
   const total = yearSum + monthSum + daySum;
   steps.push({
-    label: "三部分之和",
+    label: labels.totalSum,
     value: `${yearSum} + ${monthSum} + ${daySum} = ${total}`,
     result: total,
   });
@@ -168,21 +278,21 @@ export function getCalculationSteps(
     const totalSum = totalDigits.reduce((a, b) => a + b, 0);
     if (totalSum !== finalResult && totalSum > 9) {
       steps.push({
-        label: "继续缩减",
+        label: labels.reduce,
         value: `${totalDigits.join(" + ")} = ${totalSum}`,
         result: totalSum,
       });
       if (totalSum !== finalResult) {
         const nextDigits = totalSum.toString().split("").map(Number);
         steps.push({
-          label: "最终数字",
+          label: labels.finalNumber,
           value: `${nextDigits.join(" + ")} = ${finalResult}`,
           result: finalResult,
         });
       }
     } else {
       steps.push({
-        label: "最终数字",
+        label: labels.finalNumber,
         value: `${totalDigits.join(" + ")} = ${finalResult}`,
         result: finalResult,
       });
@@ -214,11 +324,12 @@ export function getNumerologyReading(
   year: number,
   month: number,
   day: number,
+  lang: Lang = "zh",
 ): NumerologyResult {
   const number = calculateLifeNumber(year, month, day);
-  const profile = NUMEROLOGY_DATA[number];
-  const keywords = NUMBER_KEYWORDS[number];
-  const steps = getCalculationSteps(year, month, day);
+  const profile = resolveProfile(NUMEROLOGY_DATA[number], lang);
+  const keywords = NUMBER_KEYWORDS[number][lang];
+  const steps = getCalculationSteps(year, month, day, lang);
 
   return {
     number,
@@ -234,8 +345,22 @@ export function getNumerologyReading(
 
 /**
  * 格式化日期显示
+ * en 使用 en-US 风格（如 Jan 05, 1990），zh/tw 使用中文「年月日」。
  */
-export function formatBirthdate(year: number, month: number, day: number): string {
+export function formatBirthdate(
+  year: number,
+  month: number,
+  day: number,
+  lang: Lang = "zh",
+): string {
+  if (lang === "en") {
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
   return `${year}年${month.toString().padStart(2, "0")}月${day.toString().padStart(2, "0")}日`;
 }
 
@@ -287,20 +412,65 @@ export function isValidDate(year: number, month: number, day: number): boolean {
 }
 
 /**
- * SEO 标题描述生成
+ * SEO 标题描述生成（三语）
  */
-export function generateNumerologyTDK(lifeNumber?: LifeNumber) {
+const TDK_TEXT: Record<Lang, {
+  brand: string;
+  numLabel: (n: number) => string;
+  describe: (n: number, name: string, tagline: string) => string;
+  fallbackTitle: string;
+  fallbackDesc: string;
+  fallbackKeywords: string;
+  keywordBase: string;
+}> = {
+  zh: {
+    brand: "命运密语",
+    numLabel: (n) => `生命灵数 ${n}`,
+    describe: (n, name, tagline) =>
+      `你的生命灵数是 ${n}，被称为"${name}"。${tagline}。探索你的性格特质、潜能天赋与人生课题。`,
+    fallbackTitle: "生命灵数 · 数字命理解析 - 命运密语",
+    fallbackDesc: "输入你的生日，计算专属生命灵数（1-9、11、22、33），深度解析性格特质、潜能天赋与人生课题，生成专属灵数卡片。",
+    fallbackKeywords: "生命灵数,数字命理,Numerology,卓越数,11,22,33,命运解析,性格测试",
+    keywordBase: "生命灵数,数字命理,灵数",
+  },
+  tw: {
+    brand: "命運密語",
+    numLabel: (n) => `生命靈數 ${n}`,
+    describe: (n, name, tagline) =>
+      `你的生命靈數是 ${n}，被稱為「${name}」。${tagline}。探索你的性格特質、潛能天賦與人生課題。`,
+    fallbackTitle: "生命靈數 · 數字命理解析 - 命運密語",
+    fallbackDesc: "輸入你的生日，計算專屬生命靈數（1-9、11、22、33），深度解析性格特質、潛能天賦與人生課題，生成專屬靈數卡片。",
+    fallbackKeywords: "生命靈數,數字命理,Numerology,卓越數,11,22,33,命運解析,性格測試",
+    keywordBase: "生命靈數,數字命理,靈數",
+  },
+  en: {
+    brand: "Mystic Whispers",
+    numLabel: (n) => `Life Path Number ${n}`,
+    describe: (n, name, tagline) =>
+      `Your Life Path Number is ${n}, known as "${name}". ${tagline}. Explore your personality traits, hidden gifts, and life lessons.`,
+    fallbackTitle: "Life Path Number · Numerology Reading - Mystic Whispers",
+    fallbackDesc: "Enter your birthday to calculate your Life Path Number (1-9, 11, 22, 33), with an in-depth reading of your traits, gifts, and life lessons, plus a personal number card.",
+    fallbackKeywords: "Life Path Number,Numerology,Master Number,11,22,33,personality,destiny reading",
+    keywordBase: "Life Path Number,Numerology",
+  },
+};
+
+export function generateNumerologyTDK(lifeNumber?: LifeNumber, lang: Lang = "zh") {
+  const txt = TDK_TEXT[lang];
   if (lifeNumber) {
-    const profile = NUMEROLOGY_DATA[lifeNumber];
+    const raw = NUMEROLOGY_DATA[lifeNumber];
+    const name = raw.name[lang];
+    const tagline = raw.tagline[lang];
+    const keywords = NUMBER_KEYWORDS[lifeNumber][lang];
     return {
-      title: `生命灵数 ${lifeNumber} · ${profile.name} - 命运密语`,
-      description: `你的生命灵数是 ${lifeNumber}，被称为"${profile.name}"。${profile.tagline}。探索你的性格特质、潜能天赋与人生课题。`,
-      keywords: `生命灵数,数字命理,灵数${lifeNumber},${profile.name},${NUMBER_KEYWORDS[lifeNumber].join(",")}`,
+      title: `${txt.numLabel(lifeNumber)} · ${name} - ${txt.brand}`,
+      description: txt.describe(lifeNumber, name, tagline),
+      keywords: `${txt.keywordBase},${name},${keywords.join(",")}`,
     };
   }
   return {
-    title: "生命灵数 · 数字命理解析 - 命运密语",
-    description: "输入你的生日，计算专属生命灵数（1-9、11、22、33），深度解析性格特质、潜能天赋与人生课题，生成专属灵数卡片。",
-    keywords: "生命灵数,数字命理,Numerology,卓越数,11,22,33,命运解析,性格测试",
+    title: txt.fallbackTitle,
+    description: txt.fallbackDesc,
+    keywords: txt.fallbackKeywords,
   };
 }
