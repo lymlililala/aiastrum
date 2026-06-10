@@ -5,6 +5,7 @@ import type { SynastryResult, SynastryAspect } from "../synastry-engine";
 import { getAspectInfo } from "../synastry-engine";
 import { getRelationType } from "../synastry-data";
 import { PLANET_MAP } from "../../astro/astro-data";
+import { getPlanetName, getAspectName } from "../../astro/astro-content-i18n";
 import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
@@ -94,6 +95,7 @@ export default function SynastryReport({ result, onShowPoster, onReset, t, lang 
               expanded={expandedAspect === i}
               onToggle={() => setExpandedAspect(expandedAspect === i ? null : i)}
               t={t}
+              lang={lang}
             />
           ))}
         </div>
@@ -125,7 +127,7 @@ export default function SynastryReport({ result, onShowPoster, onReset, t, lang 
               return (
                 <div key={pA.planet} className="syn-planets-row">
                   <span className="syn-planet-name" style={{ color: pData?.color }}>
-                    {pData?.symbol} {pData?.name}
+                    {pData?.symbol} {getPlanetName(pA.planet, lang)}
                   </span>
                   <span className="syn-planet-sign-a">{pA.sign} {pA.degree}°</span>
                   <span className="syn-planet-sign-b">{pB?.sign} {pB?.degree}°</span>
@@ -206,7 +208,7 @@ function ScoreRing({
 
 // ===== 相位卡片 =====
 function AspectCard({
-  aspect, nameA, nameB, relColor, expanded, onToggle, t,
+  aspect, nameA, nameB, relColor, expanded, onToggle, t, lang,
 }: {
   aspect: SynastryAspect;
   nameA: string;
@@ -215,10 +217,14 @@ function AspectCard({
   expanded: boolean;
   onToggle: () => void;
   t: SynT;
+  lang: SynLang;
 }) {
   const pAData = PLANET_MAP[aspect.planetA];
   const pBData = PLANET_MAP[aspect.planetB];
   const aspInfo = getAspectInfo(aspect.type);
+  const pAName = getPlanetName(aspect.planetA, lang);
+  const pBName = getPlanetName(aspect.planetB, lang);
+  const aspName = getAspectName(aspect.type, lang);
   const isPos = aspect.score >= 0;
 
   return (
@@ -229,17 +235,17 @@ function AspectCard({
       <div className="syn-aspect-card-header" onClick={onToggle}>
         <div className="syn-aspect-planets">
           <span className="syn-asp-planet" style={{ color: pAData?.color }}>
-            {pAData?.symbol} {pAData?.name}
+            {pAData?.symbol} {pAName}
           </span>
           <span
             className="syn-asp-symbol"
             style={{ color: aspInfo?.color ?? "#888" }}
-            title={aspInfo?.name}
+            title={aspName}
           >
             {aspInfo?.symbol ?? "×"}
           </span>
           <span className="syn-asp-planet" style={{ color: pBData?.color }}>
-            {pBData?.symbol} {pBData?.name}
+            {pBData?.symbol} {pBName}
           </span>
         </div>
         <div className="syn-aspect-meta">
@@ -255,7 +261,7 @@ function AspectCard({
       {expanded && (
         <div className="syn-aspect-detail">
           <div className="syn-aspect-who">
-            <span className="syn-asp-who-a">{nameA}{t.whoSuffix}{pAData?.name}</span>
+            <span className="syn-asp-who-a">{nameA}{t.whoSuffix}{pAName}</span>
             <span className="syn-asp-orb">{t.orbPre}{aspect.orb.toFixed(1)}{t.orbPost}</span>
           </div>
           <p className="syn-aspect-desc">{aspect.description}</p>
@@ -402,10 +408,10 @@ function SummaryText({ result, lang }: { result: SynastryResult; lang: SynLang }
         <p>
           {st.posPre}
           {positiveAspects.slice(0, 2).map((a) => {
-            const pA = PLANET_MAP[a.planetA]?.name ?? a.planetA;
-            const pB = PLANET_MAP[a.planetB]?.name ?? a.planetB;
-            const aspInfo = getAspectInfo(a.type);
-            return `${pA}-${pB} ${aspInfo?.name ?? ""}`;
+            const pA = getPlanetName(a.planetA, lang);
+            const pB = getPlanetName(a.planetB, lang);
+            const aspName = getAspectName(a.type, lang);
+            return `${pA}-${pB} ${aspName}`;
           }).join(st.posJoin)}
           {st.posPost}
         </p>
@@ -415,8 +421,8 @@ function SummaryText({ result, lang }: { result: SynastryResult; lang: SynLang }
         <p>
           {st.chalPre}
           {challengingAspects.slice(0, 2).map((a) => {
-            const pA = PLANET_MAP[a.planetA]?.name ?? a.planetA;
-            const pB = PLANET_MAP[a.planetB]?.name ?? a.planetB;
+            const pA = getPlanetName(a.planetA, lang);
+            const pB = getPlanetName(a.planetB, lang);
             return `${pA}-${pB}`;
           }).join(st.chalJoin)}
           {st.chalPost}

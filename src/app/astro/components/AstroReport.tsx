@@ -4,17 +4,25 @@ import React, { useState } from "react";
 import type { AstroChart } from "../astro-engine";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, HOUSE_LIST } from "../astro-data";
 import type { ZodiacSign } from "../astro-data";
-import type { AstroT } from "../astro-i18n";
+import type { AstroT, Lang } from "../astro-i18n";
+import {
+  getZodiacName,
+  getPlanetName,
+  getAspectName,
+  getPlanetMeaning,
+  getHouseDomain,
+} from "../astro-content-i18n";
 
 interface AstroReportProps {
   chart: AstroChart;
   t: AstroT;
+  lang: Lang;
 }
 
 type TabType = "big3" | "planets" | "aspects";
 
 // 星座标签组件
-function ZodiacBadge({ sign }: { sign: ZodiacSign }) {
+function ZodiacBadge({ sign, lang }: { sign: ZodiacSign; lang: Lang }) {
   const zodiac = ZODIAC_LIST.find((z) => z.id === sign)!;
   const elementColors: Record<string, string> = {
     fire: "#FF6B6B",
@@ -27,13 +35,13 @@ function ZodiacBadge({ sign }: { sign: ZodiacSign }) {
       className="astro-zodiac-badge"
       style={{ borderColor: `${elementColors[zodiac.element]}60`, color: elementColors[zodiac.element] }}
     >
-      {zodiac.symbol} {zodiac.name}
+      {zodiac.symbol} {getZodiacName(sign, lang)}
     </span>
   );
 }
 
 // Big3 三巨头卡片
-function Big3Card({ chart, t }: { chart: AstroChart; t: AstroT }) {
+function Big3Card({ chart, t, lang }: { chart: AstroChart; t: AstroT; lang: Lang }) {
   const { big3 } = chart;
   const sunPlanet = PLANET_MAP.Sun;
   const moonPlanet = PLANET_MAP.Moon;
@@ -78,8 +86,8 @@ function Big3Card({ chart, t }: { chart: AstroChart; t: AstroT }) {
       {/* 一句话总结 */}
       <div className="astro-big3-summary">
         {big3.rising
-          ? `${ZODIAC_LIST.find(z => z.id === big3.rising!.sign)?.name}${t.risingSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}${t.sunSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}${t.moonSuffix}`
-          : `${ZODIAC_LIST.find(z => z.id === big3.sun.sign)?.name}${t.sunSuffix} · ${ZODIAC_LIST.find(z => z.id === big3.moon.sign)?.name}${t.moonSuffix}`}
+          ? `${getZodiacName(big3.rising.sign, lang)}${t.risingSuffix} · ${getZodiacName(big3.sun.sign, lang)}${t.sunSuffix} · ${getZodiacName(big3.moon.sign, lang)}${t.moonSuffix}`
+          : `${getZodiacName(big3.sun.sign, lang)}${t.sunSuffix} · ${getZodiacName(big3.moon.sign, lang)}${t.moonSuffix}`}
       </div>
 
       <div className="astro-big3-cards">
@@ -97,7 +105,7 @@ function Big3Card({ chart, t }: { chart: AstroChart; t: AstroT }) {
                 <div className="astro-big3-label">{card.label}</div>
                 <div className="astro-big3-sublabel">{card.sublabel}</div>
               </div>
-              <ZodiacBadge sign={card.sign} />
+              <ZodiacBadge sign={card.sign} lang={lang} />
             </div>
             <p className="astro-big3-text">{card.text}</p>
           </div>
@@ -114,7 +122,7 @@ function Big3Card({ chart, t }: { chart: AstroChart; t: AstroT }) {
 }
 
 // 行星宫位解读
-function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
+function PlanetHouseSection({ chart, t, lang }: { chart: AstroChart; t: AstroT; lang: Lang }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const mainPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
@@ -148,9 +156,9 @@ function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
                   <span style={{ color: planetInfo.color, fontSize: "1.2rem" }}>{planetInfo.symbol}</span>
                 </div>
                 <div className="astro-planet-info">
-                  <span className="astro-planet-name">{planetInfo.name}</span>
+                  <span className="astro-planet-name">{getPlanetName(pid, lang)}</span>
                   <div className="astro-planet-position">
-                    <ZodiacBadge sign={planetPos.sign} />
+                    <ZodiacBadge sign={planetPos.sign} lang={lang} />
                     <span className="astro-planet-degree">
                       {planetPos.degree}°{planetPos.minute.toString().padStart(2, "0")}&apos;
                     </span>
@@ -166,12 +174,12 @@ function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
                 <div className="astro-planet-detail">
                   <div className="astro-planet-meaning">
                     <span className="astro-detail-label">{t.detailMeaning}</span>
-                    <p>{planetInfo.meaning}</p>
+                    <p>{getPlanetMeaning(pid, lang)}</p>
                   </div>
                   {planetInterpret?.signKeyword && (
                     <div className="astro-planet-sign-interp">
                       <span className="astro-detail-label">
-                        {t.detailInPre}{zodiacInfo.name}
+                        {t.detailInPre}{getZodiacName(zodiacInfo.id, lang)}
                       </span>
                       <p>{planetInterpret.signKeyword}</p>
                     </div>
@@ -179,7 +187,7 @@ function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
                   {chart.hasTimeData && planetInterpret?.houseText && houseInfo && (
                     <div className="astro-planet-house-interp">
                       <span className="astro-detail-label">
-                        {t.detailHousePre}{planetPos.house}{t.detailHouseMid}{houseInfo.domain}{t.detailHousePost}
+                        {t.detailHousePre}{planetPos.house}{t.detailHouseMid}{getHouseDomain(houseInfo.num, lang)}{t.detailHousePost}
                       </span>
                       <p>{planetInterpret.houseText}</p>
                     </div>
@@ -203,8 +211,8 @@ function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
             return (
               <div key={pid} className="astro-outer-planet-card">
                 <span style={{ color: planetInfo.color }}>{planetInfo.symbol}</span>
-                <span className="astro-outer-planet-name">{planetInfo.name}</span>
-                <span className="astro-outer-planet-sign">{zodiacInfo.symbol} {zodiacInfo.name}</span>
+                <span className="astro-outer-planet-name">{getPlanetName(pid, lang)}</span>
+                <span className="astro-outer-planet-sign">{zodiacInfo.symbol} {getZodiacName(zodiacInfo.id, lang)}</span>
               </div>
             );
           })}
@@ -218,7 +226,7 @@ function PlanetHouseSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
 }
 
 // 核心相位解读
-function AspectsSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
+function AspectsSection({ chart, t, lang }: { chart: AstroChart; t: AstroT; lang: Lang }) {
   return (
     <div className="astro-aspects-section">
       <div className="astro-section-header">
@@ -238,14 +246,14 @@ function AspectsSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
               <div key={i} className="astro-aspect-card" style={{ borderLeftColor: aspectInfo.color }}>
                 <div className="astro-aspect-header">
                   <div className="astro-aspect-planets">
-                    <span style={{ color: p1Info.color }}>{p1Info.symbol} {p1Info.name}</span>
+                    <span style={{ color: p1Info.color }}>{p1Info.symbol} {getPlanetName(aspect.planet1, lang)}</span>
                     <span
                       className="astro-aspect-symbol"
                       style={{ color: aspectInfo.color }}
                     >
                       {aspectInfo.symbol}
                     </span>
-                    <span style={{ color: p2Info.color }}>{p2Info.symbol} {p2Info.name}</span>
+                    <span style={{ color: p2Info.color }}>{p2Info.symbol} {getPlanetName(aspect.planet2, lang)}</span>
                   </div>
                   <div className="astro-aspect-meta">
                     <span
@@ -256,7 +264,7 @@ function AspectsSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
                         border: `1px solid ${aspectInfo.color}40`,
                       }}
                     >
-                      {aspectInfo.name}
+                      {getAspectName(aspect.type, lang)}
                     </span>
                     <span className="astro-aspect-orb">{aspect.orb.toFixed(1)}°</span>
                     <span
@@ -284,7 +292,7 @@ function AspectsSection({ chart, t }: { chart: AstroChart; t: AstroT }) {
 }
 
 // 主报告组件
-export function AstroReport({ chart, t }: AstroReportProps) {
+export function AstroReport({ chart, t, lang }: AstroReportProps) {
   const [activeTab, setActiveTab] = useState<TabType>("big3");
 
   const tabs: Array<{ id: TabType; label: string; icon: string }> = [
@@ -326,9 +334,9 @@ export function AstroReport({ chart, t }: AstroReportProps) {
 
       {/* Tab 内容 */}
       <div className="astro-report-content">
-        {activeTab === "big3" && <Big3Card chart={chart} t={t} />}
-        {activeTab === "planets" && <PlanetHouseSection chart={chart} t={t} />}
-        {activeTab === "aspects" && <AspectsSection chart={chart} t={t} />}
+        {activeTab === "big3" && <Big3Card chart={chart} t={t} lang={lang} />}
+        {activeTab === "planets" && <PlanetHouseSection chart={chart} t={t} lang={lang} />}
+        {activeTab === "aspects" && <AspectsSection chart={chart} t={t} lang={lang} />}
       </div>
     </div>
   );

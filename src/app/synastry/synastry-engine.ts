@@ -22,8 +22,13 @@ import {
   ASPECT_LIST,
   PLANET_LIST,
   ZODIAC_LIST,
-  PLANET_MAP,
 } from "../astro/astro-data";
+
+import {
+  getZodiacName,
+  getPlanetName,
+  getAspectName,
+} from "../astro/astro-content-i18n";
 
 // ===== 输入类型 =====
 export interface PersonInput {
@@ -173,14 +178,15 @@ function calcPlanetLongitude(planet: string, T: number): number {
   return normalizeDeg(L + rad2deg(EC));
 }
 
-function getZodiacInfo(longitude: number) {
+function getZodiacInfo(longitude: number, lang: Lang) {
   const normalized = normalizeDeg(longitude);
   const signIndex = Math.floor(normalized / 30);
   const degInSign = normalized - signIndex * 30;
   const zodiac = ZODIAC_LIST[signIndex];
+  const signId = zodiac?.id ?? "Aries";
   return {
-    signId: zodiac?.id ?? "Aries",
-    sign: zodiac?.name ?? "白羊座",
+    signId,
+    sign: getZodiacName(signId, lang),
     degree: Math.floor(degInSign),
     minute: Math.floor((degInSign - Math.floor(degInSign)) * 60),
   };
@@ -204,7 +210,7 @@ function getTimezoneHours(timezone: string): number {
 }
 
 // ===== 计算某人的行星位置列表 =====
-function calcPersonPlanets(input: PersonInput): PlanetPos[] {
+function calcPersonPlanets(input: PersonInput, lang: Lang): PlanetPos[] {
   const { birthDate, birthTime, unknownTime, city } = input;
   const [year, month, day] = birthDate.split("-").map(Number) as [number, number, number];
 
@@ -235,7 +241,7 @@ function calcPersonPlanets(input: PersonInput): PlanetPos[] {
 
   return PLANET_LIST.map((p) => {
     const lon = longitudes[p.id] ?? 0;
-    const info = getZodiacInfo(lon);
+    const info = getZodiacInfo(lon, lang);
     return {
       planet: p.id,
       longitude: lon,
@@ -333,9 +339,9 @@ function calcSynastryAspects(
       const score = baseScore * weight * orbFactor;
 
       // 生成默认文案（如果没有专属文案）
-      const pAName = PLANET_MAP[posA.planet]?.name ?? posA.planet;
-      const pBName = PLANET_MAP[posB.planet]?.name ?? posB.planet;
-      const aspName = ASPECT_LIST.find((a) => a.id === asp.type)?.name ?? asp.type;
+      const pAName = getPlanetName(posA.planet, lang);
+      const pBName = getPlanetName(posB.planet, lang);
+      const aspName = getAspectName(asp.type, lang);
 
       // 解析专属文案（多语言 L → 纯字符串）
       const resolvedShortTitle = textData ? rs(textData.shortTitle, lang) : null;
@@ -458,8 +464,8 @@ function calcTotalScore(aspects: SynastryAspect[], relationType: RelationType): 
 
 // ===== 主入口 =====
 export function buildSynastryResult(input: SynastryInput, lang: Lang = "zh"): SynastryResult {
-  const planetsA = calcPersonPlanets(input.personA);
-  const planetsB = calcPersonPlanets(input.personB);
+  const planetsA = calcPersonPlanets(input.personA, lang);
+  const planetsB = calcPersonPlanets(input.personB, lang);
 
   const aspects = calcSynastryAspects(planetsA, planetsB, input.relationType, lang);
   const topAspects = aspects.slice(0, 8);
@@ -482,7 +488,7 @@ export function buildSynastryResult(input: SynastryInput, lang: Lang = "zh"): Sy
 }
 
 // ===== 辅助：格式化行星度数 =====
-export function formatDegree(longitude: number): string {
+export function formatDegree(longitude: number, lang: Lang = "zh"): string {
   const info = (() => {
     const normalized = normalizeDeg(longitude);
     const signIndex = Math.floor(normalized / 30);
@@ -490,7 +496,7 @@ export function formatDegree(longitude: number): string {
     const degree = Math.floor(degInSign);
     const minute = Math.floor((degInSign - degree) * 60);
     const zodiac = ZODIAC_LIST[signIndex];
-    return { sign: zodiac?.name ?? "", degree, minute };
+    return { sign: zodiac ? getZodiacName(zodiac.id, lang) : "", degree, minute };
   })();
   return `${info.sign} ${info.degree}°${info.minute.toString().padStart(2, "0")}'`;
 }

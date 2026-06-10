@@ -12,16 +12,22 @@ import type {
 import {
   ZODIAC_LIST,
   ASPECT_LIST,
-  SUN_SIGN_INTERPRETATIONS,
-  MOON_SIGN_INTERPRETATIONS,
-  RISING_SIGN_INTERPRETATIONS,
-  PLANET_IN_SIGN_KEYWORDS,
-  PLANET_IN_HOUSE_INTERPRETATIONS,
-  ASPECT_INTERPRETATIONS,
   PLANET_LIST,
-  PLANET_MAP,
   HOUSE_LIST,
 } from "./astro-data";
+
+import {
+  type Lang,
+  getZodiacName,
+  getPlanetName,
+  getAspectName,
+  getSunSignText,
+  getMoonSignText,
+  getRisingSignText,
+  getPlanetInSignKeyword,
+  getPlanetInHouseText,
+  getAspectInterpretation,
+} from "./astro-content-i18n";
 
 // ===== 输入类型 =====
 export interface AstroInput {
@@ -336,7 +342,7 @@ function calcAspect(lon1: number, lon2: number): { type: AspectType; orb: number
 }
 
 // ===== 主计算函数 =====
-export function buildAstroChart(input: AstroInput): AstroChart {
+export function buildAstroChart(input: AstroInput, lang: Lang = "zh"): AstroChart {
   const { birthDate, birthTime, unknownTime, city } = input;
 
   // 解析出生日期
@@ -446,9 +452,8 @@ export function buildAstroChart(input: AstroInput): AstroChart {
       if (aspectResult) {
         // 查找解析文本
         const interpretation =
-          ASPECT_INTERPRETATIONS[p1]?.[p2]?.[aspectResult.type]
-          ?? ASPECT_INTERPRETATIONS[p2]?.[p1]?.[aspectResult.type]
-          ?? `${PLANET_MAP[p1]?.name ?? p1}与${PLANET_MAP[p2]?.name ?? p2}形成${ASPECT_LIST.find((a) => a.id === aspectResult.type)?.name ?? aspectResult.type}（容许度 ${aspectResult.orb.toFixed(1)}°）`;
+          getAspectInterpretation(p1, p2, aspectResult.type, lang)
+          ?? `${getPlanetName(p1, lang)}与${getPlanetName(p2, lang)}形成${getAspectName(aspectResult.type, lang)}（容许度 ${aspectResult.orb.toFixed(1)}°）`;
 
         aspects.push({
           planet1: p1,
@@ -471,15 +476,15 @@ export function buildAstroChart(input: AstroInput): AstroChart {
   const { sign: ascSign } = getZodiacSign(ascendant);
 
   const big3: Big3Interpretation = {
-    sun: { sign: sunPos.sign, text: SUN_SIGN_INTERPRETATIONS[sunPos.sign] },
-    moon: { sign: moonPos.sign, text: MOON_SIGN_INTERPRETATIONS[moonPos.sign] },
-    rising: hasTimeData ? { sign: ascSign, text: RISING_SIGN_INTERPRETATIONS[ascSign] } : null,
+    sun: { sign: sunPos.sign, text: getSunSignText(sunPos.sign, lang) },
+    moon: { sign: moonPos.sign, text: getMoonSignText(moonPos.sign, lang) },
+    rising: hasTimeData ? { sign: ascSign, text: getRisingSignText(ascSign, lang) } : null,
   };
 
   // 行星解析列表
   const planetInterpretations = planets.map((p) => {
-    const signKeyword = PLANET_IN_SIGN_KEYWORDS[p.planet]?.[p.sign];
-    const houseText = PLANET_IN_HOUSE_INTERPRETATIONS[p.planet]?.[p.house];
+    const signKeyword = getPlanetInSignKeyword(p.planet, p.sign, lang);
+    const houseText = getPlanetInHouseText(p.planet, p.house, lang);
     return {
       planet: p.planet,
       sign: p.sign,
@@ -512,10 +517,10 @@ export function buildAstroChart(input: AstroInput): AstroChart {
 }
 
 // ===== 辅助：格式化行星位置为字符串 =====
-export function formatPlanetPosition(pos: PlanetPosition): string {
+export function formatPlanetPosition(pos: PlanetPosition, lang: Lang = "zh"): string {
   const zodiacData = ZODIAC_LIST.find((z) => z.id === pos.sign);
   if (!zodiacData) return "";
-  return `${zodiacData.name} ${pos.degree}°${pos.minute.toString().padStart(2, "0")}'`;
+  return `${getZodiacName(pos.sign, lang)} ${pos.degree}°${pos.minute.toString().padStart(2, "0")}'`;
 }
 
 // ===== 辅助：获取元素组 =====
@@ -542,3 +547,4 @@ export function getModalityBreakdown(planets: PlanetPosition[]): Record<string, 
 
 // 导出辅助类型
 export type { ZodiacSign, Planet, AspectType, CityData };
+export type { Lang };

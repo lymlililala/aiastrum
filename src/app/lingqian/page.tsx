@@ -1,13 +1,24 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { Deity, Sign } from "./lingqian-data";
-import { drawSign, getDailyZen, getTodayDrawn, saveTodayDrawn, getCheckinState } from "./lingqian-engine";
+import {
+  drawSign,
+  getDailyZen,
+  getTodayDrawn,
+  saveTodayDrawn,
+  getCheckinState,
+  localizeSign,
+  localizeDeity,
+} from "./lingqian-engine";
 import DeitySelect from "./components/DeitySelect";
 import ShakeSign from "./components/ShakeSign";
 import JiaoGua from "./components/JiaoGua";
 import SignResult from "./components/SignResult";
 import SharePoster from "./components/SharePoster";
 import CheckinRecord from "./components/CheckinRecord";
+import { useLocale } from "~/lib/useLocale";
+import { LangSwitcher } from "../components/LangSwitcher";
+import { T, type Lang } from "./lingqian-i18n";
 
 // 用户求签流程状态机
 type FlowStep =
@@ -18,6 +29,9 @@ type FlowStep =
   | "poster";     // 5. 海报分享（覆盖层）
 
 export default function LingQianPage() {
+  const lang = useLocale() as Lang;
+  const t = T[lang];
+
   const [step, setStep] = useState<FlowStep>("select");
   const [selectedDeity, setSelectedDeity] = useState<Deity | null>(null);
   const [currentSign, setCurrentSign] = useState<Sign | null>(null);
@@ -27,12 +41,12 @@ export default function LingQianPage() {
   const [streakDays, setStreakDays] = useState(0);
 
   useEffect(() => {
-    setDailyZen(getDailyZen());
+    setDailyZen(getDailyZen(lang));
     const state = getCheckinState();
     setStreakDays(state.streakDays);
-  }, []);
+  }, [lang]);
 
-  // 处理神明选择
+  // 处理神明选择（state 保存原始 zh 对象，渲染时再本地化）
   const handleDeitySelect = (deity: Deity) => {
     setSelectedDeity(deity);
 
@@ -80,11 +94,16 @@ export default function LingQianPage() {
     setStep("select");
   };
 
+  // 渲染期本地化（override 为空时回退中文；id 等数据键保持不变）
+  const localizedDeity = selectedDeity ? localizeDeity(selectedDeity, lang) : null;
+  const localizedSign =
+    selectedDeity && currentSign ? localizeSign(currentSign, selectedDeity.id, lang) : null;
+
   return (
     <div className="lq-page">
       {/* SEO H1 — 视觉隐藏，搜索引擎可读 */}
       <h1 style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
-        在线求签 — 观音灵签 · 妈祖签诗 AI 解签
+        {t.seoTitle}
       </h1>
       {/* 顶部导航栏 */}
       <nav className="lq-nav">
@@ -97,7 +116,7 @@ export default function LingQianPage() {
               border: "1px solid rgba(201,168,76,0.2)",
               color: "rgba(201,168,76,0.8)", fontSize: "0.78rem",
               textDecoration: "none",
-            }}>← 返回</a>
+            }}>{t.navBack}</a>
           ) : (
             <button
               className="lq-nav-back"
@@ -111,7 +130,7 @@ export default function LingQianPage() {
             </button>
           )}
         </div>
-        <div className="lq-nav-right">
+        <div className="lq-nav-right" style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* 连续打卡天数 */}
           {streakDays > 0 && (
             <div className="lq-nav-streak">
@@ -122,10 +141,11 @@ export default function LingQianPage() {
           <button
             className="lq-nav-record-btn"
             onClick={() => setShowRecord(true)}
-            title="查看记录"
+            title={t.navRecordTitle}
           >
             📅
           </button>
+          <LangSwitcher />
         </div>
       </nav>
 
@@ -149,52 +169,61 @@ export default function LingQianPage() {
       {/* 主内容区 */}
       <main className="lq-main">
         {step === "select" && (
-          <DeitySelect onSelect={handleDeitySelect} dailyZen={dailyZen} />
+          <DeitySelect onSelect={handleDeitySelect} dailyZen={dailyZen} t={t} lang={lang} />
         )}
 
-        {step === "shake" && selectedDeity && (
+        {step === "shake" && localizedDeity && (
           <ShakeSign
-            deity={selectedDeity}
+            deity={localizedDeity}
             onShakeComplete={handleShakeComplete}
             onBack={() => setStep("select")}
+            t={t}
           />
         )}
 
-        {step === "jiao" && selectedDeity && (
+        {step === "jiao" && localizedDeity && (
           <JiaoGua
-            deity={selectedDeity}
+            deity={localizedDeity}
             onConfirmed={handleJiaoConfirmed}
             maxAttempts={3}
+            t={t}
+            lang={lang}
           />
         )}
 
-        {step === "result" && selectedDeity && currentSign && (
+        {step === "result" && localizedDeity && localizedSign && (
           <SignResult
-            sign={currentSign}
-            deity={selectedDeity}
+            sign={localizedSign}
+            deity={localizedDeity}
             onShare={() => setStep("poster")}
             onCheckin={handleCheckin}
             onDrawAgain={handleDrawAgain}
             alreadyCheckedIn={checkedIn}
+            t={t}
+            lang={lang}
           />
         )}
 
-        {step === "poster" && selectedDeity && currentSign && (
+        {step === "poster" && localizedDeity && localizedSign && (
           <>
             {/* 底层仍然显示结果页 */}
             <SignResult
-              sign={currentSign}
-              deity={selectedDeity}
+              sign={localizedSign}
+              deity={localizedDeity}
               onShare={() => setStep("poster")}
               onCheckin={handleCheckin}
               onDrawAgain={handleDrawAgain}
               alreadyCheckedIn={checkedIn}
+              t={t}
+              lang={lang}
             />
             {/* 海报弹窗覆盖 */}
             <SharePoster
-              sign={currentSign}
-              deity={selectedDeity}
+              sign={localizedSign}
+              deity={localizedDeity}
               onClose={() => setStep("result")}
+              t={t}
+              lang={lang}
             />
           </>
         )}
@@ -202,7 +231,7 @@ export default function LingQianPage() {
 
       {/* 打卡记录弹窗 */}
       {showRecord && (
-        <CheckinRecord onClose={() => setShowRecord(false)} />
+        <CheckinRecord onClose={() => setShowRecord(false)} t={t} lang={lang} />
       )}
     </div>
   );

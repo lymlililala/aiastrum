@@ -1,19 +1,21 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Deity } from "../lingqian-data";
+import type { LingT } from "../lingqian-i18n";
 
 interface ShakeSignProps {
   deity: Deity;
   onShakeComplete: () => void;
   onBack: () => void;
+  t: LingT;
 }
 
 type AnimState = "idle" | "shaking" | "flying" | "done";
 
-export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignProps) {
+export default function ShakeSign({ deity, onShakeComplete, onBack, t }: ShakeSignProps) {
   const [animState, setAnimState] = useState<AnimState>("idle");
   const [shakeCount, setShakeCount] = useState(0);
-  const [hint, setHint] = useState("点击签筒 或 摇晃手机 开始求签");
+  const [hint, setHint] = useState(t.shakeHintIdle);
   const lastShakeTime = useRef(0);
   const motionListenerRef = useRef<((e: DeviceMotionEvent) => void) | null>(null);
 
@@ -67,14 +69,14 @@ export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignP
   const triggerShake = useCallback(() => {
     if (animState !== "idle") return;
     setAnimState("shaking");
-    setHint("签筒晃动中，请虔诚祈愿...");
+    setHint(t.shakeHintShaking);
 
     // 模拟签筒摇晃动画
     setShakeCount((c) => c + 1);
 
     setTimeout(() => {
       setAnimState("flying");
-      setHint("一支签飞出！");
+      setHint(t.shakeHintFlying);
       setTimeout(() => {
         setAnimState("done");
         setTimeout(() => {
@@ -82,13 +84,13 @@ export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignP
         }, 600);
       }, 800);
     }, 1800);
-  }, [animState, onShakeComplete]);
+  }, [animState, onShakeComplete, t]);
 
   return (
     <div className="lq-shake-page">
       {/* 返回按钮 */}
       <button className="lq-back-btn" onClick={onBack}>
-        ← 返回
+        {t.navBack}
       </button>
 
       {/* 神明信息 */}
@@ -109,12 +111,12 @@ export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignP
           className={`lq-tube-wrap ${animState === "shaking" ? "lq-tube-shaking" : ""} ${animState === "idle" ? "lq-tube-pulse" : ""}`}
           onClick={triggerShake}
           disabled={animState !== "idle"}
-          aria-label="摇签"
+          aria-label={t.shakeAria}
         >
           <div className="lq-tube">
             <div className="lq-tube-top" />
             <div className="lq-tube-body">
-              <div className="lq-tube-pattern">竹</div>
+              <div className="lq-tube-pattern">{t.shakeTubeChar}</div>
             </div>
             <div className="lq-tube-bottom" />
           </div>
@@ -140,7 +142,7 @@ export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignP
       <div className="lq-shake-hint">
         <p className="lq-hint-text">{hint}</p>
         {animState === "idle" && (
-          <p className="lq-hint-sub">闭上眼睛，心中默念所求之事</p>
+          <p className="lq-hint-sub">{t.shakeHintSub}</p>
         )}
       </div>
 
@@ -149,11 +151,11 @@ export default function ShakeSign({ deity, onShakeComplete, onBack }: ShakeSignP
         <div className="lq-ritual-tips">
           <div className="lq-tip-item">
             <span className="lq-tip-icon">📱</span>
-            <span>移动端：摇晃手机求签</span>
+            <span>{t.shakeTipMobile}</span>
           </div>
           <div className="lq-tip-item">
             <span className="lq-tip-icon">🖱️</span>
-            <span>PC端：点击签筒求签</span>
+            <span>{t.shakeTipPc}</span>
           </div>
         </div>
       )}

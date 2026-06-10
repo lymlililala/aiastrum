@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SynastryResult } from "../synastry-engine";
 import { getRelationType } from "../synastry-data";
 import { PLANET_MAP } from "../../astro/astro-data";
+import { getPlanetName } from "../../astro/astro-content-i18n";
 import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
@@ -265,10 +266,10 @@ function drawPoster(canvas: HTMLCanvasElement, result: SynastryResult, t: SynT, 
     ctx.font = "bold 13px sans-serif";
     ctx.fillStyle = pA?.color ?? "#fff";
     ctx.textAlign = "left";
-    ctx.fillText(`${pA?.symbol ?? ""} ${pA?.name ?? asp.planetA}`, x + 10, y + 18);
+    ctx.fillText(`${pA?.symbol ?? ""} ${getPlanetName(asp.planetA, lang)}`, x + 10, y + 18);
 
     ctx.fillStyle = "#ffffff60";
-    ctx.fillText(`× ${pB?.name ?? asp.planetB}`, x + 10, y + 34);
+    ctx.fillText(`× ${getPlanetName(asp.planetB, lang)}`, x + 10, y + 34);
 
     // 标题
     ctx.font = "13px sans-serif";

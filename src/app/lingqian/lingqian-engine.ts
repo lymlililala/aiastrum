@@ -5,6 +5,15 @@
  */
 
 import { DEITIES, Sign, Deity, JiaoResult, JIAO_CONFIGS } from "./lingqian-data";
+import {
+  type Lang,
+  resolveSignField,
+  resolveSignPoem,
+  resolveSignInterp,
+  resolveSignList,
+  resolveDeityField,
+  resolveZenQuote,
+} from "./lingqian-content-i18n";
 
 // ===== 类型定义 =====
 export interface DailyRecord {
@@ -246,13 +255,55 @@ export function getSignById(deityId: string, signId: number): Sign | undefined {
   return deity?.signs.find((s) => s.id === signId);
 }
 
+// ===== 内容本地化（结果 TYPE 不变：仍返回 Sign / Deity）=====
+// 选签/掷筊/抽取逻辑全部保持原样；本地化仅在“构建结果”时把内容字段 resolve 成纯字符串，
+// override 为空时一律回退中文。
+
+/** 把一支签的全部内容字段按 lang resolve 成纯字符串（结果仍是 Sign） */
+export function localizeSign(sign: Sign, deityId: string, lang: Lang): Sign {
+  if (lang === "zh") return sign;
+  return {
+    ...sign,
+    name: resolveSignField(lang, deityId, sign.id, "name", sign.name),
+    poem: resolveSignPoem(lang, deityId, sign.id, sign.poem),
+    plain: resolveSignField(lang, deityId, sign.id, "plain", sign.plain),
+    interpretation: {
+      career: resolveSignInterp(lang, deityId, sign.id, "career", sign.interpretation.career),
+      love: resolveSignInterp(lang, deityId, sign.id, "love", sign.interpretation.love),
+      wealth: resolveSignInterp(lang, deityId, sign.id, "wealth", sign.interpretation.wealth),
+      health: resolveSignInterp(lang, deityId, sign.id, "health", sign.interpretation.health),
+    },
+    yi: resolveSignList(lang, deityId, sign.id, "yi", sign.yi),
+    ji: resolveSignList(lang, deityId, sign.id, "ji", sign.ji),
+    zen: resolveSignField(lang, deityId, sign.id, "zen", sign.zen),
+  };
+}
+
+/** 把神明的展示字段按 lang resolve（结果仍是 Deity；signs 不在此处本地化） */
+export function localizeDeity(deity: Deity, lang: Lang): Deity {
+  if (lang === "zh") return deity;
+  return {
+    ...deity,
+    name: resolveDeityField(lang, deity.id, "name", deity.name),
+    fullName: resolveDeityField(lang, deity.id, "fullName", deity.fullName),
+    desc: resolveDeityField(lang, deity.id, "desc", deity.desc),
+  };
+}
+
+/** 本地化后的神明列表（供选择页使用） */
+export function getLocalizedDeities(lang: Lang): Deity[] {
+  if (lang === "zh") return DEITIES;
+  return DEITIES.map((d) => localizeDeity(d, lang));
+}
+
 // ===== 每日禅语 =====
 import { ZEN_QUOTES } from "./lingqian-data";
 
-export function getDailyZen(): string {
+export function getDailyZen(lang: Lang = "zh"): string {
   const today = getTodayStr();
   const idx = Math.abs(hashCode(today)) % ZEN_QUOTES.length;
-  return ZEN_QUOTES[idx] ?? ZEN_QUOTES[0] ?? "心诚则灵";
+  const zh = ZEN_QUOTES[idx] ?? ZEN_QUOTES[0] ?? "心诚则灵";
+  return resolveZenQuote(lang, idx, zh);
 }
 
 // ===== 格式化显示 =====

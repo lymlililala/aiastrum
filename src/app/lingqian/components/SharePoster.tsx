@@ -2,19 +2,25 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Sign, Deity, LUCK_COLORS } from "../lingqian-data";
 import { formatDate, getTodayStr, getLunarDayLabel } from "../lingqian-engine";
+import { resolveLuckLevel, resolveLuckLabel } from "../lingqian-content-i18n";
+import type { LingT, Lang } from "../lingqian-i18n";
 
 interface SharePosterProps {
   sign: Sign;
   deity: Deity;
   onClose: () => void;
+  t: LingT;
+  lang: Lang;
 }
 
-export default function SharePoster({ sign, deity, onClose }: SharePosterProps) {
+export default function SharePoster({ sign, deity, onClose, t, lang }: SharePosterProps) {
   const posterRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadErr, setDownloadErr] = useState(false);
   const luckColor = LUCK_COLORS[sign.luck];
+  const luckLevelText = resolveLuckLevel(lang, sign.luck);
+  const luckLabelText = resolveLuckLabel(lang, sign.luck, luckColor.label);
 
   const handleDownload = async () => {
     if (!posterRef.current) return;
@@ -31,7 +37,7 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
       });
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
-      a.download = `灵签_${deity.name}_${sign.name}_${getTodayStr()}.png`;
+      a.download = `${t.posterFilePrefix}_${deity.name}_${sign.name}_${getTodayStr()}.png`;
       a.href = url;
       a.click();
     } catch (err) {
@@ -44,7 +50,7 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
   };
 
   const handleCopyText = async () => {
-    const text = `【${deity.name}灵签】第${sign.id}签·${sign.name}\n${sign.luck}·${LUCK_COLORS[sign.luck].label}\n\n${sign.poem.join("，")}\n\n${sign.plain}\n\n🪔 ${sign.zen}\n\n— ${formatDate(getTodayStr())} ${getLunarDayLabel()} —`;
+    const text = `【${deity.name}${t.copyDeitySuffix}】${t.copySignPrefix}${sign.id}${t.copySignSuffix}·${sign.name}\n${luckLevelText}·${luckLabelText}\n\n${sign.poem.join("，")}\n\n${sign.plain}\n\n🪔 ${sign.zen}\n\n— ${formatDate(getTodayStr())} ${getLunarDayLabel()} —`;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -71,7 +77,7 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
 
             {/* 头部 */}
             <div className="lq-poster-header">
-              <div className="lq-poster-site">云端灵签</div>
+              <div className="lq-poster-site">{t.posterSite}</div>
               <div className="lq-poster-date-row">
                 <span className="lq-poster-date">{formatDate(getTodayStr())}</span>
                 <span className="lq-poster-lunar">{getLunarDayLabel()}</span>
@@ -91,7 +97,7 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
 
             {/* 签号与吉凶 */}
             <div className="lq-poster-sign-id">
-              <span>第 {sign.id} 签</span>
+              <span>{t.posterSignPrefix} {sign.id} {t.posterSignSuffix}</span>
               <span className="lq-poster-sign-name">·{sign.name}·</span>
             </div>
 
@@ -100,8 +106,8 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
               className="lq-poster-luck-stamp"
               style={{ borderColor: luckColor.border, color: luckColor.text }}
             >
-              <div className="lq-stamp-level">{sign.luck}</div>
-              <div className="lq-stamp-label">{luckColor.label}</div>
+              <div className="lq-stamp-level">{luckLevelText}</div>
+              <div className="lq-stamp-label">{luckLabelText}</div>
             </div>
 
             {/* 签诗 */}
@@ -124,7 +130,7 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
 
             {/* 底部 */}
             <div className="lq-poster-footer">
-              <span className="lq-poster-url">心诚则灵 · 遇见每日指引</span>
+              <span className="lq-poster-url">{t.posterFooter}</span>
             </div>
           </div>
         </div>
@@ -137,17 +143,17 @@ export default function SharePoster({ sign, deity, onClose }: SharePosterProps) 
             disabled={downloading}
             style={{ "--deity-color": deity.color } as React.CSSProperties}
           >
-            {downloading ? "⏳ 生成中..." : downloadErr ? "⚠ 请截图保存" : "⬇️ 保存图片"}
+            {downloading ? t.posterDownloading : downloadErr ? t.posterDownloadErr : t.posterDownloadBtn}
           </button>
           <button
             className="lq-poster-copy-btn"
             onClick={handleCopyText}
           >
-            {copied ? "✓ 已复制" : "📋 复制文字"}
+            {copied ? t.posterCopied : t.posterCopyBtn}
           </button>
         </div>
 
-        <p className="lq-poster-tip">长按海报可直接保存至相册</p>
+        <p className="lq-poster-tip">{t.posterTip}</p>
       </div>
     </div>
   );

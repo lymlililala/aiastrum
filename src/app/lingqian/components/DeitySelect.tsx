@@ -1,20 +1,25 @@
 "use client";
 import React from "react";
-import { DEITIES, Deity } from "../lingqian-data";
+import { Deity } from "../lingqian-data";
+import { getLocalizedDeities } from "../lingqian-engine";
+import type { LingT, Lang } from "../lingqian-i18n";
 
 interface DeitySelectProps {
   onSelect: (deity: Deity) => void;
   dailyZen: string;
+  t: LingT;
+  lang: Lang;
 }
 
-export default function DeitySelect({ onSelect, dailyZen }: DeitySelectProps) {
+export default function DeitySelect({ onSelect, dailyZen, t, lang }: DeitySelectProps) {
+  const deities = getLocalizedDeities(lang);
   return (
     <div className="lq-deity-page">
       {/* 顶部标题区 */}
       <div className="lq-hero">
         <div className="lq-hero-deco">☯</div>
-        <h1 className="lq-title">云端灵签</h1>
-        <p className="lq-subtitle">心诚则灵，遇见每日指引</p>
+        <h1 className="lq-title">{t.heroTitle}</h1>
+        <p className="lq-subtitle">{t.heroSubtitle}</p>
         <div className="lq-zen-banner">
           <span className="lq-zen-icon">🪔</span>
           <span className="lq-zen-text">{dailyZen}</span>
@@ -25,13 +30,13 @@ export default function DeitySelect({ onSelect, dailyZen }: DeitySelectProps) {
       <div className="lq-deity-section">
         <h2 className="lq-section-title">
           <span className="lq-section-deco">—</span>
-          请选择神明
+          {t.selectTitle}
           <span className="lq-section-deco">—</span>
         </h2>
-        <p className="lq-section-hint">虔诚礼拜，方得真诀</p>
+        <p className="lq-section-hint">{t.selectHint}</p>
 
         <div className="lq-deity-grid">
-          {DEITIES.map((deity) => (
+          {deities.map((deity) => (
             <button
               key={deity.id}
               className="lq-deity-card"
@@ -48,7 +53,7 @@ export default function DeitySelect({ onSelect, dailyZen }: DeitySelectProps) {
                 <p className="lq-deity-fullname">{deity.fullName}</p>
                 <p className="lq-deity-desc">{deity.desc}</p>
                 <div className="lq-deity-count">
-                  <span className="lq-count-badge">{deity.signs.length} 签</span>
+                  <span className="lq-count-badge">{deity.signs.length} {t.deityCountUnit}</span>
                 </div>
               </div>
               <div className="lq-deity-arrow">→</div>
@@ -60,9 +65,9 @@ export default function DeitySelect({ onSelect, dailyZen }: DeitySelectProps) {
       {/* 底部说明 */}
       <div className="lq-footer-note">
         <div className="lq-divider-ornament">
-          <span>✦</span><span>每日一签·福运相随</span><span>✦</span>
+          <span>✦</span><span>{t.footerOrnament}</span><span>✦</span>
         </div>
-        <p className="lq-footer-text">每位神明每天只赐一签，诚心求问，方得指引</p>
+        <p className="lq-footer-text">{t.footerText}</p>
       </div>
     </div>
   );

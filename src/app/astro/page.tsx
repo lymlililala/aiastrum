@@ -86,7 +86,7 @@ export default function AstroPage() {
     await new Promise((resolve) => setTimeout(resolve, 2800));
 
     try {
-      const result = buildAstroChart(input);
+      const result = buildAstroChart(input, lang);
       setChart(result);
       saveToHistory(result);
       setHistory(loadHistory());
@@ -324,13 +324,13 @@ export default function AstroPage() {
         <div className="astro-result-content">
           {/* 左侧：星盘图 */}
           <div className="astro-result-left">
-            <AstroChartSVG chart={chart} t={t} />
-            <ElementBreakdown chart={chart} t={t} />
+            <AstroChartSVG chart={chart} t={t} lang={lang} />
+            <ElementBreakdown chart={chart} t={t} lang={lang} />
           </div>
 
           {/* 右侧：解析报告 */}
           <div className="astro-result-right">
-            <AstroReport chart={chart} t={t} />
+            <AstroReport chart={chart} t={t} lang={lang} />
           </div>
         </div>
 

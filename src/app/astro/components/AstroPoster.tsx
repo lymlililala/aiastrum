@@ -4,6 +4,11 @@ import React, { useRef, useState } from "react";
 import type { AstroChart } from "../astro-engine";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP } from "../astro-data";
 import type { AstroT, Lang } from "../astro-i18n";
+import {
+  getZodiacName,
+  getPlanetName,
+  getAspectName,
+} from "../astro-content-i18n";
 
 interface AstroPosterProps {
   chart: AstroChart;
@@ -12,7 +17,7 @@ interface AstroPosterProps {
 }
 
 // 在 Canvas 上绘制星盘海报
-async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: AstroT, dateLocale: string) {
+async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: AstroT, dateLocale: string, lang: Lang) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -121,7 +126,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
     ctx.fillStyle = "#e8d5a3";
     ctx.font = "bold 16px 'serif'";
-    ctx.fillText(`${zodiacInfo.symbol} ${zodiacInfo.name}`, bx + big3BlockW / 2, big3Y + 72);
+    ctx.fillText(`${zodiacInfo.symbol} ${getZodiacName(item.sign, lang)}`, bx + big3BlockW / 2, big3Y + 72);
   }
 
   // ===== 星盘图圆形绘制 =====
@@ -268,11 +273,11 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
     ctx.fillStyle = "#e8d5a3";
     ctx.font = "12px 'sans-serif'";
-    ctx.fillText(planetInfo.name, px + 18, py);
+    ctx.fillText(getPlanetName(p.planet, lang), px + 18, py);
 
     ctx.fillStyle = "rgba(232,213,163,0.6)";
     ctx.font = "11px 'sans-serif'";
-    ctx.fillText(`${zodiacInfo.symbol}${zodiacInfo.name} ${p.degree}°`, px, py + 16);
+    ctx.fillText(`${zodiacInfo.symbol}${getZodiacName(p.sign, lang)} ${p.degree}°`, px, py + 16);
   }
 
   // ===== 顶部核心相位 =====
@@ -305,7 +310,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
     ctx.fillStyle = "#e8d5a3";
     ctx.font = "12px 'sans-serif'";
-    ctx.fillText(p1Info.name, 76, ay);
+    ctx.fillText(getPlanetName(aspect.planet1, lang), 76, ay);
 
     ctx.fillStyle = aspectInfo.color;
     ctx.font = "bold 13px 'sans-serif'";
@@ -313,7 +318,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
     ctx.fillStyle = "#e8d5a3";
     ctx.font = "12px 'sans-serif'";
-    ctx.fillText(aspectInfo.name, 166, ay);
+    ctx.fillText(getAspectName(aspect.type, lang), 166, ay);
 
     ctx.fillStyle = p2Info.color;
     ctx.font = "bold 13px 'serif'";
@@ -321,7 +326,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
     ctx.fillStyle = "#e8d5a3";
     ctx.font = "12px 'sans-serif'";
-    ctx.fillText(p2Info.name, 256, ay);
+    ctx.fillText(getPlanetName(aspect.planet2, lang), 256, ay);
 
     ctx.fillStyle = "rgba(232,213,163,0.5)";
     ctx.font = "11px 'sans-serif'";
@@ -377,7 +382,7 @@ export function AstroPoster({ chart, t, lang }: AstroPosterProps) {
     if (!canvasRef.current) return;
     setIsGenerating(true);
     try {
-      await drawAstroPoster(canvasRef.current, chart, t, dateLocale);
+      await drawAstroPoster(canvasRef.current, chart, t, dateLocale, lang);
       setIsGenerated(true);
     } finally {
       setIsGenerating(false);

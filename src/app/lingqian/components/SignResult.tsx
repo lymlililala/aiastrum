@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Sign, Deity, LUCK_COLORS } from "../lingqian-data";
 import { DailyRecord, saveRecord, getTodayStr, formatDate, getLunarDayLabel } from "../lingqian-engine";
+import { resolveLuckLevel, resolveLuckLabel } from "../lingqian-content-i18n";
+import type { LingT, Lang } from "../lingqian-i18n";
 
 interface SignResultProps {
   sign: Sign;
@@ -10,17 +12,11 @@ interface SignResultProps {
   onCheckin: () => void;
   onDrawAgain: () => void;
   alreadyCheckedIn: boolean;
+  t: LingT;
+  lang: Lang;
 }
 
 type Tab = "poem" | "career" | "love" | "wealth" | "health";
-
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: "poem",   label: "签诗",   icon: "📜" },
-  { id: "career", label: "事业",   icon: "💼" },
-  { id: "love",   label: "姻缘",   icon: "💕" },
-  { id: "wealth", label: "财运",   icon: "💰" },
-  { id: "health", label: "健康",   icon: "🌿" },
-];
 
 export default function SignResult({
   sign,
@@ -29,7 +25,16 @@ export default function SignResult({
   onCheckin,
   onDrawAgain,
   alreadyCheckedIn,
+  t,
+  lang,
 }: SignResultProps) {
+  const TABS: { id: Tab; label: string; icon: string }[] = [
+    { id: "poem",   label: t.tabPoem,   icon: "📜" },
+    { id: "career", label: t.tabCareer, icon: "💼" },
+    { id: "love",   label: t.tabLove,   icon: "💕" },
+    { id: "wealth", label: t.tabWealth, icon: "💰" },
+    { id: "health", label: t.tabHealth, icon: "🌿" },
+  ];
   const [activeTab, setActiveTab] = useState<Tab>("poem");
   const [checkedIn, setCheckedIn] = useState(alreadyCheckedIn);
 
@@ -73,7 +78,7 @@ export default function SignResult({
 
         {/* 签号与吉凶 */}
         <div className="lq-result-sign-header">
-          <div className="lq-result-sign-num">第 {sign.id} 签</div>
+          <div className="lq-result-sign-num">{t.signNumPrefix} {sign.id} {t.signNumSuffix}</div>
           <div className="lq-result-sign-name">{sign.name}</div>
           <div
             className="lq-result-luck-badge"
@@ -83,8 +88,8 @@ export default function SignResult({
               borderColor: luckColor.border,
             }}
           >
-            <span className="lq-luck-level">{sign.luck}</span>
-            <span className="lq-luck-label">{luckColor.label}</span>
+            <span className="lq-luck-level">{resolveLuckLevel(lang, sign.luck)}</span>
+            <span className="lq-luck-label">{resolveLuckLabel(lang, sign.luck, luckColor.label)}</span>
           </div>
         </div>
 
@@ -123,13 +128,13 @@ export default function SignResult({
               </div>
               {/* 白话解析 */}
               <div className="lq-plain-text">
-                <h4 className="lq-plain-title">✦ 白话解析</h4>
+                <h4 className="lq-plain-title">{t.plainTitle}</h4>
                 <p className="lq-plain-content">{sign.plain}</p>
               </div>
               {/* 宜忌 */}
               <div className="lq-yi-ji-row">
                 <div className="lq-yi-section">
-                  <span className="lq-yi-label">宜</span>
+                  <span className="lq-yi-label">{t.yiLabel}</span>
                   <div className="lq-yi-tags">
                     {sign.yi.map((item) => (
                       <span key={item} className="lq-yi-tag">{item}</span>
@@ -137,7 +142,7 @@ export default function SignResult({
                   </div>
                 </div>
                 <div className="lq-ji-section">
-                  <span className="lq-ji-label">忌</span>
+                  <span className="lq-ji-label">{t.jiLabel}</span>
                   <div className="lq-ji-tags">
                     {sign.ji.map((item) => (
                       <span key={item} className="lq-ji-tag">{item}</span>
@@ -156,7 +161,7 @@ export default function SignResult({
           {activeTab === "career" && (
             <div className="lq-tab-interp">
               <div className="lq-interp-icon">💼</div>
-              <h3 className="lq-interp-title">事业 · 学业</h3>
+              <h3 className="lq-interp-title">{t.interpCareerTitle}</h3>
               <p className="lq-interp-content">{sign.interpretation.career}</p>
             </div>
           )}
@@ -164,7 +169,7 @@ export default function SignResult({
           {activeTab === "love" && (
             <div className="lq-tab-interp">
               <div className="lq-interp-icon">💕</div>
-              <h3 className="lq-interp-title">姻缘 · 感情</h3>
+              <h3 className="lq-interp-title">{t.interpLoveTitle}</h3>
               <p className="lq-interp-content">{sign.interpretation.love}</p>
             </div>
           )}
@@ -172,7 +177,7 @@ export default function SignResult({
           {activeTab === "wealth" && (
             <div className="lq-tab-interp">
               <div className="lq-interp-icon">💰</div>
-              <h3 className="lq-interp-title">财运 · 投资</h3>
+              <h3 className="lq-interp-title">{t.interpWealthTitle}</h3>
               <p className="lq-interp-content">{sign.interpretation.wealth}</p>
             </div>
           )}
@@ -180,7 +185,7 @@ export default function SignResult({
           {activeTab === "health" && (
             <div className="lq-tab-interp">
               <div className="lq-interp-icon">🌿</div>
-              <h3 className="lq-interp-title">健康 · 养生</h3>
+              <h3 className="lq-interp-title">{t.interpHealthTitle}</h3>
               <p className="lq-interp-content">{sign.interpretation.health}</p>
             </div>
           )}
@@ -195,21 +200,21 @@ export default function SignResult({
           disabled={checkedIn}
           style={{ "--deity-color": deity.color } as React.CSSProperties}
         >
-          {checkedIn ? "✓ 已打卡" : "📅 每日打卡"}
+          {checkedIn ? t.checkinDone : t.checkinBtn}
         </button>
         <button
           className="lq-share-btn"
           onClick={onShare}
           style={{ "--deity-color": deity.color } as React.CSSProperties}
         >
-          🎨 生成日签海报
+          {t.shareBtn}
         </button>
       </div>
 
       {/* 再抽一签（仅当已打卡） */}
       <div className="lq-result-bottom">
         <button className="lq-again-btn" onClick={onDrawAgain}>
-          换个神明问签 →
+          {t.drawAgainBtn}
         </button>
       </div>
     </div>

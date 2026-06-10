@@ -6,6 +6,7 @@ import { getAspectInfo } from "../synastry-engine";
 import { getRelationType } from "../synastry-data";
 import type { Planet, AspectType } from "../synastry-data";
 import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP } from "../../astro/astro-data";
+import { getAspectName } from "../../astro/astro-content-i18n";
 import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
@@ -62,7 +63,7 @@ export default function SynastryChart({ result, t, lang }: Props) {
     return ZODIAC_LIST.map((z, i) => {
       const angleDeg = i * 30 + 15;
       const pt = polarToXY((R_ZODIAC_IN + R_ZODIAC) / 2, angleDeg);
-      return { ...pt, symbol: z.symbol, name: z.name };
+      return { ...pt, symbol: z.symbol };
     });
   }, []);
 
@@ -232,7 +233,7 @@ export default function SynastryChart({ result, t, lang }: Props) {
                   strokeDasharray={type === "square" || type === "opposition" ? "4 3" : undefined}
                 />
               </svg>
-              <span>{info.name}</span>
+              <span>{getAspectName(type, lang)}</span>
             </div>
           );
         })}
