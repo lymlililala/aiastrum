@@ -10,6 +10,18 @@
 // - 吉凶等级 LuckLevel（"上上"…）、掷筊 JiaoResult（"圣杯"…）保持中文键，仅本地化显示文本。
 
 import type { LuckLevel } from "./lingqian-data";
+import { LING_EN_1, LING_TW_1 } from "./lingqian-fill-1";
+import { LING_EN_2, LING_TW_2 } from "./lingqian-fill-2";
+import { LING_EN_3, LING_TW_3 } from "./lingqian-fill-3";
+import { LING_EN_4, LING_TW_4 } from "./lingqian-fill-4";
+import { LING_EN_5, LING_TW_5 } from "./lingqian-fill-5";
+import {
+  DEITY_EN, DEITY_TW,
+  LUCK_LEVEL_EN, LUCK_LEVEL_TW,
+  LUCK_LABEL_EN, LUCK_LABEL_TW,
+  JIAO_DESC_EN, JIAO_DESC_TW,
+  ZEN_QUOTES_EN, ZEN_QUOTES_TW,
+} from "./lingqian-fill-6";
 
 export type Lang = "zh" | "en" | "tw";
 export type ContentLang = "en" | "tw";
@@ -33,8 +45,8 @@ export interface SignContentOverride {
 // ─── 签文覆盖表：key = `${deityId}:${signId}` ───
 // 例：{ en: { "guanyin:1": { name: "...", poem: [...], ... } }, tw: {...} }
 export const SIGN_CONTENT_I18N: Record<ContentLang, Record<string, SignContentOverride>> = {
-  en: {},
-  tw: {},
+  en: { ...LING_EN_1, ...LING_EN_2, ...LING_EN_3, ...LING_EN_4, ...LING_EN_5 },
+  tw: { ...LING_TW_1, ...LING_TW_2, ...LING_TW_3, ...LING_TW_4, ...LING_TW_5 },
 };
 
 // ─── 神明描述覆盖表：key = deity.id ───
@@ -45,31 +57,31 @@ export interface DeityContentOverride {
   desc?: string;
 }
 export const DEITY_CONTENT_I18N: Record<ContentLang, Record<string, DeityContentOverride>> = {
-  en: {},
-  tw: {},
+  en: DEITY_EN,
+  tw: DEITY_TW,
 };
 
 // ─── 吉凶等级显示文本覆盖表：key = LuckLevel（中文）───
 // LUCK_COLORS 的 label（"大吉"/"吉祥"…）的本地化显示。等级本身（"上上"…）也可本地化显示。
 export const LUCK_LEVEL_I18N: Record<ContentLang, Partial<Record<LuckLevel, string>>> = {
-  en: {},
-  tw: {},
+  en: LUCK_LEVEL_EN,
+  tw: LUCK_LEVEL_TW,
 };
 export const LUCK_LABEL_I18N: Record<ContentLang, Partial<Record<LuckLevel, string>>> = {
-  en: {},
-  tw: {},
+  en: LUCK_LABEL_EN,
+  tw: LUCK_LABEL_TW,
 };
 
 // ─── 掷筊结果描述覆盖表：key = JiaoResult（中文）───
 export const JIAO_DESC_I18N: Record<ContentLang, Record<string, string>> = {
-  en: {},
-  tw: {},
+  en: JIAO_DESC_EN,
+  tw: JIAO_DESC_TW,
 };
 
 // ─── 每日禅语覆盖表（按相同索引；缺失回退中文）───
 export const ZEN_QUOTES_I18N: Record<ContentLang, readonly string[]> = {
-  en: [],
-  tw: [],
+  en: ZEN_QUOTES_EN,
+  tw: ZEN_QUOTES_TW,
 };
 
 // ===== 解析助手（resolver）=====
