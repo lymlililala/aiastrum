@@ -43,7 +43,7 @@ export default function HoroscopePage() {
     setSelectedZodiac(id);
     saveSelectedZodiac(id);
 
-    const horoscopeResult = generateHoroscope(id, period);
+    const horoscopeResult = generateHoroscope(id, period, new Date(), lang);
     setResult(horoscopeResult);
     setStep("detail");
   };
@@ -52,7 +52,7 @@ export default function HoroscopePage() {
   const handlePeriodChange = (newPeriod: TimePeriod) => {
     setPeriod(newPeriod);
     if (selectedZodiac) {
-      const horoscopeResult = generateHoroscope(selectedZodiac, newPeriod);
+      const horoscopeResult = generateHoroscope(selectedZodiac, newPeriod, new Date(), lang);
       setResult(horoscopeResult);
     }
   };

@@ -13,6 +13,16 @@ import {
   type LuckyInfo,
   type FortuneContent,
 } from "./horoscope-data";
+import {
+  type Lang,
+  luckyColorsFor,
+  luckyDirectionsFor,
+  luckyItemsFor,
+  advicePoolFor,
+  buildSummary,
+  localizedFortuneSet,
+  localizedTitle,
+} from "./horoscope-content-i18n";
 
 // ===== 日期种子哈希 =====
 
@@ -106,6 +116,21 @@ function pickN<T>(rng: () => number, arr: readonly T[], n: number): T[] {
   return shuffled.slice(0, n);
 }
 
+/** 确定性选取一个索引（与 pickOne 同样消耗 1 次 rng，保证多语言结果一致） */
+function pickOneIndex(rng: () => number, len: number): number {
+  return Math.floor(rng() * len);
+}
+
+/** 确定性选取 n 个不重复索引（与 pickN 同样的 rng 消耗序列） */
+function pickNIndices(rng: () => number, len: number, n: number): number[] {
+  const idx = Array.from({ length: len }, (_, i) => i);
+  for (let i = 0; i < Math.min(n, len); i++) {
+    const j = i + Math.floor(rng() * (len - i));
+    [idx[i], idx[j]] = [idx[j]!, idx[i]!];
+  }
+  return idx.slice(0, n);
+}
+
 // ===== 运势指数生成 =====
 
 /** 生成各维度运势分数（1-5） */
@@ -160,7 +185,7 @@ const LUCKY_ITEMS = [
   "精油", "音乐盒", "沙漏", "钥匙扣",
 ];
 
-function generateLuckyInfo(rng: () => number, zodiacId: ZodiacId): LuckyInfo {
+function generateLuckyInfo(rng: () => number, zodiacId: ZodiacId, lang: Lang): LuckyInfo {
   const zodiacList = ZODIAC_LIST;
   const zodiacIndex = zodiacList.findIndex((z) => z.id === zodiacId);
 
@@ -179,23 +204,32 @@ function generateLuckyInfo(rng: () => number, zodiacId: ZodiacId): LuckyInfo {
     (z) => z.id !== zodiacId && z.element === clashMap[ZODIAC_MAP[zodiacId].element]
   );
 
-  const colors = pickN(rng, LUCKY_COLORS, 3);
+  // 颜色：按索引确定性选取（保证多语言取到同一组），再映射到当前语言数组
+  const colorArr = luckyColorsFor(lang, LUCKY_COLORS);
+  const colorIdx = pickNIndices(rng, LUCKY_COLORS.length, 3);
+  const colors = colorIdx.map((i) => colorArr[i]!);
   const numbers = [
     randomInt(rng, 1, 9),
     randomInt(rng, 1, 9),
     randomInt(rng, 1, 9),
   ].sort((a, b) => a - b);
 
+  const ally = allyCandidates.length > 0 ? pickOne(rng, allyCandidates).id : zodiacList[(zodiacIndex + 4) % 12]!.id;
+  const noble = nobleCandidates.length > 0 ? pickOne(rng, nobleCandidates).id : zodiacList[(zodiacIndex + 6) % 12]!.id;
+  const rival = rivalCandidates.length > 0 ? pickOne(rng, rivalCandidates).id : zodiacList[(zodiacIndex + 3) % 12]!.id;
+  const direction = luckyDirectionsFor(lang, LUCKY_DIRECTIONS)[pickOneIndex(rng, LUCKY_DIRECTIONS.length)]!;
+  const item = luckyItemsFor(lang, LUCKY_ITEMS)[pickOneIndex(rng, LUCKY_ITEMS.length)]!;
+
   return {
     color: colors[0]!,
     colors,
     number: numbers[0]!,
     numbers,
-    ally: allyCandidates.length > 0 ? pickOne(rng, allyCandidates).id : zodiacList[(zodiacIndex + 4) % 12]!.id,
-    noble: nobleCandidates.length > 0 ? pickOne(rng, nobleCandidates).id : zodiacList[(zodiacIndex + 6) % 12]!.id,
-    rival: rivalCandidates.length > 0 ? pickOne(rng, rivalCandidates).id : zodiacList[(zodiacIndex + 3) % 12]!.id,
-    direction: pickOne(rng, LUCKY_DIRECTIONS),
-    item: pickOne(rng, LUCKY_ITEMS),
+    ally,
+    noble,
+    rival,
+    direction,
+    item,
   };
 }
 
@@ -206,6 +240,7 @@ function extractFortuneTexts(
   rng: () => number,
   zodiacId: ZodiacId,
   period: TimePeriod,
+  lang: Lang,
 ): {
   title: string;
   overall: string;
@@ -217,7 +252,7 @@ function extractFortuneTexts(
   const templates = FORTUNE_TEMPLATES[zodiacId][period];
   // 每个时间段有3套文案，确定性选取一套
   const setIndex = Math.floor(rng() * templates.length);
-  const set = templates[setIndex]!;
+  const set = localizedFortuneSet(lang, zodiacId, period, setIndex, templates[setIndex]!);
 
   return {
     title: "", // 标题由 FORTUNE_TITLES 单独生成
@@ -298,6 +333,7 @@ export function generateHoroscope(
   zodiacId: ZodiacId,
   period: TimePeriod = "today",
   referenceDate: Date = new Date(),
+  lang: Lang = "zh",
 ): HoroscopeResult {
   // 1. 构建种子 & 初始化 RNG
   const seedStr = buildSeedString(zodiacId, period, referenceDate);
@@ -306,18 +342,20 @@ export function generateHoroscope(
 
   // 2. 生成各维度数据
   const scores = generateFortuneScores(rng, zodiacId, period);
-  const lucky = generateLuckyInfo(rng, zodiacId);
-  const texts = extractFortuneTexts(rng, zodiacId, period);
+  const lucky = generateLuckyInfo(rng, zodiacId, lang);
+  const texts = extractFortuneTexts(rng, zodiacId, period, lang);
 
-  // 3. 选取标题
+  // 3. 选取标题（按索引取，多语言一致；缺译文回退中文）
   const titleCandidates = FORTUNE_TITLES[zodiacId][period];
-  const title = pickOne(rng, titleCandidates);
+  const titleIdx = pickOneIndex(rng, titleCandidates.length);
+  const title = localizedTitle(lang, zodiacId, period, titleIdx, titleCandidates[titleIdx]!);
 
   // 4. 生成摘要（基于总分的一句话概述）
-  const summary = generateSummary(scores.overall, period);
+  const summary = buildSummary(lang, scores.overall, period, generateSummary);
 
   // 5. 选取建议
-  const advice = pickOne(rng, ADVICE_POOL[period]);
+  const adviceIdx = pickOneIndex(rng, ADVICE_POOL[period].length);
+  const advice = advicePoolFor(lang, period, ADVICE_POOL[period])[adviceIdx]!;
 
   // 6. 当前日期
   const y = referenceDate.getFullYear();
@@ -416,10 +454,11 @@ export function inferZodiacFromDate(month: number, day: number): ZodiacId {
 export function generateAllHoroscopes(
   period: TimePeriod = "today",
   referenceDate: Date = new Date(),
+  lang: Lang = "zh",
 ): Record<ZodiacId, HoroscopeResult> {
   const result: Partial<Record<ZodiacId, HoroscopeResult>> = {};
   for (const zodiac of ZODIAC_LIST) {
-    result[zodiac.id] = generateHoroscope(zodiac.id, period, referenceDate);
+    result[zodiac.id] = generateHoroscope(zodiac.id, period, referenceDate, lang);
   }
   return result as Record<ZodiacId, HoroscopeResult>;
 }
