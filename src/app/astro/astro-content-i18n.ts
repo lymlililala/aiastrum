@@ -30,75 +30,78 @@ export type ContentLang = "en" | "tw";
 // 形状：Record<ContentLang, Partial<Record<key, string>>>。空 = 全部回退中文。
 
 /** 星座中文名覆盖（key = ZodiacSign id，如 "Aries"） */
+import {
+  Z_NAME_EN, Z_NAME_TW, P_NAME_EN, P_NAME_TW, P_MEAN_EN, P_MEAN_TW,
+  A_NAME_EN, A_NAME_TW, HOUSE_EN, HOUSE_TW,
+  SUN_EN, SUN_TW, MOON_EN, MOON_TW, RISE_EN, RISE_TW,
+} from "./astro-fill-1";
+import { PIS_EN, PIS_TW, PIH_EN, PIH_TW, ASP_EN, ASP_TW } from "./astro-fill-2";
+
 export const ZODIAC_NAME_I18N: Record<ContentLang, Partial<Record<ZodiacSign, string>>> = {
-  en: {},
-  tw: {},
+  en: Z_NAME_EN,
+  tw: Z_NAME_TW,
 };
 
 /** 行星中文名覆盖（key = Planet id，如 "Sun"） */
 export const PLANET_NAME_I18N: Record<ContentLang, Partial<Record<Planet, string>>> = {
-  en: {},
-  tw: {},
+  en: P_NAME_EN,
+  tw: P_NAME_TW,
 };
 
 /** 相位中文名覆盖（key = AspectType id，如 "conjunction"） */
 export const ASPECT_NAME_I18N: Record<ContentLang, Partial<Record<AspectType, string>>> = {
-  en: {},
-  tw: {},
+  en: A_NAME_EN,
+  tw: A_NAME_TW,
 };
 
 /** 行星「代表意义」覆盖（key = Planet id） */
 export const PLANET_MEANING_I18N: Record<ContentLang, Partial<Record<Planet, string>>> = {
-  en: {},
-  tw: {},
+  en: P_MEAN_EN,
+  tw: P_MEAN_TW,
 };
 
 /** 宫位「管辖领域」覆盖（key = 宫位编号 1-12） */
 export const HOUSE_DOMAIN_I18N: Record<ContentLang, Partial<Record<number, string>>> = {
-  en: {},
-  tw: {},
+  en: HOUSE_EN,
+  tw: HOUSE_TW,
 };
 
 // ─── Big3 长文案覆盖表 ────────────────────────────────────────
-// 形状：Record<ContentLang, Partial<Record<ZodiacSign, string>>>。空 = 回退中文。
 
 /** 太阳星座解析覆盖（key = ZodiacSign） */
 export const SUN_SIGN_I18N: Record<ContentLang, Partial<Record<ZodiacSign, string>>> = {
-  en: {},
-  tw: {},
+  en: SUN_EN,
+  tw: SUN_TW,
 };
 
 /** 月亮星座解析覆盖（key = ZodiacSign） */
 export const MOON_SIGN_I18N: Record<ContentLang, Partial<Record<ZodiacSign, string>>> = {
-  en: {},
-  tw: {},
+  en: MOON_EN,
+  tw: MOON_TW,
 };
 
 /** 上升星座解析覆盖（key = ZodiacSign） */
 export const RISING_SIGN_I18N: Record<ContentLang, Partial<Record<ZodiacSign, string>>> = {
-  en: {},
-  tw: {},
+  en: RISE_EN,
+  tw: RISE_TW,
 };
 
 // ─── 行星落星座关键短句覆盖表 ─────────────────────────────────
-// 形状：Record<ContentLang, Partial<Record<Planet, Partial<Record<ZodiacSign, string>>>>>。
 export const PLANET_IN_SIGN_I18N: Record<ContentLang, Partial<Record<Planet, Partial<Record<ZodiacSign, string>>>>> = {
-  en: {},
-  tw: {},
+  en: PIS_EN,
+  tw: PIS_TW,
 };
 
 // ─── 行星落宫位解析覆盖表 ─────────────────────────────────────
-// 形状：Record<ContentLang, Partial<Record<Planet, Partial<Record<number, string>>>>>。
 export const PLANET_IN_HOUSE_I18N: Record<ContentLang, Partial<Record<Planet, Partial<Record<number, string>>>>> = {
-  en: {},
-  tw: {},
+  en: PIH_EN,
+  tw: PIH_TW,
 };
 
 // ─── 核心相位解析覆盖表 ───────────────────────────────────────
-// 形状：Record<ContentLang, Partial<Record<Planet, Partial<Record<Planet, Partial<Record<AspectType, string>>>>>>>。
 export const ASPECT_INTERPRETATION_I18N: Record<ContentLang, Partial<Record<Planet, Partial<Record<Planet, Partial<Record<AspectType, string>>>>>>> = {
-  en: {},
-  tw: {},
+  en: ASP_EN,
+  tw: ASP_TW,
 };
 
 // ===== 解析助手（override 优先，否则回退 astro-data 中文）=====
