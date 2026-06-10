@@ -6,6 +6,12 @@
 //   结构镜像 horoscope-data.ts，按相同索引取用；可分批填充，未填部分自动回退中文。
 
 import type { ZodiacId, TimePeriod } from "./horoscope-data";
+import { EN_TEMPLATES_1, TW_TEMPLATES_1, EN_TITLES_1, TW_TITLES_1 } from "./horoscope-fill-1";
+import { EN_TEMPLATES_2, TW_TEMPLATES_2, EN_TITLES_2, TW_TITLES_2 } from "./horoscope-fill-2";
+import { EN_TEMPLATES_3, TW_TEMPLATES_3, EN_TITLES_3, TW_TITLES_3 } from "./horoscope-fill-3";
+import { EN_TEMPLATES_4, TW_TEMPLATES_4, EN_TITLES_4, TW_TITLES_4 } from "./horoscope-fill-4";
+import { EN_TEMPLATES_5, TW_TEMPLATES_5, EN_TITLES_5, TW_TITLES_5 } from "./horoscope-fill-5";
+import { EN_TEMPLATES_6, TW_TEMPLATES_6, EN_TITLES_6, TW_TITLES_6 } from "./horoscope-fill-6";
 
 export type Lang = "zh" | "en" | "tw";
 export type ContentLang = "en" | "tw";
@@ -169,14 +175,14 @@ export const SUMMARY_I18N: Record<ContentLang, { periodLabel: Record<TimePeriod,
 // 每个 set = [overall, love, career, wealth, health]，与中文同序、同套数。
 // 分批填充；未填的 sign/period/set 自动回退中文。
 export const FORTUNE_TEMPLATES_I18N: Partial<Record<ContentLang, Partial<Record<ZodiacId, Partial<Record<TimePeriod, string[][]>>>>>> = {
-  en: {},
-  tw: {},
+  en: { ...EN_TEMPLATES_1, ...EN_TEMPLATES_2, ...EN_TEMPLATES_3, ...EN_TEMPLATES_4, ...EN_TEMPLATES_5, ...EN_TEMPLATES_6 },
+  tw: { ...TW_TEMPLATES_1, ...TW_TEMPLATES_2, ...TW_TEMPLATES_3, ...TW_TEMPLATES_4, ...TW_TEMPLATES_5, ...TW_TEMPLATES_6 },
 };
 
 // ─── 标题覆盖表（镜像 FORTUNE_TITLES[sign][period] = string[]）───
 export const FORTUNE_TITLES_I18N: Partial<Record<ContentLang, Partial<Record<ZodiacId, Partial<Record<TimePeriod, string[]>>>>>> = {
-  en: {},
-  tw: {},
+  en: { ...EN_TITLES_1, ...EN_TITLES_2, ...EN_TITLES_3, ...EN_TITLES_4, ...EN_TITLES_5, ...EN_TITLES_6 },
+  tw: { ...TW_TITLES_1, ...TW_TITLES_2, ...TW_TITLES_3, ...TW_TITLES_4, ...TW_TITLES_5, ...TW_TITLES_6 },
 };
 
 // ===== 解析助手 =====
