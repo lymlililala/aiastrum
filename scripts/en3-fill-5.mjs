@@ -63,8 +63,8 @@ export const POSTS_5 = [
   {
     ...base,
     slug: "baby-dream-meaning",
-    title: "Dreaming About a Baby: Meaning &amp; Interpretation",
-    title_en: "Dreaming About a Baby: Meaning &amp; Interpretation",
+    title: "Dreaming About a Baby: Meaning & Interpretation",
+    title_en: "Dreaming About a Baby: Meaning & Interpretation",
     description:
       "What does dreaming of a baby mean? Explore the psychological and symbolic meaning of baby dreams — new beginnings, vulnerability, and common scenarios.",
     keywords: [

@@ -13,8 +13,8 @@ export const POSTS_3 = [
     slug: "strength-tarot-card-meaning",
     category: "tarot",
     lang: "en",
-    title: "Strength Tarot Card Meaning: Courage, Inner Power &amp; Reversed",
-    title_en: "Strength Tarot Card Meaning: Courage, Inner Power &amp; Reversed",
+    title: "Strength Tarot Card Meaning: Courage, Inner Power & Reversed",
+    title_en: "Strength Tarot Card Meaning: Courage, Inner Power & Reversed",
     description:
       "Strength tarot card meaning explained: courage, compassion, and inner power that tames the lion — with clear upright, reversed, love and career guidance.",
     keywords: [
@@ -70,8 +70,8 @@ export const POSTS_3 = [
     slug: "the-hermit-tarot-card-meaning",
     category: "tarot",
     lang: "en",
-    title: "The Hermit Tarot Card Meaning: Introspection, Solitude &amp; Reversed",
-    title_en: "The Hermit Tarot Card Meaning: Introspection, Solitude &amp; Reversed",
+    title: "The Hermit Tarot Card Meaning: Introspection, Solitude & Reversed",
+    title_en: "The Hermit Tarot Card Meaning: Introspection, Solitude & Reversed",
     description:
       "The Hermit tarot card meaning explained: introspection, solitude, and inner guidance lit by a lantern — with clear upright, reversed, love and career guidance.",
     keywords: [
@@ -127,8 +127,8 @@ export const POSTS_3 = [
     slug: "wheel-of-fortune-tarot-card-meaning",
     category: "tarot",
     lang: "en",
-    title: "Wheel of Fortune Tarot Card Meaning: Fate, Change &amp; Reversed",
-    title_en: "Wheel of Fortune Tarot Card Meaning: Fate, Change &amp; Reversed",
+    title: "Wheel of Fortune Tarot Card Meaning: Fate, Change & Reversed",
+    title_en: "Wheel of Fortune Tarot Card Meaning: Fate, Change & Reversed",
     description:
       "Wheel of Fortune tarot card meaning explained: fate, cycles, luck, and turning points — with clear upright, reversed, love and career guidance.",
     keywords: [

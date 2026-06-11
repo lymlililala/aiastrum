@@ -113,8 +113,8 @@ export const POSTS_4 = [
     slug: "spider-dream-meaning",
     category: "dream",
     lang: "en",
-    title: "Spider Dreams: Meaning &amp; Interpretation",
-    title_en: "Spider Dreams: Meaning &amp; Interpretation",
+    title: "Spider Dreams: Meaning & Interpretation",
+    title_en: "Spider Dreams: Meaning & Interpretation",
     description:
       "What do spider dreams mean? Explore the psychological and symbolic meaning of dreaming about spiders — creativity, feeling trapped in a web, and key scenarios.",
     keywords: [

@@ -5,8 +5,8 @@ export const POSTS_6 = [
     slug: "chinese-zodiac-signs-explained",
     category: "bazi",
     lang: "en",
-    title: "Chinese Zodiac Signs Explained: The 12 Animals &amp; Their Meanings",
-    title_en: "Chinese Zodiac Signs Explained: The 12 Animals &amp; Their Meanings",
+    title: "Chinese Zodiac Signs Explained: The 12 Animals & Their Meanings",
+    title_en: "Chinese Zodiac Signs Explained: The 12 Animals & Their Meanings",
     description:
       "Meet all 12 Chinese zodiac animals in order, with a clear personality profile for each, how the 12-year cycle works, and why it differs from the Western zodiac.",
     keywords: [
@@ -73,8 +73,8 @@ export const POSTS_6 = [
     slug: "chinese-zodiac-compatibility",
     category: "bazi",
     lang: "en",
-    title: "Chinese Zodiac Compatibility: Best &amp; Worst Animal Matches",
-    title_en: "Chinese Zodiac Compatibility: Best &amp; Worst Animal Matches",
+    title: "Chinese Zodiac Compatibility: Best & Worst Animal Matches",
+    title_en: "Chinese Zodiac Compatibility: Best & Worst Animal Matches",
     description:
       "Discover Chinese zodiac compatibility through the four trine groups, the six clashing pairs, and secret-friend matches, with simple love guidance by sign.",
     keywords: [

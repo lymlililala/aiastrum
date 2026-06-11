@@ -62,8 +62,8 @@ export const POSTS_3 = [
     slug: "water-dream-meaning",
     category: "dream",
     lang: "en",
-    title: "Water Dreams: Meaning of Oceans, Floods, Rivers &amp; More",
-    title_en: "Water Dreams: Meaning of Oceans, Floods, Rivers &amp; More",
+    title: "Water Dreams: Meaning of Oceans, Floods, Rivers & More",
+    title_en: "Water Dreams: Meaning of Oceans, Floods, Rivers & More",
     description:
       "What do water dreams mean? Explore the emotional symbolism of dreaming about water — calm vs turbulent, oceans, floods, rivers, drowning, and clear vs murky water.",
     keywords: [

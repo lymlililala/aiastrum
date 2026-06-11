@@ -223,7 +223,7 @@ export const POSTS_8 = [
     slug: "qi-men-dun-jia-explained",
     category: "qimen",
     title: "What Is Qi Men Dun Jia? The Ancient Chinese Art of Timing & Strategy",
-    title_en: "What Is Qi Men Dun Jia? The Ancient Chinese Art of Timing &amp; Strategy",
+    title_en: "What Is Qi Men Dun Jia? The Ancient Chinese Art of Timing & Strategy",
     description:
       "Qi Men Dun Jia is an ancient Chinese art of timing and strategy. Learn the nine-palace chart, its stars, doors and deities, and how it guides real decisions.",
     keywords: [

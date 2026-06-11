@@ -162,7 +162,7 @@ export const POSTS_7 = [
   {
     slug: "i-ching-explained-beginners-guide",
     category: "meihua",
-    title: "The I Ching Explained: The Book of Changes &amp; How to Read It",
+    title: "The I Ching Explained: The Book of Changes & How to Read It",
     title_en: "The I Ching Explained: The Book of Changes & How to Read It",
     description:
       "The I Ching, or Book of Changes, is one of the world's oldest texts. Learn about yin and yang lines, the 8 trigrams, the 64 hexagrams and the coin method.",

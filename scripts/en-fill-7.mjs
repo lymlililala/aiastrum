@@ -128,8 +128,8 @@ export const POSTS_7 = [
   {
     ...base,
     slug: "snake-dream-meaning",
-    title: "Snake Dreams: Meaning &amp; Common Interpretations",
-    title_en: "Snake Dreams: Meaning &amp; Common Interpretations",
+    title: "Snake Dreams: Meaning & Common Interpretations",
+    title_en: "Snake Dreams: Meaning & Common Interpretations",
     description:
       "What do snake dreams mean? Explore the cultural and psychological meaning of dreaming about snakes — being bitten, killing a snake, many snakes and colors.",
     keywords: [
