@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import type { PersonInput, SynastryInput } from "../synastry-engine";
 import type { RelationType } from "../synastry-data";
 import { RELATION_TYPES, getRelationType } from "../synastry-data";
-import { CITY_DATABASE } from "../../astro/astro-data";
+import { searchCities } from "../../astro/astro-data";
 import { cityLabel, countryLabel, type CityData } from "../../astro/astro-data";
 import type { SynT, SynLang } from "../synastry-i18n";
 
@@ -44,10 +44,7 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
       setCitySuggestions((prev) => ({ ...prev, [who]: [] }));
       return;
     }
-    const ql = q.toLowerCase();
-    const results = CITY_DATABASE.filter(
-      (c) => c.name.includes(q) || c.nameEn.toLowerCase().includes(ql) || c.country.includes(q)
-    ).slice(0, 8);
+    const results = searchCities(q).slice(0, 8);
     setCitySuggestions((prev) => ({ ...prev, [who]: results }));
     cityDropRef.current[who] = true;
   };

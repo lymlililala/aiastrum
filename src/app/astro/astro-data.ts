@@ -571,14 +571,44 @@ export const COUNTRY_EN: Record<string, string> = {
   "印度尼西亚": "Indonesia",
 };
 
-/** 城市显示名：英文模式用 nameEn，其余用中文 name */
+// 国家简体 → 繁体（仅列不同者）
+export const COUNTRY_TW: Record<string, string> = {
+  "中国": "中國",
+  "美国": "美國",
+  "英国": "英國",
+  "法国": "法國",
+  "德国": "德國",
+  "俄罗斯": "俄羅斯",
+  "澳大利亚": "澳大利亞",
+  "韩国": "韓國",
+  "泰国": "泰國",
+  "马来西亚": "馬來西亞",
+  "印度尼西亚": "印度尼西亞",
+};
+
+// 城市简体 → 繁体（仅列与简体不同者；其余回退简体 name）
+export const CITY_TW: Record<string, string> = {
+  "广州": "廣州", "重庆": "重慶", "武汉": "武漢", "苏州": "蘇州", "长沙": "長沙",
+  "郑州": "鄭州", "青岛": "青島", "大连": "大連", "厦门": "廈門", "哈尔滨": "哈爾濱",
+  "沈阳": "瀋陽", "南宁": "南寧", "长春": "長春", "石家庄": "石家莊", "济南": "濟南",
+  "贵阳": "貴陽", "兰州": "蘭州", "乌鲁木齐": "烏魯木齊", "拉萨": "拉薩", "银川": "銀川",
+  "西宁": "西寧", "澳门": "澳門", "东京": "東京", "首尔": "首爾", "雅加达": "雅加達",
+  "孟买": "孟買", "伦敦": "倫敦", "纽约": "紐約", "洛杉矶": "洛杉磯", "旧金山": "舊金山",
+  "多伦多": "多倫多",
+};
+
+/** 城市显示名：en→nameEn；tw→繁体（缺失回退简体）；zh→简体 name */
 export function cityLabel(city: CityData, lang: "zh" | "en" | "tw"): string {
-  return lang === "en" ? city.nameEn : city.name;
+  if (lang === "en") return city.nameEn;
+  if (lang === "tw") return CITY_TW[city.name] ?? city.name;
+  return city.name;
 }
 
-/** 国家显示名：英文模式用映射英文，缺失回退原值 */
+/** 国家显示名：en→英文映射；tw→繁体映射；缺失回退原值 */
 export function countryLabel(country: string, lang: "zh" | "en" | "tw"): string {
-  return lang === "en" ? (COUNTRY_EN[country] ?? country) : country;
+  if (lang === "en") return COUNTRY_EN[country] ?? country;
+  if (lang === "tw") return COUNTRY_TW[country] ?? country;
+  return country;
 }
 
 export const CITY_DATABASE: CityData[] = [
@@ -651,7 +681,9 @@ export function searchCities(query: string): CityData[] {
     (c) =>
       c.name.includes(query) ||
       c.nameEn.toLowerCase().includes(q) ||
-      c.country.includes(query),
+      c.country.includes(query) ||
+      (CITY_TW[c.name] ?? "").includes(query) ||
+      (COUNTRY_TW[c.country] ?? "").includes(query),
   ).slice(0, 10);
 }
 
