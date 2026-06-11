@@ -2,22 +2,23 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import type { AstroInput } from "../astro-engine";
-import { searchCities } from "../astro-data";
+import { searchCities, cityLabel, countryLabel } from "../astro-data";
 import type { CityData } from "../astro-data";
-import type { AstroT } from "../astro-i18n";
+import type { AstroT, Lang } from "../astro-i18n";
 
 interface AstroInputProps {
   onSubmit: (input: AstroInput) => void;
   isLoading: boolean;
   t: AstroT;
+  lang: Lang;
 }
 
-export function AstroInputForm({ onSubmit, isLoading, t }: AstroInputProps) {
+export function AstroInputForm({ onSubmit, isLoading, t, lang }: AstroInputProps) {
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [unknownTime, setUnknownTime] = useState(false);
-  const [cityQuery, setCityQuery] = useState("北京");
+  const [cityQuery, setCityQuery] = useState(lang === "en" ? "Beijing" : "北京");
   const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
   const [cityResults, setCityResults] = useState<CityData[]>([]);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
@@ -59,7 +60,7 @@ export function AstroInputForm({ onSubmit, isLoading, t }: AstroInputProps) {
 
   const handleCitySelect = (city: CityData) => {
     setSelectedCity(city);
-    setCityQuery(city.name);
+    setCityQuery(cityLabel(city, lang));
     setShowCityDropdown(false);
   };
 
@@ -232,8 +233,8 @@ export function AstroInputForm({ onSubmit, isLoading, t }: AstroInputProps) {
                     onClick={() => handleCitySelect(city)}
                     className="astro-city-option"
                   >
-                    <span className="astro-city-name">{city.name}</span>
-                    <span className="astro-city-country">{city.country}</span>
+                    <span className="astro-city-name">{cityLabel(city, lang)}</span>
+                    <span className="astro-city-country">{countryLabel(city.country, lang)}</span>
                     <span className="astro-city-coords">
                       {city.lat.toFixed(2)}{t.coordN}, {city.lng.toFixed(2)}{t.coordE}
                     </span>
@@ -244,7 +245,7 @@ export function AstroInputForm({ onSubmit, isLoading, t }: AstroInputProps) {
           </div>
           {selectedCity && (
             <div className="astro-city-selected">
-              <span>📍 {selectedCity.name}, {selectedCity.country}</span>
+              <span>📍 {cityLabel(selectedCity, lang)}, {countryLabel(selectedCity.country, lang)}</span>
               <span className="astro-city-selected-coords">
                 {Math.abs(selectedCity.lat).toFixed(2)}{selectedCity.lat >= 0 ? t.coordN : t.coordS},
                 {Math.abs(selectedCity.lng).toFixed(2)}{selectedCity.lng >= 0 ? t.coordE : t.coordW}

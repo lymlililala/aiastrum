@@ -261,7 +261,7 @@ export default function AstroPage() {
           {error && (
             <div className="astro-error-banner">⚠️ {error}</div>
           )}
-          <AstroInputForm t={t} onSubmit={handleInputSubmit} isLoading={false} />
+          <AstroInputForm t={t} lang={lang} onSubmit={handleInputSubmit} isLoading={false} />
         </div>
       </div>
     );

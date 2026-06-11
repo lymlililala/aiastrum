@@ -552,6 +552,35 @@ export interface CityData {
   country: string;
 }
 
+// 国家中文名 → 英文名（城市下拉英文模式用）
+export const COUNTRY_EN: Record<string, string> = {
+  "中国": "China",
+  "美国": "United States",
+  "日本": "Japan",
+  "印度": "India",
+  "英国": "United Kingdom",
+  "法国": "France",
+  "德国": "Germany",
+  "俄罗斯": "Russia",
+  "加拿大": "Canada",
+  "澳大利亚": "Australia",
+  "韩国": "South Korea",
+  "泰国": "Thailand",
+  "新加坡": "Singapore",
+  "马来西亚": "Malaysia",
+  "印度尼西亚": "Indonesia",
+};
+
+/** 城市显示名：英文模式用 nameEn，其余用中文 name */
+export function cityLabel(city: CityData, lang: "zh" | "en" | "tw"): string {
+  return lang === "en" ? city.nameEn : city.name;
+}
+
+/** 国家显示名：英文模式用映射英文，缺失回退原值 */
+export function countryLabel(country: string, lang: "zh" | "en" | "tw"): string {
+  return lang === "en" ? (COUNTRY_EN[country] ?? country) : country;
+}
+
 export const CITY_DATABASE: CityData[] = [
   // 中国主要城市
   { name: "北京", nameEn: "Beijing", lat: 39.9042, lng: 116.4074, timezone: "Asia/Shanghai", country: "中国" },

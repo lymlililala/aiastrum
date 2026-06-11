@@ -5,7 +5,7 @@ import type { PersonInput, SynastryInput } from "../synastry-engine";
 import type { RelationType } from "../synastry-data";
 import { RELATION_TYPES, getRelationType } from "../synastry-data";
 import { CITY_DATABASE } from "../../astro/astro-data";
-import type { CityData } from "../../astro/astro-data";
+import { cityLabel, countryLabel, type CityData } from "../../astro/astro-data";
 import type { SynT, SynLang } from "../synastry-i18n";
 
 interface Props {
@@ -32,7 +32,7 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
   const [relationType, setRelationType] = useState<RelationType>("love");
   const [personA, setPersonA] = useState<PersonInput>({ ...EMPTY_PERSON });
   const [personB, setPersonB] = useState<PersonInput>({ ...EMPTY_PERSON });
-  const [cityQuery, setCityQuery] = useState<{ a: string; b: string }>({ a: "北京", b: "北京" });
+  const [cityQuery, setCityQuery] = useState<{ a: string; b: string }>({ a: lang === "en" ? "Beijing" : "北京", b: lang === "en" ? "Beijing" : "北京" });
   const [citySuggestions, setCitySuggestions] = useState<{ a: CityData[]; b: CityData[] }>({ a: [], b: [] });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const cityDropRef = useRef<{ a: boolean; b: boolean }>({ a: false, b: false });
@@ -53,7 +53,7 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
   };
 
   const selectCity = (who: "a" | "b", city: CityData) => {
-    setCityQuery((prev) => ({ ...prev, [who]: city.name }));
+    setCityQuery((prev) => ({ ...prev, [who]: cityLabel(city, lang) }));
     setCitySuggestions((prev) => ({ ...prev, [who]: [] }));
     if (who === "a") setPersonA((p) => ({ ...p, city }));
     else setPersonB((p) => ({ ...p, city }));
@@ -166,6 +166,7 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
             errors={errors}
             prefix="a"
             t={t}
+            lang={lang}
           />
         )}
 
@@ -184,6 +185,7 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
             errors={errors}
             prefix="b"
             t={t}
+            lang={lang}
           />
         )}
 
@@ -194,12 +196,12 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
             <p className="syn-step-subtitle">{t.confirmSubtitle}</p>
 
             <div className="syn-confirm-cards">
-              <ConfirmCard person={personA} side="a" t={t} />
+              <ConfirmCard person={personA} side="a" t={t} lang={lang} />
               <div className="syn-confirm-vs">
                 <span className="syn-vs-text">{RELATION_TYPES[relationType].icon}</span>
                 <span className="syn-vs-label">{getRelationType(relationType, lang).label}</span>
               </div>
-              <ConfirmCard person={personB} side="b" t={t} />
+              <ConfirmCard person={personB} side="b" t={t} lang={lang} />
             </div>
 
             <p className="syn-confirm-note">
@@ -251,10 +253,11 @@ interface PersonFormProps {
   errors: Record<string, string>;
   prefix: "a" | "b";
   t: SynT;
+  lang: SynLang;
 }
 
 function PersonForm({
-  label, subtitle, person, onChange, cityQuery, onCitySearch, citySuggestions, onSelectCity, errors, prefix, t,
+  label, subtitle, person, onChange, cityQuery, onCitySearch, citySuggestions, onSelectCity, errors, prefix, t, lang,
 }: PersonFormProps) {
   const [showCityDrop, setShowCityDrop] = useState(false);
 
@@ -369,8 +372,8 @@ function PersonForm({
                       setShowCityDrop(false);
                     }}
                   >
-                    <span className="syn-city-name">{c.name}</span>
-                    <span className="syn-city-country">{c.country}</span>
+                    <span className="syn-city-name">{cityLabel(c, lang)}</span>
+                    <span className="syn-city-country">{countryLabel(c.country, lang)}</span>
                   </li>
                 ))}
               </ul>
@@ -384,7 +387,7 @@ function PersonForm({
 }
 
 // ===== 确认卡片 =====
-function ConfirmCard({ person, side, t }: { person: PersonInput; side: "a" | "b"; t: SynT }) {
+function ConfirmCard({ person, side, t, lang }: { person: PersonInput; side: "a" | "b"; t: SynT; lang: SynLang }) {
   return (
     <div className="syn-confirm-person">
       <div className="syn-confirm-avatar">{side === "a" ? "🌙" : "⭐"}</div>
@@ -393,7 +396,7 @@ function ConfirmCard({ person, side, t }: { person: PersonInput; side: "a" | "b"
       {!person.unknownTime && person.birthTime && (
         <div className="syn-confirm-time">{person.birthTime}</div>
       )}
-      <div className="syn-confirm-city">{person.city.name}</div>
+      <div className="syn-confirm-city">{cityLabel(person.city, lang)}</div>
     </div>
   );
 }

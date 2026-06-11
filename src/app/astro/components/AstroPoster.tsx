@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import type { AstroChart } from "../astro-engine";
-import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP } from "../astro-data";
+import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, cityLabel } from "../astro-data";
 import type { AstroT, Lang } from "../astro-i18n";
 import {
   getZodiacName,
@@ -74,7 +74,7 @@ async function drawAstroPoster(canvas: HTMLCanvasElement, chart: AstroChart, t: 
 
   ctx.fillStyle = "rgba(232,213,163,0.6)";
   ctx.font = "15px 'sans-serif'";
-  const birthInfo = `${chart.input.birthDate}${chart.hasTimeData ? " " + chart.input.birthTime : ""}  ·  ${chart.input.city.name}`;
+  const birthInfo = `${chart.input.birthDate}${chart.hasTimeData ? " " + chart.input.birthTime : ""}  ·  ${cityLabel(chart.input.city, lang)}`;
   ctx.fillText(birthInfo, W / 2, 178);
 
   // 分割线

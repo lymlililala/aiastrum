@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import type { AstroChart } from "../astro-engine";
-import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, HOUSE_LIST } from "../astro-data";
+import { ZODIAC_LIST, PLANET_MAP, ASPECT_MAP, HOUSE_LIST, cityLabel } from "../astro-data";
 import type { ZodiacSign } from "../astro-data";
 import type { AstroT, Lang } from "../astro-i18n";
 import {
@@ -309,7 +309,7 @@ export function AstroReport({ chart, t, lang }: AstroReportProps) {
         <p className="astro-report-info">
           {chart.input.birthDate.replace(/-/g, " / ")}
           {chart.hasTimeData && ` · ${chart.input.birthTime}`}
-          {" · "}{chart.input.city.name}
+          {" · "}{cityLabel(chart.input.city, lang)}
         </p>
         {!chart.hasTimeData && (
           <div className="astro-report-no-time">
