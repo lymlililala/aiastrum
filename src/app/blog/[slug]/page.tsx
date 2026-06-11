@@ -6,6 +6,8 @@ import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links"
 import { canonicalSlug } from "~/lib/canonical-overrides";
 import { buildFaqSchema } from "~/lib/faq-schema";
 import { CATEGORY_META } from "../blog-data";
+import { BLOG_CHROME, catLabel, fmtDate } from "../blog-i18n";
+import { type Locale } from "~/lib/i18n";
 
 // 根 layout 使用 headers()（读取 locale），整站本质为动态渲染。
 // 故本路由显式 force-dynamic：按需服务端渲染，避免与 ISR(revalidate) 冲突导致
@@ -58,6 +60,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 type PostDisplay = {
   slug: string;
   category: string; // 支持所有 22 个分类
+  lang: string;     // 文章语言：'zh' | 'en'，决定 chrome 语言
   title: string;
   description: string;
   keywords: string[];
@@ -66,15 +69,16 @@ type PostDisplay = {
   content: string;
   ctaHref: string;
   ctaLabel: string;
+  ctaLabelEn: string;
 };
 
 function fromDb(p: DbBlogPost): PostDisplay {
   return {
-    slug: p.slug, category: p.category as string, title: p.title,
+    slug: p.slug, category: p.category as string, lang: p.lang, title: p.title,
     description: p.description, keywords: p.keywords ?? [],
     publishedAt: p.published_at,
     readingTime: p.reading_time, content: p.content,
-    ctaHref: p.cta_href, ctaLabel: p.cta_label,
+    ctaHref: p.cta_href, ctaLabel: p.cta_label, ctaLabelEn: p.cta_label_en,
   };
 }
 
@@ -88,6 +92,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   } catch { /* 降级 */ }
 
   if (!post) notFound();
+
+  // chrome 语言 = 文章自身 lang（对无 cookie 的爬虫友好），非 cookie
+  const locale: Locale = post.lang === "en" ? "en" : "zh";
+  const t = BLOG_CHROME[locale];
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const meta = (CATEGORY_META as any)[post.category] ?? { label: "文章", labelEn: "Article", icon: "✦", color: "#c9a84c" };
@@ -130,7 +138,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   let related: Array<{ slug: string; category: string; title: string; readingTime: number }> = [];
   let linkedContent = post.content;
   try {
-    const pool = await fetchAllPosts(); // 仅元数据、无 content，全站文章池
+    const pool = await fetchAllPosts(undefined, post.lang); // 仅元数据、无 content，同语言文章池
     const others = pool.filter(p => p.slug !== post!.slug);
 
     // ── 正文自动内链：优先同类文章作为锚词来源 ──────────────────────────────
@@ -198,11 +206,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
       {/* Nav */}
       <nav style={{ position:"sticky", top:0, zIndex:100, background:"rgba(10,6,28,0.92)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(201,168,76,0.12)", padding:"0 20px", height:52, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <Link href="/blog" className="blog-post-nav-back" style={{ display:"flex", alignItems:"center", gap:6, textDecoration:"none", color:"rgba(201,168,76,0.7)", fontSize:"0.8rem", transition:"color 0.18s" }}>← 返回知识库</Link>
+        <Link href="/blog" className="blog-post-nav-back" style={{ display:"flex", alignItems:"center", gap:6, textDecoration:"none", color:"rgba(201,168,76,0.7)", fontSize:"0.8rem", transition:"color 0.18s" }}>{t.backKB}</Link>
         <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:`${meta.color}18`, border:`1px solid ${meta.color}35`, borderRadius:8, padding:"3px 10px", fontSize:"0.66rem", color:meta.color, fontWeight:600 }}>
-          <span>{meta.icon}</span>{meta.label}
+          <span>{meta.icon}</span>{catLabel(post.category, locale)}
         </div>
-        <Link href="/" style={{ color:"rgba(201,168,76,0.45)", fontSize:"0.72rem", textDecoration:"none" }}>首页</Link>
+        <Link href="/" style={{ color:"rgba(201,168,76,0.45)", fontSize:"0.72rem", textDecoration:"none" }}>{t.home}</Link>
       </nav>
 
       <div style={{ maxWidth:720, margin:"0 auto", padding:"40px 20px 80px" }}>
@@ -210,29 +218,29 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {/* Header */}
         <header style={{ marginBottom:32 }}>
           <div style={{ display:"inline-flex", alignItems:"center", gap:4, marginBottom:14, background:`${meta.color}18`, border:`1px solid ${meta.color}35`, borderRadius:8, padding:"3px 10px", fontSize:"0.66rem", color:meta.color }}>
-            <span>{meta.icon}</span>{meta.label}
+            <span>{meta.icon}</span>{catLabel(post.category, locale)}
           </div>
           <h1 style={{ fontFamily:"serif", fontSize:"clamp(1.35rem,3.5vw,1.9rem)", fontWeight:700, color:"#e8d5a3", lineHeight:1.4, marginBottom:12 }}>{post.title}</h1>
           <p style={{ fontSize:"0.82rem", color:"rgba(200,175,140,0.6)", lineHeight:1.6, marginBottom:16 }}>{post.description}</p>
           <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap", fontSize:"0.66rem", color:"rgba(201,168,76,0.38)", paddingBottom:18, borderBottom:"1px solid rgba(201,168,76,0.1)" }}>
-            <span>📅 {post.publishedAt}</span>
-            <span>⏱ 约 {post.readingTime} 分钟阅读</span>
+            <span>📅 {fmtDate(post.publishedAt, locale)}</span>
+            <span>⏱ {t.aboutMinRead(post.readingTime)}</span>
           </div>
         </header>
 
-        <CTACard post={post} meta={meta} />
+        <CTACard post={post} meta={meta} locale={locale} />
 
         <article className="blog-content" style={{ marginTop:32 }} dangerouslySetInnerHTML={{ __html: linkedContent }} />
 
         <div style={{ marginTop:48 }}>
-          <CTACard post={post} meta={meta} large />
+          <CTACard post={post} meta={meta} locale={locale} large />
         </div>
 
         {related.length > 0 && (
           <section style={{ marginTop:48 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
               <span style={{ fontSize:13, opacity:0.6 }}>✦</span>
-              <span style={{ fontSize:"0.7rem", fontFamily:"Cinzel,serif", color:"rgba(201,168,76,0.5)", letterSpacing:"0.1em", textTransform:"uppercase" }}>相关文章</span>
+              <span style={{ fontSize:"0.7rem", fontFamily:"Cinzel,serif", color:"rgba(201,168,76,0.5)", letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.relatedArticles}</span>
               <div style={{ flex:1, height:1, background:"linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -245,7 +253,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                       <span style={{ fontSize:20, flexShrink:0, marginTop:1 }}>{relMeta.icon}</span>
                       <div>
                         <div style={{ fontSize:"0.84rem", color:"#e8d5a3", fontWeight:600, marginBottom:4, lineHeight:1.35 }}>{r.title}</div>
-                        <div style={{ fontSize:"0.68rem", color:"rgba(200,175,140,0.5)" }}>{r.readingTime} 分钟阅读</div>
+                        <div style={{ fontSize:"0.68rem", color:"rgba(200,175,140,0.5)" }}>{t.minRead(r.readingTime)}</div>
                       </div>
                       <span style={{ marginLeft:"auto", color:"rgba(201,168,76,0.4)", fontSize:"0.9rem", flexShrink:0, marginTop:2 }}>→</span>
                     </div>
@@ -257,7 +265,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               href={`/blog?cat=${post.category}`}
               className="blog-post-nav-back"
               style={{ display:"inline-flex", alignItems:"center", gap:6, marginTop:16, color:"rgba(201,168,76,0.7)", fontSize:"0.78rem", textDecoration:"none" }}
-            >查看更多 {meta.label} 文章 →</Link>
+            >{t.viewAllCat(catLabel(post.category, locale))}</Link>
           </section>
         )}
       </div>
@@ -265,13 +273,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   );
 }
 
-function CTACard({ post, meta, large = false }: { post: PostDisplay; meta: { color: string; icon: string }; large?: boolean }) {
+function CTACard({ post, meta, locale, large = false }: { post: PostDisplay; meta: { color: string; icon: string }; locale: Locale; large?: boolean }) {
+  // en：优先用 cta_label_en，为空时回退中文 cta_label
+  const ctaLabel = locale === "en" ? (post.ctaLabelEn || post.ctaLabel) : post.ctaLabel;
   return (
     <Link href={post.ctaHref} style={{ textDecoration:"none", display:"block" }}>
       <div className="blog-post-cta" style={{ borderRadius:14, background:`linear-gradient(135deg,${meta.color}14 0%,rgba(100,60,200,0.12) 100%)`, border:`1px solid ${meta.color}30`, padding:large?"20px 20px":"14px 18px", display:"flex", alignItems:"center", gap:12, cursor:"pointer", boxShadow:`0 4px 20px ${meta.color}10` }}>
         <div style={{ width:large?44:36, height:large?44:36, borderRadius:10, background:`${meta.color}20`, border:`1px solid ${meta.color}35`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:large?20:16, flexShrink:0 }}>{meta.icon}</div>
         <div style={{ flex:1 }}>
-          <div style={{ fontSize:large?"0.88rem":"0.8rem", color:"rgba(232,213,163,0.88)", fontWeight:600, lineHeight:1.4 }}>{post.ctaLabel}</div>
+          <div style={{ fontSize:large?"0.88rem":"0.8rem", color:"rgba(232,213,163,0.88)", fontWeight:600, lineHeight:1.4 }}>{ctaLabel}</div>
           {large && <div style={{ fontSize:"0.68rem", color:"rgba(200,175,140,0.5)", marginTop:3 }}>免费使用 · AI 驱动 · 即时解读</div>}
         </div>
         <span style={{ color:meta.color, fontSize:"1.1rem", flexShrink:0, opacity:0.7 }}>→</span>

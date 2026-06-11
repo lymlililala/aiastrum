@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { fetchAllPosts } from "~/lib/supabase";
 import { CATEGORY_META, type BlogCategory } from "~/app/blog/blog-data";
 import { LOCALES, type Locale } from "~/lib/i18n";
+import { localeToLang } from "~/app/blog/blog-i18n";
 
 type CatMeta = (typeof CATEGORY_META)[BlogCategory];
 const FALLBACK_META: CatMeta = { label: "知识库", labelEn: "Knowledge Base", icon: "📚", color: "#c9a84c" };
@@ -32,24 +33,24 @@ export default async function ToolArticleLinks({
   category: string;
   limit?: number;
 }) {
-  let posts: Array<{ slug: string; title: string; titleEn: string; readingTime: number }> = [];
+  let posts: Array<{ slug: string; title: string; readingTime: number }> = [];
+  const locale = await readLocale();
+  const lang = localeToLang(locale);
   try {
-    const data = await fetchAllPosts(category);
+    const data = await fetchAllPosts(category, lang);
     posts = data
       .slice(0, limit)
-      .map(p => ({ slug: p.slug, title: p.title, titleEn: p.title_en, readingTime: p.reading_time }));
+      .map(p => ({ slug: p.slug, title: p.title, readingTime: p.reading_time }));
   } catch {
     return null;
   }
   if (posts.length === 0) return null;
 
   const meta = (CATEGORY_META as Record<string, CatMeta>)[category] ?? FALLBACK_META;
-  const locale = await readLocale();
   const t = UI[locale];
   const catLabel = locale === "en" ? meta.labelEn : meta.label;
-  // 英文模式优先用 title_en（缺失则回退中文标题）；繁体暂无 title_tw，回退中文
-  const titleOf = (p: { title: string; titleEn: string }) =>
-    locale === "en" && p.titleEn ? p.titleEn : p.title;
+  // 行已按 lang 过滤，标题即 row 自身语言
+  const titleOf = (p: { title: string }) => p.title;
 
   return (
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "8px 20px 64px", position: "relative", zIndex: 1 }}>

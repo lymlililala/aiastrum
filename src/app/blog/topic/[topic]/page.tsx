@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
+import { readBlogLocale, localeToLang, BLOG_CHROME } from "~/app/blog/blog-i18n";
 
 export const revalidate = 3600;
 export const dynamicParams = false; // 仅 4 个主题，构建时全量预渲染
@@ -85,9 +86,13 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
   const t = TOPICS[params.topic];
   if (!t) notFound();
 
+  const locale = await readBlogLocale();
+  const lang = localeToLang(locale);
+  const c = BLOG_CHROME[locale];
+
   let posts: Array<{ slug: string; title: string; description: string; readingTime: number }> = [];
   try {
-    const all = await fetchAllPosts();
+    const all = await fetchAllPosts(undefined, lang);
     posts = all.filter(t.match)
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
       .map(p => ({ slug: p.slug, title: p.title, description: p.description ?? "", readingTime: p.reading_time }));
@@ -119,15 +124,15 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
       `}</style>
 
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,6,28,.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(201,168,76,.12)", padding: "0 20px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/blog" style={{ color: "rgba(201,168,76,.75)", fontSize: ".8rem", textDecoration: "none" }}>← 返回知识库</Link>
-        <Link href="/" style={{ color: "rgba(201,168,76,.45)", fontSize: ".72rem", textDecoration: "none" }}>首页</Link>
+        <Link href="/blog" style={{ color: "rgba(201,168,76,.75)", fontSize: ".8rem", textDecoration: "none" }}>{c.backKB}</Link>
+        <Link href="/" style={{ color: "rgba(201,168,76,.45)", fontSize: ".72rem", textDecoration: "none" }}>{c.home}</Link>
       </nav>
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 20px 80px" }}>
         <header style={{ marginBottom: 24 }}>
           <h1 style={{ fontFamily: "Cinzel,serif", fontSize: "clamp(1.5rem,4vw,2.2rem)", fontWeight: 700, color: "#e8d5a3", lineHeight: 1.3, marginBottom: 14 }}>{t.h1}</h1>
           <div className="pillar-intro" dangerouslySetInnerHTML={{ __html: t.intro }} />
-          <p style={{ fontSize: ".72rem", color: "rgba(201,168,76,.45)", marginTop: 8 }}>共 {posts.length} 篇相关文章</p>
+          <p style={{ fontSize: ".72rem", color: "rgba(201,168,76,.45)", marginTop: 8 }}>{c.totalArticles(posts.length)}</p>
         </header>
 
         <Link href={t.ctaHref} style={{ textDecoration: "none", display: "block", marginBottom: 28 }}>

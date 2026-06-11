@@ -2,6 +2,15 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
 import { CATEGORY_META, type BlogCategory } from "./blog-data";
+import { readBlogLocale, localeToLang, catLabel, fmtDate, BLOG_CHROME } from "./blog-i18n";
+
+// pillar 专题入口标签（不在 BLOG_CHROME 内，单独三语映射）
+const PILLAR_LABELS = {
+  "/blog/topic/dream-interpretation": { zh: "解梦大全", tw: "解夢大全", en: "Dream Dictionary" },
+  "/blog/topic/tarot-spreads":        { zh: "塔罗牌阵大全", tw: "塔羅牌陣大全", en: "Tarot Spreads" },
+  "/blog/topic/rune-meanings":        { zh: "卢恩符文大全", tw: "盧恩符文大全", en: "Rune Meanings" },
+  "/blog/topic/crystal-healing":      { zh: "水晶疗愈大全", tw: "水晶療癒大全", en: "Crystal Healing" },
+} satisfies Record<string, { zh: string; tw: string; en: string }>;
 
 const BASE_URL = "https://aiastrum.com";
 
@@ -77,10 +86,14 @@ export default async function BlogListPage({
 }) {
   const cat = (searchParams.cat ?? "all") as BlogCategory | "all";
 
+  const locale = await readBlogLocale();
+  const lang = localeToLang(locale);
+  const t = BLOG_CHROME[locale];
+
   // 从数据库读取文章
   let posts: ReturnType<typeof toDisplayPost>[] = [];
   try {
-    const dbPosts = await fetchAllPosts(cat === "all" ? undefined : cat);
+    const dbPosts = await fetchAllPosts(cat === "all" ? undefined : cat, lang);
     posts = dbPosts.map(toDisplayPost).sort(
       (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     );
@@ -93,8 +106,8 @@ export default async function BlogListPage({
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "神秘学知识库 — AiAstrum",
-    "description": "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南",
+    "name": t.metaTitle,
+    "description": t.metaDesc,
     "url": "https://aiastrum.com/blog",
     "numberOfItems": posts.length,
     "itemListElement": posts.map((post, idx) => ({
@@ -132,13 +145,13 @@ export default async function BlogListPage({
           textDecoration: "none", color: "rgba(201,168,76,0.75)", fontSize: "0.8rem",
           letterSpacing: "0.06em", transition: "color 0.18s",
         }}>
-          <span>←</span><span>返回首页</span>
+          <span>←</span><span>{t.backHome}</span>
         </Link>
         <div style={{
           fontFamily: "Cinzel, serif", fontSize: "0.85rem", fontWeight: 700,
           background: "linear-gradient(135deg,#e8d5a3,#c9a84c)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>神秘学知识库</div>
+        }}>{t.kbTitle}</div>
         <div style={{ width: 80 }} />
       </nav>
 
@@ -150,19 +163,19 @@ export default async function BlogListPage({
           pointerEvents: "none",
         }} />
         <p style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.22em", color: "rgba(201,168,76,0.5)", marginBottom: 8, textTransform: "uppercase" }}>
-          MYSTIC KNOWLEDGE BASE
+          {t.kbTagline}
         </p>
         <h1 style={{
           fontFamily: "Cinzel,serif", fontSize: "clamp(1.6rem,5vw,2.6rem)", fontWeight: 700,
           background: "linear-gradient(135deg,#e8d5a3 0%,#c9a84c 50%,#f0e68c 100%)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           marginBottom: 10, lineHeight: 1.25,
-        }}>神秘学知识库</h1>
+        }}>{t.kbTitle}</h1>
         <p style={{ fontSize: "0.88rem", color: "rgba(200,175,145,0.65)", maxWidth: 480, margin: "0 auto 28px", lineHeight: 1.6 }}>
-          塔罗78张牌意逐一解析 · 周公解梦深度科普 · 星座运势实时指南
+          {t.kbDesc}
         </p>
         <p style={{ fontSize: "0.72rem", color: "rgba(201,168,76,0.4)", marginTop: -16, marginBottom: 8 }}>
-          共 {posts.length} 篇文章
+          {t.totalArticles(posts.length)}
         </p>
       </section>
 
@@ -184,7 +197,7 @@ export default async function BlogListPage({
                 transition: "all 0.18s", whiteSpace: "nowrap",
               }}
             >
-              <span>{c.icon}</span>{c.label}
+              <span>{c.icon}</span>{c.key === "all" ? t.catAll : catLabel(c.key, locale)}
             </Link>
           );
         })}
@@ -194,19 +207,19 @@ export default async function BlogListPage({
       <div style={{ maxWidth: 960, margin: "0 auto 8px", padding: "0 16px" }}>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
           {[
-            { href: "/blog/topic/dream-interpretation", icon: "💭", label: "解梦大全" },
-            { href: "/blog/topic/tarot-spreads", icon: "🃏", label: "塔罗牌阵大全" },
-            { href: "/blog/topic/rune-meanings", icon: "ᚠ", label: "卢恩符文大全" },
-            { href: "/blog/topic/crystal-healing", icon: "💎", label: "水晶疗愈大全" },
-          ].map(t => (
-            <Link key={t.href} href={t.href} style={{
+            { href: "/blog/topic/dream-interpretation", icon: "💭", label: PILLAR_LABELS["/blog/topic/dream-interpretation"][locale] },
+            { href: "/blog/topic/tarot-spreads", icon: "🃏", label: PILLAR_LABELS["/blog/topic/tarot-spreads"][locale] },
+            { href: "/blog/topic/rune-meanings", icon: "ᚠ", label: PILLAR_LABELS["/blog/topic/rune-meanings"][locale] },
+            { href: "/blog/topic/crystal-healing", icon: "💎", label: PILLAR_LABELS["/blog/topic/crystal-healing"][locale] },
+          ].map(p => (
+            <Link key={p.href} href={p.href} style={{
               display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none",
               padding: "8px 16px", borderRadius: 12,
               background: "linear-gradient(135deg,rgba(100,60,200,.14),rgba(201,168,76,.08))",
               border: "1px solid rgba(201,168,76,.22)", color: "rgba(232,213,163,.9)",
               fontSize: ".8rem", fontWeight: 600,
             }}>
-              <span>{t.icon}</span>{t.label} →
+              <span>{p.icon}</span>{p.label} →
             </Link>
           ))}
         </div>
@@ -237,7 +250,7 @@ export default async function BlogListPage({
                     borderRadius: 8, padding: "2px 9px", marginBottom: 10,
                     fontSize: "0.66rem", color: meta.color, fontWeight: 600,
                   }}>
-                    <span>{meta.icon}</span>{meta.label}
+                    <span>{meta.icon}</span>{catLabel(post.category, locale)}
                   </div>
 
                   <h2 style={{
@@ -256,8 +269,8 @@ export default async function BlogListPage({
                     display: "flex", alignItems: "center", justifyContent: "space-between",
                     fontSize: "0.66rem", color: "rgba(201,168,76,0.4)",
                   }}>
-                    <span>📅 {post.publishedAt} · ⏱ {post.readingTime} 分钟阅读</span>
-                    <span style={{ color: "rgba(201,168,76,0.6)" }}>阅读全文 →</span>
+                    <span>📅 {fmtDate(post.publishedAt, locale)} · ⏱ {t.minRead(post.readingTime)}</span>
+                    <span style={{ color: "rgba(201,168,76,0.6)" }}>{t.readFull}</span>
                   </div>
                 </article>
               </Link>
@@ -267,7 +280,7 @@ export default async function BlogListPage({
 
         {posts.length === 0 && (
           <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(200,175,145,0.4)", fontSize: "0.9rem" }}>
-            该分类暂无文章，敬请期待
+            {t.emptyCategory}
           </div>
         )}
       </div>

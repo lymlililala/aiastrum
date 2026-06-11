@@ -28,6 +28,7 @@ export interface DbBlogPost {
   id: number;
   slug: string;
   category: string; // 支持所有分类：tarot | dream | horoscope | astro | ... 共22种
+  lang: string;     // 文章语言：'zh' | 'en'（默认 'zh'，2026-06 加列）
   title: string;
   title_en: string;
   description: string;
@@ -65,19 +66,22 @@ async function withRetry<T>(fn: () => Promise<T>, retries = 2): Promise<T> {
 }
 
 /** 获取所有文章（列表页用，不含 content 节省带宽）— 服务端用 admin 绕过 RLS */
-async function fetchAllPostsRaw(category?: string): Promise<DbBlogPost[]> {
+async function fetchAllPostsRaw(category?: string, lang?: string): Promise<DbBlogPost[]> {
   return withRetry(async () => {
     const all: DbBlogPost[] = [];
     // 分页拉取，突破 1000 行上限，确保 sitemap 收录全部文章
     for (let from = 0; ; from += PAGE_SIZE) {
       let query = supabaseAdmin
         .from("mysticai_blog_posts")
-        .select("id,slug,category,title,title_en,description,keywords,published_at,reading_time,cta_href,cta_label,cta_label_en")
+        .select("id,slug,category,lang,title,title_en,description,keywords,published_at,reading_time,cta_href,cta_label,cta_label_en")
         .order("published_at", { ascending: false })
         .range(from, from + PAGE_SIZE - 1);
 
       if (category && category !== "all") {
         query = query.eq("category", category);
+      }
+      if (lang) {
+        query = query.eq("lang", lang);
       }
 
       const { data, error } = await query;
@@ -93,13 +97,13 @@ async function fetchAllPostsRaw(category?: string): Promise<DbBlogPost[]> {
 // 跨请求缓存全量文章查询（1 小时）。force-dynamic 页面每请求都会调用它，
 // 不缓存会导致每次抓取都全表扫描 + 内链注入，并发抓取时易超时；缓存后渲染变轻。
 const fetchAllPostsCached = unstable_cache(
-  (category?: string) => fetchAllPostsRaw(category),
+  (category?: string, lang?: string) => fetchAllPostsRaw(category, lang),
   ["mysticai-all-posts"],
   { revalidate: 3600, tags: ["blog-posts"] },
 );
 
-export function fetchAllPosts(category?: string): Promise<DbBlogPost[]> {
-  return fetchAllPostsCached(category);
+export function fetchAllPosts(category?: string, lang?: string): Promise<DbBlogPost[]> {
+  return fetchAllPostsCached(category, lang);
 }
 
 /** 按 slug 获取单篇文章（含 content）— 服务端用 admin 绕过 RLS */
