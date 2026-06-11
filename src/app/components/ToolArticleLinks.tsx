@@ -32,12 +32,12 @@ export default async function ToolArticleLinks({
   category: string;
   limit?: number;
 }) {
-  let posts: Array<{ slug: string; title: string; readingTime: number }> = [];
+  let posts: Array<{ slug: string; title: string; titleEn: string; readingTime: number }> = [];
   try {
     const data = await fetchAllPosts(category);
     posts = data
       .slice(0, limit)
-      .map(p => ({ slug: p.slug, title: p.title, readingTime: p.reading_time }));
+      .map(p => ({ slug: p.slug, title: p.title, titleEn: p.title_en, readingTime: p.reading_time }));
   } catch {
     return null;
   }
@@ -47,6 +47,9 @@ export default async function ToolArticleLinks({
   const locale = await readLocale();
   const t = UI[locale];
   const catLabel = locale === "en" ? meta.labelEn : meta.label;
+  // 英文模式优先用 title_en（缺失则回退中文标题）；繁体暂无 title_tw，回退中文
+  const titleOf = (p: { title: string; titleEn: string }) =>
+    locale === "en" && p.titleEn ? p.titleEn : p.title;
 
   return (
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "8px 20px 64px", position: "relative", zIndex: 1 }}>
@@ -64,7 +67,7 @@ export default async function ToolArticleLinks({
             <div style={{ padding: "13px 16px", borderRadius: 12, background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.12)", display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>{meta.icon}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: "0.84rem", color: "#e8d5a3", fontWeight: 600, lineHeight: 1.35 }}>{p.title}</div>
+                <div style={{ fontSize: "0.84rem", color: "#e8d5a3", fontWeight: 600, lineHeight: 1.35 }}>{titleOf(p)}</div>
                 <div style={{ fontSize: "0.66rem", color: "rgba(200,175,140,0.5)", marginTop: 3 }}>{t.readMin(p.readingTime)}</div>
               </div>
               <span style={{ color: "rgba(201,168,76,0.4)", fontSize: "0.9rem", flexShrink: 0 }}>→</span>
