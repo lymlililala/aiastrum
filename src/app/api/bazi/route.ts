@@ -10,9 +10,10 @@ import {
   type BaziResult,
 } from "~/app/bazi/bazi-engine";
 import {
-  ELEMENT_PERSONALITY,
-  DAY_STEM_READING,
-  ZODIAC_2026_FORTUNE,
+  getElementPersonality,
+  getDayStemReading,
+  getZodiacFortune,
+  resolveElement,
 } from "~/app/bazi/bazi-data";
 
 interface BaziRequest extends BaziInput {
@@ -23,9 +24,11 @@ interface BaziRequest extends BaziInput {
 
 function buildBaziPrompt(input: BaziRequest, baziResult: BaziResult): string {
   const lang = input.lang ?? "zh";
-  const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, dayStem } = baziResult;
-  const dominantElement = getDominantElement(elementScores);
-  const missingElements = getMissingElements(elementScores);
+  const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, zodiacKey, dayStem } = baziResult;
+  const dominantElementKey = getDominantElement(elementScores);
+  const missingElementKeys = getMissingElements(elementScores);
+  const dominantElement = resolveElement(dominantElementKey, lang);
+  const missingElements = missingElementKeys.map((el) => resolveElement(el, lang));
 
   const pillarsDesc = [
     `年柱: ${yearPillar.stem}${yearPillar.branch}（纳音：${yearPillar.nayin}，${yearPillar.stemElement}${yearPillar.branchElement}）`,
@@ -37,10 +40,10 @@ function buildBaziPrompt(input: BaziRequest, baziResult: BaziResult): string {
   ].join("\n");
 
   const elementDesc = Object.entries(elementScores)
-    .map(([el, score]) => `${el}(${score.toFixed(1)}分)`)
+    .map(([el, score]) => `${resolveElement(el, lang)}(${score.toFixed(1)}分)`)
     .join("、");
 
-  const zodiacFortune = ZODIAC_2026_FORTUNE[zodiac];
+  const zodiacFortune = getZodiacFortune(zodiacKey, lang);
 
   if (lang === "en") {
     const focusTextEn = input.focusAspect
@@ -129,21 +132,23 @@ ${missingElements.length > 0 ? `缺失五行：${missingElements.join("、")}（
 
 function generateMockBaziReport(input: BaziRequest, result: BaziResult): string {
   const lang = input.lang ?? "zh";
-  const { zodiac, dayStem, elementScores, liuNianRelation } = result;
-  const dominantElement = getDominantElement(elementScores);
-  const missingElements = getMissingElements(elementScores);
-  const personality = ELEMENT_PERSONALITY[dominantElement];
-  const dayStemReading = DAY_STEM_READING[dayStem];
-  const zodiacFortune = ZODIAC_2026_FORTUNE[zodiac];
+  const { zodiacKey, dayStem, elementScores, liuNianRelation } = result;
+  const dominantElementKey = getDominantElement(elementScores);
+  const missingElementKeys = getMissingElements(elementScores);
+  const dominantElement = resolveElement(dominantElementKey, lang);
+  const missingElements = missingElementKeys.map((el) => resolveElement(el, lang));
+  const personality = getElementPersonality(dominantElementKey, lang);
+  const dayStemReading = getDayStemReading(dayStem, lang);
+  const zodiacFortune = getZodiacFortune(zodiacKey, lang);
 
   if (lang === "en") {
     const missingTextEn = missingElements.length > 0
       ? `Your chart is relatively weak in ${missingElements.join(", ")}. In daily life, intentionally engage with the energies these elements represent${
-          missingElements.includes("水") ? " — keep learning, reflecting, and cultivating flexibility;" : ";"
-        }${missingElements.includes("木") ? " spend time in nature and build planning habits;" : ""
-        }${missingElements.includes("火") ? " nurture passion and self-expression;" : ""
-        }${missingElements.includes("土") ? " strengthen grounded, practical execution;" : ""
-        }${missingElements.includes("金") ? " develop decisiveness and efficiency;" : ""} so as to complete your energy structure.`
+          missingElementKeys.includes("水") ? " — keep learning, reflecting, and cultivating flexibility;" : ";"
+        }${missingElementKeys.includes("木") ? " spend time in nature and build planning habits;" : ""
+        }${missingElementKeys.includes("火") ? " nurture passion and self-expression;" : ""
+        }${missingElementKeys.includes("土") ? " strengthen grounded, practical execution;" : ""
+        }${missingElementKeys.includes("金") ? " develop decisiveness and efficiency;" : ""} so as to complete your energy structure.`
       : "Your Five Elements are relatively balanced, with fairly all-round development across areas of life.";
 
     const liuNianTextEn = zodiacFortune
@@ -179,11 +184,11 @@ ${liuNianTextEn}
 
   const missingText = missingElements.length > 0
     ? `命中${missingElements.join("、")}偏弱，生活中适当多接触这些元素所代表的能量——${
-        missingElements.includes("水") ? "多学习、思考，培养灵活性；" : ""
-      }${missingElements.includes("木") ? "多接触自然、学习计划性；" : ""
-      }${missingElements.includes("火") ? "多培养热情与表达能力；" : ""
-      }${missingElements.includes("土") ? "加强脚踏实地的执行力；" : ""
-      }${missingElements.includes("金") ? "培养果断决策与执行效率；" : ""}以补全能量结构。`
+        missingElementKeys.includes("水") ? "多学习、思考，培养灵活性；" : ""
+      }${missingElementKeys.includes("木") ? "多接触自然、学习计划性；" : ""
+      }${missingElementKeys.includes("火") ? "多培养热情与表达能力；" : ""
+      }${missingElementKeys.includes("土") ? "加强脚踏实地的执行力；" : ""
+      }${missingElementKeys.includes("金") ? "培养果断决策与执行效率；" : ""}以补全能量结构。`
     : "命中五行较为均衡，各方面发展相对全面。";
 
   const liuNianText = zodiacFortune
@@ -243,10 +248,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: ERR_MESSAGES.missingInfo[lang] }, { status: 400 });
   }
 
-  // 计算八字排盘
+  // 计算八字排盘（按 lang 解析纳音/生肖/流年等派生展示文案）
   let baziResult: BaziResult;
   try {
-    baziResult = calculateBazi(body);
+    baziResult = calculateBazi(body, lang);
   } catch (err) {
     console.error("Bazi calculation error:", err);
     return NextResponse.json({ error: ERR_MESSAGES.calcFailed[lang] }, { status: 500 });

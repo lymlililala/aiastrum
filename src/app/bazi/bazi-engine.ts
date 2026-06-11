@@ -1,7 +1,18 @@
 /**
  * 八字排盘计算引擎
  * 基于中国传统天干地支历法实现
+ *
+ * 注意：天干地支字形（甲乙丙…/子丑寅…）是 BaZi 的核心符号，始终保持中文。
+ * 但面向用户展示的派生文案 —— 纳音名、生肖名、流年太岁关系 —— 会按 lang 解析为
+ * 对应语言（见 calculateBazi 的 lang 参数与 bazi-data 的 resolve* 函数）。
  */
+
+import {
+  resolveNayin,
+  resolveZodiac,
+  resolveLiuNian,
+  type Lang,
+} from "./bazi-data";
 
 // ===== 基础数据 =====
 
@@ -217,28 +228,30 @@ export interface BaziResult {
   dayPillar: Pillar;
   hourPillar: Pillar | null; // 未知时辰时为 null
   elementScores: Record<string, number>;
-  zodiac: string;
-  dayStem: HeavenlyStem;
+  zodiac: string; // 生肖（已按 lang 解析为展示文案，如 "Horse"）
+  zodiacKey: string; // 生肖原始中文键（如 "马"），供数据查表使用
+  dayStem: HeavenlyStem; // 日主天干字形，保持中文（核心符号，亦作查表键）
   dayBranch: EarthlyBranch;
-  nayin: string; // 年柱纳音（命格标签）
-  // 2026年流年太岁关系
+  nayin: string; // 年柱纳音（命格标签，已按 lang 解析为展示文案）
+  // 2026年流年太岁关系（已按 lang 解析）
   liuNianRelation: string;
 }
 
-export function calculateBazi(input: BaziInput): BaziResult {
+export function calculateBazi(input: BaziInput, lang: Lang = "zh"): BaziResult {
   const { year, month, day, hour, gender: _gender } = input;
 
   const yearRaw = getYearPillar(year);
   const monthRaw = getMonthPillar(year, month);
   const dayRaw = getDayPillar(year, month, day);
 
+  // 注：stem/branch 为 BaZi 核心字形，保持中文；nayin/zodiac 解析为 lang 对应文案。
   const makePillar = (stem: HeavenlyStem, branch: EarthlyBranch): Pillar => ({
     stem,
     branch,
-    nayin: getNayin(stem, branch),
+    nayin: resolveNayin(getNayin(stem, branch), lang),
     stemElement: STEM_ELEMENT[stem],
     branchElement: BRANCH_ELEMENT[branch],
-    zodiac: BRANCH_ZODIAC[branch],
+    zodiac: resolveZodiac(BRANCH_ZODIAC[branch], lang),
   });
 
   const yearPillar = makePillar(yearRaw.stem, yearRaw.branch);
@@ -255,10 +268,11 @@ export function calculateBazi(input: BaziInput): BaziResult {
   if (hourPillar) pillarsForScore.push(hourPillar);
 
   const elementScores = calculateElementScores(pillarsForScore);
-  const zodiac = BRANCH_ZODIAC[yearRaw.branch];
+  const zodiacKey = BRANCH_ZODIAC[yearRaw.branch];
+  const zodiac = resolveZodiac(zodiacKey, lang);
 
-  // 计算2026年（丙午年）与出生年支的太岁关系
-  const liuNianRelation = getLiuNianRelation(yearRaw.branch);
+  // 计算2026年（丙午年）与出生年支的太岁关系（解析为 lang 对应文案）
+  const liuNianRelation = resolveLiuNian(getLiuNianRelation(yearRaw.branch), lang);
 
   return {
     yearPillar,
@@ -267,6 +281,7 @@ export function calculateBazi(input: BaziInput): BaziResult {
     hourPillar,
     elementScores,
     zodiac,
+    zodiacKey,
     dayStem: dayRaw.stem,
     dayBranch: dayRaw.branch,
     nayin: yearPillar.nayin,

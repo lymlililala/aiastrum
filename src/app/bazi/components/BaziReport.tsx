@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import type { BaziResult } from "../bazi-engine";
-import { ELEMENT_PERSONALITY, ZODIAC_2026_FORTUNE, PILLAR_READINGS, DAY_STEM_READING } from "../bazi-data";
+import {
+  getElementPersonality,
+  getZodiacFortune,
+  getPillarReading,
+  getDayStemReading,
+  resolveElement,
+  type ZodiacFortune,
+} from "../bazi-data";
 import { getDominantElement, getMissingElements } from "../bazi-engine";
 
 type Lang = "zh" | "en" | "tw";
@@ -251,7 +258,7 @@ function Stars({ count, max = 5 }: { count: number; max?: number }) {
 }
 
 // 五行雷达图（SVG 实现）
-function ElementRadar({ scores, t }: { scores: Record<string, number>; t: (typeof RT)[Lang] }) {
+function ElementRadar({ scores, t, lang }: { scores: Record<string, number>; t: (typeof RT)[Lang]; lang: Lang }) {
   const elements = ["木", "火", "土", "金", "水"];
   const maxScore = 4;
   const size = 160;
@@ -343,7 +350,7 @@ function ElementRadar({ scores, t }: { scores: Record<string, number>; t: (typeo
               fontSize="13"
               fontWeight="bold"
             >
-              {el}
+              {resolveElement(el, lang)}
             </text>
           );
         })}
@@ -356,7 +363,7 @@ function ElementRadar({ scores, t }: { scores: Record<string, number>; t: (typeo
 }
 
 // 运势雷达图
-function FortuneRadar({ fortune, t }: { fortune: (typeof ZODIAC_2026_FORTUNE)[string]; t: (typeof RT)[Lang] }) {
+function FortuneRadar({ fortune, t }: { fortune: ZodiacFortune; t: (typeof RT)[Lang] }) {
   const aspects = [
     { key: "career" as const, label: t.radarCareer },
     { key: "wealth" as const, label: t.radarWealth },
@@ -415,12 +422,14 @@ function FortuneRadar({ fortune, t }: { fortune: (typeof ZODIAC_2026_FORTUNE)[st
 
 export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: BaziReportProps) {
   const t = RT[lang];
-  const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, dayStem, nayin, liuNianRelation } = baziResult;
-  const dominantElement = getDominantElement(elementScores);
-  const missingElements = getMissingElements(elementScores);
-  const personality = ELEMENT_PERSONALITY[dominantElement];
-  const dayStemReading = DAY_STEM_READING[dayStem];
-  const zodiacFortune = ZODIAC_2026_FORTUNE[zodiac];
+  const { yearPillar, monthPillar, dayPillar, hourPillar, elementScores, zodiac, zodiacKey, dayStem, nayin, liuNianRelation } = baziResult;
+  const dominantElementKey = getDominantElement(elementScores);
+  const missingElementKeys = getMissingElements(elementScores);
+  const dominantElement = resolveElement(dominantElementKey, lang);
+  const missingElements = missingElementKeys.map((el) => resolveElement(el, lang));
+  const personality = getElementPersonality(dominantElementKey, lang);
+  const dayStemReading = getDayStemReading(dayStem, lang);
+  const zodiacFortune = getZodiacFortune(zodiacKey, lang);
 
   const [displayedReport, setDisplayedReport] = useState("");
   const [isTyping, setIsTyping] = useState(true);
@@ -700,11 +709,11 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
               {t.dayMaster}<span style={{ color: "var(--vermillion)" }} className="font-bold">{dayStem}</span>
             </span>
             <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-              {t.fiveElement}<span style={{ color: ELEMENT_COLORS[dominantElement]?.text }} className="font-bold">{dominantElement}</span>{t.flourish}
+              {t.fiveElement}<span style={{ color: ELEMENT_COLORS[dominantElementKey]?.text }} className="font-bold">{dominantElement}</span>{t.flourish}
             </span>
             {missingElements.length > 0 && (
               <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
-                {t.lacking}<span style={{ color: "rgba(200,100,60,0.8)" }}>{missingElements.join("")}</span>
+                {t.lacking}<span style={{ color: "rgba(200,100,60,0.8)" }}>{missingElements.join(lang === "en" ? ", " : "")}</span>
               </span>
             )}
             <span className="text-xs" style={{ color: "rgba(200,180,150,0.6)" }}>
@@ -759,7 +768,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
                   {t.energyPattern}
                 </p>
                 <div className="flex items-center justify-between gap-4">
-                  <ElementRadar scores={elementScores} t={t} />
+                  <ElementRadar scores={elementScores} t={t} lang={lang} />
                   <div className="flex-1">
                     {Object.entries(elementScores).map(([el, score]) => (
                       <div key={el} className="flex items-center gap-2 mb-2">
@@ -767,7 +776,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
                           className="text-sm font-bold w-4"
                           style={{ color: ELEMENT_COLORS[el]?.text ?? "#fff" }}
                         >
-                          {el}
+                          {resolveElement(el, lang)}
                         </span>
                         <div
                           className="flex-1 rounded-full h-1.5 overflow-hidden"
@@ -854,7 +863,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
           {activeTab === "pillars" && (
             <div style={{ animation: "bazi-fade-in 0.5s ease-out" }}>
               {pillars.map(({ key, data }) => {
-                const reading = PILLAR_READINGS[key as keyof typeof PILLAR_READINGS];
+                const reading = getPillarReading(key as "year" | "month" | "day" | "hour", lang);
                 return (
                   <div
                     key={key}
@@ -897,7 +906,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
                             border: `1px solid ${ELEMENT_COLORS[data.stemElement]?.border ?? "transparent"}`,
                           }}
                         >
-                          {t.stemElementPrefix}{data.stemElement}
+                          {t.stemElementPrefix}{resolveElement(data.stemElement, lang)}
                         </span>
                         <span
                           className="text-xs px-2 py-1 rounded-full"
@@ -907,7 +916,7 @@ export function BaziReport({ baziResult, report, birthInfo, onRestart, lang }: B
                             border: `1px solid ${ELEMENT_COLORS[data.branchElement]?.border ?? "transparent"}`,
                           }}
                         >
-                          {t.branchElementPrefix}{data.branchElement}
+                          {t.branchElementPrefix}{resolveElement(data.branchElement, lang)}
                         </span>
                         <span
                           className="text-xs px-2 py-1 rounded-full"
