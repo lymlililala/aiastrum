@@ -226,6 +226,7 @@ export default function NamingPage() {
             gender={apiResult.gender}
             onContinue={() => setStep("names")}
             t={t}
+            lang={lang}
           />
         )}
 
@@ -244,6 +245,7 @@ export default function NamingPage() {
               setStep("detail");
             }}
             t={t}
+            lang={lang}
           />
         )}
 
@@ -255,6 +257,7 @@ export default function NamingPage() {
             xiyongshen={apiResult.bazi.xiyongshen}
             onBack={() => setStep("names")}
             t={t}
+            lang={lang}
           />
         )}
       </div>

@@ -49,6 +49,15 @@ export function FacePoster({ t, lang, report, imageUrl, onClose }: FacePosterPro
   }, [saving, report.talentLabel.name, t.posterFileName]);
 
   const modeName = report.mode === "face" ? t.reportFace : t.reportPalm;
+  // rarity 是中文 KEY，按 KEY 映射到本地化显示文案
+  const rarityText =
+    report.talentLabel.rarity === "传说"
+      ? t.rarityLegend
+      : report.talentLabel.rarity === "史诗"
+        ? t.rarityEpic
+        : report.talentLabel.rarity === "稀有"
+          ? t.rarityRare
+          : t.rarityCommon;
   const today = new Date().toLocaleDateString(
     lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN",
     {
@@ -106,7 +115,7 @@ export function FacePoster({ t, lang, report, imageUrl, onClose }: FacePosterPro
             className="fr-poster-talent"
             style={{ background: report.talentLabel.gradient }}
           >
-            <span className="fr-poster-talent-rarity">{report.talentLabel.rarity}</span>
+            <span className="fr-poster-talent-rarity">{rarityText}</span>
             <span className="fr-poster-talent-icon">{report.talentLabel.icon}</span>
             <span className="fr-poster-talent-name">{report.talentLabel.name}</span>
           </div>

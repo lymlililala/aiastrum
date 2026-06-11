@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { DREAM_CATEGORIES, LEVEL_CONFIG, type DreamLevel } from "../dream-data";
+import { getDreamCategories, levelLabel, LEVEL_CONFIG, type DreamLevel, type Lang } from "../dream-data";
 import type { DreamT } from "../dream-i18n";
 
 interface DreamCategoryProps {
   t: DreamT;
+  lang: Lang;
   onKeywordClick: (keyword: string) => void;
 }
 
-export default function DreamCategory({ t, onKeywordClick }: DreamCategoryProps) {
+export default function DreamCategory({ t, lang, onKeywordClick }: DreamCategoryProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const categories = getDreamCategories(lang);
 
   return (
     <div className="dream-category-container">
@@ -23,7 +25,7 @@ export default function DreamCategory({ t, onKeywordClick }: DreamCategoryProps)
       </p>
 
       <div className="dream-category-grid">
-        {DREAM_CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <div key={cat.id} className="dream-category-card">
             {/* 分类标题 */}
             <button
@@ -49,12 +51,12 @@ export default function DreamCategory({ t, onKeywordClick }: DreamCategoryProps)
                       className="dream-cat-kw-btn"
                       onClick={() => onKeywordClick(item.word)}
                     >
-                      <span className="dream-cat-kw-word">{item.word}</span>
+                      <span className="dream-cat-kw-word">{item.wordLabel}</span>
                       <span
                         className="dream-cat-kw-level"
                         style={{ color: lvConf?.color, background: lvConf?.bg }}
                       >
-                        {item.level}
+                        {levelLabel(item.level, lang)}
                       </span>
                     </button>
                   );

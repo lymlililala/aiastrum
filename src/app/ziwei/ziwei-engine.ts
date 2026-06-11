@@ -13,15 +13,18 @@ import {
   TIANGAN_SIHUA,
   TIAN_GAN_10,
   DI_ZHI_12,
-  MINGONG_FREE_READINGS,
-  PERSONALITY_LABELS,
-  PAYWALL_HINTS,
-  STAR_COLORS,
   DAXIAN_TEXTS,
   LIUNIAN_TEXTS,
+  resolveMingReading,
+  resolvePersonalityLabels,
+  resolveStarDisplay,
+  resolveWuXingJu,
+  type Lang,
   type MainStar,
   type Palace,
 } from "./ziwei-data";
+
+export type { Lang } from "./ziwei-data";
 
 // ===== 输入类型 =====
 export interface ZiweiInput {
@@ -74,7 +77,8 @@ export interface ZiweiChart {
   // 十二宫数据
   palaces: PalaceData[];
   // 解读
-  mingStarName: string;         // 命宫主星
+  mingStarName: string;         // 命宫主星（中文 key，命盘格内字形 + 数据查找）
+  mingStarDisplay: string;      // 命宫主星本地化显示名（散文用）
   mingReading: string;          // 命宫解读（免费）
   personalityLabels: string[];  // 性格标签
   wealthReading: string;
@@ -299,7 +303,7 @@ function calcWuXingJu(mingGan: string, mingZhi: string): { name: string; startAg
 }
 
 // ===== 主引擎函数 =====
-export function runZiweiEngine(input: ZiweiInput): ZiweiChart {
+export function runZiweiEngine(input: ZiweiInput, lang: Lang = "zh"): ZiweiChart {
   const seed = input.birthYear * 100000 + input.birthMonth * 1000 + input.birthDay * 10
     + (input.gender === "female" ? 0 : 5000)
     + input.name.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
@@ -321,10 +325,11 @@ export function runZiweiEngine(input: ZiweiInput): ZiweiChart {
   // 五行局
   const yearGanIdx = TIAN_GAN_10.indexOf(yearGan as typeof TIAN_GAN_10[number]);
   const mingGanIdx = (yearGanIdx + mingGong) % 10;
-  const { name: wuXingJu, startAge } = calcWuXingJu(
+  const { name: wuXingJuKey, startAge } = calcWuXingJu(
     TIAN_GAN_10[mingGanIdx]!,
     DI_ZHI_12[mingGong]!
   );
+  const wuXingJu = resolveWuXingJu(wuXingJuKey, lang);
 
   // 安主星
   const mainPlacement = placeMingStars(mingGong, input.birthDay, rand);
@@ -356,8 +361,9 @@ export function runZiweiEngine(input: ZiweiInput): ZiweiChart {
   // 命宫主星
   const mingStars = palaceDataList[0]?.mainStars ?? [];
   const mingStarName = mingStars.length > 0 ? mingStars[0]! : "紫微";
-  const mingReading = MINGONG_FREE_READINGS[mingStarName] ?? MINGONG_FREE_READINGS["紫微"]!;
-  const personalityLabels = PERSONALITY_LABELS[mingStarName]?.slice(0, 3) ?? ["命格独特", "天赋异禀", "格局超凡"];
+  const mingStarDisplay = resolveStarDisplay(mingStarName, lang);
+  const mingReading = resolveMingReading(mingStarName, lang);
+  const personalityLabels = resolvePersonalityLabels(mingStarName, lang).slice(0, 3);
 
     const wealthPalace = palaceDataList[4]!;
   const careerPalace = palaceDataList[8]!;
@@ -365,15 +371,15 @@ export function runZiweiEngine(input: ZiweiInput): ZiweiChart {
 
   const mainStarData = MAIN_STARS[mingStarName];
 
-  const wealthReading = generateWealthReading(wealthPalace, mingStarName, rand);
-  const careerReading = generateCareerReading(careerPalace, mingStarName, rand);
-  const loveReading   = generateLoveReading(lovePalace, input.gender, mingStarName, rand);
-  const guirenReading = generateGuirenReading(mingGong, rand);
+  const wealthReading = generateWealthReading(wealthPalace, mingStarName, lang, rand);
+  const careerReading = generateCareerReading(careerPalace, mingStarName, lang, rand);
+  const loveReading   = generateLoveReading(lovePalace, input.gender, mingStarName, lang, rand);
+  const guirenReading = generateGuirenReading(mingGong, lang, rand);
 
   // 大限流年
   const currentAge = new Date().getFullYear() - input.birthYear;
-  const daxianReading = generateDaxianReading(currentAge, rand);
-  const liunianReading = LIUNIAN_TEXTS[rand() > 0.5 ? "good" : rand() > 0.3 ? "average" : "caution"];
+  const daxianReading = generateDaxianReading(currentAge, lang, rand);
+  const liunianReading = LIUNIAN_TEXTS[rand() > 0.5 ? "good" : rand() > 0.3 ? "average" : "caution"][lang];
 
   return {
     name: input.name,
@@ -389,81 +395,185 @@ export function runZiweiEngine(input: ZiweiInput): ZiweiChart {
     mingGong, shenGong,
     wuXingJu, startAge,
     palaces: palaceDataList,
-    mingStarName, mingReading, personalityLabels,
+    mingStarName, mingStarDisplay, mingReading, personalityLabels,
     wealthReading, careerReading, loveReading,
     guirenReading, daxianReading, liunianReading,
   };
 }
 
-// ===== 解读生成辅助函数 =====
-function generateWealthReading(palace: PalaceData, mingStarName: string, rand: () => number): string {
-  const mainStarData = MAIN_STARS[mingStarName];
-  const hasSihua = palace.siHua.length > 0;
-  const base = mainStarData?.wealth_hint ?? "财运稳健，正财为主。";
+// ===== 解读生成辅助函数（三语本地化）=====
 
-  const extras = [
+const WEALTH_EXTRAS: Record<Lang, string[]> = {
+  zh: [
     "你的财帛宫格局显示，最适合通过专业技能积累财富，越到中年后期财运越旺。",
     "命盘显示你有一次明显的财富跃迁机会，关键在于抓住某个行业转型的时间节点。",
     "你的偏财运值得关注，在某个特定领域的投资或副业，可能给你带来超出预期的收益。",
     "你的财富密码藏在你的专业壁垒里，深耕一个领域后财运会有质的飞跃。",
-  ];
+  ],
+  en: [
+    "Your Wealth Palace pattern shows you accumulate wealth best through professional skill, with fortune strengthening into later midlife.",
+    "Your chart reveals one clear chance for a leap in wealth; the key is seizing the moment of a particular industry's transformation.",
+    "Your windfall luck is worth watching — an investment or side venture in a specific field may bring returns beyond expectation.",
+    "Your wealth code lies in your professional moat; once you go deep in one field, your fortune takes a qualitative leap.",
+  ],
+  tw: [
+    "你的財帛宮格局顯示，最適合通過專業技能積累財富，越到中年後期財運越旺。",
+    "命盤顯示你有一次明顯的財富躍遷機會，關鍵在於抓住某個行業轉型的時間節點。",
+    "你的偏財運值得關注，在某個特定領域的投資或副業，可能給你帶來超出預期的收益。",
+    "你的財富密碼藏在你的專業壁壘裡，深耕一個領域後財運會有質的飛躍。",
+  ],
+};
 
-  const sihuaBonus = palace.siHua.includes("禄") ? "财帛宫化禄，财运格局极旺，贵人财源不断。" :
-                     palace.siHua.includes("忌") ? "财帛宫有化忌飞入，需谨防冲动消费和感情破财。" : "";
+const WEALTH_DEFAULT: Record<Lang, string> = {
+  zh: "财运稳健，正财为主。",
+  en: "Steady wealth, primarily from regular income.",
+  tw: "財運穩健，正財為主。",
+};
+
+const WEALTH_SIHUA_LU: Record<Lang, string> = {
+  zh: "财帛宫化禄，财运格局极旺，贵人财源不断。",
+  en: "A Hua-Lu transformation in the Wealth Palace makes for very strong wealth luck, with a steady stream of benefactor-driven income.",
+  tw: "財帛宮化祿，財運格局極旺，貴人財源不斷。",
+};
+
+const WEALTH_SIHUA_JI: Record<Lang, string> = {
+  zh: "财帛宫有化忌飞入，需谨防冲动消费和感情破财。",
+  en: "A Hua-Ji transformation flies into the Wealth Palace, so guard against impulsive spending and losses through relationships.",
+  tw: "財帛宮有化忌飛入，需謹防衝動消費和感情破財。",
+};
+
+function generateWealthReading(palace: PalaceData, mingStarName: string, lang: Lang, rand: () => number): string {
+  const mainStarData = MAIN_STARS[mingStarName];
+  const base = mainStarData?.wealth_hint[lang] ?? WEALTH_DEFAULT[lang];
+  const extras = WEALTH_EXTRAS[lang];
+
+  const sihuaBonus = palace.siHua.includes("禄") ? WEALTH_SIHUA_LU[lang] :
+                     palace.siHua.includes("忌") ? WEALTH_SIHUA_JI[lang] : "";
 
   return `${base}\n\n${extras[Math.floor(rand() * extras.length)]}${sihuaBonus ? "\n\n" + sihuaBonus : ""}`;
 }
 
-function generateCareerReading(palace: PalaceData, mingStarName: string, rand: () => number): string {
-  const mainStarData = MAIN_STARS[mingStarName];
-  const base = mainStarData?.career_hint ?? "事业格局稳健，适合专业型发展路径。";
-
-  const extras = [
+const CAREER_EXTRAS: Record<Lang, string[]> = {
+  zh: [
     "官禄宫的格局显示，你最大的突破往往发生在换赛道或行业转型的节点上，勇于改变是你的关键词。",
     "你有明显的独立创业格局，在某个时间节点选择自主创业，将是事业的重大转折点。",
     "你的事业贵人在意想不到的地方，保持开放的人际关系，命中自有贵人相助。",
     "你的官禄宫显示，舞台越大你越能发挥，需要主动寻找更大的平台和更高的目标。",
-  ];
+  ],
+  en: [
+    "Your Career Palace shows your biggest breakthroughs tend to come at moments of switching tracks or industry transformation — daring to change is your keyword.",
+    "You have a clear pattern for independent entrepreneurship; choosing to start your own venture at the right moment will be a major career turning point.",
+    "Your career benefactors appear in unexpected places; keep your relationships open and help is written into your fate.",
+    "Your Career Palace shows the bigger the stage, the better you perform — actively seek larger platforms and higher goals.",
+  ],
+  tw: [
+    "官祿宮的格局顯示，你最大的突破往往發生在換賽道或行業轉型的節點上，勇於改變是你的關鍵詞。",
+    "你有明顯的獨立創業格局，在某個時間節點選擇自主創業，將是事業的重大轉折點。",
+    "你的事業貴人在意想不到的地方，保持開放的人際關係，命中自有貴人相助。",
+    "你的官祿宮顯示，舞台越大你越能發揮，需要主動尋找更大的平台和更高的目標。",
+  ],
+};
+
+const CAREER_DEFAULT: Record<Lang, string> = {
+  zh: "事业格局稳健，适合专业型发展路径。",
+  en: "A steady career pattern, suited to a specialist development path.",
+  tw: "事業格局穩健，適合專業型發展路徑。",
+};
+
+function generateCareerReading(palace: PalaceData, mingStarName: string, lang: Lang, rand: () => number): string {
+  const mainStarData = MAIN_STARS[mingStarName];
+  const base = mainStarData?.career_hint[lang] ?? CAREER_DEFAULT[lang];
+  const extras = CAREER_EXTRAS[lang];
 
   return `${base}\n\n${extras[Math.floor(rand() * extras.length)]}`;
 }
 
-function generateLoveReading(palace: PalaceData, gender: string, mingStarName: string, rand: () => number): string {
-  const mainStarData = MAIN_STARS[mingStarName];
-  const base = mainStarData?.love_hint ?? "感情格局稳定，正缘有时会在意想不到的地方相遇。";
+const LOVE_DEFAULT: Record<Lang, string> = {
+  zh: "感情格局稳定，正缘有时会在意想不到的地方相遇。",
+  en: "A stable pattern in love; your destined partner sometimes appears where you least expect.",
+  tw: "感情格局穩定，正緣有時會在意想不到的地方相遇。",
+};
 
-  const maleFeatures = [
+const LOVE_MALE_FEATURES: Record<Lang, string[]> = {
+  zh: [
     "你的正缘气质温柔知性，在某个与你有共同兴趣的场合相遇，缘分来临时你会有强烈的心动感。",
     "你的正缘事业心强，独立有主见，是那种不需要依附别人的女性，与你势均力敌。",
     "你的正缘有一双很有神韵的眼睛，第一次见面就能感受到她的与众不同。",
-  ];
+  ],
+  en: [
+    "Your destined partner is gentle and intellectual; you'll meet at a setting around a shared interest, and feel a strong flutter when the connection arrives.",
+    "Your destined partner is career-driven, independent, and decisive — a woman who needs no one to lean on, an equal match for you.",
+    "Your destined partner has a pair of strikingly expressive eyes; you'll sense how different she is from the very first meeting.",
+  ],
+  tw: [
+    "你的正緣氣質溫柔知性，在某個與你有共同興趣的場合相遇，緣分來臨時你會有強烈的心動感。",
+    "你的正緣事業心強，獨立有主見，是那種不需要依附別人的女性，與你勢均力敵。",
+    "你的正緣有一雙很有神韻的眼睛，第一次見面就能感受到她的與眾不同。",
+  ],
+};
 
-  const femaleFeatures = [
+const LOVE_FEMALE_FEATURES: Record<Lang, string[]> = {
+  zh: [
     "你的正缘稳重可靠，有担当，是那种用行动而非语言来表达爱意的类型。",
     "你的正缘才华出众，可能在艺术或技术领域有专业建树，与你有强烈的精神共鸣。",
     "你的正缘高颜值是一方面，但更重要的是他/她的内在成熟度与你高度匹配。",
-  ];
+  ],
+  en: [
+    "Your destined partner is steady, dependable, and responsible — the type who expresses love through actions rather than words.",
+    "Your destined partner is exceptionally talented, perhaps accomplished in the arts or technology, sharing a strong spiritual resonance with you.",
+    "Your destined partner's good looks are one thing, but more important is how closely their inner maturity matches yours.",
+  ],
+  tw: [
+    "你的正緣穩重可靠，有擔當，是那種用行動而非語言來表達愛意的類型。",
+    "你的正緣才華出眾，可能在藝術或技術領域有專業建樹，與你有強烈的精神共鳴。",
+    "你的正緣高顏值是一方面，但更重要的是他/她的內在成熟度與你高度匹配。",
+  ],
+};
 
-  const features = gender === "female" ? femaleFeatures : maleFeatures;
+function generateLoveReading(palace: PalaceData, gender: string, mingStarName: string, lang: Lang, rand: () => number): string {
+  const mainStarData = MAIN_STARS[mingStarName];
+  const base = mainStarData?.love_hint[lang] ?? LOVE_DEFAULT[lang];
+
+  const features = gender === "female" ? LOVE_FEMALE_FEATURES[lang] : LOVE_MALE_FEATURES[lang];
 
   return `${base}\n\n${features[Math.floor(rand() * features.length)]}`;
 }
 
-function generateGuirenReading(mingGong: number, rand: () => number): string {
-  const directions = ["东北方", "西南方", "正南方", "东南方", "西北方", "正东方"];
-  const types = ["年长于你的长辈型贵人", "同辈中的意见领袖", "异性贵人", "行业大咖"];
-  const scenes = ["工作场合", "某次偶然的社交场合", "朋友介绍的圈子里", "某个感兴趣的课程或活动中"];
+const GUIREN_DIRECTIONS: Record<Lang, string[]> = {
+  zh: ["东北方", "西南方", "正南方", "东南方", "西北方", "正东方"],
+  en: ["the northeast", "the southwest", "due south", "the southeast", "the northwest", "due east"],
+  tw: ["東北方", "西南方", "正南方", "東南方", "西北方", "正東方"],
+};
 
-  const dir = directions[Math.floor(rand() * directions.length)]!;
-  const type = types[Math.floor(rand() * types.length)]!;
-  const scene = scenes[Math.floor(rand() * scenes.length)]!;
+const GUIREN_TYPES: Record<Lang, string[]> = {
+  zh: ["年长于你的长辈型贵人", "同辈中的意见领袖", "异性贵人", "行业大咖"],
+  en: ["an elder benefactor older than you", "an opinion leader among your peers", "a benefactor of the opposite sex", "a big name in your industry"],
+  tw: ["年長於你的長輩型貴人", "同輩中的意見領袖", "異性貴人", "行業大咖"],
+};
 
+const GUIREN_SCENES: Record<Lang, string[]> = {
+  zh: ["工作场合", "某次偶然的社交场合", "朋友介绍的圈子里", "某个感兴趣的课程或活动中"],
+  en: ["a work setting", "a chance social occasion", "a circle introduced by friends", "a course or activity that interests you"],
+  tw: ["工作場合", "某次偶然的社交場合", "朋友介紹的圈子裡", "某個感興趣的課程或活動中"],
+};
+
+function generateGuirenReading(mingGong: number, lang: Lang, rand: () => number): string {
+  const dir = GUIREN_DIRECTIONS[lang][Math.floor(rand() * GUIREN_DIRECTIONS[lang].length)]!;
+  const type = GUIREN_TYPES[lang][Math.floor(rand() * GUIREN_TYPES[lang].length)]!;
+  const scene = GUIREN_SCENES[lang][Math.floor(rand() * GUIREN_SCENES[lang].length)]!;
+
+  if (lang === "en") {
+    return `Your chart shows your benefactor direction lies in ${dir}, with benefactors tending to be ${type}.\n\nThe scene where you are most likely to meet a benefactor is ${scene}. Keep an open social attitude and actively build high-quality connections — your benefactor is often within your own radius.\n\nThis year holds an important window of benefactor opportunity; stay alert and seize it boldly.`;
+  }
+  if (lang === "tw") {
+    return `你的命盤顯示貴人方位在${dir}，貴人類型傾向於${type}。\n\n最容易與貴人相遇的場景是${scene}。保持開放的社交心態，主動建立高質量人脈，貴人往往就在你的半徑之內。\n\n今年有一個重要的貴人機遇窗口，保持敏感，勇於把握。`;
+  }
   return `你的命盘显示贵人方位在${dir}，贵人类型倾向于${type}。\n\n最容易与贵人相遇的场景是${scene}。保持开放的社交心态，主动建立高质量人脉，贵人往往就在你的半径之内。\n\n今年有一个重要的贵人机遇窗口，保持敏感，勇于把握。`;
 }
 
-function generateDaxianReading(age: number, rand: () => number): string {
-  if (age <= 20) return DAXIAN_TEXTS.early;
-  if (age <= 30) return DAXIAN_TEXTS.youth;
-  if (age <= 40) return DAXIAN_TEXTS.mature;
-  return DAXIAN_TEXTS.prime;
+function generateDaxianReading(age: number, lang: Lang, rand: () => number): string {
+  if (age <= 20) return DAXIAN_TEXTS.early[lang];
+  if (age <= 30) return DAXIAN_TEXTS.youth[lang];
+  if (age <= 40) return DAXIAN_TEXTS.mature[lang];
+  return DAXIAN_TEXTS.prime[lang];
 }

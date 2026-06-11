@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { STAR_COLORS, SI_HUA } from "../ziwei-data";
 import type { ZiweiChart, PalaceData } from "../ziwei-engine";
-import type { ZiweiT } from "../ziwei-i18n";
+import type { ZiweiT, Lang } from "../ziwei-i18n";
 
 interface ZiweiChartProps {
   chart: ZiweiChart;
   mode: "modern" | "classic";
   onModeChange: (mode: "modern" | "classic") => void;
   t: ZiweiT;
+  lang: Lang;
 }
 
 // 十二宫在标准方格中的位置（传统样式：3x4布局，命宫在右下）
@@ -33,7 +34,7 @@ const GRID_POSITIONS: [number, number][] = [
 // 三合色
 const SANFANG_COLORS = ["#C77DFF", "#FFB703", "#48CAE4", "#FF99C8"];
 
-export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: ZiweiChartProps) {
+export default function ZiweiChartComponent({ chart, mode, onModeChange, t, lang }: ZiweiChartProps) {
   const [selectedPalace, setSelectedPalace] = useState<number | null>(null);
   const [expandedPalace, setExpandedPalace] = useState<number | null>(null);
 
@@ -101,7 +102,7 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: Zi
         <div className="zw-palace-center">
           <div className="zw-center-name">{chart.name}</div>
           <div className="zw-center-star" style={{ color: STAR_COLORS[chart.mingStarName] }}>
-            {chart.mingStarName}
+            {chart.mingStarDisplay}
           </div>
           <div className="zw-center-labels">
             {chart.personalityLabels.map(l => (
@@ -112,13 +113,13 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: Zi
             <div className="zw-center-selected">
               <div className="zw-center-selected-name">
                 {mode === "modern"
-                  ? chart.palaces[selectedPalace]?.palace.modernName
-                  : chart.palaces[selectedPalace]?.palace.name}
+                  ? chart.palaces[selectedPalace]?.palace.modernName[lang]
+                  : chart.palaces[selectedPalace]?.palace.name[lang]}
               </div>
               <div className="zw-center-selected-desc">
                 {mode === "modern"
-                  ? chart.palaces[selectedPalace]?.palace.modernDesc
-                  : chart.palaces[selectedPalace]?.palace.description}
+                  ? chart.palaces[selectedPalace]?.palace.modernDesc[lang]
+                  : chart.palaces[selectedPalace]?.palace.description[lang]}
               </div>
             </div>
           )}
@@ -145,7 +146,7 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: Zi
             >
               {/* 宫名 */}
               <div className="zw-palace-name">
-                {mode === "modern" ? pd.palace.modernName : pd.palace.name}
+                {mode === "modern" ? pd.palace.modernName[lang] : pd.palace.name[lang]}
                 {isMing && <span className="zw-palace-tag zw-tag-ming">命</span>}
                 {isShen && <span className="zw-palace-tag zw-tag-shen">身</span>}
               </div>
@@ -195,8 +196,8 @@ export default function ZiweiChartComponent({ chart, mode, onModeChange, t }: Zi
 
       {selectedPalace !== null && (
         <p className="zw-chart-tip">{t.chartTipPre}{mode === "modern"
-          ? chart.palaces[selectedPalace]?.palace.modernName
-          : chart.palaces[selectedPalace]?.palace.name}{t.chartTipPost}</p>
+          ? chart.palaces[selectedPalace]?.palace.modernName[lang]
+          : chart.palaces[selectedPalace]?.palace.name[lang]}{t.chartTipPost}</p>
       )}
     </div>
   );

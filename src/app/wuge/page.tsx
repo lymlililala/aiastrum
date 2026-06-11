@@ -18,11 +18,11 @@ interface WugeApiResponse {
   score: number;
   scoreLevel: string;
   wuge: {
-    tian: { strokes: number; level: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
-    ren:  { strokes: number; level: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
-    di:   { strokes: number; level: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
-    wai:  { strokes: number; level: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
-    zong: { strokes: number; level: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
+    tian: { strokes: number; level: string; levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
+    ren:  { strokes: number; level: string; levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
+    di:   { strokes: number; level: string; levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
+    wai:  { strokes: number; level: string; levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
+    zong: { strokes: number; level: string; levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶"; score: number; title: string; shortDesc: string; fullDesc: string };
   };
   sanCai: string;
   sanCaiDesc: string;

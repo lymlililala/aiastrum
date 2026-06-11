@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { LEVEL_CONFIG, POSTER_QUOTES, type DreamLevel } from "../dream-data";
+import {
+  LEVEL_CONFIG,
+  POSTER_QUOTES,
+  levelLabel,
+  resolveLevelKey,
+  isYiAdvice,
+  type Lang,
+} from "../dream-data";
 import type { DreamT } from "../dream-i18n";
 
 export interface DreamResultData {
@@ -17,17 +24,21 @@ export interface DreamResultData {
 
 interface DreamResultProps {
   t: DreamT;
+  lang: Lang;
   data: DreamResultData;
   onReset: () => void;
 }
 
-export default function DreamResult({ t, data, onReset }: DreamResultProps) {
+export default function DreamResult({ t, lang, data, onReset }: DreamResultProps) {
   const [liked, setLiked] = useState<"up" | "down" | null>(null);
   const [showPosterTip, setShowPosterTip] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const level = (data.level ?? "平") as DreamLevel;
-  const levelConf = LEVEL_CONFIG[level] ?? LEVEL_CONFIG["平"];
+  // data.level 可能是 zh key（mock）或 AI 返回的本地化等级文案；
+  // 归一化为 zh key 以取色/图标，展示则用 levelLabel 本地化。
+  const levelKey = resolveLevelKey(data.level ?? "平");
+  const levelConf = LEVEL_CONFIG[levelKey];
+  const levelText = levelLabel(data.level ?? "平", lang);
 
   // 拆解宜忌建议
   const adviceParts = data.traditional.advice.split(/[。；;]/).filter(Boolean);
@@ -92,7 +103,7 @@ export default function DreamResult({ t, data, onReset }: DreamResultProps) {
     // 吉凶标签
     ctx.font = "bold 28px sans-serif";
     ctx.fillStyle = levelConf.color;
-    ctx.fillText(`${levelConf.icon} ${level}`, W / 2, 370);
+    ctx.fillText(`${levelConf.icon} ${levelText}`, W / 2, 370);
 
     // 分隔线
     ctx.beginPath();
@@ -169,7 +180,7 @@ export default function DreamResult({ t, data, onReset }: DreamResultProps) {
               border: `1px solid ${levelConf.border}`,
             }}
           >
-            {levelConf.icon} {level}
+            {levelConf.icon} {levelText}
           </span>
         </div>
         <h1 className="dream-result-title">{data.primaryTitle}</h1>
@@ -194,7 +205,7 @@ export default function DreamResult({ t, data, onReset }: DreamResultProps) {
               className="dream-level-tag"
               style={{ color: levelConf.color, background: levelConf.bg }}
             >
-              {level}
+              {levelText}
             </span>
           </div>
 
@@ -202,18 +213,19 @@ export default function DreamResult({ t, data, onReset }: DreamResultProps) {
             <p className="dream-omen-text">{data.traditional.omen}</p>
 
             <div className="dream-advice-box">
-              {adviceParts.map((part, i) => (
-                <div key={i} className="dream-advice-item">
-                  <span
-                    className={part.startsWith("宜") ? "dream-yi" : "dream-ji"}
-                  >
-                    {part.startsWith("宜") ? t.yi : t.ji}
-                  </span>
-                  <span className="dream-advice-text">
-                    {part.replace(/^[宜忌]：?/, "")}
-                  </span>
-                </div>
-              ))}
+              {adviceParts.map((part, i) => {
+                const isYi = isYiAdvice(part);
+                return (
+                  <div key={i} className="dream-advice-item">
+                    <span className={isYi ? "dream-yi" : "dream-ji"}>
+                      {isYi ? t.yi : t.ji}
+                    </span>
+                    <span className="dream-advice-text">
+                      {part.replace(/^\s*(?:[宜忌]：?|(?:do|don['’]?t)\s*[:：]?)/i, "").trim()}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LOVE_LOADING_TEXTS } from "../love-data";
+import { LOVE_LOADING_TEXTS, ra, type Lang } from "../love-data";
 
-export default function LoveLoading() {
+export default function LoveLoading({ lang }: { lang: Lang }) {
+  const texts = ra(LOVE_LOADING_TEXTS, lang);
   const [textIdx, setTextIdx] = useState(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const textTimer = setInterval(() => {
-      setTextIdx(prev => (prev + 1) % LOVE_LOADING_TEXTS.length);
+      setTextIdx(prev => (prev + 1) % texts.length);
     }, 600);
     return () => clearInterval(textTimer);
-  }, []);
+  }, [texts.length]);
 
   useEffect(() => {
     const progTimer = setInterval(() => {
@@ -56,7 +57,7 @@ export default function LoveLoading() {
 
       {/* 加载文案 */}
       <div className="love-loading-text-wrap">
-        <p className="love-loading-text">{LOVE_LOADING_TEXTS[textIdx]}</p>
+        <p className="love-loading-text">{texts[textIdx]}</p>
       </div>
 
       {/* 进度条 */}

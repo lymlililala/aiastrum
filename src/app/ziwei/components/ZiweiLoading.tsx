@@ -2,21 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { ZIWEI_LOADING_TEXTS } from "../ziwei-data";
-import type { ZiweiT } from "../ziwei-i18n";
+import type { ZiweiT, Lang } from "../ziwei-i18n";
 
 interface ZiweiLoadingProps {
   t: ZiweiT;
+  lang: Lang;
 }
 
-export default function ZiweiLoading({ t: _t }: ZiweiLoadingProps) {
+export default function ZiweiLoading({ t: _t, lang }: ZiweiLoadingProps) {
+  const loadingTexts = ZIWEI_LOADING_TEXTS[lang];
   const [textIdx, setTextIdx]   = useState(0);
   const [progress, setProgress] = useState(0);
   const [angle, setAngle]       = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setTextIdx(p => (p + 1) % ZIWEI_LOADING_TEXTS.length), 700);
+    const t = setInterval(() => setTextIdx(p => (p + 1) % loadingTexts.length), 700);
     return () => clearInterval(t);
-  }, []);
+  }, [loadingTexts.length]);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -80,7 +82,7 @@ export default function ZiweiLoading({ t: _t }: ZiweiLoadingProps) {
 
       {/* 加载文案 */}
       <div className="zw-loading-text-wrap">
-        <p className="zw-loading-text">{ZIWEI_LOADING_TEXTS[textIdx]}</p>
+        <p className="zw-loading-text">{loadingTexts[textIdx]}</p>
       </div>
 
       {/* 进度条 */}

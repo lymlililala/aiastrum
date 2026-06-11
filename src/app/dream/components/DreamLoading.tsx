@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { LOADING_TEXTS } from "../dream-data";
+import { getLoadingTexts, type Lang } from "../dream-data";
 import type { DreamT } from "../dream-i18n";
 
 interface DreamLoadingProps {
   t: DreamT;
+  lang: Lang;
   query: string;
 }
 
-export default function DreamLoading({ t, query }: DreamLoadingProps) {
+export default function DreamLoading({ t, lang, query }: DreamLoadingProps) {
+  const loadingTexts = getLoadingTexts(lang);
   const [textIndex, setTextIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [stars, setStars] = useState<Array<{ x: number; y: number; size: number; delay: number; dur: number }>>([]);
@@ -29,10 +31,10 @@ export default function DreamLoading({ t, query }: DreamLoadingProps) {
   // 滚动加载文案
   useEffect(() => {
     const timer = setInterval(() => {
-      setTextIndex((prev) => (prev + 1) % LOADING_TEXTS.length);
+      setTextIndex((prev) => (prev + 1) % loadingTexts.length);
     }, 800);
     return () => clearInterval(timer);
-  }, []);
+  }, [loadingTexts.length]);
 
   // 进度条动画
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function DreamLoading({ t, query }: DreamLoadingProps) {
     return () => clearInterval(timer);
   }, []);
 
-  const displayText = LOADING_TEXTS[textIndex] ?? LOADING_TEXTS[0]!;
+  const displayText = loadingTexts[textIndex] ?? loadingTexts[0]!;
 
   return (
     <div className="dream-loading-container">

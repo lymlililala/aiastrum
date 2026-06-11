@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ZiweiChartComponent from "./ZiweiChart";
-import { STAR_COLORS, MAIN_STARS } from "../ziwei-data";
+import { STAR_COLORS, MAIN_STARS, resolveElement, resolveYinYang, resolveStarDisplay } from "../ziwei-data";
 import type { ZiweiChart } from "../ziwei-engine";
 import type { ZiweiT, Lang } from "../ziwei-i18n";
 
@@ -15,7 +15,7 @@ interface ZiweiFullReportProps {
 
 type TabKey = "chart" | "personality" | "wealth" | "career" | "love" | "daxian";
 
-export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: ZiweiFullReportProps) {
+export default function ZiweiFullReport({ chart, onReset, t, lang }: ZiweiFullReportProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("chart");
   const [chartMode, setChartMode] = useState<"modern" | "classic">("modern");
   const [copied, setCopied]       = useState(false);
@@ -35,7 +35,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
   ];
 
   const handleShare = async () => {
-    const text = `${t.shareTextL1}\n${chart.mingStarName}${t.shareTextZuo}${chart.wuXingJu}\n${chart.personalityLabels.join(t.shareTextJoin)}\n\n${t.shareTextCTA}`;
+    const text = `${t.shareTextL1}\n${chart.mingStarDisplay}${t.shareTextZuo}${chart.wuXingJu}\n${chart.personalityLabels.join(t.shareTextJoin)}\n\n${t.shareTextCTA}`;
     try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }
     catch { /* ignore */ }
   };
@@ -49,7 +49,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
           <div className="zw-report-unlocked">{t.unlocked}</div>
           <h1 className="zw-report-name">{chart.name}{t.reportNameSuffix}</h1>
           <div className="zw-report-main-star" style={{ color: mingColor }}>
-            {chart.mingStarName}{t.zuoMingSuffix}
+            {chart.mingStarDisplay}{t.zuoMingSuffix}
           </div>
           <p className="zw-report-ganzhi">
             {chart.yearGan}{chart.yearZhi}{t.unitYear} · {chart.monthGan}{chart.monthZhi}{t.unitMonth} · {chart.dayGan}{chart.dayZhi}{t.unitDay}
@@ -78,7 +78,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
         {/* === 星盘 Tab === */}
         {activeTab === "chart" && (
           <div className="zw-tab-pane">
-            <ZiweiChartComponent chart={chart} mode={chartMode} onModeChange={setChartMode} t={t} />
+            <ZiweiChartComponent chart={chart} mode={chartMode} onModeChange={setChartMode} t={t} lang={lang} />
           </div>
         )}
 
@@ -89,24 +89,24 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
               <div className="zw-section-icon-lg" style={{ color: mingColor }}>◆</div>
               <div>
                 <h2 className="zw-section-h2">{t.secPersonalityH}</h2>
-                <p className="zw-section-sub">{chart.mingStarName}{t.secPersonalitySubPost}</p>
+                <p className="zw-section-sub">{chart.mingStarDisplay}{t.secPersonalitySubPost}</p>
               </div>
             </div>
 
             {/* 主星卡片 */}
             <div className="zw-star-card" style={{ borderColor: mingColor }}>
               <div className="zw-star-card-name" style={{ color: mingColor }}>
-                {chart.mingStarName}
+                {chart.mingStarDisplay}
               </div>
-              <div className="zw-star-card-category">{mingStarData?.category}</div>
-              <p className="zw-star-card-personality">{mingStarData?.personality}</p>
+              <div className="zw-star-card-category">{mingStarData?.category[lang]}</div>
+              <p className="zw-star-card-personality">{mingStarData?.personality[lang]}</p>
             </div>
 
             {/* 性格标签 */}
             <div className="zw-personality-grid">
               {(MAIN_STARS[chart.mingStarName] ? [
                 { icon: "◆", label: t.piLabelPersonality, value: chart.personalityLabels.join(t.shareTextJoin) },
-                { icon: "⚡", label: t.piLabelElement, value: `${mingStarData?.element}${t.elementSuffix}${mingStarData?.yin_yang}${t.yinyangSuffix}` },
+                { icon: "⚡", label: t.piLabelElement, value: `${resolveElement(mingStarData!.element, lang)}${t.elementSuffix}${resolveYinYang(mingStarData!.yin_yang, lang)}${t.yinyangSuffix}` },
                 { icon: "🌟", label: t.piLabelWuxing, value: `${chart.wuXingJu}${t.wuxingValueMid}${chart.startAge}${t.wuxingValuePost}` },
               ] : []).map(item => (
                 <div key={item.label} className="zw-personality-item">
@@ -153,7 +153,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
               {chart.palaces[4] && (
                 <>
                   <div className="zw-spotlight-stars">
-                    {t.spotlightStars}{chart.palaces[4].mainStars.length > 0 ? chart.palaces[4].mainStars.join(t.starsJoin) : t.noMainStar}
+                    {t.spotlightStars}{chart.palaces[4].mainStars.length > 0 ? chart.palaces[4].mainStars.map(s => resolveStarDisplay(s, lang)).join(t.starsJoin) : t.noMainStar}
                   </div>
                   {chart.palaces[4].siHua.length > 0 && (
                     <div className="zw-spotlight-sihua">
@@ -161,7 +161,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
                     </div>
                   )}
                   <p className="zw-spotlight-desc">{chart.palaces[4].mainStars.length > 0
-                    ? `${t.wealthSpotPre}${chart.palaces[4].mainStars[0]}${t.wealthSpotMid}${MAIN_STARS[chart.palaces[4].mainStars[0]!]?.wealth_hint ?? ""}`
+                    ? `${t.wealthSpotPre}${resolveStarDisplay(chart.palaces[4].mainStars[0]!, lang)}${t.wealthSpotMid}${MAIN_STARS[chart.palaces[4].mainStars[0]!]?.wealth_hint[lang] ?? ""}`
                     : t.wealthSpotEmpty}</p>
                 </>
               )}
@@ -197,9 +197,9 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
               {chart.palaces[8] && (
                 <>
                   <div className="zw-spotlight-stars">
-                    {t.spotlightStars}{chart.palaces[8].mainStars.length > 0 ? chart.palaces[8].mainStars.join(t.starsJoin) : t.careerEmptyStars}
+                    {t.spotlightStars}{chart.palaces[8].mainStars.length > 0 ? chart.palaces[8].mainStars.map(s => resolveStarDisplay(s, lang)).join(t.starsJoin) : t.careerEmptyStars}
                   </div>
-                  <p className="zw-spotlight-desc">{mingStarData?.career_hint}</p>
+                  <p className="zw-spotlight-desc">{mingStarData?.career_hint[lang]}</p>
                 </>
               )}
             </div>
@@ -208,7 +208,7 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
               {[
                 { label: t.careerLabelType, value: ["紫微", "七杀", "破军", "廉贞"].includes(chart.mingStarName) ? t.careerValueLead : t.careerValuePro },
                 { label: t.careerLabelWealth, value: ["贪狼", "廉贞", "破军"].includes(chart.mingStarName) ? t.careerValuePian : t.careerValueZheng },
-                { label: t.careerLabelField, value: mingStarData?.career_hint?.split("，")[0] ?? t.careerFieldDefault },
+                { label: t.careerLabelField, value: mingStarData?.career_hint[lang]?.split(/[，,]/)[0] ?? t.careerFieldDefault },
               ].map(item => (
                 <div key={item.label} className="zw-career-item">
                   <div className="zw-ci-label">{item.label}</div>
@@ -240,9 +240,9 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
               {chart.palaces[2] && (
                 <>
                   <div className="zw-spotlight-stars">
-                    {t.spotlightStars}{chart.palaces[2].mainStars.length > 0 ? chart.palaces[2].mainStars.join(t.starsJoin) : t.loveEmptyStars}
+                    {t.spotlightStars}{chart.palaces[2].mainStars.length > 0 ? chart.palaces[2].mainStars.map(s => resolveStarDisplay(s, lang)).join(t.starsJoin) : t.loveEmptyStars}
                   </div>
-                  <p className="zw-spotlight-desc">{mingStarData?.love_hint}</p>
+                  <p className="zw-spotlight-desc">{mingStarData?.love_hint[lang]}</p>
                 </>
               )}
             </div>
@@ -284,9 +284,9 @@ export default function ZiweiFullReport({ chart, onReset, t, lang: _lang }: Ziwe
                 return (
                   <div key={i} className={`zw-timeline-item ${isCurrent ? "zw-timeline-current" : ""}`}>
                     <div className="zw-tl-age">{pd.daXian.startAge}-{pd.daXian.endAge}{t.ageSuffix}</div>
-                    <div className="zw-tl-palace">{pd.palace.name}</div>
+                    <div className="zw-tl-palace">{pd.palace.name[lang]}</div>
                     <div className="zw-tl-stars">
-                      {pd.mainStars.length > 0 ? pd.mainStars.join(" ") : t.timelineEmpty}
+                      {pd.mainStars.length > 0 ? pd.mainStars.map(s => resolveStarDisplay(s, lang)).join(" ") : t.timelineEmpty}
                     </div>
                     {isCurrent && <div className="zw-tl-current-badge">{t.timelineCurrent}</div>}
                   </div>

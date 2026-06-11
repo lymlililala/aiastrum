@@ -114,7 +114,7 @@ export default function ZiweiPage() {
         />
       )}
 
-      {stage === "loading" && <ZiweiLoading t={t} />}
+      {stage === "loading" && <ZiweiLoading t={t} lang={lang} />}
 
       {stage === "full" && chart && (
         <ZiweiFullReport

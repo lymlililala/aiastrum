@@ -6,7 +6,24 @@
 // ===== 五行类型 =====
 export type WuXing = "金" | "木" | "水" | "火" | "土";
 
-// ===== 五行颜色配置 =====
+// ===== 多语言类型 =====
+export type Lang = "zh" | "en" | "tw";
+
+/** 五行元素名（标签）三语 */
+export const WUXING_LABEL: Record<WuXing, Record<Lang, string>> = {
+  金: { zh: "金", tw: "金", en: "Metal" },
+  木: { zh: "木", tw: "木", en: "Wood" },
+  水: { zh: "水", tw: "水", en: "Water" },
+  火: { zh: "火", tw: "火", en: "Fire" },
+  土: { zh: "土", tw: "土", en: "Earth" },
+};
+
+/** 解析五行元素标签 */
+export function getWuxingLabel(wx: WuXing, lang: Lang): string {
+  return WUXING_LABEL[wx][lang];
+}
+
+// ===== 五行颜色配置（仅颜色，文案见 WUXING_DESC）=====
 export const WUXING_CONFIG = {
   金: { color: "#d4a017", bg: "rgba(212,160,23,0.12)", border: "rgba(212,160,23,0.3)", desc: "坚毅果决，刚强有力" },
   木: { color: "#4a7c59", bg: "rgba(74,124,89,0.12)", border: "rgba(74,124,89,0.3)", desc: "生机勃勃，仁慈宽厚" },
@@ -14,6 +31,19 @@ export const WUXING_CONFIG = {
   火: { color: "#c0392b", bg: "rgba(192,57,43,0.12)", border: "rgba(192,57,43,0.3)", desc: "热情积极，光明磊落" },
   土: { color: "#8b6c42", bg: "rgba(139,108,66,0.12)", border: "rgba(139,108,66,0.3)", desc: "稳重踏实，厚德载物" },
 } as const;
+
+/** 五行性格描述（WUXING_CONFIG.desc 的三语版） */
+export const WUXING_DESC: Record<WuXing, Record<Lang, string>> = {
+  金: { zh: "坚毅果决，刚强有力", tw: "堅毅果決，剛強有力", en: "Resolute and strong-willed" },
+  木: { zh: "生机勃勃，仁慈宽厚", tw: "生機勃勃，仁慈寬厚", en: "Vibrant, kind and generous" },
+  水: { zh: "灵动智慧，随机应变", tw: "靈動智慧，隨機應變", en: "Agile, wise and adaptable" },
+  火: { zh: "热情积极，光明磊落", tw: "熱情積極，光明磊落", en: "Passionate, bright and open" },
+  土: { zh: "稳重踏实，厚德载物", tw: "穩重踏實，厚德載物", en: "Steady, grounded and virtuous" },
+};
+
+export function getWuxingDesc(wx: WuXing, lang: Lang): string {
+  return WUXING_DESC[wx][lang];
+}
 
 // ===== 五行相生相克 =====
 export const WUXING_GENERATE: Record<WuXing, WuXing> = {
@@ -238,3 +268,114 @@ export const XIYONGSHEN_TEMPLATES: Record<WuXing, {
     avoidTip: "忌用土旁字（土克水），如：垚、城、坤等",
   },
 };
+
+/** 五行相生口诀（三语版，渲染层按 lang 取用） */
+export const WUXING_TIPS_I18N: Record<Lang, string[]> = {
+  zh: WUXING_TIPS,
+  tw: [
+    "木生火：木燃而生火，生長滋養",
+    "火生土：火灼而生土，熱情孕育",
+    "土生金：土凝而生金，厚積薄發",
+    "金生水：金融而生水，精華流動",
+    "水生木：水潤而生木，滋養生機",
+  ],
+  en: [
+    "Wood feeds Fire: wood burns to give rise to fire, nurturing growth",
+    "Fire feeds Earth: fire's ash forms earth, warmth that gives life",
+    "Earth feeds Metal: earth condenses into metal, strength from patience",
+    "Metal feeds Water: metal melts into water, the flow of essence",
+    "Water feeds Wood: water nourishes wood, sustaining vitality",
+  ],
+};
+
+export function getWuxingTips(lang: Lang): string[] {
+  return WUXING_TIPS_I18N[lang];
+}
+
+/** 喜用神分析模板（三语版）。括号内引用的中文示例字与五行名保留原文。 */
+export const XIYONGSHEN_TEMPLATES_I18N: Record<WuXing, Record<Lang, {
+  title: string;
+  desc: string;
+  nameTip: string;
+  avoidTip: string;
+}>> = {
+  木: {
+    zh: XIYONGSHEN_TEMPLATES.木,
+    tw: {
+      title: "喜用神·木",
+      desc: "命局中木氣不足，需以木氣補益。木主仁慈生長，代表生命力與向上的精神。",
+      nameTip: "宜選帶木旁的字（如：樺、楠、梓）或字義含植物、成長的字（如：萱、芷、榮）",
+      avoidTip: "忌用金旁字（金克木），如：鋒、鋼、銳等",
+    },
+    en: {
+      title: "Favorable Element · Wood",
+      desc: "The chart lacks Wood energy and needs it supplemented. Wood governs kindness and growth, representing vitality and an upward spirit.",
+      nameTip: "Choose characters with the Wood radical (e.g. 桦, 楠, 梓) or characters that evoke plants and growth (e.g. 萱, 芷, 荣).",
+      avoidTip: "Avoid Metal-radical characters (Metal overcomes Wood), such as 锋, 钢, 锐.",
+    },
+  },
+  火: {
+    zh: XIYONGSHEN_TEMPLATES.火,
+    tw: {
+      title: "喜用神·火",
+      desc: "命局中火氣不足，需以火氣補益。火主熱情光明，代表才華與積極向上的精神。",
+      nameTip: "宜選帶火旁或日旁的字（如：煜、炎、旭）或字義含光熱的字（如：曦、暉、晨）",
+      avoidTip: "忌用水旁字（水克火），如：濤、瀾、淼等",
+    },
+    en: {
+      title: "Favorable Element · Fire",
+      desc: "The chart lacks Fire energy and needs it supplemented. Fire governs passion and brightness, representing talent and an active, positive spirit.",
+      nameTip: "Choose characters with the Fire or Sun radical (e.g. 煜, 炎, 旭) or characters that evoke light and warmth (e.g. 曦, 晖, 晨).",
+      avoidTip: "Avoid Water-radical characters (Water overcomes Fire), such as 涛, 澜, 淼.",
+    },
+  },
+  土: {
+    zh: XIYONGSHEN_TEMPLATES.土,
+    tw: {
+      title: "喜用神·土",
+      desc: "命局中土氣不足，需以土氣補益。土主穩重踏實，代表厚德載物的品格。",
+      nameTip: "宜選帶土旁的字（如：坤、垚、城）或字義含山地、穩固的字（如：嶽、堅、厚）",
+      avoidTip: "忌用木旁字（木克土），如：柯、棠、楠等",
+    },
+    en: {
+      title: "Favorable Element · Earth",
+      desc: "The chart lacks Earth energy and needs it supplemented. Earth governs steadiness and groundedness, representing a virtuous, dependable character.",
+      nameTip: "Choose characters with the Earth radical (e.g. 坤, 垚, 城) or characters that evoke mountains and stability (e.g. 岳, 坚, 厚).",
+      avoidTip: "Avoid Wood-radical characters (Wood overcomes Earth), such as 柯, 棠, 楠.",
+    },
+  },
+  金: {
+    zh: XIYONGSHEN_TEMPLATES.金,
+    tw: {
+      title: "喜用神·金",
+      desc: "命局中金氣不足，需以金氣補益。金主剛強果決，代表精準高效的品格。",
+      nameTip: "宜選帶金旁的字（如：銘、鈺、錦）或字義含精金美玉的字（如：琳、璇、瑾）",
+      avoidTip: "忌用火旁字（火克金），如：炎、爍、焱等",
+    },
+    en: {
+      title: "Favorable Element · Metal",
+      desc: "The chart lacks Metal energy and needs it supplemented. Metal governs firmness and decisiveness, representing a precise, efficient character.",
+      nameTip: "Choose characters with the Metal radical (e.g. 铭, 钰, 锦) or characters that evoke fine metal and jade (e.g. 琳, 璇, 瑾).",
+      avoidTip: "Avoid Fire-radical characters (Fire overcomes Metal), such as 炎, 烁, 焱.",
+    },
+  },
+  水: {
+    zh: XIYONGSHEN_TEMPLATES.水,
+    tw: {
+      title: "喜用神·水",
+      desc: "命局中水氣不足，需以水氣補益。水主智慧靈動，代表廣博包容的品格。",
+      nameTip: "宜選帶水旁的字（如：霖、澄、潤）或字義含智慧、流動的字（如：博、睿、涵）",
+      avoidTip: "忌用土旁字（土克水），如：垚、城、坤等",
+    },
+    en: {
+      title: "Favorable Element · Water",
+      desc: "The chart lacks Water energy and needs it supplemented. Water governs wisdom and fluidity, representing a broad-minded, accommodating character.",
+      nameTip: "Choose characters with the Water radical (e.g. 霖, 澄, 润) or characters that evoke wisdom and flow (e.g. 博, 睿, 涵).",
+      avoidTip: "Avoid Earth-radical characters (Earth overcomes Water), such as 垚, 城, 坤.",
+    },
+  },
+};
+
+export function getXiyongTemplate(wx: WuXing, lang: Lang) {
+  return XIYONGSHEN_TEMPLATES_I18N[wx][lang];
+}

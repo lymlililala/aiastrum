@@ -112,7 +112,7 @@ export default function MeihuaPage() {
               </div>
             )}
             <MeihuaInputComponent lang={lang} t={t} onSubmit={handleSubmit} isLoading={false} />
-            <MeihuaKnowledge t={t} />
+            <MeihuaKnowledge lang={lang} t={t} />
           </>
         )}
 
@@ -129,7 +129,7 @@ export default function MeihuaPage() {
               aiReading={aiReading}
               onReset={handleReset}
             />
-            <MeihuaKnowledge t={t} />
+            <MeihuaKnowledge lang={lang} t={t} />
           </>
         )}
       </main>

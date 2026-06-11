@@ -6,7 +6,8 @@ import type { WugeT } from "../wuge-i18n";
 
 interface WugeGe {
   strokes: number;
-  level: "大吉" | "吉" | "半吉" | "凶" | "大凶";
+  level: string;
+  levelKey: "大吉" | "吉" | "半吉" | "凶" | "大凶";
   score: number;
   title: string;
   shortDesc: string;
@@ -148,8 +149,8 @@ function WugeRadarChart({ data, t }: { data: WugeReportData; t: WugeT }) {
 
 // 单个五格卡片
 function GeCard({ label, ge, t, isMain = false }: { label: string; ge: WugeGe; t: WugeT; isMain?: boolean }) {
-  const colors = LEVEL_COLORS[ge.level] ?? LEVEL_COLORS["半吉"]!;
-  const icon = LEVEL_ICONS[ge.level] ?? "○";
+  const colors = LEVEL_COLORS[ge.levelKey] ?? LEVEL_COLORS["半吉"]!;
+  const icon = LEVEL_ICONS[ge.levelKey] ?? "○";
 
   return (
     <div className={`wuge-ge-card ${isMain ? "wuge-ge-card-main" : ""} ${colors.border}`}>
@@ -267,7 +268,7 @@ export default function WugeReport({ t, data, onReset }: WugeReportProps) {
       const levelColors: Record<string, string> = {
         大吉: "#f59e0b", 吉: "#22c55e", 半吉: "#60a5fa", 凶: "#9ca3af", 大凶: "#ef4444"
       };
-      ctx.fillStyle = levelColors[ge.val.level] ?? "#9ca3af";
+      ctx.fillStyle = levelColors[ge.val.levelKey] ?? "#9ca3af";
       ctx.font = "12px serif";
       ctx.fillText(ge.val.level, x, geY + 52);
     });
@@ -417,7 +418,7 @@ export default function WugeReport({ t, data, onReset }: WugeReportProps) {
               <div key={key} className={`wuge-ge-mini ${isMain ? "wuge-ge-mini-main" : ""}`}>
                 <span className="wuge-ge-mini-label">{label}</span>
                 <span className="wuge-ge-mini-num">{data.wuge[key].strokes}</span>
-                <span className={`wuge-ge-mini-level ${LEVEL_COLORS[data.wuge[key].level]?.text ?? ""}`}>
+                <span className={`wuge-ge-mini-level ${LEVEL_COLORS[data.wuge[key].levelKey]?.text ?? ""}`}>
                   {data.wuge[key].level}
                 </span>
               </div>

@@ -6,10 +6,12 @@
 import {
   BA_GUA,
   GUA_MAP,
-  CATEGORY_ADVICE,
   HOUR_TO_ZHI,
   analyzeTiYong,
   getGua64Data,
+  guaNameLabel,
+  resolveCategoryAdvice,
+  type Lang,
   type WuXing,
   type Gua64Info,
 } from "./meihua-data";
@@ -19,6 +21,7 @@ export type DivinationMethod = "time" | "number" | "random";
 
 export interface MeihuaInput {
   method: DivinationMethod;
+  lang?: Lang;                 // 语言（默认 zh）
   question?: string;           // 占问事项（可选）
   category?: string;           // 事项分类
   // 数字起卦
@@ -35,11 +38,12 @@ export interface MeihuaInput {
 export interface GuaInfo {
   upper: number;               // 上卦先天数
   lower: number;               // 下卦先天数
-  upperName: string;
-  lowerName: string;
-  guaName: string;             // 完整卦名
+  upperName: string;           // 上卦名（本地化显示）
+  lowerName: string;           // 下卦名（本地化显示）
+  guaName: string;             // 完整卦名（中文 KEY，用于查表/分享/AI 取象）
+  guaNameDisplay: string;      // 完整卦名（本地化显示）
   symbol: string;              // 上下卦符号组合
-  wuxing: WuXing;              // 整卦五行（取上卦）
+  wuxing: WuXing;              // 整卦五行（取上卦，中文 KEY）
 }
 
 export interface MeihuaResult {
@@ -97,16 +101,18 @@ function mod6(n: number): number {
 /**
  * 从上下卦先天数构建 GuaInfo
  */
-function buildGuaInfo(upper: number, lower: number): GuaInfo {
+function buildGuaInfo(upper: number, lower: number, lang: Lang): GuaInfo {
   const upperGua = BA_GUA[upper]!;
   const lowerGua = BA_GUA[lower]!;
   const key = `${upper}-${lower}`;
+  // guaName 保持中文 KEY（查表/分享/AI 取象）；fallback 同样用中文 name KEY
   const guaName = GUA_MAP[key] ?? `${upperGua.name}${lowerGua.name}卦`;
   return {
     upper, lower,
-    upperName: upperGua.name,
-    lowerName: lowerGua.name,
+    upperName: upperGua.nameLabel[lang],
+    lowerName: lowerGua.nameLabel[lang],
     guaName,
+    guaNameDisplay: GUA_MAP[key] ? guaNameLabel(guaName, lang) : `${upperGua.nameLabel[lang]} / ${lowerGua.nameLabel[lang]}`,
     symbol: upperGua.symbol + lowerGua.symbol,
     wuxing: upperGua.wuxing,
   };
@@ -115,7 +121,7 @@ function buildGuaInfo(upper: number, lower: number): GuaInfo {
 /**
  * 计算互卦（本卦2、3、4爻为下互卦，3、4、5爻为上互卦）
  */
-function calcHuGua(mainGua: GuaInfo): GuaInfo {
+function calcHuGua(mainGua: GuaInfo, lang: Lang): GuaInfo {
   // 爻序（从下到上 1-6）
   const lower = BA_GUA[mainGua.lower]!.lines; // 1,2,3爻
   const upper = BA_GUA[mainGua.upper]!.lines; // 4,5,6爻
@@ -128,13 +134,13 @@ function calcHuGua(mainGua: GuaInfo): GuaInfo {
   const huLowerNum = findBaGuaByLines(huLowerLines);
   const huUpperNum = findBaGuaByLines(huUpperLines);
 
-  return buildGuaInfo(huUpperNum, huLowerNum);
+  return buildGuaInfo(huUpperNum, huLowerNum, lang);
 }
 
 /**
  * 计算变卦（将动爻的阴阳取反）
  */
-function calcChangeGua(mainGua: GuaInfo, dongYao: number): GuaInfo {
+function calcChangeGua(mainGua: GuaInfo, dongYao: number, lang: Lang): GuaInfo {
   const lower = [...BA_GUA[mainGua.lower]!.lines] as [0|1, 0|1, 0|1];
   const upper = [...BA_GUA[mainGua.upper]!.lines] as [0|1, 0|1, 0|1];
   const allLines: (0|1)[] = [...lower, ...upper];
@@ -149,7 +155,7 @@ function calcChangeGua(mainGua: GuaInfo, dongYao: number): GuaInfo {
   const changeLowerNum = findBaGuaByLines(changeLowerLines);
   const changeUpperNum = findBaGuaByLines(changeUpperLines);
 
-  return buildGuaInfo(changeUpperNum, changeLowerNum);
+  return buildGuaInfo(changeUpperNum, changeLowerNum, lang);
 }
 
 /**
@@ -182,9 +188,22 @@ function determineTiYong(dongYao: number): { tiGua: "upper" | "lower"; yongGua: 
 
 // ===== 起卦主函数 =====
 
+// 起卦计算公式的本地化片段（年支/月/日/时支/随机数/÷8余/÷6余）
+const CALC_LABELS: Record<Lang, {
+  yearZhi: string; month: string; day: string; hourZhi: string;
+  rand: string; div8: string; div6: string;
+}> = {
+  zh: { yearZhi: "年支", month: "月", day: "日", hourZhi: "时支", rand: "随机数", div8: "÷ 8 余", div6: "÷ 6 余" },
+  tw: { yearZhi: "年支", month: "月", day: "日", hourZhi: "時支", rand: "隨機數", div8: "÷ 8 餘", div6: "÷ 6 餘" },
+  en: { yearZhi: "year branch ", month: "month ", day: "day ", hourZhi: "hour branch ", rand: "random ", div8: "÷ 8 rem.", div6: "÷ 6 rem." },
+};
+
 export function runMeihuaEngine(input: MeihuaInput): MeihuaResult {
+  const lang: Lang = input.lang ?? "zh";
+  const cl = CALC_LABELS[lang];
+  const localeTag = lang === "en" ? "en-US" : lang === "tw" ? "zh-TW" : "zh-CN";
   const now = new Date();
-  const divineTime = now.toLocaleString("zh-CN", {
+  const divineTime = now.toLocaleString(localeTag, {
     year: "numeric", month: "2-digit", day: "2-digit",
     hour: "2-digit", minute: "2-digit",
   });
@@ -204,9 +223,9 @@ export function runMeihuaEngine(input: MeihuaInput): MeihuaResult {
 
     calcDetail = {
       yearZhiNum: 0, monthNum: 0, dayNum: 0, hourZhiNum: 0,
-      upperCalc: `${n1} ÷ 8 余 ${upperNum}`,
-      lowerCalc: `${n2} ÷ 8 余 ${lowerNum}`,
-      dongYaoCalc: `(${n1} + ${n2}) ÷ 6 余 ${dongYao}`,
+      upperCalc: `${n1} ${cl.div8} ${upperNum}`,
+      lowerCalc: `${n2} ${cl.div8} ${lowerNum}`,
+      dongYaoCalc: `(${n1} + ${n2}) ${cl.div6} ${dongYao}`,
     };
   } else if (input.method === "time") {
     // 时间起卦（使用农历年月日时）
@@ -230,9 +249,9 @@ export function runMeihuaEngine(input: MeihuaInput): MeihuaResult {
       monthNum: lunarMonth,
       dayNum: lunarDay,
       hourZhiNum: hourInfo.num,
-      upperCalc: `(年支${yearZhiNum} + 月${lunarMonth} + 日${lunarDay}) ÷ 8 余 ${upperNum}`,
-      lowerCalc: `(年支${yearZhiNum} + 月${lunarMonth} + 日${lunarDay} + 时支${hourInfo.num}) ÷ 8 余 ${lowerNum}`,
-      dongYaoCalc: `(年支${yearZhiNum} + 月${lunarMonth} + 日${lunarDay} + 时支${hourInfo.num}) ÷ 6 余 ${dongYao}`,
+      upperCalc: `(${cl.yearZhi}${yearZhiNum} + ${cl.month}${lunarMonth} + ${cl.day}${lunarDay}) ${cl.div8} ${upperNum}`,
+      lowerCalc: `(${cl.yearZhi}${yearZhiNum} + ${cl.month}${lunarMonth} + ${cl.day}${lunarDay} + ${cl.hourZhi}${hourInfo.num}) ${cl.div8} ${lowerNum}`,
+      dongYaoCalc: `(${cl.yearZhi}${yearZhiNum} + ${cl.month}${lunarMonth} + ${cl.day}${lunarDay} + ${cl.hourZhi}${hourInfo.num}) ${cl.div6} ${dongYao}`,
     };
   } else {
     // 随机起卦（模拟心易）
@@ -244,18 +263,18 @@ export function runMeihuaEngine(input: MeihuaInput): MeihuaResult {
 
     calcDetail = {
       yearZhiNum: 0, monthNum: 0, dayNum: 0, hourZhiNum: 0,
-      upperCalc: `随机数 ${r1} ÷ 8 余 ${upperNum}`,
-      lowerCalc: `随机数 ${r2} ÷ 8 余 ${lowerNum}`,
-      dongYaoCalc: `(${r1} + ${r2}) ÷ 6 余 ${dongYao}`,
+      upperCalc: `${cl.rand}${r1} ${cl.div8} ${upperNum}`,
+      lowerCalc: `${cl.rand}${r2} ${cl.div8} ${lowerNum}`,
+      dongYaoCalc: `(${r1} + ${r2}) ${cl.div6} ${dongYao}`,
     };
   }
 
   // 构建主卦
-  const mainGua = buildGuaInfo(upperNum, lowerNum);
+  const mainGua = buildGuaInfo(upperNum, lowerNum, lang);
   // 互卦
-  const huGua = calcHuGua(mainGua);
+  const huGua = calcHuGua(mainGua, lang);
   // 变卦
-  const changeGua = calcChangeGua(mainGua, dongYao);
+  const changeGua = calcChangeGua(mainGua, dongYao, lang);
 
   // 体用判断
   const { tiGua: tiPos, yongGua: yongPos } = determineTiYong(dongYao);
@@ -264,17 +283,16 @@ export function runMeihuaEngine(input: MeihuaInput): MeihuaResult {
   const tiWuXing = BA_GUA[tiNum]!.wuxing;
   const yongWuXing = BA_GUA[yongNum]!.wuxing;
 
-  // 五行生克断卦
-  const relation = analyzeTiYong(tiWuXing, yongWuXing);
+  // 五行生克断卦（按 lang 解析为本地化文案，type/level KEY 保持中文）
+  const relation = analyzeTiYong(tiWuXing, yongWuXing, lang);
 
-  // 分类建议
+  // 分类建议（按 type KEY + category 解析为本地化纯字符串）
   const category = input.category ?? "general";
-  const adviceMap = CATEGORY_ADVICE[relation.type] ?? CATEGORY_ADVICE["比和"]!;
-  const categoryAdvice = adviceMap[category] ?? adviceMap["general"] ?? "";
+  const categoryAdvice = resolveCategoryAdvice(relation.type, category, lang);
 
-  // 卦辞爻辞
-  const guaCiInfo = getGua64Data(mainGua.guaName);
-  const changeGuaCiInfo = getGua64Data(changeGua.guaName);
+  // 卦辞爻辞（按 lang 解析；guaName 为中文 KEY 用于查表）
+  const guaCiInfo = getGua64Data(mainGua.guaName, lang);
+  const changeGuaCiInfo = getGua64Data(changeGua.guaName, lang);
 
   return {
     mainGua,

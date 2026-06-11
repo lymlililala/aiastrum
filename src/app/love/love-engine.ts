@@ -1,28 +1,45 @@
 /**
  * 姻缘占卜引擎
  * 生成姻缘评分、正缘画像、桃花运势报告
+ *
+ * 本地化：runLoveEngine 接收 lang，所有展示字段在此解析为纯字符串。
+ * LoveReport 字段类型保持 string / string[] 不变。
  */
 
 import {
-  getZodiacSign,
+  getZodiacSignRaw,
+  resolveZodiac,
   getYearGanzhi,
+  resolveGanzhiDisplay,
   BARNUM_TRAITS,
   SCORE_LABELS,
   SOULMATE_APPEARANCE,
   SOULMATE_PERSONALITY,
   SOULMATE_CAREERS,
+  CAREER_JOINER,
   MEET_SCENES,
+  MEET_TIMING_TEMPLATE,
   LOVE_STRENGTHS,
   LOVE_WEAKNESSES,
   LOVE_ACTIONS,
   LOVE_AFFIRMATIONS,
+  PEACH_ADVICE_TEMPLATES,
   PEACH_MONTHLY_TEXTS,
+  PEACH_MONTH_SEP,
+  MONTH_NAMES,
+  SEASON_TEXTS,
+  rs,
+  ra,
+  type Lang,
+  type LArr,
   type LoveReport,
   type LoveScore,
   type SoulmatePicture,
   type PeachBlossomForecast,
   type LoveAdvice,
 } from "./love-data";
+
+export type { Lang };
 
 // ===== 输入类型 =====
 export interface LoveInput {
@@ -46,13 +63,18 @@ function pickOne<T>(arr: T[], rand: () => number): T {
   return arr[Math.floor(rand() * arr.length)]!;
 }
 
+/** 从三语数组中按 lang 解析后选一条 */
+function pickOneL(v: LArr, lang: Lang, rand: () => number): string {
+  return pickOne(ra(v, lang), rand);
+}
+
 function pickN<T>(arr: T[], n: number, rand: () => number): T[] {
   const shuffled = [...arr].sort(() => rand() - 0.5);
   return shuffled.slice(0, n);
 }
 
 // ===== 计算姻缘评分 =====
-function calcLoveScore(input: LoveInput, seed: number): LoveScore {
+function calcLoveScore(input: LoveInput, seed: number, lang: Lang): LoveScore {
   const rand = seededRandom(seed + 1);
 
   // 基础分（基于出生月日，产生差异化但在60-95之间）
@@ -75,42 +97,44 @@ function calcLoveScore(input: LoveInput, seed: number): LoveScore {
     peach,
     timing,
     depth,
-    label: labelConfig.label,
+    label: rs(labelConfig.label, lang),
     labelColor: labelConfig.color,
-    shortComment: labelConfig.comment,
+    shortComment: rs(labelConfig.comment, lang),
   };
 }
 
 // ===== 生成正缘画像 =====
-function genSoulmate(input: LoveInput, zodiacElement: string, rand: () => number): SoulmatePicture {
-  // 正缘的五行元素（对方星座元素）
-  const oppositeGender = input.gender === "female" ? "male" : "female";
+function genSoulmate(
+  input: LoveInput,
+  zodiacElement: string,
+  lang: Lang,
+  rand: () => number,
+): SoulmatePicture {
   const appearanceKey = `${input.gender}_${zodiacElement}` as keyof typeof SOULMATE_APPEARANCE;
   const appearanceArr = SOULMATE_APPEARANCE[appearanceKey] ?? SOULMATE_APPEARANCE["female_火"]!;
 
   return {
-    appearance: pickOne(appearanceArr, rand),
-    personality: pickOne(SOULMATE_PERSONALITY, rand),
-    career: pickN(SOULMATE_CAREERS, 2, rand).join("或"),
-    meetScene: pickOne(MEET_SCENES, rand),
-    meetTiming: genMeetTiming(input, rand),
+    appearance: pickOneL(appearanceArr, lang, rand),
+    personality: pickOneL(SOULMATE_PERSONALITY, lang, rand),
+    career: pickN(ra(SOULMATE_CAREERS, lang), 2, rand).join(CAREER_JOINER[lang]),
+    meetScene: pickOneL(MEET_SCENES, lang, rand),
+    meetTiming: genMeetTiming(lang, rand),
   };
 }
 
-function genMeetTiming(input: LoveInput, rand: () => number): string {
+function genMeetTiming(lang: Lang, rand: () => number): string {
   const now = new Date();
   const monthsAhead = 2 + Math.floor(rand() * 5); // 2-6个月后
   const targetMonth = ((now.getMonth() + monthsAhead) % 12) + 1;
-  const monthNames = ["", "一月", "二月", "三月", "四月", "五月", "六月",
-    "七月", "八月", "九月", "十月", "十一月", "十二月"];
-  const seasons = ["春末夏初", "夏日", "秋高气爽", "岁末年初"];
+  const monthNames = MONTH_NAMES[lang];
+  const seasons = ra(SEASON_TEXTS, lang);
   const season = seasons[Math.floor(rand() * seasons.length)]!;
 
-  return `最有可能的相遇时机在${season}前后（约${monthNames[targetMonth]}前后），届时你的姻缘磁场将迎来一个小高峰，命运的安排往往就在这段时间悄然启动。`;
+  return MEET_TIMING_TEMPLATE[lang](season, monthNames[targetMonth]!);
 }
 
 // ===== 生成桃花运势预测 =====
-function genPeachForecast(input: LoveInput, rand: () => number): PeachBlossomForecast {
+function genPeachForecast(lang: Lang, rand: () => number): PeachBlossomForecast {
   const levels: Array<"high" | "medium" | "low"> = ["high", "medium", "low"];
   const l1 = levels[Math.floor(rand() * levels.length)]!;
   const l2 = levels[Math.floor(rand() * levels.length)]!;
@@ -120,36 +144,30 @@ function genPeachForecast(input: LoveInput, rand: () => number): PeachBlossomFor
   const m1 = ((now.getMonth()) % 12) + 1;
   const m2 = ((now.getMonth() + 1) % 12) + 1;
   const m3 = ((now.getMonth() + 2) % 12) + 1;
-  const monthNames = ["", "一月", "二月", "三月", "四月", "五月", "六月",
-    "七月", "八月", "九月", "十月", "十一月", "十二月"];
-
-  const adviceTemplates = [
-    "多走进新的社交场合，尝试一个你从未去过的兴趣社群或活动，缘分往往在你打破舒适圈的那一刻出现。",
-    "保持对生活的热情与好奇心，让自己的眼睛里常有光芒——那是最强的吸引力，正缘会被这道光所引导。",
-    "适时更新自己的形象与状态，从内到外的焕新会给你的桃花运注入新的能量，让缘分的大门悄然开启。",
-  ];
+  const monthNames = MONTH_NAMES[lang];
+  const sep = PEACH_MONTH_SEP[lang];
 
   return {
-    month1: `${monthNames[m1]}：${pickOne(PEACH_MONTHLY_TEXTS[l1], rand)}`,
-    month2: `${monthNames[m2]}：${pickOne(PEACH_MONTHLY_TEXTS[l2], rand)}`,
-    month3: `${monthNames[m3]}：${pickOne(PEACH_MONTHLY_TEXTS[l3], rand)}`,
+    month1: `${monthNames[m1]}${sep}${pickOneL(PEACH_MONTHLY_TEXTS[l1], lang, rand)}`,
+    month2: `${monthNames[m2]}${sep}${pickOneL(PEACH_MONTHLY_TEXTS[l2], lang, rand)}`,
+    month3: `${monthNames[m3]}${sep}${pickOneL(PEACH_MONTHLY_TEXTS[l3], lang, rand)}`,
     peak: l1 === "high" ? monthNames[m1]! : l2 === "high" ? monthNames[m2]! : monthNames[m3]!,
-    advice: pickOne(adviceTemplates, rand),
+    advice: pickOneL(PEACH_ADVICE_TEMPLATES, lang, rand),
   };
 }
 
 // ===== 生成情感建议 =====
-function genLoveAdvice(rand: () => number): LoveAdvice {
+function genLoveAdvice(lang: Lang, rand: () => number): LoveAdvice {
   return {
-    strength: pickOne(LOVE_STRENGTHS, rand),
-    weakness: pickOne(LOVE_WEAKNESSES, rand),
-    action: pickOne(LOVE_ACTIONS, rand),
-    affirmation: pickOne(LOVE_AFFIRMATIONS, rand),
+    strength: pickOneL(LOVE_STRENGTHS, lang, rand),
+    weakness: pickOneL(LOVE_WEAKNESSES, lang, rand),
+    action: pickOneL(LOVE_ACTIONS, lang, rand),
+    affirmation: pickOneL(LOVE_AFFIRMATIONS, lang, rand),
   };
 }
 
 // ===== 主引擎函数 =====
-export function runLoveEngine(input: LoveInput): LoveReport {
+export function runLoveEngine(input: LoveInput, lang: Lang = "zh"): LoveReport {
   // 计算种子（确保同一用户每次结果相同）
   const seed = input.birthYear * 10000 + input.birthMonth * 100 + input.birthDay
     + (input.gender === "female" ? 0 : 5000)
@@ -157,18 +175,20 @@ export function runLoveEngine(input: LoveInput): LoveReport {
 
   const rand = seededRandom(seed + 7);
 
-  const zodiac = getZodiacSign(input.birthMonth, input.birthDay);
-  const yearGanzhi = getYearGanzhi(input.birthYear);
+  const zodiacRaw = getZodiacSignRaw(input.birthMonth, input.birthDay);
+  const zodiac = resolveZodiac(zodiacRaw, lang);
+  const yearGanzhi = resolveGanzhiDisplay(getYearGanzhi(input.birthYear), lang);
 
-  const score = calcLoveScore(input, seed);
+  const score = calcLoveScore(input, seed, lang);
 
   // 性格特质（巴纳姆效应）
   const traitArr = BARNUM_TRAITS[input.gender] ?? BARNUM_TRAITS["female"]!;
-  const personalityTrait = pickOne(traitArr, rand);
+  const personalityTrait = pickOneL(traitArr, lang, rand);
 
-  const soulmate = genSoulmate(input, zodiac.element, seededRandom(seed + 13));
-  const peachForecast = genPeachForecast(input, seededRandom(seed + 17));
-  const loveAdvice = genLoveAdvice(seededRandom(seed + 23));
+  // 正缘画像基于星座五行键（保持中文 火/土/风/水），展示文案按 lang 解析
+  const soulmate = genSoulmate(input, zodiacRaw.element, lang, seededRandom(seed + 13));
+  const peachForecast = genPeachForecast(lang, seededRandom(seed + 17));
+  const loveAdvice = genLoveAdvice(lang, seededRandom(seed + 23));
 
   return {
     name: input.name,

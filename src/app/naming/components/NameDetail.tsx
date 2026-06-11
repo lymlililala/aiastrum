@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { WUXING_CONFIG, WUXING_GENERATE, type WuXing } from "../naming-data";
+import { WUXING_CONFIG, WUXING_GENERATE, getWuxingLabel, type WuXing, type Lang } from "../naming-data";
+import { buildSynergy } from "../naming-engine";
 import { type NamingT } from "../naming-i18n";
 
 interface NameCharDetail {
@@ -35,10 +36,11 @@ interface NameDetailProps {
   xiyongshen: WuXing[];
   onBack?: () => void;
   t: NamingT;
+  lang: Lang;
 }
 
 // 五格数理（简化版 - 天格、人格、地格）
-function calcWuGe(surname: string, name: string): Record<string, { val: number; desc: string }> {
+function calcWuGe(surname: string, name: string, lang: Lang): Record<string, { val: number; desc: string }> {
   const strCount = (s: string) => {
     let total = 0;
     for (const ch of s) {
@@ -55,13 +57,26 @@ function calcWuGe(surname: string, name: string): Record<string, { val: number; 
   const ren = s + (name.length > 0 ? strCount(name[0] ?? "") : 0);
   const di = n + 1;
 
+  const WUGE_DESC: Record<Lang, [string, string, string, string, string]> = {
+    zh: ["大吉 · 领导之数", "吉 · 文昌之数", "平 · 稳健之数", "平 · 积累之数", "凶 · 变动之数"],
+    tw: ["大吉 · 領導之數", "吉 · 文昌之數", "平 · 穩健之數", "平 · 積累之數", "凶 · 變動之數"],
+    en: [
+      "Very auspicious · number of leadership",
+      "Auspicious · number of scholarship",
+      "Neutral · number of steadiness",
+      "Neutral · number of accumulation",
+      "Inauspicious · number of upheaval",
+    ],
+  };
+
   const getDesc = (v: number) => {
+    const d = WUGE_DESC[lang];
     const mod = v % 10;
-    if (mod === 1 || mod === 6) return "大吉 · 领导之数";
-    if (mod === 2 || mod === 7) return "吉 · 文昌之数";
-    if (mod === 3 || mod === 8) return "平 · 稳健之数";
-    if (mod === 4 || mod === 9) return "平 · 积累之数";
-    return "凶 · 变动之数";
+    if (mod === 1 || mod === 6) return d[0];
+    if (mod === 2 || mod === 7) return d[1];
+    if (mod === 3 || mod === 8) return d[2];
+    if (mod === 4 || mod === 9) return d[3];
+    return d[4];
   };
 
   return {
@@ -72,22 +87,44 @@ function calcWuGe(surname: string, name: string): Record<string, { val: number; 
 }
 
 // 平仄分析
-function getToneAnalysis(chars: NameCharDetail[], surname: string): string {
+function getToneAnalysis(chars: NameCharDetail[], surname: string, lang: Lang): string {
   const pinyins = chars.map(c => c.pinyin);
+  const flatChar = lang === "en" ? "P" : "平"; // P = level/flat tone
+  const obliqueChar = lang === "en" ? "Z" : "仄"; // Z = oblique tone
   const analysis = pinyins.map(p => {
     const isFlat = ["ā", "á", "ē", "é", "ī", "í", "ō", "ó", "ū", "ú", "ǖ", "ǘ"].some(v => p.includes(v));
-    return isFlat ? "平" : "仄";
+    return isFlat ? flatChar : obliqueChar;
   });
-  const pattern = `（${surname.length === 1 ? "—" : "——"}）${analysis.join("")}`;
-  const desc = analysis[0] !== analysis[1]
+  const surnameMark = surname.length === 1 ? "—" : "——";
+  const pattern = `（${surnameMark}）${analysis.join("")}`;
+  const alternate = analysis[0] !== analysis[1];
+
+  if (lang === "en") {
+    const desc = alternate
+      ? "Level and oblique tones alternate, giving a rhythmic, easy-to-read cadence"
+      : `Two ${analysis[0] === flatChar ? "level" : "oblique"} tones in a row — a harmonious sound, ${analysis[0] === flatChar ? "steady and dignified" : "firm and resonant"}`;
+    return `${pattern}, ${desc}`;
+  }
+  if (lang === "tw") {
+    const desc = alternate
+      ? "平仄相間，抑揚頓挫，讀來朗朗上口"
+      : `連續${analysis[0]}聲，音調和諧，${analysis[0] === flatChar ? "平穩大氣" : "鏗鏘有力"}`;
+    return `${pattern}，${desc}`;
+  }
+  const desc = alternate
     ? "平仄相间，抑扬顿挫，读来朗朗上口"
-    : `连续${analysis[0]}声，音调和谐，${analysis[0] === "平" ? "平稳大气" : "铿锵有力"}`;
+    : `连续${analysis[0]}声，音调和谐，${analysis[0] === flatChar ? "平稳大气" : "铿锵有力"}`;
   return `${pattern}，${desc}`;
 }
 
-export default function NameDetail({ suggestion, surname, xiyongshen, onBack, t }: NameDetailProps) {
-  const wuGe = calcWuGe(surname, suggestion.name);
-  const toneAnalysis = getToneAnalysis(suggestion.charDetails, surname);
+export default function NameDetail({ suggestion, surname, xiyongshen, onBack, t, lang }: NameDetailProps) {
+  const wuGe = calcWuGe(surname, suggestion.name, lang);
+  const toneAnalysis = getToneAnalysis(suggestion.charDetails, surname, lang);
+  const synergy = buildSynergy(
+    suggestion.combinedWuxing[0] ?? "土",
+    suggestion.combinedWuxing[1] ?? "土",
+    lang,
+  );
   const wugeLabel: Record<string, string> = { 天格: t.ndWugeTian, 人格: t.ndWugeRen, 地格: t.ndWugeDi };
 
   return (
@@ -178,14 +215,14 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack, t 
                     className="namedetail-char-wuxing"
                     style={{ color: WUXING_CONFIG[cd.wuxing].color }}
                   >
-                    {cd.wuxing}{t.ndWxSuffix}
+                    {getWuxingLabel(cd.wuxing, lang)}{t.ndWxSuffix}
                   </span>
                   {isXiyong && <span className="namedetail-xi-badge">{t.ndXiBadge}</span>}
                 </div>
                 <p className="namedetail-char-meaning">{cd.meaning}</p>
                 {generates && (
                   <p className="namedetail-char-tip">
-                    {generates[0]}{t.ndGenMid}{cd.wuxing}{t.ndGenPost}
+                    {getWuxingLabel(generates[0] as WuXing, lang)}{t.ndGenMid}{getWuxingLabel(cd.wuxing, lang)}{t.ndGenPost}
                   </p>
                 )}
               </div>
@@ -196,7 +233,7 @@ export default function NameDetail({ suggestion, surname, xiyongshen, onBack, t 
         {/* 五行搭配说明 */}
         <div className="namedetail-synergy-card">
           <span className="namedetail-synergy-icon">☯</span>
-          <strong>{t.ndSynergyLabel}</strong>{suggestion.synergy}
+          <strong>{t.ndSynergyLabel}</strong>{synergy}
         </div>
       </div>
 

@@ -93,7 +93,7 @@ function generateMockReport(result: ReturnType<typeof calculateWuge>, lang: Lang
   const renDetail = getNumDetail(result.ren.strokes);
   const zongDetail = getNumDetail(result.zong.strokes);
 
-  const isAuspicious = result.ren.level === "大吉" || result.ren.level === "吉";
+  const isAuspicious = result.ren.levelKey === "大吉" || result.ren.levelKey === "吉";
 
   if (lang === "en") {
     return {
@@ -103,7 +103,7 @@ function generateMockReport(result: ReturnType<typeof calculateWuge>, lang: Lang
 
       love: `Your Earth Grid is ${result.di.strokes} strokes (${result.di.level}). ${isAuspicious ? "Your romantic fortune is generally favorable, and you are likely to meet a suitable partner through good affinity" : "Your romantic path may hold some twists, requiring extra patience and tolerance"}. In relationships you value sincerity and trust, longing for ${result.gender === "male" ? "a stable and dependable relationship" : "a bond in which you are understood and cherished"}. Express your feelings more openly rather than keeping them too reserved. For those married, communicate and understand one another — home will be your warmest harbor.`,
 
-      health: `Looking at the Five Grids as a whole, you should pay particular attention to ${result.ren.level === "凶" || result.ren.level === "大凶" ? "releasing psychological pressure and avoiding long-term tension that drains the body" : "keeping a regular routine and moderate exercise, and balancing work with rest especially during prosperous periods"}. Cultivate the habit of early to bed and early to rise, eat a balanced diet, and reduce spicy or stimulating foods. Gentle meditation or traditional wellness practices (such as Tai Chi or Baduanjin) will benefit your constitution. A positive and optimistic mindset is the best path to wellness.`,
+      health: `Looking at the Five Grids as a whole, you should pay particular attention to ${result.ren.levelKey === "凶" || result.ren.levelKey === "大凶" ? "releasing psychological pressure and avoiding long-term tension that drains the body" : "keeping a regular routine and moderate exercise, and balancing work with rest especially during prosperous periods"}. Cultivate the habit of early to bed and early to rise, eat a balanced diet, and reduce spicy or stimulating foods. Gentle meditation or traditional wellness practices (such as Tai Chi or Baduanjin) will benefit your constitution. A positive and optimistic mindset is the best path to wellness.`,
 
       lifeQuote: `${result.name}: blessed by ${result.ren.title}, ${isAuspicious ? "virtue and talent combined, embracing all flavors of life with a smile" : "pressing forward through trials, adversity forging true gold"}.`,
     };
@@ -116,7 +116,7 @@ function generateMockReport(result: ReturnType<typeof calculateWuge>, lang: Lang
 
     love: `您的地格${result.di.strokes}画（${result.di.level}），${isAuspicious ? "感情运势总体良好，有缘分遇见合适的伴侣" : "感情路上可能有些波折，需要多一些耐心与包容"}。在感情中您重视真诚与信任，期待${result.gender === "male" ? "一段稳定踏实的关系" : "一段被理解与珍视的情感"}。建议多主动表达情感，不要过于含蓄。已婚者与伴侣多沟通理解，家庭将是您最温暖的港湾。`,
 
-    health: `综合五格数理来看，您需要特别关注${result.ren.level === "凶" || result.ren.level === "大凶" ? "心理压力的疏导，避免长期紧绷导致身体透支" : "保持规律的作息和适量运动，在旺运期尤需注意劳逸结合"}。建议养成早睡早起的习惯，饮食均衡，减少辛辣刺激食物。适当的冥想或传统养生方式（如太极、八段锦）对您的体质大有裨益，保持积极乐观的心态是最好的养生之道。`,
+    health: `综合五格数理来看，您需要特别关注${result.ren.levelKey === "凶" || result.ren.levelKey === "大凶" ? "心理压力的疏导，避免长期紧绷导致身体透支" : "保持规律的作息和适量运动，在旺运期尤需注意劳逸结合"}。建议养成早睡早起的习惯，饮食均衡，减少辛辣刺激食物。适当的冥想或传统养生方式（如太极、八段锦）对您的体质大有裨益，保持积极乐观的心态是最好的养生之道。`,
 
     lifeQuote: `${result.name}：${result.ren.title}照命，${isAuspicious ? "德才兼备，笑纳人生百味" : "砥砺前行，逆境铸就真金"}。`,
   };
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
   // 计算五格
   let wugeResult: ReturnType<typeof calculateWuge>;
   try {
-    wugeResult = calculateWuge({ name: nameClean, gender: gender as "male" | "female" });
+    wugeResult = calculateWuge({ name: nameClean, gender: gender as "male" | "female" }, lang);
   } catch (err) {
     const msg = err instanceof Error ? err.message : (lang === "en" ? "Calculation failed" : "计算失败");
     return NextResponse.json({ error: msg }, { status: 400 });
@@ -231,11 +231,11 @@ export async function POST(request: NextRequest) {
     score: wugeResult.score,
     scoreLevel: wugeResult.scoreLevel,
     wuge: {
-      tian:  { strokes: wugeResult.tian.strokes,  level: wugeResult.tian.level,  title: wugeResult.tian.title,  shortDesc: wugeResult.tian.shortDesc,  fullDesc: wugeResult.tian.fullDesc  },
-      ren:   { strokes: wugeResult.ren.strokes,   level: wugeResult.ren.level,   title: wugeResult.ren.title,   shortDesc: wugeResult.ren.shortDesc,   fullDesc: wugeResult.ren.fullDesc   },
-      di:    { strokes: wugeResult.di.strokes,    level: wugeResult.di.level,    title: wugeResult.di.title,    shortDesc: wugeResult.di.shortDesc,    fullDesc: wugeResult.di.fullDesc    },
-      wai:   { strokes: wugeResult.wai.strokes,   level: wugeResult.wai.level,   title: wugeResult.wai.title,   shortDesc: wugeResult.wai.shortDesc,   fullDesc: wugeResult.wai.fullDesc   },
-      zong:  { strokes: wugeResult.zong.strokes,  level: wugeResult.zong.level,  title: wugeResult.zong.title,  shortDesc: wugeResult.zong.shortDesc,  fullDesc: wugeResult.zong.fullDesc  },
+      tian:  { strokes: wugeResult.tian.strokes,  level: wugeResult.tian.level,  levelKey: wugeResult.tian.levelKey,  title: wugeResult.tian.title,  shortDesc: wugeResult.tian.shortDesc,  fullDesc: wugeResult.tian.fullDesc  },
+      ren:   { strokes: wugeResult.ren.strokes,   level: wugeResult.ren.level,   levelKey: wugeResult.ren.levelKey,   title: wugeResult.ren.title,   shortDesc: wugeResult.ren.shortDesc,   fullDesc: wugeResult.ren.fullDesc   },
+      di:    { strokes: wugeResult.di.strokes,    level: wugeResult.di.level,    levelKey: wugeResult.di.levelKey,    title: wugeResult.di.title,    shortDesc: wugeResult.di.shortDesc,    fullDesc: wugeResult.di.fullDesc    },
+      wai:   { strokes: wugeResult.wai.strokes,   level: wugeResult.wai.level,   levelKey: wugeResult.wai.levelKey,   title: wugeResult.wai.title,   shortDesc: wugeResult.wai.shortDesc,   fullDesc: wugeResult.wai.fullDesc   },
+      zong:  { strokes: wugeResult.zong.strokes,  level: wugeResult.zong.level,  levelKey: wugeResult.zong.levelKey,  title: wugeResult.zong.title,  shortDesc: wugeResult.zong.shortDesc,  fullDesc: wugeResult.zong.fullDesc  },
     },
     sanCai: wugeResult.sanCai,
     sanCaiDesc: wugeResult.sanCaiDesc,

@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
 
     const input: MeihuaInput = {
       method,
+      lang,
       question: body.question ?? "",
       category: body.category ?? "general",
       num1: body.num1,

@@ -1,55 +1,161 @@
 /**
  * 周公解梦 - 数据库
  * 传统吉凶解析 + 现代心理学关键词映射
+ *
+ * 本地化说明（参照 numerology 模式）：
+ * - 可翻译的展示文本使用 L = { zh, en, tw } 结构，由下方 resolver 按 lang 解析为纯 string。
+ * - 作为查询/匹配用途的 keyword/word 保持中文（解梦引擎按中文关键词匹配），仅本地化“展示标签”。
+ * - 吉凶等级（level）的 zh 值仍作为 LEVEL_CONFIG 的 key，仅本地化展示用的 badge 文案（见 levelLabel）。
  */
 
+export type Lang = "zh" | "en" | "tw";
+
+/** 单条本地化字符串 */
+export type L = { zh: string; en: string; tw: string };
+
+/** 解析单条本地化字符串 */
+export function rs(v: L, lang: Lang): string {
+  return v[lang];
+}
+
 // ===== 热门搜索标签 =====
-export const HOT_TAGS = [
-  { keyword: "蛇", emoji: "🐍" },
-  { keyword: "水", emoji: "💧" },
-  { keyword: "考试", emoji: "📝" },
-  { keyword: "前任", emoji: "💔" },
-  { keyword: "掉牙", emoji: "🦷" },
-  { keyword: "飞翔", emoji: "🕊️" },
-  { keyword: "死亡", emoji: "💀" },
-  { keyword: "钱", emoji: "💰" },
-  { keyword: "结婚", emoji: "💍" },
-  { keyword: "下坠", emoji: "🌊" },
-  { keyword: "火", emoji: "🔥" },
-  { keyword: "被追", emoji: "🏃" },
+// keyword 保持中文（作为查询提交给引擎）；label 为本地化展示标签。
+export const HOT_TAGS: { keyword: string; emoji: string; label: L }[] = [
+  { keyword: "蛇", emoji: "🐍", label: { zh: "蛇", en: "Snake", tw: "蛇" } },
+  { keyword: "水", emoji: "💧", label: { zh: "水", en: "Water", tw: "水" } },
+  { keyword: "考试", emoji: "📝", label: { zh: "考试", en: "Exam", tw: "考試" } },
+  { keyword: "前任", emoji: "💔", label: { zh: "前任", en: "Ex", tw: "前任" } },
+  { keyword: "掉牙", emoji: "🦷", label: { zh: "掉牙", en: "Losing teeth", tw: "掉牙" } },
+  { keyword: "飞翔", emoji: "🕊️", label: { zh: "飞翔", en: "Flying", tw: "飛翔" } },
+  { keyword: "死亡", emoji: "💀", label: { zh: "死亡", en: "Death", tw: "死亡" } },
+  { keyword: "钱", emoji: "💰", label: { zh: "钱", en: "Money", tw: "錢" } },
+  { keyword: "结婚", emoji: "💍", label: { zh: "结婚", en: "Marriage", tw: "結婚" } },
+  { keyword: "下坠", emoji: "🌊", label: { zh: "下坠", en: "Falling", tw: "下墜" } },
+  { keyword: "火", emoji: "🔥", label: { zh: "火", en: "Fire", tw: "火" } },
+  { keyword: "被追", emoji: "🏃", label: { zh: "被追", en: "Being chased", tw: "被追" } },
 ];
 
+/** 解析热门标签为面向组件的纯字符串结构 */
+export function getHotTags(lang: Lang): { keyword: string; emoji: string; label: string }[] {
+  return HOT_TAGS.map((tag) => ({
+    keyword: tag.keyword,
+    emoji: tag.emoji,
+    label: rs(tag.label, lang),
+  }));
+}
+
 // ===== 每日推荐梦境（轮播展示） =====
-export const DAILY_DREAMS = [
+// keyword 保持中文（作为查询提交给引擎）；title/traditional/psychology 为本地化展示文本。
+export interface DailyDream {
+  keyword: string;
+  keywordLabel: L;
+  title: L;
+  traditional: L;
+  psychology: L;
+  level: DreamLevel;
+}
+
+export const DAILY_DREAMS: DailyDream[] = [
   {
     keyword: "飞翔",
-    title: "梦见自己在天空飞翔",
-    traditional: "飞翔之梦多主吉兆，预示事业腾飞、前途光明，心想事成。",
-    psychology: "渴望自由与解脱，可能正在从某种限制中逐渐脱身，内心充满向往与突破欲。",
-    level: "吉" as const,
+    keywordLabel: { zh: "飞翔", en: "Flying", tw: "飛翔" },
+    title: {
+      zh: "梦见自己在天空飞翔",
+      en: "Dreaming of flying through the sky",
+      tw: "夢見自己在天空飛翔",
+    },
+    traditional: {
+      zh: "飞翔之梦多主吉兆，预示事业腾飞、前途光明，心想事成。",
+      en: "Dreams of flying are mostly auspicious, foretelling a soaring career, a bright future, and wishes coming true.",
+      tw: "飛翔之夢多主吉兆，預示事業騰飛、前途光明，心想事成。",
+    },
+    psychology: {
+      zh: "渴望自由与解脱，可能正在从某种限制中逐渐脱身，内心充满向往与突破欲。",
+      en: "A yearning for freedom and release — you may be gradually breaking free from some constraint, filled with longing and a drive to break through.",
+      tw: "渴望自由與解脫，可能正在從某種限制中逐漸脫身，內心充滿嚮往與突破欲。",
+    },
+    level: "吉",
   },
   {
     keyword: "掉牙",
-    title: "梦见牙齿脱落",
-    traditional: "掉牙之梦，传统认为与家人健康相关，需多关心长辈，亦主言多有失。",
-    psychology: "通常象征失去掌控感或对某件事的焦虑，也可能反映对衰老、形象或能力的担忧。",
-    level: "平" as const,
+    keywordLabel: { zh: "掉牙", en: "Losing teeth", tw: "掉牙" },
+    title: {
+      zh: "梦见牙齿脱落",
+      en: "Dreaming of losing teeth",
+      tw: "夢見牙齒脫落",
+    },
+    traditional: {
+      zh: "掉牙之梦，传统认为与家人健康相关，需多关心长辈，亦主言多有失。",
+      en: "Dreams of losing teeth are traditionally linked to family health — care more for your elders; they also warn that loose talk invites trouble.",
+      tw: "掉牙之夢，傳統認為與家人健康相關，需多關心長輩，亦主言多有失。",
+    },
+    psychology: {
+      zh: "通常象征失去掌控感或对某件事的焦虑，也可能反映对衰老、形象或能力的担忧。",
+      en: "Often symbolizes a loss of control or anxiety over something, and may reflect worries about aging, self-image, or capability.",
+      tw: "通常象徵失去掌控感或對某件事的焦慮，也可能反映對衰老、形象或能力的擔憂。",
+    },
+    level: "平",
   },
   {
     keyword: "考试",
-    title: "梦见参加考试却没复习",
-    traditional: "考试之梦，主近期会有考验降临，须提前准备，凡事多加谨慎。",
-    psychology: "典型的焦虑梦境，反映现实中对某件事的准备不足或自我要求过高带来的心理压力。",
-    level: "平" as const,
+    keywordLabel: { zh: "考试", en: "Exam", tw: "考試" },
+    title: {
+      zh: "梦见参加考试却没复习",
+      en: "Dreaming of taking an exam unprepared",
+      tw: "夢見參加考試卻沒複習",
+    },
+    traditional: {
+      zh: "考试之梦，主近期会有考验降临，须提前准备，凡事多加谨慎。",
+      en: "Dreams of exams foretell a coming test — prepare in advance and approach everything with extra caution.",
+      tw: "考試之夢，主近期會有考驗降臨，須提前準備，凡事多加謹慎。",
+    },
+    psychology: {
+      zh: "典型的焦虑梦境，反映现实中对某件事的准备不足或自我要求过高带来的心理压力。",
+      en: "A classic anxiety dream, reflecting real-life under-preparation for something or the pressure of overly high self-expectations.",
+      tw: "典型的焦慮夢境，反映現實中對某件事的準備不足或自我要求過高帶來的心理壓力。",
+    },
+    level: "平",
   },
   {
     keyword: "水",
-    title: "梦见清澈的流水",
-    traditional: "清水为吉，主财运亨通、贵人相助，万事顺遂，吉祥如意。",
-    psychology: "清水代表潜意识的净化与流动，内心正处于较为平静清明的状态，情感疏导良好。",
-    level: "吉" as const,
+    keywordLabel: { zh: "水", en: "Water", tw: "水" },
+    title: {
+      zh: "梦见清澈的流水",
+      en: "Dreaming of clear flowing water",
+      tw: "夢見清澈的流水",
+    },
+    traditional: {
+      zh: "清水为吉，主财运亨通、贵人相助，万事顺遂，吉祥如意。",
+      en: "Clear water is auspicious, foretelling flourishing wealth, helpful benefactors, and all things going smoothly and well.",
+      tw: "清水為吉，主財運亨通、貴人相助，萬事順遂，吉祥如意。",
+    },
+    psychology: {
+      zh: "清水代表潜意识的净化与流动，内心正处于较为平静清明的状态，情感疏导良好。",
+      en: "Clear water represents the cleansing and flow of the subconscious — your inner state is fairly calm and lucid, with emotions well channeled.",
+      tw: "清水代表潛意識的淨化與流動，內心正處於較為平靜清明的狀態，情感疏導良好。",
+    },
+    level: "吉",
   },
 ];
+
+/** 解析每日推荐梦境为面向组件的纯字符串结构 */
+export function getDailyDreams(lang: Lang): {
+  keyword: string;
+  keywordLabel: string;
+  title: string;
+  traditional: string;
+  psychology: string;
+  level: DreamLevel;
+}[] {
+  return DAILY_DREAMS.map((d) => ({
+    keyword: d.keyword,
+    keywordLabel: rs(d.keywordLabel, lang),
+    title: rs(d.title, lang),
+    traditional: rs(d.traditional, lang),
+    psychology: rs(d.psychology, lang),
+    level: d.level,
+  }));
+}
 
 // ===== 吉凶等级配置 =====
 export const LEVEL_CONFIG = {
@@ -61,6 +167,61 @@ export const LEVEL_CONFIG = {
 } as const;
 
 export type DreamLevel = keyof typeof LEVEL_CONFIG;
+
+// ===== 吉凶等级展示标签（三语） =====
+// zh 值同时作为 LEVEL_CONFIG 的 key 与引擎匹配用途，这里仅本地化“展示文案”。
+export const LEVEL_LABELS: Record<DreamLevel, L> = {
+  大吉: { zh: "大吉", en: "Very Auspicious", tw: "大吉" },
+  吉: { zh: "吉", en: "Auspicious", tw: "吉" },
+  平: { zh: "平", en: "Neutral", tw: "平" },
+  凶: { zh: "凶", en: "Inauspicious", tw: "凶" },
+  大凶: { zh: "大凶", en: "Very Inauspicious", tw: "大凶" },
+};
+
+/**
+ * 解析吉凶等级的展示标签。
+ * 入参可能是 zh 等级 key，也可能是 AI 直接返回的等级文案（如 "Auspicious"）。
+ * 若命中 LEVEL_LABELS 的某个 key（按 zh 或任一语言匹配）则返回本地化标签，否则原样返回。
+ */
+export function levelLabel(level: string, lang: Lang): string {
+  // 直接是 zh key
+  if (level in LEVEL_LABELS) {
+    return rs(LEVEL_LABELS[level as DreamLevel], lang);
+  }
+  // AI 可能返回任意语言的等级文案，尝试反查到 zh key 再本地化
+  for (const key of Object.keys(LEVEL_LABELS) as DreamLevel[]) {
+    const variants = LEVEL_LABELS[key];
+    if (variants.zh === level || variants.en === level || variants.tw === level) {
+      return rs(variants, lang);
+    }
+  }
+  return level;
+}
+
+/**
+ * 将任意语言的等级文案归一化为 zh 等级 key（用于 LEVEL_CONFIG 取色/图标）。
+ * 命中失败时回退到「平」。
+ */
+export function resolveLevelKey(level: string): DreamLevel {
+  if (level in LEVEL_LABELS) return level as DreamLevel;
+  for (const key of Object.keys(LEVEL_LABELS) as DreamLevel[]) {
+    const variants = LEVEL_LABELS[key];
+    if (variants.zh === level || variants.en === level || variants.tw === level) {
+      return key;
+    }
+  }
+  return "平";
+}
+
+/**
+ * 判断一条宜忌建议是否为「宜」（do）。
+ * advice 来自已按 lang 分支的 AI/mock 文案：zh/tw 以「宜」开头，en 以 "Do" 开头。
+ * 仅用于决定展示哪个标签与样式，不改变文案本身。
+ */
+export function isYiAdvice(part: string): boolean {
+  const trimmed = part.trimStart();
+  return trimmed.startsWith("宜") || /^do\b/i.test(trimmed);
+}
 
 // ===== 传统周公解梦数据库 =====
 export interface DreamEntry {
@@ -285,82 +446,117 @@ export const DREAM_DATABASE: DreamEntry[] = [
 ];
 
 // ===== 梦境分类库 =====
+// word 保持中文（作为查询提交给引擎）；title 与 word 的展示标签使用 L 本地化。
+export interface DreamCategoryKeyword {
+  word: string;
+  wordLabel: L;
+  level: DreamLevel;
+}
+
 export interface DreamCategory {
   id: string;
-  title: string;
+  title: L;
   emoji: string;
   color: string;
-  keywords: { word: string; level: DreamLevel }[];
+  keywords: DreamCategoryKeyword[];
 }
+
+const K = (word: string, en: string, tw: string, level: DreamLevel): DreamCategoryKeyword => ({
+  word,
+  wordLabel: { zh: word, en, tw },
+  level,
+});
 
 export const DREAM_CATEGORIES: DreamCategory[] = [
   {
     id: "people",
-    title: "人物篇",
+    title: { zh: "人物篇", en: "People", tw: "人物篇" },
     emoji: "👥",
     color: "rgba(167, 139, 250, 0.6)",
     keywords: [
-      { word: "父母", level: "吉" },
-      { word: "死者", level: "吉" },
-      { word: "前任", level: "平" },
-      { word: "名人", level: "平" },
-      { word: "婴儿", level: "大吉" },
-      { word: "陌生人", level: "平" },
-      { word: "老人", level: "吉" },
-      { word: "朋友", level: "吉" },
+      K("父母", "Parents", "父母", "吉"),
+      K("死者", "The deceased", "死者", "吉"),
+      K("前任", "Ex-partner", "前任", "平"),
+      K("名人", "Celebrity", "名人", "平"),
+      K("婴儿", "Baby", "嬰兒", "大吉"),
+      K("陌生人", "Stranger", "陌生人", "平"),
+      K("老人", "Elder", "老人", "吉"),
+      K("朋友", "Friend", "朋友", "吉"),
     ],
   },
   {
     id: "animals",
-    title: "动物篇",
+    title: { zh: "动物篇", en: "Animals", tw: "動物篇" },
     emoji: "🐉",
     color: "rgba(52, 211, 153, 0.6)",
     keywords: [
-      { word: "蛇", level: "吉" },
-      { word: "龙", level: "大吉" },
-      { word: "狗", level: "吉" },
-      { word: "猫", level: "平" },
-      { word: "鱼", level: "大吉" },
-      { word: "鸟", level: "吉" },
-      { word: "老虎", level: "吉" },
-      { word: "马", level: "大吉" },
+      K("蛇", "Snake", "蛇", "吉"),
+      K("龙", "Dragon", "龍", "大吉"),
+      K("狗", "Dog", "狗", "吉"),
+      K("猫", "Cat", "貓", "平"),
+      K("鱼", "Fish", "魚", "大吉"),
+      K("鸟", "Bird", "鳥", "吉"),
+      K("老虎", "Tiger", "老虎", "吉"),
+      K("马", "Horse", "馬", "大吉"),
     ],
   },
   {
     id: "things",
-    title: "物品篇",
+    title: { zh: "物品篇", en: "Objects", tw: "物品篇" },
     emoji: "💎",
     color: "rgba(251, 191, 36, 0.6)",
     keywords: [
-      { word: "钱", level: "吉" },
-      { word: "棺材", level: "大吉" },
-      { word: "血", level: "吉" },
-      { word: "水", level: "吉" },
-      { word: "火", level: "吉" },
-      { word: "房子", level: "吉" },
-      { word: "刀", level: "平" },
-      { word: "书", level: "吉" },
+      K("钱", "Money", "錢", "吉"),
+      K("棺材", "Coffin", "棺材", "大吉"),
+      K("血", "Blood", "血", "吉"),
+      K("水", "Water", "水", "吉"),
+      K("火", "Fire", "火", "吉"),
+      K("房子", "House", "房子", "吉"),
+      K("刀", "Knife", "刀", "平"),
+      K("书", "Book", "書", "吉"),
     ],
   },
   {
     id: "actions",
-    title: "行为篇",
+    title: { zh: "行为篇", en: "Actions", tw: "行為篇" },
     emoji: "✨",
     color: "rgba(248, 113, 113, 0.6)",
     keywords: [
-      { word: "飞翔", level: "吉" },
-      { word: "下坠", level: "平" },
-      { word: "被追", level: "平" },
-      { word: "结婚", level: "大吉" },
-      { word: "考试", level: "平" },
-      { word: "掉牙", level: "平" },
-      { word: "死亡", level: "吉" },
-      { word: "迷路", level: "凶" },
+      K("飞翔", "Flying", "飛翔", "吉"),
+      K("下坠", "Falling", "下墜", "平"),
+      K("被追", "Being chased", "被追", "平"),
+      K("结婚", "Marriage", "結婚", "大吉"),
+      K("考试", "Exam", "考試", "平"),
+      K("掉牙", "Losing teeth", "掉牙", "平"),
+      K("死亡", "Death", "死亡", "吉"),
+      K("迷路", "Getting lost", "迷路", "凶"),
     ],
   },
 ];
 
+/** 解析梦境分类库为面向组件的纯字符串结构（word 保持中文用于查询） */
+export function getDreamCategories(lang: Lang): {
+  id: string;
+  title: string;
+  emoji: string;
+  color: string;
+  keywords: { word: string; wordLabel: string; level: DreamLevel }[];
+}[] {
+  return DREAM_CATEGORIES.map((cat) => ({
+    id: cat.id,
+    title: rs(cat.title, lang),
+    emoji: cat.emoji,
+    color: cat.color,
+    keywords: cat.keywords.map((k) => ({
+      word: k.word,
+      wordLabel: rs(k.wordLabel, lang),
+      level: k.level,
+    })),
+  }));
+}
+
 // ===== 分享海报金句 =====
+// 注意：与海报渲染保持一致，POSTER_QUOTES 仅在 zh/tw 海报中作为随机金句使用，保持中文。
 export const POSTER_QUOTES: string[] = [
   "梦是潜意识给你写的信，此刻，你读懂了它。",
   "每一个梦境，都是内心深处另一个自己的低语。",
@@ -372,13 +568,18 @@ export const POSTER_QUOTES: string[] = [
 ];
 
 // ===== 加载文案 =====
-export const LOADING_TEXTS: string[] = [
-  "正在唤醒周公大人...",
-  "翻阅千年解梦古籍...",
-  "分析梦境中的隐秘符号...",
-  "连接你的潜意识深处...",
-  "荣格正在解析原型意象...",
-  "整理吉凶宜忌建议...",
-  "提取梦境的核心能量...",
-  "将神秘语言翻译为启示...",
+const LOADING_TEXTS_L: L[] = [
+  { zh: "正在唤醒周公大人...", en: "Awakening the Dream Master...", tw: "正在喚醒周公大人..." },
+  { zh: "翻阅千年解梦古籍...", en: "Leafing through millennia-old dream tomes...", tw: "翻閱千年解夢古籍..." },
+  { zh: "分析梦境中的隐秘符号...", en: "Analyzing the hidden symbols in your dream...", tw: "分析夢境中的隱秘符號..." },
+  { zh: "连接你的潜意识深处...", en: "Connecting to the depths of your subconscious...", tw: "連接你的潛意識深處..." },
+  { zh: "荣格正在解析原型意象...", en: "Jung is decoding the archetypal imagery...", tw: "榮格正在解析原型意象..." },
+  { zh: "整理吉凶宜忌建议...", en: "Compiling omens and guidance...", tw: "整理吉凶宜忌建議..." },
+  { zh: "提取梦境的核心能量...", en: "Extracting the dream's core energy...", tw: "提取夢境的核心能量..." },
+  { zh: "将神秘语言翻译为启示...", en: "Translating the mystic tongue into revelation...", tw: "將神秘語言翻譯為啟示..." },
 ];
+
+/** 解析加载文案为面向组件的纯字符串数组 */
+export function getLoadingTexts(lang: Lang): string[] {
+  return LOADING_TEXTS_L.map((t) => rs(t, lang));
+}

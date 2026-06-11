@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { WUXING_CONFIG, WUXING_TIPS, XIYONGSHEN_TEMPLATES, type WuXing } from "../naming-data";
+import { WUXING_CONFIG, getWuxingTips, getXiyongTemplate, getWuxingLabel, type WuXing, type Lang } from "../naming-data";
+import { getPillarLabel, buildDiagnosisI18n } from "../naming-engine";
 import { type NamingT } from "../naming-i18n";
 
 interface BaziPillar {
@@ -27,16 +28,20 @@ interface BaziResultProps {
   gender: "male" | "female";
   onContinue?: () => void;
   t: NamingT;
+  lang: Lang;
 }
 
 const WUXING_ORDER: WuXing[] = ["金", "木", "水", "火", "土"];
 
-export default function BaziResult({ bazi, surname, gender, onContinue, t }: BaziResultProps) {
+export default function BaziResult({ bazi, surname, gender, onContinue, t, lang }: BaziResultProps) {
   const [showTip, setShowTip] = useState(false);
 
   const total = Object.values(bazi.wuxingScores).reduce((a, b) => a + b, 0);
 
   const maxScore = Math.max(...Object.values(bazi.wuxingScores));
+
+  // 诊断文案按 lang 由结构化字段重建（引擎在 API 端生成的中文 diagnosis 不直接使用）
+  const diagnosis = buildDiagnosisI18n(bazi.dominant, bazi.weak, bazi.xiyongshen, lang);
 
   return (
     <div className="bazi-result-container">
@@ -52,9 +57,9 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
       <div className="bazi-pillars-section">
         <h3 className="bazi-section-label">{t.bzPillars}</h3>
         <div className="bazi-pillars-grid">
-          {bazi.pillars.map((p) => (
+          {bazi.pillars.map((p, pi) => (
             <div key={p.label} className="bazi-pillar-card">
-              <div className="bazi-pillar-label">{p.label}</div>
+              <div className="bazi-pillar-label">{getPillarLabel(pi, lang)}</div>
               <div className="bazi-pillar-chars">
                 <div className="bazi-pillar-gan-wrap">
                   <span
@@ -67,7 +72,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
                   >
                     {p.gan}
                   </span>
-                  <span className="bazi-pillar-wuxing">{p.ganWuxing}</span>
+                  <span className="bazi-pillar-wuxing">{getWuxingLabel(p.ganWuxing, lang)}</span>
                 </div>
                 <div className="bazi-pillar-gan-wrap">
                   <span
@@ -80,7 +85,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
                   >
                     {p.zhi}
                   </span>
-                  <span className="bazi-pillar-wuxing">{p.zhiWuxing}</span>
+                  <span className="bazi-pillar-wuxing">{getWuxingLabel(p.zhiWuxing, lang)}</span>
                 </div>
               </div>
             </div>
@@ -108,7 +113,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
                     className="bazi-wx-dot"
                     style={{ background: WUXING_CONFIG[wx].color }}
                   />
-                  <span className="bazi-wx-name">{wx}</span>
+                  <span className="bazi-wx-name">{getWuxingLabel(wx, lang)}</span>
                   {isXiyong && <span className="bazi-wx-badge bazi-badge-xi">{t.bzBadgeXi}</span>}
                   {isDominant && !isXiyong && <span className="bazi-wx-badge bazi-badge-strong">{t.bzBadgeStrong}</span>}
                   {isWeak && !isXiyong && <span className="bazi-wx-badge bazi-badge-weak">{t.bzBadgeWeak}</span>}
@@ -137,7 +142,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
           <div
             className="bazi-diagnosis-text"
             dangerouslySetInnerHTML={{
-              __html: bazi.diagnosis.replace(/\*\*(.*?)\*\*/g, '<strong class="bazi-emphasis">$1</strong>'),
+              __html: diagnosis.replace(/\*\*(.*?)\*\*/g, '<strong class="bazi-emphasis">$1</strong>'),
             }}
           />
         </div>
@@ -158,13 +163,9 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
 
         {showTip && (
           <div className="bazi-xiyong-tip-card">
-            <p>
-              <strong>喜用神</strong>是命局中最需要补充的五行，也是运势的关键所在。
-              传统命理中"喜用神"并非简单的"缺啥补啥"，而是根据日主（出生日天干）的强弱，
-              结合整体格局综合研判。名字五行契合喜用神，可以起到"补运助势"的效果。
-            </p>
+            <p dangerouslySetInnerHTML={{ __html: t.bzXiyongIntro }} />
             <div className="bazi-wuxing-tips">
-              {WUXING_TIPS.map(tip => (
+              {getWuxingTips(lang).map(tip => (
                 <div key={tip} className="bazi-wuxing-tip-item">⊙ {tip}</div>
               ))}
             </div>
@@ -173,7 +174,7 @@ export default function BaziResult({ bazi, surname, gender, onContinue, t }: Baz
 
         <div className="bazi-xiyong-cards">
           {bazi.xiyongshen.map(wx => {
-            const tpl = XIYONGSHEN_TEMPLATES[wx];
+            const tpl = getXiyongTemplate(wx, lang);
             return (
               <div
                 key={wx}

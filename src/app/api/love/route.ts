@@ -24,14 +24,14 @@ export async function POST(request: NextRequest) {
     }
 
     const input: LoveInput = {
-      name: body.name?.trim() ?? "匿名",
+      name: body.name?.trim() || ANON_NAME[lang],
       gender: body.gender,
       birthYear: year,
       birthMonth: month,
       birthDay: day,
     };
 
-    const report = runLoveEngine(input);
+    const report = runLoveEngine(input, lang);
 
     // 可选 AI 增强
     const apiKey = process.env.DEEPSEEK_API_KEY;
@@ -80,6 +80,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: ERR_SERVER[lang] }, { status: 500 });
   }
 }
+
+const ANON_NAME: Record<LoveLang, string> = {
+  zh: "匿名",
+  en: "Anonymous",
+  tw: "匿名",
+};
 
 const ERR_GENDER: Record<LoveLang, string> = {
   zh: "请选择性别",

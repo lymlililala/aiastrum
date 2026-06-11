@@ -5,9 +5,11 @@
 
 import {
   type WuXing,
+  type Lang,
   AUSPICIOUS_CHARS,
   WUXING_GENERATE,
   WUXING_OVERCOME,
+  getWuxingLabel,
   type NameSuggestion,
 } from "./naming-data";
 
@@ -445,4 +447,82 @@ export function runNamingEngine(input: NamingInput): NamingResult {
     surname: input.surname,
     gender: input.gender,
   };
+}
+
+// ===== 渲染层多语言辅助函数 =====
+// 引擎在 API route（无 lang 上下文）中运行并生成中文 diagnosis/synergy/label，
+// 这里提供按 lang 复算的纯函数，供客户端组件用结构化字段重建本地化文案。
+// 不改变 NamingResult / BaziResult 等结果类型。
+
+const PILLAR_LABELS: Record<Lang, [string, string, string, string]> = {
+  zh: ["年柱", "月柱", "日柱", "时柱"],
+  tw: ["年柱", "月柱", "日柱", "時柱"],
+  en: ["Year", "Month", "Day", "Hour"],
+};
+
+/** 四柱标签：按柱索引 (0=年,1=月,2=日,3=时) 返回本地化标签 */
+export function getPillarLabel(index: number, lang: Lang): string {
+  return PILLAR_LABELS[lang][index] ?? PILLAR_LABELS[lang][0];
+}
+
+/** 五行相生/比和搭配描述（对应引擎 generateNames 中的 synergy 文案） */
+export function buildSynergy(a: WuXing, b: WuXing, lang: Lang): string {
+  const la = getWuxingLabel(a, lang);
+  const lb = getWuxingLabel(b, lang);
+  const generatesAB = WUXING_GENERATE[a] === b;
+  const generatesBA = WUXING_GENERATE[b] === a;
+  const same = a === b;
+  if (lang === "en") {
+    if (generatesAB) return `${la} generates ${lb} — an auspicious, supportive cycle`;
+    if (generatesBA) return `${lb} generates ${la} — an auspicious, supportive cycle`;
+    if (same) return `Double ${la} in harmony — kindred energies reinforce each other`;
+    return "The Five Elements are balanced and complement one another";
+  }
+  if (lang === "tw") {
+    if (generatesAB) return `${la}生${lb}，相生吉順`;
+    if (generatesBA) return `${lb}生${la}，相生吉順`;
+    if (same) return `雙${la}比和，同氣相求`;
+    return "五行調和，相輔相成";
+  }
+  if (generatesAB) return `${la}生${lb}，相生吉顺`;
+  if (generatesBA) return `${lb}生${la}，相生吉顺`;
+  if (same) return `双${la}比和，同气相求`;
+  return "五行调和，相辅相成";
+}
+
+/** 命局诊断文案（对应引擎 buildDiagnosis），由结构化字段按 lang 重建 */
+export function buildDiagnosisI18n(
+  dominant: WuXing[],
+  weak: WuXing[],
+  xiyongshen: WuXing[],
+  lang: Lang,
+): string {
+  const join = lang === "en" ? ", " : "、";
+  const dl = dominant.map(w => getWuxingLabel(w, lang));
+  const wl = weak.map(w => getWuxingLabel(w, lang));
+  const xl = xiyongshen.map(w => getWuxingLabel(w, lang));
+  const xiStr = xl.join(join);
+
+  if (lang === "en") {
+    const dominantStr = dominant.length > 0 ? dl.join(join) : "fairly balanced";
+    const weakStr = weak.length > 0 ? wl.join(join) : "no clear deficiency";
+    if (dominant.length === 0 && weak.length === 0) {
+      return `The Five Elements are evenly distributed with abundant vitality — a rare and well-balanced chart. The favorable elements are **${xiStr}**; the name should add the finishing touch with auspicious, meaningful characters.`;
+    }
+    return `In this chart **${dominantStr}** is abundant while **${weakStr}** runs a little short. According to authentic metaphysics, one should not blindly "fill what is missing" but judge by the strength of the day master and the overall pattern. The favorable elements are **${xiStr}**; the name should favor characters of these elements to enhance fortune.`;
+  }
+  if (lang === "tw") {
+    const dominantStr = dominant.length > 0 ? dl.join(join) : "五行較均衡";
+    const weakStr = weak.length > 0 ? wl.join(join) : "無明顯偏弱";
+    if (dominant.length === 0 && weak.length === 0) {
+      return `命局五行分布均衡，元氣充足，屬於難得的中和命局。專屬喜用神為 **${xiStr}**，起名宜錦上添花，選擇寓意美好的字。`;
+    }
+    return `命局中**${dominantStr}**旺盛有餘，**${weakStr}**稍顯不足。根據正宗命理，不可盲目「缺啥補啥」，應結合日主強弱綜合研判。您的專屬喜用神為 **${xiStr}**，起名宜選含此五行之字，以助運勢提升。`;
+  }
+  const dominantStr = dominant.length > 0 ? dl.join(join) : "五行较均衡";
+  const weakStr = weak.length > 0 ? wl.join(join) : "无明显偏弱";
+  if (dominant.length === 0 && weak.length === 0) {
+    return `命局五行分布均衡，元气充足，属于难得的中和命局。专属喜用神为 **${xiStr}**，起名宜锦上添花，选择寓意美好的字。`;
+  }
+  return `命局中**${dominantStr}**旺盛有余，**${weakStr}**稍显不足。根据正宗命理，不可盲目"缺啥补啥"，应结合日主强弱综合研判。您的专属喜用神为 **${xiStr}**，起名宜选含此五行之字，以助运势提升。`;
 }

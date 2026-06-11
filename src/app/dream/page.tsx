@@ -92,15 +92,15 @@ export default function DreamPage() {
                 ⚠️ {error}
               </div>
             )}
-            <DreamInput t={t} onSubmit={handleSubmit} isLoading={false} />
-            <DreamCategory t={t} onKeywordClick={handleSubmit} />
+            <DreamInput t={t} lang={lang} onSubmit={handleSubmit} isLoading={false} />
+            <DreamCategory t={t} lang={lang} onKeywordClick={handleSubmit} />
           </div>
         )}
 
-        {phase === "loading" && <DreamLoading t={t} query={query} />}
+        {phase === "loading" && <DreamLoading t={t} lang={lang} query={query} />}
 
         {phase === "result" && result && (
-          <DreamResult t={t} data={result} onReset={handleReset} />
+          <DreamResult t={t} lang={lang} data={result} onReset={handleReset} />
         )}
       </main>
     </div>

@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react";
 import Link from "next/link";
 import type { AnalysisMode, FaceReadingReport } from "./face-reading-data";
 import type { ScanProgress } from "./face-reading-engine";
-import { analyzeImage, saveToHistory, preprocessImage } from "./face-reading-engine";
+import { analyzeImage, saveToHistory, preprocessImage, initialScanProgress } from "./face-reading-engine";
 import { UploadPhoto } from "./components/UploadPhoto";
 import { ScanAnimation } from "./components/ScanAnimation";
 import { FaceReport } from "./components/FaceReport";
@@ -24,11 +24,9 @@ export default function FaceReadingPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [processedImageUrl, setProcessedImageUrl] = useState<string>("");
-  const [scanProgress, setScanProgress] = useState<ScanProgress>({
-    phase: "uploading",
-    progress: 0,
-    message: "准备中...",
-  });
+  const [scanProgress, setScanProgress] = useState<ScanProgress>(() =>
+    initialScanProgress(lang)
+  );
   const [report, setReport] = useState<FaceReadingReport | null>(null);
   const [showPoster, setShowPoster] = useState(false);
   const [error, setError] = useState<string>("");

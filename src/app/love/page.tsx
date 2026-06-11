@@ -119,11 +119,11 @@ export default function LovePage() {
               <button onClick={() => setErrMsg(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: "1.1rem", padding: 0, lineHeight: 1 }}>×</button>
             </div>
           )}
-          <LoveInputComponent t={t} onSubmit={handleSubmit} isLoading={false} />
+          <LoveInputComponent t={t} lang={lang} onSubmit={handleSubmit} isLoading={false} />
         </>
       )}
 
-      {step === "loading" && <LoveLoading />}
+      {step === "loading" && <LoveLoading lang={lang} />}
 
       {step === "full-report" && report && (
         <LoveFullReport

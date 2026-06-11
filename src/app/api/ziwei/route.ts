@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       birthPlace:  body.birthPlace?.trim(),
     };
 
-    const chart = runZiweiEngine(input);
+    const chart = runZiweiEngine(input, lang);
 
     // 可选 AI 增强
     const apiKey = process.env.DEEPSEEK_API_KEY;

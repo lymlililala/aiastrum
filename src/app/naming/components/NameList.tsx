@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { WUXING_CONFIG, type WuXing } from "../naming-data";
+import { WUXING_CONFIG, getWuxingLabel, type WuXing, type Lang } from "../naming-data";
+import { buildSynergy } from "../naming-engine";
 import { type NamingT } from "../naming-i18n";
 
 interface NameCharDetail {
@@ -49,6 +50,7 @@ interface NameListProps {
   onUnlock?: () => void;
   onSelectName?: (name: NameSuggestion) => void;
   t: NamingT;
+  lang: Lang;
 }
 
 function NameCard({
@@ -56,11 +58,13 @@ function NameCard({
   surname,
   onClick,
   t,
+  lang,
 }: {
   suggestion: NameSuggestion;
   surname: string;
   onClick?: () => void;
   t: NamingT;
+  lang: Lang;
 }) {
   return (
     <div
@@ -105,10 +109,16 @@ function NameCard({
               color: WUXING_CONFIG[wx].color,
             }}
           >
-            {suggestion.chars[i]}{wx}{t.nlWxSuffix}
+            {suggestion.chars[i]}{getWuxingLabel(wx, lang)}{t.nlWxSuffix}
           </span>
         ))}
-        <span className="name-card-synergy">{suggestion.synergy}</span>
+        <span className="name-card-synergy">
+          {buildSynergy(
+            suggestion.combinedWuxing[0] ?? "土",
+            suggestion.combinedWuxing[1] ?? "土",
+            lang,
+          )}
+        </span>
       </div>
 
       {/* 寓意 */}
@@ -133,7 +143,7 @@ function NameCard({
   );
 }
 
-function AINameCard({ aiName, surname, t }: { aiName: AIName; surname: string; t: NamingT }) {
+function AINameCard({ aiName, surname, t, lang }: { aiName: AIName; surname: string; t: NamingT; lang: Lang }) {
   return (
     <div className="name-card name-card-ai">
       <div className="name-card-ai-badge">{t.nlAiBadge}</div>
@@ -162,7 +172,7 @@ function AINameCard({ aiName, surname, t }: { aiName: AIName; surname: string; t
                   color: WUXING_CONFIG[wxKey].color,
                 }}
               >
-                {wx}{t.nlWxSuffix}
+                {getWuxingLabel(wxKey, lang)}{t.nlWxSuffix}
               </span>
             ) : null;
           })}
@@ -191,6 +201,7 @@ export default function NameList({
   onUnlock,
   onSelectName,
   t,
+  lang,
 }: NameListProps) {
 
   return (
@@ -221,6 +232,7 @@ export default function NameList({
               surname={surname}
               onClick={onSelectName ? () => onSelectName(s) : undefined}
               t={t}
+              lang={lang}
             />
           ))}
         </div>
@@ -237,7 +249,7 @@ export default function NameList({
           </div>
           <div className="namelist-grid">
             {aiNames.map(n => (
-              <AINameCard key={n.name} aiName={n} surname={surname} t={t} />
+              <AINameCard key={n.name} aiName={n} surname={surname} t={t} lang={lang} />
             ))}
           </div>
         </section>

@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import ZiweiChartComponent from "./ZiweiChart";
-import { PAYWALL_HINTS, STAR_COLORS } from "../ziwei-data";
+import { STAR_COLORS, resolvePaywallHints } from "../ziwei-data";
 import type { ZiweiChart } from "../ziwei-engine";
-import type { ZiweiT } from "../ziwei-i18n";
+import type { ZiweiT, Lang } from "../ziwei-i18n";
 
 interface ZiweiFreeResultProps {
   chart: ZiweiChart;
   onUnlock: () => void;
   onReset: () => void;
   t: ZiweiT;
+  lang: Lang;
 }
 
-export default function ZiweiFreeResult({ chart, onUnlock, onReset, t }: ZiweiFreeResultProps) {
+export default function ZiweiFreeResult({ chart, onUnlock, onReset, t, lang }: ZiweiFreeResultProps) {
   const [mode, setMode] = useState<"modern" | "classic">("modern");
   const mingColor = STAR_COLORS[chart.mingStarName] ?? "#C77DFF";
 
@@ -24,7 +25,7 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset, t }: ZiweiFr
         <div className="zw-result-header-glow" />
         <div className="zw-result-header-content">
           <div className="zw-result-badge" style={{ color: mingColor, borderColor: mingColor }}>
-            {t.freeBadgePre}{chart.mingStarName}{t.zuoMingSuffix}
+            {t.freeBadgePre}{chart.mingStarDisplay}{t.zuoMingSuffix}
           </div>
           <h1 className="zw-result-title">{chart.name}{t.reportNameSuffix}</h1>
           <p className="zw-result-subtitle">
@@ -42,13 +43,13 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset, t }: ZiweiFr
       </div>
 
       {/* 星盘（免费展示完整星盘） */}
-      <ZiweiChartComponent chart={chart} mode={mode} onModeChange={setMode} t={t} />
+      <ZiweiChartComponent chart={chart} mode={mode} onModeChange={setMode} t={t} lang={lang} />
 
       {/* 命宫解读（免费） */}
       <div className="zw-free-section">
         <div className="zw-section-title">
           <span className="zw-section-icon" style={{ color: mingColor }}>◆</span>
-          {t.freeMingReadingPre}{chart.mingStarName}{t.zuoMingSuffix}
+          {t.freeMingReadingPre}{chart.mingStarDisplay}{t.zuoMingSuffix}
         </div>
         <p className="zw-ming-reading">{chart.mingReading}</p>
 
@@ -64,9 +65,9 @@ export default function ZiweiFreeResult({ chart, onUnlock, onReset, t }: ZiweiFr
       <div className="zw-paywall">
         <div className="zw-paywall-title">{t.paywallTitle}</div>
         <div className="zw-paywall-hints">
-          {Object.entries(PAYWALL_HINTS).map(([key, hint]) => (
-            <div key={key} className="zw-paywall-hint-card" onClick={onUnlock}>
-              <div className="zw-hint-tag">{key}</div>
+          {resolvePaywallHints(lang).map((hint) => (
+            <div key={hint.key} className="zw-paywall-hint-card" onClick={onUnlock}>
+              <div className="zw-hint-tag">{hint.tag}</div>
               <div className="zw-hint-title">{t.hintLock}{hint.title}</div>
               <div className="zw-hint-teaser">{hint.teaser}</div>
               <div className="zw-hint-unlock">{t.hintUnlock}</div>

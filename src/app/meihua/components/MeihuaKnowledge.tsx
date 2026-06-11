@@ -1,14 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { BA_GUA } from "../meihua-data";
-import type { MeihuaT } from "../meihua-i18n";
+import { BA_GUA, wuxingLabel, type WuXing } from "../meihua-data";
+import type { Lang, MeihuaT } from "../meihua-i18n";
 
 interface MeihuaKnowledgeProps {
+  lang: Lang;
   t: MeihuaT;
 }
 
-export default function MeihuaKnowledge({ t }: MeihuaKnowledgeProps) {
+// 体用生克断卦规则表（type/level 中文 KEY → 本地化显示 + 简述）
+const TIYONG_RULES: Array<{ type: string; level: string; typeLabel: Record<Lang, string>; levelLabel: Record<Lang, string>; desc: Record<Lang, string> }> = [
+  { type: "用生体", level: "大吉", typeLabel: { zh: "用生体", tw: "用生體", en: "Guest→Host" }, levelLabel: { zh: "大吉", tw: "大吉", en: "Very auspicious" }, desc: { zh: "外力相助，事顺人和", tw: "外力相助，事順人和", en: "Outside help; matters go smoothly." } },
+  { type: "体克用", level: "中吉", typeLabel: { zh: "体克用", tw: "體剋用", en: "Host controls Guest" }, levelLabel: { zh: "中吉", tw: "中吉", en: "Auspicious" }, desc: { zh: "主动掌控，付出可成", tw: "主動掌控，付出可成", en: "Take command; effort brings success." } },
+  { type: "比和", level: "吉", typeLabel: { zh: "比和", tw: "比和", en: "In harmony" }, levelLabel: { zh: "吉", tw: "吉", en: "Favorable" }, desc: { zh: "顺其自然，平稳顺遂", tw: "順其自然，平穩順遂", en: "Let it flow; steady and smooth." } },
+  { type: "体生用", level: "泄气", typeLabel: { zh: "体生用", tw: "體生用", en: "Host→Guest" }, levelLabel: { zh: "泄气", tw: "洩氣", en: "Draining" }, desc: { zh: "付出较多，得不偿失", tw: "付出較多，得不償失", en: "Much given for too little gained." } },
+  { type: "用克体", level: "凶", typeLabel: { zh: "用克体", tw: "用剋體", en: "Guest controls Host" }, levelLabel: { zh: "凶", tw: "凶", en: "Inauspicious" }, desc: { zh: "外压阻碍，谨慎守正", tw: "外壓阻礙，謹慎守正", en: "Outside pressure; stay cautious and upright." } },
+];
+
+// 五行生克图解卡片（wx KEY 中文，显示用 wuxingLabel；箭头方向标签三语）
+const WUXING_DIAGRAM: Array<{ wx: WuXing; color: string; sheng: Record<Lang, string>; ke: Record<Lang, string> }> = [
+  { wx: "木", color: "#5B8A4A", sheng: { zh: "→ 火", tw: "→ 火", en: "→ Fire" }, ke: { zh: "→ 土", tw: "→ 土", en: "→ Earth" } },
+  { wx: "火", color: "#C04851", sheng: { zh: "→ 土", tw: "→ 土", en: "→ Earth" }, ke: { zh: "→ 金", tw: "→ 金", en: "→ Metal" } },
+  { wx: "土", color: "#9B6B3A", sheng: { zh: "→ 金", tw: "→ 金", en: "→ Metal" }, ke: { zh: "→ 水", tw: "→ 水", en: "→ Water" } },
+  { wx: "金", color: "#C9A84C", sheng: { zh: "→ 水", tw: "→ 水", en: "→ Water" }, ke: { zh: "→ 木", tw: "→ 木", en: "→ Wood" } },
+  { wx: "水", color: "#4A7A9B", sheng: { zh: "→ 木", tw: "→ 木", en: "→ Wood" }, ke: { zh: "→ 火", tw: "→ 火", en: "→ Fire" } },
+];
+
+export default function MeihuaKnowledge({ lang, t }: MeihuaKnowledgeProps) {
   const [activeSection, setActiveSection] = useState<"bagua" | "wuxing" | "method" | null>(null);
 
   const toggle = (s: typeof activeSection) => setActiveSection(prev => prev === s ? null : s);
@@ -36,12 +55,12 @@ export default function MeihuaKnowledge({ t }: MeihuaKnowledgeProps) {
               {Object.values(BA_GUA).map(gua => (
                 <div key={gua.name} className="meihua-bagua-row">
                   <span className="meihua-bt-sym">{gua.symbol}</span>
-                  <span className="meihua-bt-name">{gua.name}</span>
-                  <span className="meihua-bt-num">{t.knowBaguaPalacePre}{["一","二","三","四","五","六","七","八"][gua.number - 1]}{t.knowBaguaPalacePost}</span>
-                  <span className={`meihua-bt-wx meihua-wx-${gua.wuxing}`}>{gua.wuxing}</span>
-                  <span className="meihua-bt-nature">{gua.nature}</span>
-                  <span className="meihua-bt-family">{gua.family}</span>
-                  <span className="meihua-bt-dir">{gua.direction}</span>
+                  <span className="meihua-bt-name">{gua.nameLabel[lang]}</span>
+                  <span className="meihua-bt-num">{t.knowBaguaPalacePre}{lang === "en" ? gua.number : ["一","二","三","四","五","六","七","八"][gua.number - 1]}{t.knowBaguaPalacePost}</span>
+                  <span className={`meihua-bt-wx meihua-wx-${gua.wuxing}`}>{wuxingLabel(gua.wuxing, lang)}</span>
+                  <span className="meihua-bt-nature">{gua.nature[lang]}</span>
+                  <span className="meihua-bt-family">{gua.family[lang]}</span>
+                  <span className="meihua-bt-dir">{gua.direction[lang]}</span>
                 </div>
               ))}
             </div>
@@ -63,18 +82,12 @@ export default function MeihuaKnowledge({ t }: MeihuaKnowledgeProps) {
           <div className="meihua-know-body">
             <div className="meihua-wuxing-diagram">
               <div className="meihua-wx-center">{t.knowWxCenter}</div>
-              {[
-                { wx: "木", color: "#5B8A4A", sheng: "→ 火", ke: "→ 土", bei_sheng: "← 水", bei_ke: "← 金" },
-                { wx: "火", color: "#C04851", sheng: "→ 土", ke: "→ 金", bei_sheng: "← 木", bei_ke: "← 水" },
-                { wx: "土", color: "#9B6B3A", sheng: "→ 金", ke: "→ 水", bei_sheng: "← 火", bei_ke: "← 木" },
-                { wx: "金", color: "#C9A84C", sheng: "→ 水", ke: "→ 木", bei_sheng: "← 土", bei_ke: "← 火" },
-                { wx: "水", color: "#4A7A9B", sheng: "→ 木", ke: "→ 火", bei_sheng: "← 金", bei_ke: "← 土" },
-              ].map(item => (
+              {WUXING_DIAGRAM.map(item => (
                 <div key={item.wx} className="meihua-wx-card" style={{ "--wx-color": item.color } as React.CSSProperties}>
-                  <div className="meihua-wx-name">{item.wx}</div>
+                  <div className="meihua-wx-name">{wuxingLabel(item.wx, lang)}</div>
                   <div className="meihua-wx-relations">
-                    <span className="meihua-wx-sheng">{t.knowWxSheng}{item.sheng}</span>
-                    <span className="meihua-wx-ke">{t.knowWxKe}{item.ke}</span>
+                    <span className="meihua-wx-sheng">{t.knowWxSheng}{item.sheng[lang]}</span>
+                    <span className="meihua-wx-ke">{t.knowWxKe}{item.ke[lang]}</span>
                   </div>
                 </div>
               ))}
@@ -91,17 +104,11 @@ export default function MeihuaKnowledge({ t }: MeihuaKnowledgeProps) {
             </div>
             <div className="meihua-tiyong-rules">
               <div className="meihua-tiyong-rule-title">{t.knowTiyongTitle}</div>
-              {[
-                { type: "用生体", level: "大吉", desc: "外力相助，事顺人和" },
-                { type: "体克用", level: "中吉", desc: "主动掌控，付出可成" },
-                { type: "比和",   level: "吉",   desc: "顺其自然，平稳顺遂" },
-                { type: "体生用", level: "泄气", desc: "付出较多，得不偿失" },
-                { type: "用克体", level: "凶",   desc: "外压阻碍，谨慎守正" },
-              ].map(r => (
+              {TIYONG_RULES.map(r => (
                 <div key={r.type} className="meihua-ty-rule">
-                  <span className="meihua-ty-type">{r.type}</span>
-                  <span className="meihua-ty-level">{r.level}</span>
-                  <span className="meihua-ty-desc">{r.desc}</span>
+                  <span className="meihua-ty-type">{r.typeLabel[lang]}</span>
+                  <span className="meihua-ty-level">{r.levelLabel[lang]}</span>
+                  <span className="meihua-ty-desc">{r.desc[lang]}</span>
                 </div>
               ))}
             </div>

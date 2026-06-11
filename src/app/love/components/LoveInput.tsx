@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { TRUST_REVIEWS } from "../love-data";
+import { TRUST_REVIEWS, resolveTrustReview, type Lang } from "../love-data";
 import type { LoveInput } from "../love-engine";
 import type { LoveT } from "../love-i18n";
 
 interface LoveInputProps {
   t: LoveT;
+  lang: Lang;
   onSubmit: (input: LoveInput) => void;
   isLoading: boolean;
 }
@@ -14,7 +15,7 @@ interface LoveInputProps {
 const CURRENT_YEAR = new Date().getFullYear();
 const YEARS = Array.from({ length: 61 }, (_, i) => CURRENT_YEAR - 16 - i); // 16~76岁
 
-export default function LoveInputComponent({ t, onSubmit, isLoading }: LoveInputProps) {
+export default function LoveInputComponent({ t, lang, onSubmit, isLoading }: LoveInputProps) {
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"female" | "male">("female");
   const [birthYear, setBirthYear] = useState(1995);
@@ -39,7 +40,7 @@ export default function LoveInputComponent({ t, onSubmit, isLoading }: LoveInput
     onSubmit({ name: name || t.anonName, gender, birthYear, birthMonth, birthDay });
   };
 
-  const review = TRUST_REVIEWS[reviewIdx]!;
+  const review = resolveTrustReview(TRUST_REVIEWS[reviewIdx]!, lang);
 
   return (
     <div className="love-input-page">

@@ -1,22 +1,25 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { HOT_TAGS, DAILY_DREAMS } from "../dream-data";
+import { getHotTags, getDailyDreams, type Lang } from "../dream-data";
 import type { DreamT } from "../dream-i18n";
 
 interface DreamInputProps {
   t: DreamT;
+  lang: Lang;
   onSubmit: (query: string) => void;
   isLoading?: boolean;
 }
 
-export default function DreamInput({ t, onSubmit, isLoading = false }: DreamInputProps) {
+export default function DreamInput({ t, lang, onSubmit, isLoading = false }: DreamInputProps) {
   const [query, setQuery] = useState("");
-  const [dailyIndex] = useState(() => Math.floor(Math.random() * DAILY_DREAMS.length));
+  const hotTags = getHotTags(lang);
+  const dailyDreams = getDailyDreams(lang);
+  const [dailyIndex] = useState(() => Math.floor(Math.random() * dailyDreams.length));
   const [showDaily, setShowDaily] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const dailyDream = DAILY_DREAMS[dailyIndex]!;
+  const dailyDream = dailyDreams[dailyIndex]!;
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -111,7 +114,7 @@ export default function DreamInput({ t, onSubmit, isLoading = false }: DreamInpu
           {t.hotLabel}
         </p>
         <div className="dream-tags">
-          {HOT_TAGS.map((tag) => (
+          {hotTags.map((tag) => (
             <button
               key={tag.keyword}
               className="dream-tag"
@@ -119,7 +122,7 @@ export default function DreamInput({ t, onSubmit, isLoading = false }: DreamInpu
               disabled={isLoading}
             >
               <span className="dream-tag-emoji">{tag.emoji}</span>
-              {tag.keyword}
+              {tag.label}
             </button>
           ))}
         </div>
@@ -146,7 +149,7 @@ export default function DreamInput({ t, onSubmit, isLoading = false }: DreamInpu
             className="dream-daily-try"
             onClick={() => handleTagClick(dailyDream.keyword)}
           >
-            {t.dailyTry(dailyDream.keyword)}
+            {t.dailyTry(dailyDream.keywordLabel)}
           </button>
         </div>
       )}

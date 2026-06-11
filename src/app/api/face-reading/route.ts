@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // ===== 生成基础 Mock 报告 =====
-    const baseReport = generateMockReport(mode, seed);
+    // ===== 生成基础 Mock 报告（按语言本地化）=====
+    const baseReport = generateMockReport(mode, seed, lang);
 
     // ===== 如果 AI 增强成功，合并到报告 =====
     const finalReport = aiEnhancedReport
