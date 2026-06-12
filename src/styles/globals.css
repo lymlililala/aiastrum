@@ -10240,7 +10240,7 @@ padding: 16px 20px 12px;
   letter-spacing: 0.1em;
 }
 
-.lq-deity-grid { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.lq-deity-grid { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
 
 .lq-deity-card {
   position: relative;
