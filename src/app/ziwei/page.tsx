@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import ZiweiInputComponent from "./components/ZiweiInput";
 import ZiweiLoading from "./components/ZiweiLoading";
 import ZiweiFullReport from "./components/ZiweiFullReport";
+import { runZiweiEngine } from "./ziwei-engine";
 import type { ZiweiInput, ZiweiChart } from "./ziwei-engine";
+import { resolveStarDisplay } from "./ziwei-data";
 import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
 import { T, type Lang } from "./ziwei-i18n";
@@ -12,6 +14,8 @@ import { T, type Lang } from "./ziwei-i18n";
 type Stage = "input" | "loading" | "full";
 
 const STORAGE_KEY_CHART = "ziwei_chart";
+// 各语言「默认名」集合：重新本地化时让默认名跟随语言切换（真实姓名保持不动）
+const DEFAULT_NAMES = new Set([T.zh.anonymous, T.en.anonymous, T.tw.anonymous]);
 
 export default function ZiweiPage() {
   const lang = useLocale() as Lang;
@@ -33,6 +37,32 @@ export default function ZiweiPage() {
       /* ignore */
     }
   }, []);
+
+  // 语言对齐：localStorage 里恢复的盘是「排盘时语言」烤死的（表头主星/五行局/性格标签/
+  // 各 Tab 解读都是当时语言的成品字符串）。若与当前语言不一致，用当前语言重新跑一次引擎。
+  // 紫微引擎是纯函数且确定性的——同样的出生信息排出的星曜布局与语言无关，只是显示字符串
+  // 随语言变化，所以重排只会「换语言」不会「换盘」。判断是否需要重排用纯函数比对主星显示名，
+  // 这样连早期没有语言标记的旧存盘也能自动识别纠正。
+  useEffect(() => {
+    if (!chart) return;
+    if (resolveStarDisplay(chart.mingStarName, lang) === chart.mingStarDisplay) return; // 语言已一致
+    const regen = runZiweiEngine(
+      {
+        name:       chart.name,
+        gender:     chart.gender,
+        birthYear:  chart.birthYear,
+        birthMonth: chart.birthMonth,
+        birthDay:   chart.birthDay,
+        birthHour:  chart.birthHour,
+        isLunar:    false, // 引擎不使用此字段，仅为补齐类型
+      },
+      lang,
+    );
+    // 默认名（匿名 / Anonymous）跟随当前语言；用户自填的真实姓名原样保留
+    if (DEFAULT_NAMES.has(regen.name)) regen.name = t.anonymous;
+    setChart(regen);
+    try { localStorage.setItem(STORAGE_KEY_CHART, JSON.stringify(regen)); } catch { /* ignore */ }
+  }, [chart, lang, t.anonymous]);
 
   const handleSubmit = async (input: ZiweiInput) => {
     setError(null);
