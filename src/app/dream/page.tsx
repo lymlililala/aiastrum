@@ -36,13 +36,14 @@ export default function DreamPage() {
       const data = await response.json() as DreamResultData & { error?: string };
 
       if (!response.ok || data.error) {
-        throw new Error(data.error ?? "解梦失败，请稍后重试");
+        throw new Error(data.error ?? (lang === "en" ? "Interpretation failed, please try again" : lang === "tw" ? "解夢失敗，請稍後重試" : "解梦失败，请稍后重试"));
       }
 
       setResult(data);
       setPhase("result");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "网络错误，请重试";
+      const fallback = lang === "en" ? "Network error, please try again" : lang === "tw" ? "網絡錯誤，請重試" : "网络错误，请重试";
+      const msg = err instanceof Error ? err.message : fallback;
       setError(msg);
       setPhase("input");
     }

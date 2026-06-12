@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import type { QimenInput, QimenEvent } from "../qimen-engine";
-import { MAJOR_CITIES } from "../qimen-data";
+import { MAJOR_CITIES, cityLabel } from "../qimen-data";
 import type { PanType, JuType } from "../qimen-data";
 
 type Lang = "zh" | "en" | "tw";
@@ -133,7 +133,9 @@ export function QimenInputForm({ onSubmit, loading, lang }: QimenInputProps) {
   const [showCityList, setShowCityList] = useState(false);
 
   const filteredCities = citySearch
-    ? MAJOR_CITIES.filter(c => c.name.includes(citySearch))
+    ? MAJOR_CITIES.filter(c =>
+        c.name.includes(citySearch) ||
+        cityLabel(c.name, lang).toLowerCase().includes(citySearch.toLowerCase()))
     : MAJOR_CITIES;
 
   const handleNow = useCallback(() => {
@@ -223,7 +225,7 @@ export function QimenInputForm({ onSubmit, loading, lang }: QimenInputProps) {
           <input
             className="qm-input qm-city-input"
             placeholder={ft.citySearch}
-            value={citySearch || city}
+            value={citySearch || cityLabel(city, lang)}
             onFocus={() => { setShowCityList(true); setCitySearch(""); }}
             onBlur={() => setTimeout(() => setShowCityList(false), 200)}
             onChange={e => setCitySearch(e.target.value)}
@@ -241,7 +243,7 @@ export function QimenInputForm({ onSubmit, loading, lang }: QimenInputProps) {
                     setShowCityList(false);
                   }}
                 >
-                  {c.name}
+                  {cityLabel(c.name, lang)}
                   <span className="qm-city-lng">{c.lng.toFixed(1)}°E</span>
                 </button>
               ))}

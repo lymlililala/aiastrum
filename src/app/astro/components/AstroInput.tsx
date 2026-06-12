@@ -34,6 +34,13 @@ export function AstroInputForm({ onSubmit, isLoading, t, lang }: AstroInputProps
     }
   }, []);
 
+  // 城市输入框显示名随语言切换：useState 初值在首屏 lang 仍为默认 zh 时只取一次，
+  // 之后 cookie 把 lang 校正为 en/tw 也不更新，默认「北京」在英文下不变。
+  // 用 effect 把已选城市同步为当前语言下的名称（默认北京 → EN 显示 Beijing）。
+  useEffect(() => {
+    if (selectedCity) setCityQuery(cityLabel(selectedCity, lang));
+  }, [lang, selectedCity]);
+
   // 城市搜索
   useEffect(() => {
     if (cityQuery.length > 0) {

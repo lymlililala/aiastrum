@@ -37,6 +37,13 @@ export default function SynastryInput({ onSubmit, loading, t, lang }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const cityDropRef = useRef<{ a: boolean; b: boolean }>({ a: false, b: false });
 
+  // 城市输入框显示名随语言切换：useState 初值在首屏 lang 仍为默认 zh 时只取一次，
+  // 之后 cookie 把 lang 校正为 en/tw 也不会更新，导致默认「北京」在英文下不变。
+  // 用 effect 把输入框同步为「已选城市在当前语言下的名称」（默认北京 → EN 显示 Beijing）。
+  useEffect(() => {
+    setCityQuery({ a: cityLabel(personA.city, lang), b: cityLabel(personB.city, lang) });
+  }, [lang, personA.city, personB.city]);
+
   // 城市搜索
   const handleCitySearch = (who: "a" | "b", q: string) => {
     setCityQuery((prev) => ({ ...prev, [who]: q }));

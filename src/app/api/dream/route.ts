@@ -234,6 +234,14 @@ export async function POST(request: NextRequest) {
 
   const report = aiReport ?? generateMockInterpretation(dreamResult, lang);
 
+  // 标题「梦见X」前缀按语言本地化（引擎产出始终是中文「梦见」+关键词）。
+  // 仅替换前缀，保留关键词；zh 原样。修复英文模式标题显示「梦见hi」。
+  const DREAM_PREFIX: Record<Lang, string> = { zh: "梦见", en: "Dreaming of ", tw: "夢見" };
+  const rawTitle = dreamResult.primaryEntry.title;
+  const primaryTitle = lang === "zh" || !rawTitle.startsWith("梦见")
+    ? rawTitle
+    : DREAM_PREFIX[lang] + rawTitle.slice(2);
+
   return NextResponse.json({
     query: dreamResult.query,
     keywords: dreamResult.keywords,
@@ -242,7 +250,7 @@ export async function POST(request: NextRequest) {
     psychology: report.psychology,
     dreamQuote: report.dreamQuote,
     // 附加分类信息供前端展示
-    primaryTitle: dreamResult.primaryEntry.title,
+    primaryTitle,
     matchedCount: dreamResult.matched.length,
   });
 }

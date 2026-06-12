@@ -8,6 +8,7 @@ import { QimenAnalysis } from "./components/QimenAnalysis";
 import { QimenPoster } from "./components/QimenPoster";
 import { buildQimenChart, saveQimenHistory, getQimenHistory } from "./qimen-engine";
 import type { QimenChart, QimenInput, QimenHistoryItem } from "./qimen-engine";
+import { cityLabel } from "./qimen-data";
 import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
 
@@ -108,9 +109,9 @@ export default function QimenPage() {
   }, []);
 
   const handleHistoryReload = useCallback((item: QimenHistoryItem) => {
-    setHistoryHint(t.historyReload(item.date, item.city, item.ju));
+    setHistoryHint(t.historyReload(item.date, cityLabel(item.city, lang), item.ju));
     setShowHistory(false);
-  }, [t]);
+  }, [t, lang]);
 
   return (
     <div className="qm-page">
@@ -166,7 +167,7 @@ export default function QimenPage() {
                   >
                     <div className="qm-history-item-main">
                       <span className="qm-history-date">{item.date}</span>
-                      <span className="qm-history-city">{item.city}</span>
+                      <span className="qm-history-city">{cityLabel(item.city, lang)}</span>
                     </div>
                     <div className="qm-history-item-sub">
                       <span className="qm-history-ju">{item.ju}</span>
@@ -212,7 +213,7 @@ export default function QimenPage() {
               </button>
               <div className="qm-result-title-info">
                 <span className="qm-result-ju">{chart.yinyangJu}</span>
-                <span className="qm-result-city">{chart.input.city}</span>
+                <span className="qm-result-city">{cityLabel(chart.input.city, lang)}</span>
               </div>
             </div>
 

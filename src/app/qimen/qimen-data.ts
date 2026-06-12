@@ -550,6 +550,33 @@ export const MAJOR_CITIES: CityCoord[] = [
   { name: "台北", lng: 121.5, lat: 25.0 },
 ];
 
+// 城市显示名本地化：内部仍以中文名为键（引擎/真太阳时查表用），仅显示层翻译。
+// en 全量；tw 仅列简繁不同者，缺失回退中文名。
+const CITY_EN: Record<string, string> = {
+  "北京": "Beijing", "上海": "Shanghai", "广州": "Guangzhou", "深圳": "Shenzhen",
+  "杭州": "Hangzhou", "南京": "Nanjing", "成都": "Chengdu", "武汉": "Wuhan",
+  "西安": "Xi'an", "重庆": "Chongqing", "天津": "Tianjin", "郑州": "Zhengzhou",
+  "沈阳": "Shenyang", "哈尔滨": "Harbin", "长春": "Changchun", "济南": "Jinan",
+  "青岛": "Qingdao", "福州": "Fuzhou", "厦门": "Xiamen", "昆明": "Kunming",
+  "贵阳": "Guiyang", "长沙": "Changsha", "合肥": "Hefei", "南昌": "Nanchang",
+  "太原": "Taiyuan", "石家庄": "Shijiazhuang", "呼和浩特": "Hohhot", "银川": "Yinchuan",
+  "兰州": "Lanzhou", "西宁": "Xining", "乌鲁木齐": "Urumqi", "拉萨": "Lhasa",
+  "南宁": "Nanning", "海口": "Haikou", "香港": "Hong Kong", "澳门": "Macau", "台北": "Taipei",
+};
+const CITY_TW: Record<string, string> = {
+  "广州": "廣州", "郑州": "鄭州", "沈阳": "瀋陽", "哈尔滨": "哈爾濱", "长春": "長春",
+  "济南": "濟南", "青岛": "青島", "厦门": "廈門", "贵阳": "貴陽", "长沙": "長沙",
+  "石家庄": "石家莊", "银川": "銀川", "兰州": "蘭州", "乌鲁木齐": "烏魯木齊",
+  "拉萨": "拉薩", "澳门": "澳門",
+};
+
+/** 城市显示名（zh 原名 / en 英文 / tw 繁体，缺失回退中文名） */
+export function cityLabel(name: string, lang: "zh" | "en" | "tw"): string {
+  if (lang === "en") return CITY_EN[name] ?? name;
+  if (lang === "tw") return CITY_TW[name] ?? name;
+  return name;
+}
+
 // ===== 天干加临关系表 =====
 // 用于格局判断（天盘干 + 地盘干）
 export const GAN_JIALING_GEJU: Record<string, string> = {
