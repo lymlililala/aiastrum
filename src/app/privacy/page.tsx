@@ -79,9 +79,9 @@ export default async function PrivacyPage() {
 
         <h2>3. Cookies &amp; local storage</h2>
         <p>
-          We use a small number of cookies and browser local storage to remember your language
-          preference and to support basic analytics. You can clear or block these through your browser
-          settings; some features may not work as well without them.
+          We use cookies and browser local storage to remember your preferences (such as language),
+          to keep the site running, and to support analytics and advertising. You can manage cookies
+          through your browser settings.
         </p>
         <p>
           We may also work with third-party advertising partners, including Google, who use cookies and
@@ -173,8 +173,8 @@ export default async function PrivacyPage() {
 
         <h2>3. Cookie 與本地儲存</h2>
         <p>
-          我們使用少量 Cookie 與瀏覽器本地儲存，以記住你的語言偏好並支援基本分析。
-          你可透過瀏覽器設定清除或封鎖它們；但部分功能可能因此無法正常運作。
+          我們使用 Cookie 與瀏覽器本地儲存，以記住你的偏好（如語言）、維持網站正常運行，
+          並支援分析與廣告。你可透過瀏覽器設定管理 Cookie。
         </p>
         <p>
           我們也可能與包括 Google 在內的第三方廣告合作夥伴合作，他們會使用 Cookie 及類似技術，
@@ -255,8 +255,8 @@ export default async function PrivacyPage() {
 
       <h2>3. Cookie 与本地存储</h2>
       <p>
-        我们使用少量 Cookie 与浏览器本地存储，以记住你的语言偏好并支持基本分析。
-        你可通过浏览器设置清除或屏蔽它们；但部分功能可能因此无法正常运作。
+        我们使用 Cookie 与浏览器本地存储，以记住你的偏好（如语言）、维持网站正常运行，
+        并支持分析与广告。你可通过浏览器设置管理 Cookie。
       </p>
       <p>
         我们也可能与包括 Google 在内的第三方广告合作伙伴合作，他们会使用 Cookie 及类似技术，
