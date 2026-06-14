@@ -83,6 +83,13 @@ export default async function PrivacyPage() {
           preference and to support basic analytics. You can clear or block these through your browser
           settings; some features may not work as well without them.
         </p>
+        <p>
+          We may also work with third-party advertising partners, including Google, who use cookies and
+          similar technologies to serve and measure ads based on your visits to this and other websites.
+          You can opt out of personalized advertising through Google&rsquo;s Ads Settings
+          (<a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>)
+          or via <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>.
+        </p>
 
         <h2>4. Third-party services</h2>
         <p>
@@ -93,6 +100,7 @@ export default async function PrivacyPage() {
           <li><strong>Hosting &amp; analytics</strong> — our platform provider hosts the site and supplies privacy-friendly, aggregated usage analytics.</li>
           <li><strong>AI providers</strong> — to generate interpretations, the text of your question may be sent to large-language-model providers. We ask only what is needed to produce your reading.</li>
           <li><strong>Content database</strong> — articles and related content are served from our database provider.</li>
+          <li><strong>Advertising</strong> — we may use Google and other advertising partners to display ads; they may set cookies to personalize and measure advertising, as described above.</li>
         </ul>
         <p>These providers process data under their own privacy and security commitments.</p>
 
@@ -168,6 +176,12 @@ export default async function PrivacyPage() {
           我們使用少量 Cookie 與瀏覽器本地儲存，以記住你的語言偏好並支援基本分析。
           你可透過瀏覽器設定清除或封鎖它們；但部分功能可能因此無法正常運作。
         </p>
+        <p>
+          我們也可能與包括 Google 在內的第三方廣告合作夥伴合作，他們會使用 Cookie 及類似技術，
+          依你在本站及其他網站的瀏覽記錄投放與衡量廣告。你可透過 Google 廣告設定
+          （<a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>）
+          或 <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a> 選擇退出個人化廣告。
+        </p>
 
         <h2>4. 第三方服務</h2>
         <p>我們仰賴受信任的供應商來營運 AiAstrum，部分資料可能由他們代為處理：</p>
@@ -175,6 +189,7 @@ export default async function PrivacyPage() {
           <li><strong>主機與分析</strong> —— 我們的平台供應商負責網站託管，並提供注重隱私的彙總使用分析。</li>
           <li><strong>AI 供應商</strong> —— 為生成解讀，你的提問文字可能會傳送給大型語言模型供應商。我們僅傳送生成解讀所必需的內容。</li>
           <li><strong>內容資料庫</strong> —— 文章與相關內容由我們的資料庫供應商提供。</li>
+          <li><strong>廣告</strong> —— 我們可能使用 Google 及其他廣告合作夥伴展示廣告；他們可能如上所述設置 Cookie 以個人化並衡量廣告效果。</li>
         </ul>
         <p>這些供應商會依其各自的隱私與安全承諾處理資料。</p>
 
@@ -243,6 +258,12 @@ export default async function PrivacyPage() {
         我们使用少量 Cookie 与浏览器本地存储，以记住你的语言偏好并支持基本分析。
         你可通过浏览器设置清除或屏蔽它们；但部分功能可能因此无法正常运作。
       </p>
+      <p>
+        我们也可能与包括 Google 在内的第三方广告合作伙伴合作，他们会使用 Cookie 及类似技术，
+        依你在本站及其他网站的浏览记录投放与衡量广告。你可通过 Google 广告设置
+        （<a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">adssettings.google.com</a>）
+        或 <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a> 选择退出个性化广告。
+      </p>
 
       <h2>4. 第三方服务</h2>
       <p>我们依赖受信任的供应商来运营 AiAstrum，部分数据可能由他们代为处理：</p>
@@ -250,6 +271,7 @@ export default async function PrivacyPage() {
         <li><strong>主机与分析</strong> —— 我们的平台供应商负责网站托管，并提供注重隐私的汇总使用分析。</li>
         <li><strong>AI 供应商</strong> —— 为生成解读，你的提问文字可能会发送给大型语言模型供应商。我们仅发送生成解读所必需的内容。</li>
         <li><strong>内容数据库</strong> —— 文章与相关内容由我们的数据库供应商提供。</li>
+        <li><strong>广告</strong> —— 我们可能使用 Google 及其他广告合作伙伴展示广告；他们可能如上所述设置 Cookie 以个性化并衡量广告效果。</li>
       </ul>
       <p>这些供应商会依其各自的隐私与安全承诺处理数据。</p>
 
