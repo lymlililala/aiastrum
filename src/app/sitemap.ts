@@ -87,6 +87,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/lingqian",      priority: 0.75, changeFrequency: "weekly"  },
     { path: "/almanac",       priority: 0.75, changeFrequency: "daily"   },
     { path: "/pet-psychic",   priority: 0.65, changeFrequency: "weekly"  },
+    // ── 信息 / 法律页面 ──
+    { path: "/about",         priority: 0.5,  changeFrequency: "monthly" },
+    { path: "/contact",       priority: 0.5,  changeFrequency: "monthly" },
+    { path: "/privacy",       priority: 0.3,  changeFrequency: "yearly"  },
+    { path: "/terms",         priority: 0.3,  changeFrequency: "yearly"  },
   ];
 
   const toolEntries: MetadataRoute.Sitemap = toolRoutes.map(({ path, priority, changeFrequency }) => ({

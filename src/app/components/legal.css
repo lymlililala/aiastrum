@@ -1,0 +1,151 @@
+/* legal.css — 关于/联系/隐私/条款等信息页统一排版 */
+
+.legal-wrap {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 72px 20px 40px;
+}
+
+.legal-back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(10, 6, 28, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  color: rgba(201, 168, 76, 0.85);
+  font-size: 0.8rem;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: border-color 0.18s, color 0.18s;
+}
+.legal-back:hover {
+  border-color: rgba(201, 168, 76, 0.55);
+  color: rgba(240, 210, 120, 0.95);
+}
+
+.legal-langswitch {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 200;
+}
+
+.legal-main {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.legal-title {
+  font-family: Cinzel, serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(240, 210, 120, 0.95);
+  margin: 8px 0 10px;
+  text-align: center;
+}
+
+.legal-sub {
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(205, 190, 170, 0.78);
+  max-width: 560px;
+  margin: 0 auto 6px;
+}
+
+.legal-updated {
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(170, 155, 135, 0.6);
+  letter-spacing: 0.04em;
+  margin: 0 auto 28px;
+}
+
+.legal-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.22), transparent);
+  margin: 0 auto 30px;
+  max-width: 280px;
+}
+
+.legal-prose {
+  color: rgba(210, 198, 180, 0.85);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+.legal-prose h2 {
+  font-family: Cinzel, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(220, 190, 110, 0.92);
+  letter-spacing: 0.03em;
+  margin: 34px 0 12px;
+}
+.legal-prose h2:first-child {
+  margin-top: 0;
+}
+.legal-prose p {
+  margin: 0 0 14px;
+}
+.legal-prose ul {
+  margin: 0 0 16px;
+  padding-left: 22px;
+}
+.legal-prose li {
+  margin: 0 0 8px;
+}
+.legal-prose strong {
+  color: rgba(230, 215, 185, 0.95);
+  font-weight: 600;
+}
+.legal-prose a {
+  color: rgba(240, 210, 120, 0.9);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.35);
+  transition: color 0.15s, border-color 0.15s;
+}
+.legal-prose a:hover {
+  color: rgba(250, 225, 150, 1);
+  border-color: rgba(240, 210, 120, 0.7);
+}
+
+/* 联系页：邮箱卡片 */
+.legal-contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 8px auto 30px;
+  padding: 26px 24px;
+  max-width: 440px;
+  border-radius: 16px;
+  background: rgba(12, 7, 32, 0.6);
+  border: 1px solid rgba(201, 168, 76, 0.18);
+  text-align: center;
+}
+.legal-contact-card .label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(201, 168, 76, 0.6);
+}
+.legal-contact-card a {
+  font-family: Cinzel, serif;
+  font-size: 1.15rem;
+  color: rgba(245, 220, 150, 0.95);
+  text-decoration: none;
+  border: none;
+  letter-spacing: 0.02em;
+}
+.legal-contact-card a:hover {
+  color: rgba(255, 235, 175, 1);
+}

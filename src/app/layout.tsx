@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { LOCALE_LANG, getLocaleFromPath, type Locale } from "~/lib/i18n";
 import { BASE_URL } from "~/lib/seo";
+import { SiteFooter } from "./components/SiteFooter";
 
 // ── 全局默认 metadata（各页面可通过 generateMetadata 覆盖） ──────────────────
 export const metadata: Metadata = {
@@ -109,6 +110,7 @@ export default async function RootLayout({
         {/* 装饰星点 */}
         <Stars />
         {children}
+        <SiteFooter locale={locale} year={new Date().getFullYear()} />
         <Analytics />
       </body>
     </html>

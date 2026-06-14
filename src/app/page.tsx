@@ -673,29 +673,6 @@ function ModuleSelectPage() {
           </div>
         </Link>
       </div>
-
-      {/* ── FOOTER ── */}
-      <footer style={{
-        borderTop: "1px solid rgba(201,168,76,0.08)",
-        padding: "28px 24px 36px",
-        textAlign: "center", background: "rgba(6,3,18,0.8)",
-      }}>
-        <div style={{ height: 1, background: "linear-gradient(90deg,transparent,rgba(201,168,76,0.12),transparent)", marginBottom: 16 }} />
-        <div style={{ fontFamily: "Cinzel,serif", fontSize: "0.75rem", color: "rgba(201,168,76,0.6)", letterSpacing: "0.15em", marginBottom: 8 }}>
-          ✦ AiAstrum · {lang === "zh" ? "命运密语" : lang === "tw" ? "命運密語" : "Destiny Oracle"} ✦
-        </div>
-        {/* 版权声明文字提亮至可读水平 (#888) */}
-        <p style={{ fontSize: "0.68rem", color: "rgba(180,165,145,0.6)", lineHeight: 1.6, maxWidth: 320, margin: "0 auto 8px" }}>
-          {lang === "en"
-            ? "For entertainment purposes only. All readings are for fun and personal reflection."
-            : "本站内容仅供娱乐与心理探索参考，请理性看待，切勿迷信。"}
-        </p>
-        <p style={{ fontSize: "0.62rem", color: "rgba(170,155,135,0.5)", lineHeight: 1.5, maxWidth: 300, margin: "0 auto" }}>
-          {lang === "en"
-            ? "We respect your privacy. Birth data is processed locally. GDPR & CCPA compliant."
-            : "我们尊重您的隐私。出生数据仅在本地处理，符合 GDPR 及 CCPA 合规要求。"}
-        </p>
-      </footer>
     </div>
   );
 }
