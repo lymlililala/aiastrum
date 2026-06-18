@@ -24,7 +24,7 @@ on:
     inputs:
       threshold:
         description: 'AI 自评分发布阈值'
-        default: '85'
+        default: '80'
       max_publish:
         description: '单次最多发布几组(zh+en 算一组)'
         default: '2'
@@ -54,7 +54,7 @@ jobs:
       SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       WX_SOURCES_DB: '1'
-      THRESHOLD: ${{ github.event.inputs.threshold || '85' }}
+      THRESHOLD: ${{ github.event.inputs.threshold || '80' }}
       MAX_PUBLISH: ${{ github.event.inputs.max_publish || '2' }}
       MAX_CLUSTERS: ${{ github.event.inputs.max_clusters || '6' }}
       DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
