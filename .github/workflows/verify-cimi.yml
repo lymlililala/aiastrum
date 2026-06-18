@@ -1,0 +1,24 @@
+name: verify-cimi-ip
+
+# 手动触发：验证次幂 cimidata 当前 appid 能否从 GitHub 云端 IP 采集。
+# 报 4102 = 该 appid 未对此 IP 加白（需联系次幂商务，或改用本机/self-hosted 采集）。
+# 需要 secrets：CIMIDATA_APP_ID, CIMIDATA_APP_SECRET
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - name: Verify cimidata IP
+        env:
+          CIMIDATA_APP_ID: ${{ secrets.CIMIDATA_APP_ID }}
+          CIMIDATA_APP_SECRET: ${{ secrets.CIMIDATA_APP_SECRET }}
+        run: node scripts/wechat/verify-cimi.mjs
