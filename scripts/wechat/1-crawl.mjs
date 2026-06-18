@@ -42,28 +42,41 @@ const cimi = new CimiClient()
 const sinceTs = SINCE ? new Date(SINCE).getTime() : null
 const fresh = new Map()
 
+// 次幂偶发瞬时错误（4102「appid无效或过期」常是限流误报 / 1002 稍后再试 / 500 内部错误）→ 退避重试。
+const TRANSIENT = new Set([4102, 1002, 500])
+const sleep = ms => new Promise(r => setTimeout(r, ms))
+
 for (const acc of accounts) {
   let got = 0
-  try {
-    for await (const item of cimi.iterAccountHistory(acc.wxid, { nickname: acc.nickname || acc.name, maxPages: MAX_PAGES })) {
-      const sn = snOf(item.content_url)
-      if (seen.has(sn) || fresh.has(sn)) continue
-      if (sinceTs && new Date(item.published_at).getTime() < sinceTs) continue
-      fresh.set(sn, {
-        sn,
-        account: acc.name,
-        wxid: acc.wxid,
-        title: item.title,
-        digest: item.digest || '',
-        content_url: item.content_url,
-        published_at: item.published_at,
-        body_text: ''
-      })
-      got++
+  for (let attempt = 0; attempt <= 3; attempt++) {
+    got = 0
+    try {
+      for await (const item of cimi.iterAccountHistory(acc.wxid, { nickname: acc.nickname || acc.name, maxPages: MAX_PAGES })) {
+        const sn = snOf(item.content_url)
+        if (seen.has(sn) || fresh.has(sn)) continue
+        if (sinceTs && new Date(item.published_at).getTime() < sinceTs) continue
+        fresh.set(sn, {
+          sn,
+          account: acc.name,
+          wxid: acc.wxid,
+          title: item.title,
+          digest: item.digest || '',
+          content_url: item.content_url,
+          published_at: item.published_at,
+          body_text: ''
+        })
+        got++
+      }
+      console.log(`  ${acc.name}: 新增 ${got} 篇`)
+      break
+    } catch (e) {
+      if (TRANSIENT.has(e.code) && attempt < 3) {
+        await sleep(4000 * (attempt + 1))
+        continue
+      }
+      console.log(`  ${acc.name}: 列表出错 ${e.message}`)
+      break
     }
-    console.log(`  ${acc.name}: 新增 ${got} 篇`)
-  } catch (e) {
-    console.log(`  ${acc.name}: 列表出错 ${e.message}`)
   }
 }
 
