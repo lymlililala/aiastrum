@@ -44,8 +44,8 @@ export function checkQuality(doc, opts = {}) {
 
   // 文本长度（剥标签后）
   const textLen = content.replace(/<[^>]+>/g, '').length
-  // 中文按字符数（~1200 字），英文按字符数（~1500 词 → ~7000 字符）
-  const minText = opts.minText ?? (lang === 'zh' ? 1200 : 6000)
+  // 中文按字符数（~1200 字），英文按字符数（~830 词 → ~5000 字符）
+  const minText = opts.minText ?? (lang === 'zh' ? 1200 : 5000)
   if (textLen < minText) reasons.push(`THIN:${textLen}<${minText}`)
 
   // 指纹：zh 文查中文套话；en 文查英文套话 + 中文残留（公众号引流/洗稿痕迹）

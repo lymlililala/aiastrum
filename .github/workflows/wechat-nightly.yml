@@ -12,10 +12,10 @@ name: wechat-nightly
 #   SUPABASE_SECRET_KEY     (必填) 写库 + 判重
 # 可选 vars：DEEPSEEK_BASE_URL / DEEPSEEK_MODEL / SUPABASE_URL
 #
-# 源文持久层默认本地 JSON(CI 内每次全新)，故用 --today 只采当天新文(省钱)；
-# 判重仍比对 mysticai_blog_posts(跨夜持久)，不会重复发已有选题。
-# 若想跨夜复用源文池：在 Supabase 建表 mysticai_wx_sources(DDL 见 lib/sources.mjs)，
-# 并把下方 WX_SOURCES_DB 设为 "1"。
+# 源文持久化到 Supabase 表 mysticai_wx_sources（WX_SOURCES_DB=1，已默认开启）：
+# 每晚 --today 采的新文累积入库，聚类回看 N 天可用跨天素材池。
+# 前置：先跑一次 node scripts/wechat/create-sources-table.mjs 建表（需 DB 密码）。
+# 判重另比对 mysticai_blog_posts，不会重复发已有选题。
 
 on:
   schedule:
@@ -53,7 +53,7 @@ jobs:
       UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
       SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      WX_SOURCES_DB: '0'
+      WX_SOURCES_DB: '1'
       THRESHOLD: ${{ github.event.inputs.threshold || '85' }}
       MAX_PUBLISH: ${{ github.event.inputs.max_publish || '2' }}
       MAX_CLUSTERS: ${{ github.event.inputs.max_clusters || '6' }}
