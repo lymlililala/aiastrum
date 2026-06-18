@@ -46,3 +46,7 @@ yarn-error.log*
 .idea
 # GSC 导出报告（本地分析用，不入库）
 gsc/
+
+# 公众号内容流水线产物（不入库；accounts.json 例外，供复核 + CI 采集依赖）
+scripts/wechat/data/*
+!scripts/wechat/data/accounts.json

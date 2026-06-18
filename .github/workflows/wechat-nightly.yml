@@ -1,0 +1,99 @@
+name: wechat-nightly
+
+# 玄学/命理公众号内容流水线 —— 每晚自动：采集 → 聚类 → 合成(中英双发) → 发布。
+# 发布走强闸门(AI 自评分阈值)+ 单次上限护栏，过线才 upsert 进 mysticai_blog_posts(绝不删旧文)。
+#
+# 需在仓库 Settings → Secrets and variables → Actions 配置以下 secrets：
+#   DEEPSEEK_API_KEY        (必填) DeepSeek key
+#   CIMIDATA_APP_ID         (必填) 次幂数据
+#   CIMIDATA_APP_SECRET     (必填) 次幂数据
+#   PEXELS_API_KEY          (选填) 配图，缺则回退写死玄学图池
+#   UNSPLASH_ACCESS_KEY     (选填) 配图回退
+#   SUPABASE_SECRET_KEY     (必填) 写库 + 判重
+# 可选 vars：DEEPSEEK_BASE_URL / DEEPSEEK_MODEL / SUPABASE_URL
+#
+# 源文持久层默认本地 JSON(CI 内每次全新)，故用 --today 只采当天新文(省钱)；
+# 判重仍比对 mysticai_blog_posts(跨夜持久)，不会重复发已有选题。
+# 若想跨夜复用源文池：在 Supabase 建表 mysticai_wx_sources(DDL 见 lib/sources.mjs)，
+# 并把下方 WX_SOURCES_DB 设为 "1"。
+
+on:
+  schedule:
+    - cron: '17 19 * * *'   # UTC 19:17 = 北京时间 03:17 每日（避开整点）
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'AI 自评分发布阈值'
+        default: '85'
+      max_publish:
+        description: '单次最多发布几组(zh+en 算一组)'
+        default: '2'
+      max_clusters:
+        description: '最多聚类几簇'
+        default: '6'
+      dry_run:
+        description: '只预览不写库(true/false)'
+        default: 'false'
+
+concurrency:
+  group: wechat-nightly
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      DEEPSEEK_BASE_URL: ${{ secrets.DEEPSEEK_BASE_URL }}
+      DEEPSEEK_MODEL: ${{ secrets.DEEPSEEK_MODEL }}
+      CIMIDATA_APP_ID: ${{ secrets.CIMIDATA_APP_ID }}
+      CIMIDATA_APP_SECRET: ${{ secrets.CIMIDATA_APP_SECRET }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      WX_SOURCES_DB: '0'
+      THRESHOLD: ${{ github.event.inputs.threshold || '85' }}
+      MAX_PUBLISH: ${{ github.event.inputs.max_publish || '2' }}
+      MAX_CLUSTERS: ${{ github.event.inputs.max_clusters || '6' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: 1) 采集当天新文
+        run: node scripts/wechat/1-crawl.mjs --today
+
+      - name: 2) 聚类(品类均衡)
+        run: node scripts/wechat/2-cluster.mjs --max-clusters "$MAX_CLUSTERS" --max-per-category 2
+
+      - name: 3) 合成(中英双发)
+        run: node scripts/wechat/3-synthesize.mjs
+
+      - name: 4) 发布(强闸门 + 上限)
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node scripts/wechat/4-publish.mjs --dry-run --threshold "$THRESHOLD" --max-publish "$MAX_PUBLISH"
+          else
+            node scripts/wechat/4-publish.mjs --threshold "$THRESHOLD" --max-publish "$MAX_PUBLISH"
+          fi
+
+      - name: 上传产物(草稿/发布记录，便于复核)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wechat-pipeline-data
+          path: |
+            scripts/wechat/data/clusters.json
+            scripts/wechat/data/drafts.json
+            scripts/wechat/data/published.json
+          retention-days: 14
+          if-no-files-found: ignore
