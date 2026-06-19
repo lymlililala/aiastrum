@@ -1975,79 +1975,6 @@
     ]
   },
   {
-    "name": "三易奇门遁甲",
-    "nickname": "三易奇门遁甲",
-    "wxid": "gh_3cd835803826",
-    "biz": "MzI2NzUyNjU3Mw==",
-    "description": "奇门遁甲传统文化研究18年，只分享奇门的文化内核与思维决策智慧",
-    "candidates": [
-      {
-        "nickname": "三易合国学堂",
-        "wxid": "gh_ac5c8a79a6ba"
-      },
-      {
-        "nickname": "奇门遁甲术",
-        "wxid": "gh_a1f77c44a65c"
-      },
-      {
-        "nickname": "奇门遁甲研究社",
-        "wxid": "gh_9434ae867ed6"
-      },
-      {
-        "nickname": "奇门遁甲排盘大全",
-        "wxid": "gh_1c976df85315"
-      },
-      {
-        "nickname": "鸿蒙 奇门遁甲",
-        "wxid": "gh_648f2ea19804"
-      },
-      {
-        "nickname": "奇门遁甲",
-        "wxid": "gh_304aa41c723b"
-      },
-      {
-        "nickname": "热卜工具",
-        "wxid": "gh_ed67edbaf83d"
-      },
-      {
-        "nickname": "童坤元奇门遁甲",
-        "wxid": "gh_8197e9978a7b"
-      },
-      {
-        "nickname": "奇门遁甲国学易经",
-        "wxid": "gh_d742d5298861"
-      },
-      {
-        "nickname": "唐潮三易文化",
-        "wxid": "gh_bec3d1c87f82"
-      },
-      {
-        "nickname": "奇门遁甲",
-        "wxid": "gh_ac0453166ee0"
-      },
-      {
-        "nickname": "正界奇门",
-        "wxid": "gh_56bf2d03a99d"
-      },
-      {
-        "nickname": "AI奇门遁甲",
-        "wxid": "gh_946c508cd368"
-      },
-      {
-        "nickname": "奇门遁甲排盘分析",
-        "wxid": "gh_7368faf8b57e"
-      },
-      {
-        "nickname": "徐中山王奇门遁甲",
-        "wxid": "gh_76af41a16192"
-      },
-      {
-        "nickname": "易经与奇门遁甲",
-        "wxid": "gh_989091db4900"
-      }
-    ]
-  },
-  {
     "name": "梅花易数骨灰级玩家",
     "nickname": "梅花易数骨灰级玩家",
     "wxid": "gh_94e3f0f5face",
@@ -2164,5 +2091,13 @@
         "wxid": "gh_3a7c4d21758d"
       }
     ]
+  },
+  {
+    "name": "奇门遁甲术",
+    "nickname": "奇门遁甲术",
+    "wxid": "gh_a1f77c44a65c",
+    "biz": "",
+    "description": "奇门遁甲术，思谋星生官方认证公众号，弘扬国学易学文化",
+    "candidates": []
   }
 ]
