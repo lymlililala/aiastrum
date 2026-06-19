@@ -2,9 +2,12 @@ import { type MetadataRoute } from "next";
 import { fetchAllPosts } from "~/lib/supabase";
 import { CANONICAL_OVERRIDES } from "~/lib/canonical-overrides";
 
-// 强制每次请求都实时查询 Supabase，不使用构建时静态缓存
-// 这样新增博客文章后无需重新部署，Google 下次抓取时即可获取最新 sitemap
-export const dynamic = "force-dynamic";
+// ISR：缓存 1 小时，不用 force-dynamic。
+// 经验（参考 aiskillnav）：force-dynamic 会让每次抓取都全量分页查 Supabase（慢，
+// Googlebot 可能超时/降低抓取频率）。改 ISR 后 sitemap 走缓存、渲染轻量；
+// nightly 发文后由 GitHub Actions 调 Vercel Deploy Hook 重新部署，可靠重建 sitemap
+// （revalidatePath 对 sitemap.xml 无效，故用 Deploy Hook）。
+export const revalidate = 3600;
 
 const BASE_URL = "https://aiastrum.com";
 

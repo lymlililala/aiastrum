@@ -86,6 +86,21 @@ jobs:
             node scripts/wechat/4-publish.mjs --threshold "$THRESHOLD" --max-publish "$MAX_PUBLISH"
           fi
 
+      # 写库后触发 Vercel 重新部署刷新 sitemap：直写 Supabase 不触发重部署，
+      # 而 revalidatePath 对 metadata 路由 sitemap.xml 无效（CDN 缓存击不穿），
+      # 唯有重部署能可靠重建 sitemap。需配 GitHub secret VERCEL_DEPLOY_HOOK。
+      - name: Trigger Vercel redeploy (refresh sitemap)
+        if: env.DRY_RUN != 'true'
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$VERCEL_DEPLOY_HOOK" ]; then
+            curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" \
+              || echo "::warning::Deploy Hook 调用失败（检查 secret VERCEL_DEPLOY_HOOK），不阻塞流水线"
+          else
+            echo "::warning::未配置 VERCEL_DEPLOY_HOOK，跳过 sitemap 刷新（新文需等 ISR 缓存过期）"
+          fi
+
       - name: 上传产物(草稿/发布记录，便于复核)
         if: always()
         uses: actions/upload-artifact@v4
