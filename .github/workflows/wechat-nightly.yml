@@ -13,7 +13,7 @@ name: wechat-nightly
 # 可选 vars：DEEPSEEK_BASE_URL / DEEPSEEK_MODEL / SUPABASE_URL
 #
 # 源文持久化到 Supabase 表 mysticai_wx_sources（WX_SOURCES_DB=1，已默认开启）：
-# 每晚 --today 采的新文累积入库，聚类回看 N 天可用跨天素材池。
+# 每晚采各号最近1页历史(--max-pages 1)累积入库(DB按sn去重,稳态只增量)，聚类回看 N 天素材池。
 # 前置：先跑一次 node scripts/wechat/create-sources-table.mjs 建表（需 DB 密码）。
 # 判重另比对 mysticai_blog_posts，不会重复发已有选题。
 
@@ -70,7 +70,7 @@ jobs:
         run: npm ci
 
       - name: 1) 采集当天新文
-        run: node scripts/wechat/1-crawl.mjs --today
+        run: node scripts/wechat/1-crawl.mjs --max-pages 1
 
       - name: 2) 聚类(品类均衡)
         run: node scripts/wechat/2-cluster.mjs --max-clusters "$MAX_CLUSTERS" --max-per-category 2
