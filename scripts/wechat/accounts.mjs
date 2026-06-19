@@ -34,7 +34,13 @@ const ACCOUNT_NAMES = [
   // ── 周易/易经/风水·文化深度（meihua/qimen/almanac，质量高、更新勤）──
   '曾仕强', '易经天下', '易经四柱五行', '五行穿衣每日指南',
   // ── 姓名学/国学工具（naming/wuge）──
-  '卯山国学'
+  '卯山国学',
+  // ── 补充薄弱品类（dream/face-reading/qimen/meihua/ziwei/numerology），2026-06 精选 ──
+  '周公来解梦',          // 解梦：传统智慧+科学洞察，原创心理向（非「周公解梦大全」SEO 农场）
+  '相术天地',            // 面相：通俗理性、反迷信科普向
+  '三易奇门遁甲',        // 奇门：研究18年，只分享文化内核与决策思维（非课程广告号）
+  '梅花易数骨灰级玩家',  // 梅花：原创学习心得，非排盘工具号
+  '生命灵数解读'         // 生命灵数：站点 /numerology 缺源，原创身心灵内容
 ]
 
 const onlyArg = process.argv.find(a => a.startsWith('--only'))
