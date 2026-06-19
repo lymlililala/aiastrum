@@ -29,7 +29,7 @@ function clampDesc(s, max = 160) {
 
 const CLU = join(DATA_DIR, 'clusters.json')
 const OUT = join(DATA_DIR, 'drafts.json')
-if (!existsSync(CLU)) { console.error('缺少 clusters.json，先跑 2-cluster.mjs'); process.exit(1) }
+if (!existsSync(CLU)) { console.log('没有 clusters.json（今晚无聚类结果），跳过合成。'); process.exit(0) }
 
 const sources = await fetchSources({ sinceDays: DAYS })
 const bySn = new Map(sources.map(s => [s.sn, s]))
@@ -164,5 +164,7 @@ for (const c of clusters) {
 }
 
 console.log(`\n已写入 ${OUT}（共 ${drafts.length} 条草稿，本次判重跳过 ${skippedDup}）`)
+// 即使 0 草稿也写出空文件，保证下游 4-publish 不因找不到文件而失败（今晚无合格选题属正常）
+writeFileSync(OUT, JSON.stringify(drafts, null, 2))
 console.log('用量:', ds.costEstimate())
 console.log('⚠️  抽查 drafts.json 1 条（中英 HTML 结构 / 原创度 / FAQ / 图片占位 / 内链），再跑 4-publish.mjs')

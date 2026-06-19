@@ -22,7 +22,7 @@ const OUT = join(DATA_DIR, 'clusters.json')
 
 const sources = await fetchSources({ sinceDays: DAYS, minBodyLen: 200 })
 console.log(`读取源文最近 ${DAYS} 天：${sources.length} 篇`)
-if (!sources.length) { console.error('没有可用源文，请先跑 1-crawl.mjs'); process.exit(1) }
+if (!sources.length) { console.log('没有可用源文（今晚未采到），跳过聚类。'); process.exit(0) }
 
 // 给模型的精简清单（不含全文，省 token）
 const list = sources.map((s, i) => ({ id: i, account: s.account, title: s.title, digest: (s.digest || '').slice(0, 80) }))

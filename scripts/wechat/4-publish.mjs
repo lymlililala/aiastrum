@@ -49,8 +49,10 @@ async function resolveImages(html, finder, seed0 = 0) {
 
 const DRAFTS = join(DATA_DIR, 'drafts.json')
 const OUT = join(DATA_DIR, 'published.json')
-if (!existsSync(DRAFTS)) { console.error('缺少 drafts.json，先跑 3-synthesize.mjs'); process.exit(1) }
+// 无草稿（今晚无合格选题）= 正常空运行，优雅退出，不让 CI 标红。
+if (!existsSync(DRAFTS)) { console.log('没有 drafts.json（今晚无草稿），跳过发布。'); process.exit(0) }
 const drafts = JSON.parse(readFileSync(DRAFTS, 'utf8'))
+if (!Array.isArray(drafts) || drafts.length === 0) { console.log('草稿为空（今晚无合格选题），跳过发布。'); process.exit(0) }
 
 if (!DRY && !hasSupabase()) { console.error('缺少 SUPABASE_SECRET_KEY，无法发布（或加 --dry-run 仅预览）'); process.exit(1) }
 
