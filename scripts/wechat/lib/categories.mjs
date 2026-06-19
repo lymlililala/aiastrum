@@ -36,6 +36,10 @@ export const CATEGORY_CTA = {
 // 合法 category 列表（聚类必须落在其中）
 export const VALID_CATEGORIES = Object.keys(CATEGORY_CTA)
 
+// 「敏感品类」—— 易写成"看相/堪舆断吉凶"的机械断言，需文化科普+心理学视角+免责，
+// 合成时注入专属写作指引，发布时用较低阈值（评审对玄学主题天然更严）。
+export const SENSITIVE_CATEGORIES = new Set(['face-reading', '风水', 'qimen', 'almanac'])
+
 // 兜底：未知 category 归 ai-mystic（站内通用解忧入口）
 export function ctaFor(category) {
   return CATEGORY_CTA[category] || CATEGORY_CTA['ai-mystic']

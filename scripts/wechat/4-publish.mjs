@@ -12,6 +12,7 @@ import { checkQuality } from './lib/quality.mjs'
 import { ImageFinder, fallbackImageUrl } from './lib/images.mjs'
 import { DATA_DIR } from './lib/env.mjs'
 import { getSupabase, hasSupabase } from './lib/supabase.mjs'
+import { SENSITIVE_CATEGORIES } from './lib/categories.mjs'
 
 function arg(name, def) {
   const i = process.argv.indexOf(name)
@@ -21,6 +22,8 @@ function arg(name, def) {
 }
 const DRY = arg('--dry-run', false) === true
 const THRESHOLD = Number(arg('--threshold', 82))
+// 敏感品类（面相/风水/奇门/黄历）的发布阈值：评审对玄学主题天然更严，用略低阈值兜底
+const SENSITIVE_THRESHOLD = Number(arg('--sensitive-threshold', Math.max(70, THRESHOLD - 7)))
 const MAX_PUBLISH = Number(arg('--max-publish', 4)) // 单次最多发布几「组」（zh+en 算一组）
 
 const TABLE = 'mysticai_blog_posts'
@@ -60,10 +63,10 @@ const ds = new DeepSeek()
 const finder = new ImageFinder()
 if (!finder.enabled) console.log('⚠️  未配置 PEXELS/UNSPLASH key，正文配图将全部回退写死玄学图池。')
 
-const SCORE_SYS = `You are a strict content quality reviewer for a mysticism / Chinese-metaphysics knowledge site. Score this article (0-100 each) and give an overall:
+const SCORE_SYS = `You are a content quality reviewer for a Chinese-metaphysics / mysticism site that presents these practices as CULTURAL HERITAGE and entertainment, NOT as science. Score this article (0-100 each) and give an overall:
 - originality (original synthesis, not a rewrite/translation patchwork)
-- depth (useful, specific, information-dense)
-- accuracy (no obvious errors / fabricated claims; responsible, non-fearmongering tone)
+- depth (useful, specific, information-dense for someone curious about the topic)
+- accuracy (internally consistent; no fabricated specifics like invented dates/prices/sources. IMPORTANT: traditional metaphysical claims — e.g. face-reading "thick earlobes suggest good fortune", feng shui, bazi — are the EXPECTED content of this site; do NOT lower the score merely because such claims are unscientific or lack empirical proof. Only penalize: fear-mongering, pressuring readers to pay to "fix" their fate, absolute doom predictions, or internal contradictions.)
 - readability (clear structure, natural language)
 Return ONLY JSON: {"originality":int,"depth":int,"accuracy":int,"readability":int,"overall":int,"issues":["short"]}`
 
@@ -123,9 +126,10 @@ for (const d of drafts) {
         { maxTokens: 600 }
       )
     } catch (e) { score = { overall: 0, issues: ['评分失败:' + e.message] } }
-    decision = (score.overall ?? 0) >= THRESHOLD ? 'publish' : 'skip'
+    const th = SENSITIVE_CATEGORIES.has(d.category) ? SENSITIVE_THRESHOLD : THRESHOLD
+    decision = (score.overall ?? 0) >= th ? 'publish' : 'skip'
     const z = qByLang.zh, e = qByLang.en
-    reasonText = `overall=${score.overall}(阈${THRESHOLD}) zh[faq=${z.faqPairs} len=${z.len} img=${z.images} link=${z.links}]${e ? ` en[faq=${e.faqPairs} len=${e.len}]` : ''}`
+    reasonText = `overall=${score.overall}(阈${th}${th !== THRESHOLD ? '·敏感' : ''}) zh[faq=${z.faqPairs} len=${z.len} img=${z.images} link=${z.links}]${e ? ` en[faq=${e.faqPairs} len=${e.len}]` : ''}`
   }
 
   if (decision === 'publish' && pubGroups >= MAX_PUBLISH) {
