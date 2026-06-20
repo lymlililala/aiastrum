@@ -49,6 +49,23 @@ const TOPICS = [
     title_zh: `世界杯熬夜党的玄学自我关怀：水晶、颜色与作息的趣味开运`,
     title_en: `World Cup Night-Owl Self-Care: Crystals, Colors & Rhythm`,
     search: ['世界杯 风水', '世界杯 水晶'] },
+  // ── 第二批（新角度，蹭不同搜索词）──
+  { slug: 'astrology-world-cup-star-players', category: 'astro',
+    title_zh: `星盘看世界杯球星：太阳星座里的巨星性格底色`,
+    title_en: `Astrology & World Cup Stars: Sun Signs Behind the ${YEAR} Icons`,
+    search: ['世界杯 星座', '世界杯 球星'] },
+  { slug: 'numerology-world-cup-lucky-numbers', category: 'numerology',
+    title_zh: `世界杯幸运数字：用生命灵数为你的观赛日选个好彩头`,
+    title_en: `World Cup Lucky Numbers: A Numerology Guide for Match Days`,
+    search: ['世界杯 幸运数字', '世界杯 运势'] },
+  { slug: 'mbti-world-cup-fan-types', category: 'mbti',
+    title_zh: `MBTI看世界杯：16型人格的球迷观赛图鉴`,
+    title_en: `MBTI & the World Cup: 16 Personality Types as Football Fans`,
+    search: ['世界杯 MBTI', '世界杯 性格'] },
+  { slug: 'iching-liuyao-world-cup-culture', category: 'meihua',
+    title_zh: `六爻与足球：周易占卜世界杯的文化趣谈`,
+    title_en: `I Ching & Football: The Culture of Divining the World Cup`,
+    search: ['世界杯 占卜', '世界杯 六爻'] },
 ]
 
 // 只取与玄学/球队相关、较新的源文标题作灵感（不照搬，娱乐文更多靠创意框架）
@@ -110,6 +127,7 @@ const nowIso = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 let pub = 0
 
 for (const t of topics) {
+  if (!DRY && done.some(d => d.slug === t.slug)) { console.log(`\n✓ 已发布跳过 ${t.slug}`); continue }
   console.log(`\n=== ${t.title_zh} (${t.category}) ===`)
   // 1) 搜源文作灵感（拉 2-4 篇正文）
   const refs = []
