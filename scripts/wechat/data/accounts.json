@@ -7,16 +7,16 @@
     "description": "人气漫画家，少女之友@同道大叔，内容纯属娱乐。",
     "candidates": [
       {
-        "nickname": "走进金牛",
-        "wxid": "gh_4490735eff51"
+        "nickname": "走进天蝎",
+        "wxid": "gh_880ad183bdca"
       },
       {
         "nickname": "走进狮子",
         "wxid": "gh_dd0e9a9a89ef"
       },
       {
-        "nickname": "走进天蝎",
-        "wxid": "gh_880ad183bdca"
+        "nickname": "走进金牛",
+        "wxid": "gh_4490735eff51"
       },
       {
         "nickname": "走进天秤",
@@ -31,12 +31,12 @@
         "wxid": "gh_dbe0a758a8e4"
       },
       {
-        "nickname": "走进摩羯",
-        "wxid": "gh_9d19c3a96619"
-      },
-      {
         "nickname": "走进室女座",
         "wxid": "gh_47823ab504a3"
+      },
+      {
+        "nickname": "走进摩羯",
+        "wxid": "gh_9d19c3a96619"
       },
       {
         "nickname": "走进水瓶",
@@ -84,10 +84,6 @@
     "description": "准到没朋友的“闹闹女巫店12星座运势”，持续更新10余年的原创星座号。每天清晨推送每日、每周、每月、每年的星座运势，回答读者关于星座的各种问题。",
     "candidates": [
       {
-        "nickname": "占星妖妖",
-        "wxid": "gh_75e178bee457"
-      },
-      {
         "nickname": "白桃每日星运",
         "wxid": "gh_3b0c42ca64d3"
       },
@@ -112,12 +108,16 @@
         "wxid": "gh_982d59274322"
       },
       {
-        "nickname": "星座不求人",
-        "wxid": "gh_1421b349a4ac"
+        "nickname": "占星妖妖",
+        "wxid": "gh_75e178bee457"
       },
       {
         "nickname": "苏珊米勒",
         "wxid": "gh_c58fb4a9cfa3"
+      },
+      {
+        "nickname": "星座不求人",
+        "wxid": "gh_1421b349a4ac"
       },
       {
         "nickname": "Alex大叔",
@@ -130,6 +130,10 @@
       {
         "nickname": "每日星运",
         "wxid": "gh_e17aeca94cfd"
+      },
+      {
+        "nickname": "闹闹说星运",
+        "wxid": "gh_c83828e48822"
       },
       {
         "nickname": "每天生肖星座运势",
@@ -150,10 +154,6 @@
       {
         "nickname": "每日星运呀",
         "wxid": "gh_1d6bcb53aacb"
-      },
-      {
-        "nickname": "每日星座运",
-        "wxid": "gh_aaa73dfe207b"
       }
     ]
   },
@@ -351,16 +351,16 @@
         "wxid": "gh_1f578e830d19"
       },
       {
-        "nickname": "Alex大叔",
-        "wxid": "gh_32c2ab3ecada"
-      },
-      {
         "nickname": "陶白白星象",
         "wxid": "gh_6c20f41b831d"
       },
       {
         "nickname": "白羊座星座运势查询",
         "wxid": "gh_de9d5691e78d"
+      },
+      {
+        "nickname": "Alex大叔",
+        "wxid": "gh_32c2ab3ecada"
       },
       {
         "nickname": "白羊座星座运势",
@@ -391,12 +391,12 @@
         "wxid": "gh_659f6f2dac77"
       },
       {
-        "nickname": "水瓶座星座运势",
-        "wxid": "gh_85e820b8c416"
-      },
-      {
         "nickname": "巨蟹座星座运势",
         "wxid": "gh_41a1884d3cba"
+      },
+      {
+        "nickname": "水瓶座星座运势",
+        "wxid": "gh_85e820b8c416"
       }
     ]
   },
@@ -416,10 +416,6 @@
         "wxid": "gh_67d31255a3f1"
       },
       {
-        "nickname": "星座女神幸运馆",
-        "wxid": "gh_50334631b15e"
-      },
-      {
         "nickname": "星座女神生活馆",
         "wxid": "gh_d4a86fab1a43"
       },
@@ -436,6 +432,10 @@
         "wxid": "gh_b378e009c949"
       },
       {
+        "nickname": "星座女神幸运馆",
+        "wxid": "gh_50334631b15e"
+      },
+      {
         "nickname": "星座小仙女",
         "wxid": "gh_3a879bd0fefb"
       },
@@ -448,16 +448,16 @@
         "wxid": "gh_4268aaca41b8"
       },
       {
+        "nickname": "星座女神聊星座",
+        "wxid": "gh_b50bfc23372c"
+      },
+      {
         "nickname": "星相女神",
         "wxid": "gh_1cbedb38c689"
       },
       {
         "nickname": "星座女神",
         "wxid": "gh_96ada0cc7209"
-      },
-      {
-        "nickname": "星座女神聊星座",
-        "wxid": "gh_b50bfc23372c"
       },
       {
         "nickname": "星座魔女",
@@ -550,28 +550,20 @@
         "wxid": "gh_34285076c0a6"
       },
       {
-        "nickname": "星座女神莫小奇",
-        "wxid": "gh_014b6ca12533"
-      },
-      {
         "nickname": "星座不求人",
         "wxid": "gh_1421b349a4ac"
       },
       {
-        "nickname": "苏米的星座馆",
-        "wxid": "gh_f11a14157a48"
-      },
-      {
-        "nickname": "星星说STARCHAT",
-        "wxid": "gh_363e9b333190"
+        "nickname": "星座女神莫小奇",
+        "wxid": "gh_014b6ca12533"
       },
       {
         "nickname": "闹闹每日星运",
         "wxid": "gh_67e2f63ff038"
       },
       {
-        "nickname": "星座神婆",
-        "wxid": "gh_3d0c0670dc6e"
+        "nickname": "星星说STARCHAT",
+        "wxid": "gh_363e9b333190"
       },
       {
         "nickname": "星座屋",
@@ -582,6 +574,14 @@
         "wxid": "gh_42fb44745825"
       },
       {
+        "nickname": "苏米的星座馆",
+        "wxid": "gh_f11a14157a48"
+      },
+      {
+        "nickname": "星座神婆",
+        "wxid": "gh_3d0c0670dc6e"
+      },
+      {
         "nickname": "星座文典",
         "wxid": "gh_24e8ec3a5bc3"
       },
@@ -590,8 +590,8 @@
         "wxid": "gh_3df7b35aef87"
       },
       {
-        "nickname": "塔羅星座艾菲爾老師",
-        "wxid": "gh_f4fbf598bfec"
+        "nickname": "陈茂源星座",
+        "wxid": "gh_a8fc350e830e"
       },
       {
         "nickname": "凌工路二号",
@@ -631,6 +631,10 @@
         "wxid": "gh_20fe2c60398d"
       },
       {
+        "nickname": "星颜社",
+        "wxid": "gh_21bcc2d5dd8c"
+      },
+      {
         "nickname": "星丛社",
         "wxid": "gh_16fb6b7aeb2f"
       },
@@ -655,10 +659,6 @@
         "wxid": "gh_b1f0705062a3"
       },
       {
-        "nickname": "星颜社",
-        "wxid": "gh_21bcc2d5dd8c"
-      },
-      {
         "nickname": "星魚社",
         "wxid": "gh_1b824d12365a"
       },
@@ -669,10 +669,6 @@
       {
         "nickname": "潮州译星",
         "wxid": "gh_0b5e3c879538"
-      },
-      {
-        "nickname": "星贵社",
-        "wxid": "gh_4fef4b356700"
       },
       {
         "nickname": "译星",
@@ -693,6 +689,10 @@
       {
         "nickname": "星译社馆",
         "wxid": "gh_5383dd94094b"
+      },
+      {
+        "nickname": "星屹社",
+        "wxid": "gh_1a27c6e902c9"
       }
     ]
   },
@@ -756,6 +756,10 @@
         "wxid": "gh_7416df39ce89"
       },
       {
+        "nickname": "嘉善上善若水足道",
+        "wxid": "gh_e3e1c9473590"
+      },
+      {
         "nickname": "若旭足道",
         "wxid": "gh_34e98140a08b"
       },
@@ -770,10 +774,6 @@
       {
         "nickname": "若道学社",
         "wxid": "gh_3d4cdaeef1d6"
-      },
-      {
-        "nickname": "若旭足浴",
-        "wxid": "gh_b7f97db24722"
       },
       {
         "nickname": "道若凡心",
@@ -829,16 +829,12 @@
         "wxid": "gh_aa4f174bb395"
       },
       {
+        "nickname": "日新阅益",
+        "wxid": "gh_9d44728913dd"
+      },
+      {
         "nickname": "新月文阁",
         "wxid": "gh_995cc45df8be"
-      },
-      {
-        "nickname": "新月社Crescent",
-        "wxid": "gh_5a97fbf8cac6"
-      },
-      {
-        "nickname": "广州新月飞鸟专业美术",
-        "wxid": "gh_ef348554da7d"
       },
       {
         "nickname": "新月教育学员中心",
@@ -874,16 +870,16 @@
     "description": "苏珊米勒SusanMiler整理翻译美国著名占星师苏珊米勒的星座运势、星座配对、占星书籍等作品,版权归苏珊米勒所有.",
     "candidates": [
       {
-        "nickname": "苏珊米勒",
-        "wxid": "gh_c58fb4a9cfa3"
+        "nickname": "苏珊米勒susanmile",
+        "wxid": "gh_5218980e718b"
       },
       {
         "nickname": "苏珊米勒SusanMiller",
         "wxid": "gh_18430fb484fb"
       },
       {
-        "nickname": "苏珊米勒susanmile",
-        "wxid": "gh_5218980e718b"
+        "nickname": "苏珊米勒",
+        "wxid": "gh_c58fb4a9cfa3"
       },
       {
         "nickname": "苏珊米勒运势",
@@ -910,12 +906,12 @@
         "wxid": "gh_f7789530c441"
       },
       {
-        "nickname": "星译社",
-        "wxid": "gh_4e7e1d3edf93"
-      },
-      {
         "nickname": "苏珊米勒Susan Mllier",
         "wxid": "gh_f968b92064c7"
+      },
+      {
+        "nickname": "星译社",
+        "wxid": "gh_4e7e1d3edf93"
       },
       {
         "nickname": "苏珊米勒星座运势",
@@ -992,12 +988,12 @@
         "wxid": "gh_660f116ad712"
       },
       {
-        "nickname": "塔罗女王",
-        "wxid": "gh_2f872733c833"
-      },
-      {
         "nickname": "塔罗姐",
         "wxid": "gh_f49f5588f4d8"
+      },
+      {
+        "nickname": "塔罗女王",
+        "wxid": "gh_2f872733c833"
       },
       {
         "nickname": "塔罗塔洛",
@@ -1008,12 +1004,12 @@
         "wxid": "gh_30b635bed300"
       },
       {
-        "nickname": "青蛙王子童装",
-        "wxid": "gh_ede3e7685ace"
-      },
-      {
         "nickname": "青蛙王子俱乐部",
         "wxid": "gh_9ca88ed5676e"
+      },
+      {
+        "nickname": "青蛙王子童装",
+        "wxid": "gh_ede3e7685ace"
       },
       {
         "nickname": "嫒塔羅",
@@ -1113,8 +1109,8 @@
         "wxid": "gh_d403d8845c9e"
       },
       {
-        "nickname": "塔星社",
-        "wxid": "gh_23a7eee0238e"
+        "nickname": "捉月星社",
+        "wxid": "gh_c36c1ed331a3"
       },
       {
         "nickname": "星月剧社",
@@ -1158,6 +1154,10 @@
         "wxid": "gh_de3f32aa7549"
       },
       {
+        "nickname": "塔塔集团",
+        "wxid": "gh_1b7dd13a849e"
+      },
+      {
         "nickname": "塔斯汀招聘",
         "wxid": "gh_dbf31f0dbaa2"
       },
@@ -1182,10 +1182,6 @@
         "wxid": "gh_7e9c9f223ba1"
       },
       {
-        "nickname": "塔塔母婴",
-        "wxid": "gh_b7aca54697fc"
-      },
-      {
         "nickname": "塔塔电力 iTapower",
         "wxid": "gh_d801f3371a29"
       },
@@ -1194,12 +1190,12 @@
         "wxid": "gh_af9250c5ce38"
       },
       {
-        "nickname": "塔塔之家",
-        "wxid": "gh_167d4115f31d"
+        "nickname": "塔塔GO",
+        "wxid": "gh_b7b375cf41fb"
       },
       {
-        "nickname": "塔塔甄选自助美甲美睫",
-        "wxid": "gh_5e1a0d782170"
+        "nickname": "塔塔欢乐+",
+        "wxid": "gh_bbaf4f9034bc"
       },
       {
         "nickname": "BOLOLO波咯咯",
@@ -1210,8 +1206,8 @@
         "wxid": "gh_df0f9ac224c8"
       },
       {
-        "nickname": "塔塔基",
-        "wxid": "gh_3c95d3796d19"
+        "nickname": "东方明珠",
+        "wxid": "gh_4073553d0f3b"
       },
       {
         "nickname": "预见塔罗",
@@ -1267,12 +1263,12 @@
         "wxid": "gh_afba92674499"
       },
       {
-        "nickname": "快乐测测APP",
-        "wxid": "gh_0c0ba57c7f3c"
+        "nickname": "问卷网测试2",
+        "wxid": "gh_c282d442cd97"
       },
       {
-        "nickname": "美菜TEST测试",
-        "wxid": "gh_69b7fafb79d6"
+        "nickname": "快乐测测APP",
+        "wxid": "gh_0c0ba57c7f3c"
       },
       {
         "nickname": "她测App",
@@ -1336,12 +1332,12 @@
         "wxid": "gh_d97b4d7897e0"
       },
       {
-        "nickname": "四柱预测学",
-        "wxid": "gh_c54a11bc59c1"
-      },
-      {
         "nickname": "祖传四柱预测",
         "wxid": "gh_10a4b025be61"
+      },
+      {
+        "nickname": "四柱预测学",
+        "wxid": "gh_c54a11bc59c1"
       },
       {
         "nickname": "热卜工具",
@@ -1352,16 +1348,16 @@
         "wxid": "gh_3e48344d753c"
       },
       {
-        "nickname": "元启国学",
-        "wxid": "gh_34fe9f5fca3d"
-      },
-      {
         "nickname": "四柱八字学习",
         "wxid": "gh_ed045cc176e4"
       },
       {
-        "nickname": "四柱研究工作室",
-        "wxid": "gh_3c0a63e9a0b2"
+        "nickname": "四柱八字命理分析",
+        "wxid": "gh_97993914bf7a"
+      },
+      {
+        "nickname": "八字预测四柱命理",
+        "wxid": "gh_fa8c3ca59856"
       },
       {
         "nickname": "四柱八字",
@@ -1393,12 +1389,12 @@
         "wxid": "gh_b4927d861899"
       },
       {
-        "nickname": "Xsp文墨天机",
-        "wxid": "gh_c506b4e3fcfd"
-      },
-      {
         "nickname": "天墨文化",
         "wxid": "gh_dc460f115a67"
+      },
+      {
+        "nickname": "Xsp文墨天机",
+        "wxid": "gh_c506b4e3fcfd"
       },
       {
         "nickname": "天摩文化",
@@ -1438,10 +1434,6 @@
         "wxid": "gh_f5e0ef9b88a1"
       },
       {
-        "nickname": "文墨天机文化",
-        "wxid": "gh_42aa7bddaaac"
-      },
-      {
         "nickname": "紫微命盘",
         "wxid": "gh_2dc5bb08b251"
       },
@@ -1466,8 +1458,16 @@
         "wxid": "gh_d00a0d0e6b88"
       },
       {
+        "nickname": "文墨天机文化",
+        "wxid": "gh_42aa7bddaaac"
+      },
+      {
         "nickname": "令东来",
         "wxid": "gh_b4927d861899"
+      },
+      {
+        "nickname": "天纪排盘",
+        "wxid": "gh_d20f3fa14334"
       },
       {
         "nickname": "INTJ紫微斗数研究学会-象数心学",
@@ -1490,8 +1490,8 @@
         "wxid": "gh_eb496fa7405f"
       },
       {
-        "nickname": "紫薇斗术研究",
-        "wxid": "gh_5b848784bc38"
+        "nickname": "紫微斗数交流中心",
+        "wxid": "gh_465ab8372481"
       },
       {
         "nickname": "子梦紫微斗数",
@@ -1624,6 +1624,10 @@
         "wxid": "gh_57e1d451e994"
       },
       {
+        "nickname": "蔚晓易经观天下",
+        "wxid": "gh_bd376954b428"
+      },
+      {
         "nickname": "经穴解说",
         "wxid": "gh_0ec499ae14ce"
       },
@@ -1644,10 +1648,6 @@
         "wxid": "gh_e596d6bb81be"
       },
       {
-        "nickname": "乐修同人",
-        "wxid": "gh_c93e00127455"
-      },
-      {
         "nickname": "天人代號00",
         "wxid": "gh_4c47f42c328e"
       }
@@ -1665,16 +1665,20 @@
         "wxid": "gh_23a64686d69d"
       },
       {
+        "nickname": "易朴国学文化",
+        "wxid": "gh_d0ada4dfdda9"
+      },
+      {
+        "nickname": "易经五行",
+        "wxid": "gh_ac4f80a849e4"
+      },
+      {
         "nickname": "易经五行择日",
         "wxid": "gh_9168c11f91c1"
       },
       {
         "nickname": "五行四柱",
         "wxid": "gh_3beafec8cecf"
-      },
-      {
-        "nickname": "易经五行",
-        "wxid": "gh_ac4f80a849e4"
       },
       {
         "nickname": "易经预测运势命理",
@@ -1685,10 +1689,6 @@
         "wxid": "gh_68658d382ff0"
       },
       {
-        "nickname": "易朴国学文化",
-        "wxid": "gh_d0ada4dfdda9"
-      },
-      {
         "nickname": "小六易",
         "wxid": "gh_eabbeca589d7"
       },
@@ -1697,12 +1697,12 @@
         "wxid": "gh_ad10a3640f31"
       },
       {
-        "nickname": "易经八字研究",
-        "wxid": "gh_161591f800f6"
-      },
-      {
         "nickname": "六爻排盘",
         "wxid": "gh_fae42039bb60"
+      },
+      {
+        "nickname": "易经八字研究",
+        "wxid": "gh_161591f800f6"
       },
       {
         "nickname": "四柱易经八字",
@@ -1722,20 +1722,20 @@
         "wxid": "gh_ba9b6008bc75"
       },
       {
-        "nickname": "五行穿衣生肖运势",
-        "wxid": "gh_3029f9e9cac3"
-      },
-      {
-        "nickname": "每日五行穿衣指南",
-        "wxid": "gh_8870f49d7df8"
-      },
-      {
         "nickname": "五行穿衣每日攻略",
         "wxid": "gh_81ca4c53a555"
       },
       {
         "nickname": "每日五行穿衣",
         "wxid": "gh_ee2d6d24dcc8"
+      },
+      {
+        "nickname": "五行穿衣生肖运势",
+        "wxid": "gh_3029f9e9cac3"
+      },
+      {
+        "nickname": "每日五行穿衣指南",
+        "wxid": "gh_8870f49d7df8"
       },
       {
         "nickname": "五行穿衣每日搭配",
@@ -1754,10 +1754,6 @@
         "wxid": "gh_238a8fe4f34f"
       },
       {
-        "nickname": "小五穿衣指南",
-        "wxid": "gh_dac9c0279846"
-      },
-      {
         "nickname": "五行穿衣",
         "wxid": "gh_631538439d39"
       },
@@ -1766,20 +1762,24 @@
         "wxid": "gh_a251655f95e3"
       },
       {
-        "nickname": "五行穿搭",
-        "wxid": "gh_0c66d7834847"
-      },
-      {
         "nickname": "穿衣日历丨每日色彩搭配指南",
         "wxid": "gh_6d3c93db8568"
       },
       {
-        "nickname": "明日五行穿衣搭配指南",
-        "wxid": "gh_8c76add3b09e"
+        "nickname": "五行穿搭",
+        "wxid": "gh_0c66d7834847"
+      },
+      {
+        "nickname": "每日五行穿衣建议",
+        "wxid": "gh_0fc57e2fe73d"
       },
       {
         "nickname": "五行能量旺运穿衣",
         "wxid": "gh_d732b8a7ef59"
+      },
+      {
+        "nickname": "明日五行穿衣搭配指南",
+        "wxid": "gh_8c76add3b09e"
       },
       {
         "nickname": "五行穿衣今日指南",
@@ -1803,16 +1803,16 @@
     "description": "易学爱好者欢迎关注，我们的八字排盘工具，界面简洁优雅，数据准确。",
     "candidates": [
       {
+        "nickname": "燕山国学",
+        "wxid": "gh_5703893210d7"
+      },
+      {
         "nickname": "山水国学",
         "wxid": "gh_0ccf8203e07e"
       },
       {
         "nickname": "大山国学",
         "wxid": "gh_9e6b40f1dc64"
-      },
-      {
-        "nickname": "子卯山农业",
-        "wxid": "gh_3cd2c8af574e"
       },
       {
         "nickname": "山行国学",
@@ -1823,6 +1823,10 @@
         "wxid": "gh_31209e79daca"
       },
       {
+        "nickname": "山泉国学",
+        "wxid": "gh_e565125f44d0"
+      },
+      {
         "nickname": "昱山国学",
         "wxid": "gh_b885d0504b0b"
       },
@@ -1831,20 +1835,16 @@
         "wxid": "gh_aa072201d6d4"
       },
       {
+        "nickname": "椿山国学",
+        "wxid": "gh_e6e9040ed8a2"
+      },
+      {
         "nickname": "一善国学",
         "wxid": "gh_52c2b5accab5"
       },
       {
         "nickname": "卯山仙茶",
         "wxid": "gh_49f13b6a4f0d"
-      },
-      {
-        "nickname": "椿山国学",
-        "wxid": "gh_e6e9040ed8a2"
-      },
-      {
-        "nickname": "善上国学",
-        "wxid": "gh_9c958e77d658"
       },
       {
         "nickname": "妙善国学",
@@ -1863,12 +1863,12 @@
         "wxid": "gh_00c5c5b53567"
       },
       {
-        "nickname": "弦山国学",
-        "wxid": "gh_a28d8b5f8fca"
+        "nickname": "子卯山农业",
+        "wxid": "gh_3cd2c8af574e"
       },
       {
-        "nickname": "藏真国学",
-        "wxid": "gh_7c3da2923da1"
+        "nickname": "弦山国学",
+        "wxid": "gh_a28d8b5f8fca"
       },
       {
         "nickname": "山卯",
@@ -1924,16 +1924,20 @@
         "wxid": "gh_2fe17a2b0bf3"
       },
       {
+        "nickname": "点我周公解梦",
+        "wxid": "gh_02fc220d4035"
+      },
+      {
+        "nickname": "周公极简解梦",
+        "wxid": "gh_5bc84bacc68f"
+      },
+      {
         "nickname": "够力长条梦册号",
         "wxid": "gh_543ed7f01d77"
       },
       {
         "nickname": "周公爱解梦",
         "wxid": "gh_039cc6ebe927"
-      },
-      {
-        "nickname": "周公解梦说说",
-        "wxid": "gh_43e0e53bc4ff"
       }
     ]
   },
@@ -1986,8 +1990,8 @@
         "wxid": "gh_8d0409054c78"
       },
       {
-        "nickname": "皇极梅花",
-        "wxid": "gh_dd0bd9666c70"
+        "nickname": "便易盘",
+        "wxid": "gh_b60fee66fb64"
       },
       {
         "nickname": "梅花易数",
@@ -1996,10 +2000,6 @@
       {
         "nickname": "梅花易数入门",
         "wxid": "gh_71af91f3e6cc"
-      },
-      {
-        "nickname": "便易盘",
-        "wxid": "gh_b60fee66fb64"
       },
       {
         "nickname": "易经排盘工具",
@@ -2063,10 +2063,6 @@
         "wxid": "gh_9b84ce5d3876"
       },
       {
-        "nickname": "诗歌小曲库",
-        "wxid": "gh_feaa9b7201b2"
-      },
-      {
         "nickname": "生命科学解读",
         "wxid": "gh_888de796d84b"
       },
@@ -2075,20 +2071,24 @@
         "wxid": "gh_d94b4362ff05"
       },
       {
-        "nickname": "星运猫星座",
-        "wxid": "gh_19e6a1822dac"
+        "nickname": "生命光活水泉",
+        "wxid": "gh_5502ed97d121"
       },
       {
         "nickname": "非命",
         "wxid": "gh_280f6312fd53"
       },
       {
-        "nickname": "慧生命灵境",
-        "wxid": "gh_00bea1239afd"
-      },
-      {
         "nickname": "生命灵数欢歌",
         "wxid": "gh_3a7c4d21758d"
+      },
+      {
+        "nickname": "光之灵生命驿站",
+        "wxid": "gh_fb447ba752b6"
+      },
+      {
+        "nickname": "进博仓",
+        "wxid": "gh_be81220400f6"
       }
     ]
   },
@@ -2096,8 +2096,333 @@
     "name": "奇门遁甲术",
     "nickname": "奇门遁甲术",
     "wxid": "gh_a1f77c44a65c",
-    "biz": "",
-    "description": "奇门遁甲术，思谋星生官方认证公众号，弘扬国学易学文化",
-    "candidates": []
+    "biz": "MzA4MDEwMzUzOQ==",
+    "description": "奇门遁甲术，思谋星生官方认证公众号，以秉承中国优秀传统文化，传播正能量，弘扬国学易学文化，服务大众为宗旨，愿和广大易学爱好者一起，共同学习交流，传播奇门遁甲学术知识点窍提供精良实战文章，开启一道直达奇门密旨的大门，取到遁甲真经世代传承！",
+    "candidates": [
+      {
+        "nickname": "热卜工具",
+        "wxid": "gh_ed67edbaf83d"
+      },
+      {
+        "nickname": "学好奇门遁甲",
+        "wxid": "gh_fbd079ee08bf"
+      },
+      {
+        "nickname": "奇门遁甲",
+        "wxid": "gh_304aa41c723b"
+      },
+      {
+        "nickname": "奇门遁甲帝王术",
+        "wxid": "gh_6ea71a3ec927"
+      },
+      {
+        "nickname": "奇门遁甲研究社",
+        "wxid": "gh_9434ae867ed6"
+      },
+      {
+        "nickname": "易经排盘工具",
+        "wxid": "gh_68658d382ff0"
+      },
+      {
+        "nickname": "奇门遁甲论",
+        "wxid": "gh_d23f3e78520c"
+      },
+      {
+        "nickname": "奇门遁甲术工作室",
+        "wxid": "gh_45486b6d0c96"
+      },
+      {
+        "nickname": "易学奇门遁甲术",
+        "wxid": "gh_0cf47fc7af6b"
+      },
+      {
+        "nickname": "奇门遁甲预测术",
+        "wxid": "gh_6f05b374b230"
+      },
+      {
+        "nickname": "奇门遁甲术真神奇",
+        "wxid": "gh_be7b25ea4942"
+      }
+    ]
+  },
+  {
+    "name": "随心面像",
+    "nickname": "随心面像",
+    "wxid": "gh_a7e70751ec6f",
+    "biz": "MzU4MTIyNjI0NQ==",
+    "description": "微博：@随心面相",
+    "candidates": [
+      {
+        "nickname": "随心图像馆",
+        "wxid": "gh_ecf21f2a1346"
+      },
+      {
+        "nickname": "面像大全",
+        "wxid": "gh_a295f457ba3d"
+      },
+      {
+        "nickname": "面像图解",
+        "wxid": "gh_7c9814d12a71"
+      },
+      {
+        "nickname": "头像随心配",
+        "wxid": "gh_104ac34a7572"
+      },
+      {
+        "nickname": "随心的随随",
+        "wxid": "gh_489116f26173"
+      },
+      {
+        "nickname": "随心分享了",
+        "wxid": "gh_0e10ec2d8560"
+      },
+      {
+        "nickname": "随心分享",
+        "wxid": "gh_d42cfc17ee20"
+      },
+      {
+        "nickname": "千面随心",
+        "wxid": "gh_165b04361a65"
+      },
+      {
+        "nickname": "像面",
+        "wxid": "gh_ffacc0545f2b"
+      },
+      {
+        "nickname": "生活面ll赏味生活",
+        "wxid": "gh_418666bfc32b"
+      },
+      {
+        "nickname": "随心奇想",
+        "wxid": "gh_28075558440a"
+      },
+      {
+        "nickname": "随心享控",
+        "wxid": "gh_7960c313545b"
+      },
+      {
+        "nickname": "随心享住",
+        "wxid": "gh_7968a67dea56"
+      },
+      {
+        "nickname": "随心分享铺",
+        "wxid": "gh_0343eeaced0f"
+      },
+      {
+        "nickname": "随心向北",
+        "wxid": "gh_757b3c8be83f"
+      },
+      {
+        "nickname": "随心而享",
+        "wxid": "gh_41825e018a1f"
+      }
+    ]
+  },
+  {
+    "name": "塔罗牌卜卦",
+    "nickname": "塔罗牌卜卦",
+    "wxid": "gh_abf67f18c603",
+    "biz": "MzI1MjAyMjc1MA==",
+    "description": "欢迎来到塔罗牌的世界，资深情感专家。精通塔罗牌的各种牌型~",
+    "candidates": [
+      {
+        "nickname": "塔罗牌占卜免费",
+        "wxid": "gh_398d685674f2"
+      },
+      {
+        "nickname": "星月塔罗社",
+        "wxid": "gh_4c5a71b5d7ac"
+      },
+      {
+        "nickname": "免费塔罗牌占卜师星座占卜馆",
+        "wxid": "gh_7363da5660dc"
+      },
+      {
+        "nickname": "塔罗占卜",
+        "wxid": "gh_99be2427399c"
+      },
+      {
+        "nickname": "免费占卜塔罗牌",
+        "wxid": "gh_864ab3a810a4"
+      },
+      {
+        "nickname": "塔罗牌问卜限免",
+        "wxid": "gh_f150783cad2c"
+      },
+      {
+        "nickname": "龙女塔罗",
+        "wxid": "gh_ec1e3a74ad8b"
+      },
+      {
+        "nickname": "塔罗牌",
+        "wxid": "gh_dab889626557"
+      },
+      {
+        "nickname": "AI卜卦",
+        "wxid": "gh_b670d15d4ec4"
+      },
+      {
+        "nickname": "塔罗牌占卜贝塔",
+        "wxid": "gh_a93a542f03bf"
+      },
+      {
+        "nickname": "塔罗牌占卜复合",
+        "wxid": "gh_0d7360900bd8"
+      },
+      {
+        "nickname": "塔罗牌占卜东方",
+        "wxid": "gh_64b7798ba9f2"
+      },
+      {
+        "nickname": "塔罗牌占卜大师",
+        "wxid": "gh_9d04eb56ff07"
+      },
+      {
+        "nickname": "塔罗牌占卜师小酒",
+        "wxid": "gh_dbf6f8c89b65"
+      }
+    ]
+  },
+  {
+    "name": "子平术",
+    "nickname": "子平术",
+    "wxid": "gh_4f9315a915d0",
+    "biz": "MzkxMjE4MjgzNQ==",
+    "description": "四柱命理、子平理论研究学习！",
+    "candidates": [
+      {
+        "nickname": "梁湘潤大師研究室",
+        "wxid": "gh_19625948082d"
+      },
+      {
+        "nickname": "天时子平术",
+        "wxid": "gh_87d81930dfd7"
+      },
+      {
+        "nickname": "紫申命理子平术",
+        "wxid": "gh_6a92cb77c0d7"
+      },
+      {
+        "nickname": "子平数术",
+        "wxid": "gh_189e0a31386a"
+      },
+      {
+        "nickname": "探索命运",
+        "wxid": "gh_c83fe60b4c9b"
+      },
+      {
+        "nickname": "安知鱼带你了解子平术",
+        "wxid": "gh_8aef48fca1dc"
+      },
+      {
+        "nickname": "子平八字",
+        "wxid": "gh_1367d000e9f6"
+      },
+      {
+        "nickname": "子平易书",
+        "wxid": "gh_422d2d6ec14d"
+      },
+      {
+        "nickname": "江师傅子平术预测与教学",
+        "wxid": "gh_fb84d5290046"
+      },
+      {
+        "nickname": "登明国学",
+        "wxid": "gh_c2fc121ef117"
+      },
+      {
+        "nickname": "子平格",
+        "wxid": "gh_c9452e5a4fdc"
+      },
+      {
+        "nickname": "甲字号子平学术馆",
+        "wxid": "gh_bcd9b96e86f3"
+      },
+      {
+        "nickname": "含散持实者",
+        "wxid": "gh_bb86228bd37a"
+      },
+      {
+        "nickname": "芳妃娘娘",
+        "wxid": "gh_4c3200210e67"
+      },
+      {
+        "nickname": "抽简禄马报君知",
+        "wxid": "gh_9bd531fff9a8"
+      },
+      {
+        "nickname": "陈氏测算八易字",
+        "wxid": "gh_31fe8dcdb3fc"
+      },
+      {
+        "nickname": "子平命术",
+        "wxid": "gh_125fcd010b10"
+      },
+      {
+        "nickname": "传统子平术学习室",
+        "wxid": "gh_fbbbeb9cc012"
+      }
+    ]
+  },
+  {
+    "name": "八字命理知识汇",
+    "nickname": "八字命理知识汇",
+    "wxid": "gh_ab4b3ad161e2",
+    "biz": "MzIyNTE3NTQ3MQ==",
+    "description": "八字命理又称四柱命理学，是根据人生辰八字预测人生未来趋势，当今命理学派众多，包括传统子平派、盲派、新派、旺衰派、格局派等，但他们理论大部分都是发源于宋徐子平的《渊海子平》一书之中。",
+    "candidates": [
+      {
+        "nickname": "四柱八字命理学",
+        "wxid": "gh_e6ef703a8a18"
+      },
+      {
+        "nickname": "子平术",
+        "wxid": "gh_4f9315a915d0"
+      },
+      {
+        "nickname": "周易佔卜命理先生",
+        "wxid": "gh_446e636ab247"
+      },
+      {
+        "nickname": "易经预测运势命理",
+        "wxid": "gh_ffa38d8ec1bb"
+      },
+      {
+        "nickname": "六爻命理测算",
+        "wxid": "gh_da1fdf7a0a67"
+      },
+      {
+        "nickname": "八字命理知识学堂",
+        "wxid": "gh_d32d474be69c"
+      },
+      {
+        "nickname": "八字运势排盘",
+        "wxid": "gh_c736d81225a9"
+      },
+      {
+        "nickname": "三奇八字紫微",
+        "wxid": "gh_120d837a282a"
+      },
+      {
+        "nickname": "命理寻真国际易学擂台赛",
+        "wxid": "gh_ae0230b44282"
+      },
+      {
+        "nickname": "易经四柱五行",
+        "wxid": "gh_ead330759600"
+      },
+      {
+        "nickname": "天时子平",
+        "wxid": "gh_1f3610970772"
+      },
+      {
+        "nickname": "八字知命",
+        "wxid": "gh_af0da7e57e32"
+      },
+      {
+        "nickname": "四柱命理信息学",
+        "wxid": "gh_fff16115a391"
+      }
+    ]
   }
 ]
