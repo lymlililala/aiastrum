@@ -2,7 +2,7 @@
 // 博客页是服务端组件（middleware 跳过 /blog，无 locale 前缀），
 // 语言来源：mystic_locale cookie（列表/专题页）或文章自身 row.lang（详情页，对爬虫友好）。
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { LOCALES, type Locale } from "~/lib/i18n";
 import { CATEGORY_META, type BlogCategory } from "./blog-data";
 
@@ -11,8 +11,15 @@ export function localeToLang(locale: Locale): "zh" | "en" {
   return locale === "en" ? "en" : "zh";
 }
 
-/** 从 mystic_locale cookie 读取 locale（服务端）。 */
+/**
+ * 读取博客 chrome 语言（服务端）。
+ * 优先 x-locale 请求头(middleware 从 URL 前缀/cookie 注入,爬虫友好),再回退 cookie。
+ */
 export async function readBlogLocale(): Promise<Locale> {
+  try {
+    const h = (await headers()).get("x-locale");
+    if (h && LOCALES.includes(h as Locale)) return h as Locale;
+  } catch { /* ignore */ }
   try {
     const v = (await cookies()).get("mystic_locale")?.value;
     if (v && LOCALES.includes(v as Locale)) return v as Locale;

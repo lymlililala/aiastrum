@@ -29,7 +29,7 @@ const META: Record<Locale, { title: string; description: string; keywords: strin
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   const m = META[locale];
-  return toolMetadata({ path: "/about", title: m.title, description: m.description, keywords: m.keywords });
+  return toolMetadata({ path: "/about", locale, title: m.title, description: m.description, keywords: m.keywords });
 }
 
 export default async function AboutPage() {

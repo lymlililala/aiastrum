@@ -2,10 +2,10 @@
 // 从对应分类拉取文章，渲染指向 /blog/<slug> 的链接，把工具页权重导向文章。
 // 自带容错：无文章或查询失败时返回 null，绝不影响工具页本身。
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { fetchAllPosts } from "~/lib/supabase";
 import { CATEGORY_META, type BlogCategory } from "~/app/blog/blog-data";
-import { LOCALES, type Locale } from "~/lib/i18n";
+import { type Locale, withLocale } from "~/lib/i18n";
+import { getServerLocale } from "~/lib/serverLocale";
 import { localeToLang } from "~/app/blog/blog-i18n";
 
 type CatMeta = (typeof CATEGORY_META)[BlogCategory];
@@ -19,11 +19,7 @@ const UI: Record<Locale, { related: string; readMin: (n: number) => string; view
 };
 
 async function readLocale(): Promise<Locale> {
-  try {
-    const v = (await cookies()).get("mystic_locale")?.value;
-    if (v && LOCALES.includes(v as Locale)) return v as Locale;
-  } catch { /* ignore */ }
-  return "zh";
+  return getServerLocale();
 }
 
 export default async function ToolArticleLinks({
@@ -78,7 +74,7 @@ export default async function ToolArticleLinks({
       </div>
 
       <Link
-        href={`/blog?cat=${category}`}
+        href={withLocale(locale, `/blog?cat=${category}`)}
         style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 16, color: "rgba(201,168,76,0.7)", fontSize: "0.78rem", textDecoration: "none" }}
       >
         {t.viewAll(catLabel)}

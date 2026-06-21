@@ -1,6 +1,8 @@
 import { type Metadata } from "next";
 import Link from "next/link";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
+import { withLocale } from "~/lib/i18n";
+import { hreflangFor } from "~/lib/seo";
 import { CATEGORY_META, type BlogCategory } from "./blog-data";
 import { readBlogLocale, localeToLang, catLabel, fmtDate, BLOG_CHROME } from "./blog-i18n";
 
@@ -14,26 +16,31 @@ const PILLAR_LABELS = {
 
 const BASE_URL = "https://aiastrum.com";
 
-export const metadata: Metadata = {
-  title: "神秘学知识库 — 塔罗牌意 · 周公解梦 · 星座运势", // 模板自动追加 " | AiAstrum"
-  description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
-  keywords: ["塔罗牌意大全", "周公解梦", "星座运势2026", "塔罗解析", "梦境含义", "占星科普"],
-  alternates: { canonical: `${BASE_URL}/blog` },
-  openGraph: {
-    title: "神秘学知识库 | 塔罗牌意 · 周公解梦 · 星座运势 — AiAstrum",
-    description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。结合AI工具，让古老智慧触手可及。",
-    url: `${BASE_URL}/blog`,
-    type: "website",
-    siteName: "AiAstrum",
-    images: [{ url: `${BASE_URL}/images/og-cover.png`, width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "神秘学知识库 — AiAstrum",
-    description: "深度解析塔罗78张牌意、周公解梦大全、十二星座运势指南。",
-    images: [`${BASE_URL}/images/og-cover.png`],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await readBlogLocale();
+  const t = BLOG_CHROME[locale];
+  const alternates = hreflangFor("/blog", locale); // canonical 带语言前缀 + 三语 hreflang
+  const canonicalUrl = alternates.canonical as string;
+  return {
+    title: t.metaTitle, // 模板自动追加 " | AiAstrum"
+    description: t.metaDesc,
+    alternates,
+    openGraph: {
+      title: `${t.metaTitle} | AiAstrum`,
+      description: t.metaDesc,
+      url: canonicalUrl,
+      type: "website",
+      siteName: "AiAstrum",
+      images: [{ url: `${BASE_URL}/images/og-cover.png`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${t.metaTitle} — AiAstrum`,
+      description: t.metaDesc,
+      images: [`${BASE_URL}/images/og-cover.png`],
+    },
+  };
+}
 
 // 强制每次请求都重新从数据库读（ISR 60s）
 export const revalidate = 60;
@@ -108,7 +115,7 @@ export default async function BlogListPage({
     "@type": "ItemList",
     "name": t.metaTitle,
     "description": t.metaDesc,
-    "url": "https://aiastrum.com/blog",
+    "url": `https://aiastrum.com/${locale}/blog`,
     "numberOfItems": posts.length,
     "itemListElement": posts.map((post, idx) => ({
       "@type": "ListItem",
@@ -140,7 +147,7 @@ export default async function BlogListPage({
         padding: "0 20px", height: 52,
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
-        <Link href="/" className="blog-nav-back" style={{
+        <Link href={`/${locale}`} className="blog-nav-back" style={{
           display: "flex", alignItems: "center", gap: 8,
           textDecoration: "none", color: "rgba(201,168,76,0.75)", fontSize: "0.8rem",
           letterSpacing: "0.06em", transition: "color 0.18s",
@@ -186,7 +193,7 @@ export default async function BlogListPage({
           return (
             <Link
               key={c.key}
-              href={c.key === "all" ? "/blog" : `/blog?cat=${c.key}`}
+              href={c.key === "all" ? withLocale(locale, "/blog") : withLocale(locale, `/blog?cat=${c.key}`)}
               className="blog-cat-tab"
               style={{
                 padding: "7px 18px", borderRadius: 22, textDecoration: "none",

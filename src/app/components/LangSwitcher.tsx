@@ -42,13 +42,15 @@ export function LangSwitcher() {
     // 写入 cookie（供 middleware 和工具页面读取）
     document.cookie = `mystic_locale=${locale};path=/;max-age=31536000;samesite=lax`;
 
-    // 使用完整页面跳转，确保服务端重新读取语言设置
-    if (urlLocale) {
-      // 当前页面有 locale 前缀（首页 /zh /en /tw）：替换前缀跳转
-      const bare = stripLocale(pathname);
-      window.location.href = `/${locale}${bare === "/" ? "" : bare}`;
+    // 以地址栏真实路径为准（middleware rewrite 后 usePathname 可能丢失前缀，window.location 不会）
+    const realPath = typeof window !== "undefined" ? window.location.pathname : pathname;
+    const realLocale = getLocaleFromPath(realPath);
+    if (realLocale) {
+      // 已有 locale 前缀（首页 /zh、工具页 /zh/tarot、博客列表 /zh/blog…）：替换前缀
+      const bare = stripLocale(realPath);
+      window.location.href = `/${locale}${bare === "/" ? "" : bare}${window.location.search}`;
     } else {
-      // 工具页面（/tarot /bazi 等）：保持 URL，强制全页刷新让 cookie 生效
+      // 无前缀（博客详情 /blog/slug、topic 等范围外页面）：保持 URL，刷新让 cookie 生效
       window.location.reload();
     }
   }

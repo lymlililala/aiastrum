@@ -1,22 +1,41 @@
 import { type Metadata } from "next";
-import { toolMetadata, breadcrumbJsonLd, webAppJsonLd, BASE_URL } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { getServerLocale } from "~/lib/serverLocale";
+import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
 
-export const metadata: Metadata = toolMetadata({
-  path: "/love",
-  title: "Love Oracle — Birth Chart & Destiny Love Analysis",
-  description: "Three-dimensional analysis combining star chart, destiny, and numerology. Reveal your destined partner's traits and the timing of your fateful encounter.",
-  keywords: ["love oracle", "relationship astrology", "姻缘占卜", "爱情占卜", "缘分", "合婚"],
-});
+const META: Record<Locale, LocaleMeta> = {
+  en: {
+    title: "Love Oracle — Birth Chart & Destiny Love Analysis",
+    description: "Three-dimensional analysis combining star chart, destiny, and numerology. Reveal your destined partner's traits and the timing of your fateful encounter.",
+    keywords: ["love oracle", "relationship astrology", "love compatibility", "soulmate reading", "love fortune"],
+  },
+  zh: {
+    title: "姻缘占卜 — AI 测正缘与脱单桃花运",
+    description: "结合星盘、命理与灵数三维分析,揭示你命定另一半的特质与正缘出现的时机。免费在线姻缘爱情占卜。",
+    keywords: ["姻缘占卜", "爱情占卜", "正缘", "桃花运", "缘分测试", "脱单"],
+  },
+  tw: {
+    title: "姻緣占卜 — AI 測正緣與脫單桃花運",
+    description: "結合星盤、命理與靈數三維分析,揭示你命定另一半的特質與正緣出現的時機。免費線上姻緣愛情占卜。",
+    keywords: ["姻緣占卜", "愛情占卜", "正緣", "桃花運", "緣分測試", "脫單"],
+  },
+};
 
-export default function LoveLayout({ children }: { children: React.ReactNode }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return toolMetadataI18n("/love", META, locale);
+}
+
+export default async function LoveLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/zh` },
-    { name: "Love Oracle", url: `${BASE_URL}/love` },
+    { name: "Home", url: `${BASE_URL}/${locale}` },
+    { name: "Love Oracle", url: `${BASE_URL}/${locale}/love` },
   ]);
   const webApp = webAppJsonLd({
     name: "Love Oracle",
-    url: `${BASE_URL}/love`,
+    url: `${BASE_URL}/${locale}/love`,
     description: "Star chart and destiny analysis to reveal your destined partner's traits and meeting timing.",
   });
   return (

@@ -26,7 +26,7 @@ const META: Record<Locale, { title: string; description: string; keywords: strin
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   const m = META[locale];
-  return toolMetadata({ path: "/contact", title: m.title, description: m.description, keywords: m.keywords });
+  return toolMetadata({ path: "/contact", locale, title: m.title, description: m.description, keywords: m.keywords });
 }
 
 export default async function ContactPage() {
@@ -49,7 +49,7 @@ export default async function ContactPage() {
           <li><strong>Feedback &amp; ideas</strong> — tell us what you love or what we could do better.</li>
           <li><strong>Technical issues</strong> — found a bug or something not working? Let us know what happened.</li>
           <li><strong>Business &amp; partnerships</strong> — collaborations, press and licensing enquiries.</li>
-          <li><strong>Privacy requests</strong> — to access or delete your data, see our <a href="/privacy">Privacy Policy</a>.</li>
+          <li><strong>Privacy requests</strong> — to access or delete your data, see our <a href={`/${locale}/privacy`}>Privacy Policy</a>.</li>
         </ul>
 
         <h2>Response time</h2>
@@ -60,8 +60,8 @@ export default async function ContactPage() {
         </p>
 
         <p>
-          Looking for our policies instead? See the <a href="/privacy">Privacy Policy</a> and{" "}
-          <a href="/terms">Terms of Service</a>.
+          Looking for our policies instead? See the <a href={`/${locale}/privacy`}>Privacy Policy</a> and{" "}
+          <a href={`/${locale}/terms`}>Terms of Service</a>.
         </p>
       </LegalPage>
     );
@@ -84,7 +84,7 @@ export default async function ContactPage() {
           <li><strong>意見與想法</strong> —— 告訴我們你喜歡的地方，或我們可以做得更好之處。</li>
           <li><strong>技術問題</strong> —— 發現錯誤或功能異常？請描述發生了什麼狀況。</li>
           <li><strong>商務與合作</strong> —— 合作、媒體採訪與授權洽詢。</li>
-          <li><strong>隱私請求</strong> —— 如需查詢或刪除你的資料，請參閱<a href="/privacy">隱私政策</a>。</li>
+          <li><strong>隱私請求</strong> —— 如需查詢或刪除你的資料，請參閱<a href={`/${locale}/privacy`}>隱私政策</a>。</li>
         </ul>
 
         <h2>回覆時間</h2>
@@ -94,7 +94,7 @@ export default async function ContactPage() {
         </p>
 
         <p>
-          想查看相關政策嗎？請參閱<a href="/privacy">隱私政策</a>與<a href="/terms">服務條款</a>。
+          想查看相關政策嗎？請參閱<a href={`/${locale}/privacy`}>隱私政策</a>與<a href={`/${locale}/terms`}>服務條款</a>。
         </p>
       </LegalPage>
     );
@@ -116,7 +116,7 @@ export default async function ContactPage() {
         <li><strong>意见与想法</strong> —— 告诉我们你喜欢的地方，或我们可以做得更好之处。</li>
         <li><strong>技术问题</strong> —— 发现错误或功能异常？请描述发生了什么状况。</li>
         <li><strong>商务与合作</strong> —— 合作、媒体采访与授权洽询。</li>
-        <li><strong>隐私请求</strong> —— 如需查询或删除你的数据，请参阅<a href="/privacy">隐私政策</a>。</li>
+        <li><strong>隐私请求</strong> —— 如需查询或删除你的数据，请参阅<a href={`/${locale}/privacy`}>隐私政策</a>。</li>
       </ul>
 
       <h2>回复时间</h2>
@@ -126,7 +126,7 @@ export default async function ContactPage() {
       </p>
 
       <p>
-        想查看相关政策吗？请参阅<a href="/privacy">隐私政策</a>与<a href="/terms">服务条款</a>。
+        想查看相关政策吗？请参阅<a href={`/${locale}/privacy`}>隐私政策</a>与<a href={`/${locale}/terms`}>服务条款</a>。
       </p>
     </LegalPage>
   );

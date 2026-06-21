@@ -1,22 +1,41 @@
 import { type Metadata } from "next";
-import { toolMetadata, breadcrumbJsonLd, webAppJsonLd, BASE_URL } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { getServerLocale } from "~/lib/serverLocale";
+import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
 
-export const metadata: Metadata = toolMetadata({
-  path: "/bazi",
-  title: "Bazi Destiny Code — Four Pillars of Destiny",
-  description: "Reveal your life map written in the stars. AI analyzes your Four Pillars of Destiny (Bazi) to uncover personality, career, and fortune cycles.",
-  keywords: ["bazi", "four pillars of destiny", "chinese astrology", "生辰八字", "八字算命", "四柱"],
-});
+const META: Record<Locale, LocaleMeta> = {
+  en: {
+    title: "Bazi Destiny Code — Four Pillars of Destiny",
+    description: "Reveal your life map written in the stars. AI analyzes your Four Pillars of Destiny (Bazi) to uncover personality, career, and fortune cycles.",
+    keywords: ["bazi", "four pillars of destiny", "chinese astrology", "bazi calculator", "destiny reading"],
+  },
+  zh: {
+    title: "AI 生辰八字 — 排盘算命与四柱命理分析",
+    description: "AI 解读你的生辰八字四柱命盘,洞悉性格、事业、财运与大运流年。免费在线八字排盘与命理分析。",
+    keywords: ["生辰八字", "八字算命", "四柱命理", "八字排盘", "免费算命", "大运流年"],
+  },
+  tw: {
+    title: "AI 生辰八字 — 排盤算命與四柱命理分析",
+    description: "AI 解讀你的生辰八字四柱命盤,洞悉性格、事業、財運與大運流年。免費線上八字排盤與命理分析。",
+    keywords: ["生辰八字", "八字算命", "四柱命理", "八字排盤", "免費算命", "大運流年"],
+  },
+};
 
-export default function BaziLayout({ children }: { children: React.ReactNode }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return toolMetadataI18n("/bazi", META, locale);
+}
+
+export default async function BaziLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/zh` },
-    { name: "Bazi Destiny Code", url: `${BASE_URL}/bazi` },
+    { name: "Home", url: `${BASE_URL}/${locale}` },
+    { name: "Bazi Destiny Code", url: `${BASE_URL}/${locale}/bazi` },
   ]);
   const webApp = webAppJsonLd({
     name: "Bazi Destiny Code",
-    url: `${BASE_URL}/bazi`,
+    url: `${BASE_URL}/${locale}/bazi`,
     description: "AI analyzes your Four Pillars of Destiny to uncover personality, career, and fortune cycles.",
   });
   return (

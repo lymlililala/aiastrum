@@ -105,15 +105,15 @@ export function SiteFooter({ locale, year }: { locale: Locale; year: number }) {
           marginBottom: 16,
         }}
       >
-        <a href="/about" style={linkStyle}>{t.about}</a>
+        <a href={`/${locale}/about`} style={linkStyle}>{t.about}</a>
         <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
-        <a href="/contact" style={linkStyle}>{t.contact}</a>
+        <a href={`/${locale}/contact`} style={linkStyle}>{t.contact}</a>
         <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
-        <a href="/privacy" style={linkStyle}>{t.privacyLink}</a>
+        <a href={`/${locale}/privacy`} style={linkStyle}>{t.privacyLink}</a>
         <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
-        <a href="/terms" style={linkStyle}>{t.terms}</a>
+        <a href={`/${locale}/terms`} style={linkStyle}>{t.terms}</a>
         <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
-        <a href="/blog" style={linkStyle}>{t.blog}</a>
+        <a href={`/${locale}/blog`} style={linkStyle}>{t.blog}</a>
       </nav>
 
       <p style={{ fontSize: "0.68rem", color: "rgba(180,165,145,0.6)", lineHeight: 1.6, maxWidth: 340, margin: "0 auto 8px" }}>

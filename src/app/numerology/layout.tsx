@@ -1,22 +1,41 @@
 import { type Metadata } from "next";
-import { toolMetadata, breadcrumbJsonLd, webAppJsonLd, BASE_URL } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { getServerLocale } from "~/lib/serverLocale";
+import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
 
-export const metadata: Metadata = toolMetadata({
-  path: "/numerology",
-  title: "Numerology — Life Path Number Reading",
-  description: "Enter your birthdate to calculate your personal life path number (1-9, 11, 22, 33). Decode your personality, talents, and destiny through numerology.",
-  keywords: ["numerology", "life path number", "生命灵数", "灵数占卜", "命理数字"],
-});
+const META: Record<Locale, LocaleMeta> = {
+  en: {
+    title: "Numerology — Life Path Number Reading",
+    description: "Enter your birthdate to calculate your personal life path number (1-9, 11, 22, 33). Decode your personality, talents, and destiny through numerology.",
+    keywords: ["numerology", "life path number", "numerology calculator", "destiny number", "master numbers"],
+  },
+  zh: {
+    title: "生命灵数 — 免费计算你的生命数字与命格",
+    description: "输入生日,计算你的生命灵数(1-9、11、22、33),透过数字命理解读你的性格、天赋与人生使命。免费占卜。",
+    keywords: ["生命灵数", "生命数字", "灵数占卜", "命理数字", "数字命理", "免费测算"],
+  },
+  tw: {
+    title: "生命靈數 — 免費計算你的生命數字與命格",
+    description: "輸入生日,計算你的生命靈數(1-9、11、22、33),透過數字命理解讀你的性格、天賦與人生使命。免費占卜。",
+    keywords: ["生命靈數", "生命數字", "靈數占卜", "命理數字", "數字命理", "免費測算"],
+  },
+};
 
-export default function NumerologyLayout({ children }: { children: React.ReactNode }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale();
+  return toolMetadataI18n("/numerology", META, locale);
+}
+
+export default async function NumerologyLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getServerLocale();
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/zh` },
-    { name: "Numerology", url: `${BASE_URL}/numerology` },
+    { name: "Home", url: `${BASE_URL}/${locale}` },
+    { name: "Numerology", url: `${BASE_URL}/${locale}/numerology` },
   ]);
   const webApp = webAppJsonLd({
     name: "Life Path Numerology",
-    url: `${BASE_URL}/numerology`,
+    url: `${BASE_URL}/${locale}/numerology`,
     description: "Calculate your life path number and decode your personality, talents, and destiny.",
   });
   return (

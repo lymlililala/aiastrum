@@ -1,6 +1,7 @@
 import { type MetadataRoute } from "next";
 import { fetchAllPosts } from "~/lib/supabase";
 import { CANONICAL_OVERRIDES } from "~/lib/canonical-overrides";
+import { LOCALES } from "~/lib/i18n";
 
 // ISR：缓存 1 小时，不用 force-dynamic。
 // 经验（参考 aiskillnav）：force-dynamic 会让每次抓取都全量分页查 Supabase（慢，
@@ -61,7 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // ── 2. 工具页面：无语言前缀（真实可访问路径）──────────────────────────────
+  // ── 2. 工具页 / 信息页 / 博客列表：三语带前缀 URL + hreflang ────────────────
+  // 每个基路径展开成 /zh /en /tw 三条，每条带 alternates.languages(zh-CN/zh-TW/en/x-default)
   const toolRoutes: Array<{
     path: string;
     priority: number;
@@ -97,12 +99,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/terms",         priority: 0.3,  changeFrequency: "yearly"  },
   ];
 
-  const toolEntries: MetadataRoute.Sitemap = toolRoutes.map(({ path, priority, changeFrequency }) => ({
-    url: `${BASE_URL}${path}`,
-    lastModified: SITE_LAUNCH,
-    changeFrequency,
-    priority,
-  }));
+  const langsFor = (path: string) => ({
+    "zh-CN": `${BASE_URL}/zh${path}`,
+    "zh-TW": `${BASE_URL}/tw${path}`,
+    "en":    `${BASE_URL}/en${path}`,
+    "x-default": `${BASE_URL}/zh${path}`,
+  });
+
+  const toolEntries: MetadataRoute.Sitemap = toolRoutes.flatMap(({ path, priority, changeFrequency }) =>
+    LOCALES.map((locale) => ({
+      url: `${BASE_URL}/${locale}${path}`,
+      lastModified: SITE_LAUNCH,
+      changeFrequency,
+      priority,
+      alternates: { languages: langsFor(path) },
+    })),
+  );
 
   // ── 2b. 主题 pillar 索引页 ────────────────────────────────────────────────
   const pillarEntries: MetadataRoute.Sitemap = [

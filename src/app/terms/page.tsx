@@ -35,7 +35,7 @@ const UPDATED: Record<Locale, string> = {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale();
   const m = META[locale];
-  return toolMetadata({ path: "/terms", title: m.title, description: m.description, keywords: m.keywords });
+  return toolMetadata({ path: "/terms", locale, title: m.title, description: m.description, keywords: m.keywords });
 }
 
 export default async function TermsPage() {

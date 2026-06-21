@@ -25,7 +25,7 @@ interface LegalPageProps {
 export function LegalPage({ locale, title, subtitle, updated, children }: LegalPageProps) {
   return (
     <div className="legal-wrap">
-      <a href="/" className="legal-back">{BACK_LABEL[locale]}</a>
+      <a href={`/${locale}`} className="legal-back">{BACK_LABEL[locale]}</a>
       <div className="legal-langswitch">
         <LangSwitcher />
       </div>

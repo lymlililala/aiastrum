@@ -3,12 +3,32 @@
  * 为每个工具页生成正确的 canonical URL、hreflang alternates 和 BreadcrumbList JSON-LD
  */
 import { type Metadata } from "next";
+import { type Locale } from "~/lib/i18n";
 
 export const BASE_URL = "https://aiastrum.com";
+
+/**
+ * 生成带语言前缀的 canonical + hreflang alternates。
+ * canonical 指向当前 locale 的带前缀 URL;languages 覆盖三语 + x-default(zh)。
+ * key 集合与首页 src/app/[lang]/page.tsx 保持一致。
+ */
+export function hreflangFor(path: string, locale: Locale): NonNullable<Metadata["alternates"]> {
+  return {
+    canonical: `${BASE_URL}/${locale}${path}`,
+    languages: {
+      "zh-CN": `${BASE_URL}/zh${path}`,
+      "zh-TW": `${BASE_URL}/tw${path}`,
+      "en": `${BASE_URL}/en${path}`,
+      "x-default": `${BASE_URL}/zh${path}`,
+    },
+  };
+}
 
 interface ToolSeoOptions {
   /** 页面路径，如 "/tarot" */
   path: string;
+  /** 当前语言（决定 canonical 前缀与 hreflang） */
+  locale: Locale;
   /** 页面标题（会自动拼接 " | AiAstrum"） */
   title: string;
   /** 页面描述 */
@@ -20,23 +40,23 @@ interface ToolSeoOptions {
 }
 
 /**
- * 生成工具页面的 Metadata（canonical 指向真实无前缀 URL）
+ * 生成工具页面的 Metadata（canonical 指向带语言前缀的规范 URL，并输出 hreflang）
  */
 export function toolMetadata({
   path,
+  locale,
   title,
   description,
   keywords,
 }: ToolSeoOptions): Metadata {
-  const canonicalUrl = `${BASE_URL}${path}`;
+  const alternates = hreflangFor(path, locale);
+  const canonicalUrl = alternates.canonical as string;
 
   return {
     title,
     description,
     keywords,
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates,
     openGraph: {
       title: `${title} | AiAstrum`,
       description,
@@ -59,6 +79,26 @@ export function toolMetadata({
       images: [`${BASE_URL}/images/og-cover.png`],
     },
   };
+}
+
+/** 单语言文案(用于三语工具页 metadata） */
+export interface LocaleMeta {
+  title: string;
+  description: string;
+  keywords?: string[];
+}
+
+/**
+ * 三语工具页 Metadata：按当前 locale 选好文案后复用 toolMetadata 渲染。
+ * 工具页 layout 用法见 src/app/about/page.tsx 范式。
+ */
+export function toolMetadataI18n(
+  path: string,
+  meta: Record<Locale, LocaleMeta>,
+  locale: Locale,
+): Metadata {
+  const m = meta[locale];
+  return toolMetadata({ path, locale, title: m.title, description: m.description, keywords: m.keywords });
 }
 
 /**

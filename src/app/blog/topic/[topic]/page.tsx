@@ -2,6 +2,7 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
+import { withLocale } from "~/lib/i18n";
 import { readBlogLocale, localeToLang, BLOG_CHROME } from "~/app/blog/blog-i18n";
 
 export const revalidate = 3600;
@@ -124,8 +125,8 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
       `}</style>
 
       <nav style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(10,6,28,.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(201,168,76,.12)", padding: "0 20px", height: 52, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/blog" style={{ color: "rgba(201,168,76,.75)", fontSize: ".8rem", textDecoration: "none" }}>{c.backKB}</Link>
-        <Link href="/" style={{ color: "rgba(201,168,76,.45)", fontSize: ".72rem", textDecoration: "none" }}>{c.home}</Link>
+        <Link href={withLocale(locale, "/blog")} style={{ color: "rgba(201,168,76,.75)", fontSize: ".8rem", textDecoration: "none" }}>{c.backKB}</Link>
+        <Link href={`/${locale}`} style={{ color: "rgba(201,168,76,.45)", fontSize: ".72rem", textDecoration: "none" }}>{c.home}</Link>
       </nav>
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 20px 80px" }}>
@@ -135,7 +136,7 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
           <p style={{ fontSize: ".72rem", color: "rgba(201,168,76,.45)", marginTop: 8 }}>{c.totalArticles(posts.length)}</p>
         </header>
 
-        <Link href={t.ctaHref} style={{ textDecoration: "none", display: "block", marginBottom: 28 }}>
+        <Link href={withLocale(locale, t.ctaHref)} style={{ textDecoration: "none", display: "block", marginBottom: 28 }}>
           <div style={{ borderRadius: 14, background: "linear-gradient(135deg,rgba(201,168,76,.12),rgba(100,60,200,.12))", border: "1px solid rgba(201,168,76,.3)", padding: "14px 18px", color: "rgba(232,213,163,.9)", fontWeight: 600, fontSize: ".88rem" }}>{t.ctaLabel} →</div>
         </Link>
 

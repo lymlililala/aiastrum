@@ -8,6 +8,7 @@ import { ResultPhase } from "./components/ResultPhase";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { useReadingHistory, useDailyLimit } from "./hooks";
 import { useLocale } from "~/lib/useLocale";
+import { withLocale, type Locale } from "~/lib/i18n";
 import { LangSwitcher } from "./components/LangSwitcher";
 import type { TarotCard } from "./tarot-data";
 
@@ -81,7 +82,7 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             {/* 返回首页 */}
             <a
-              href="/"
+              href={`/${lang}`}
               className="flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity"
               style={{
                 padding: "5px 12px", borderRadius: 20,
@@ -490,7 +491,7 @@ function ModuleSelectPage() {
               border: "rgba(220,150,0,0.28)",
             },
           ] as const).map(item => (
-            <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
+            <Link key={item.href} href={withLocale(lang, item.href)} style={{ textDecoration: "none" }}>
               <div style={{
                 borderRadius: 18,
                 padding: "18px 10px 16px",
@@ -592,7 +593,7 @@ function ModuleSelectPage() {
             {/* 精选推荐：< 560px 单列，≥ 560px 双列 */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 420px), 1fr))", gap: 12, marginBottom: 0 }}>
               {featured.map(mod => (
-                <FeaturedCard key={mod.href} mod={mod} t={t} />
+                <FeaturedCard key={mod.href} mod={mod} t={t} lang={lang} />
               ))}
             </div>
           </>
@@ -617,7 +618,7 @@ function ModuleSelectPage() {
               gap: 12,
             }}>
               {normal.map(mod => (
-                <GridCard key={mod.href} mod={mod} t={t} />
+                <GridCard key={mod.href} mod={mod} t={t} lang={lang} />
               ))}
             </div>
           </>
@@ -626,7 +627,7 @@ function ModuleSelectPage() {
 
       {/* ── 知识库推广横幅 ── */}
       <div style={{ maxWidth: 960, margin: "0 auto 16px", padding: "0 16px" }}>
-        <Link href="/blog" style={{ textDecoration: "none", display: "block" }}>
+        <Link href={withLocale(lang, "/blog")} style={{ textDecoration: "none", display: "block" }}>
           <div style={{
             borderRadius: 16,
             background: "linear-gradient(135deg, rgba(100,60,200,0.15) 0%, rgba(201,168,76,0.08) 100%)",
@@ -709,14 +710,14 @@ function getBadgeStyle(badge: string | undefined): React.CSSProperties {
   return map[badge] ?? { background: "linear-gradient(135deg,#c9a84c,#f0a500)", color: "#fff" };
 }
 
-function FeaturedCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
+function FeaturedCard({ mod, t, lang }: { mod: ModuleItem; t: typeof ZH; lang: Locale }) {
   const [hovered, setHovered] = useState(false);
   const title = t[mod.titleKey] as string;
   const desc  = t[mod.descKey]  as string;
   const isRune = RUNE_ICONS.has(mod.icon);
 
   return (
-    <Link href={mod.href} style={{ textDecoration: "none" }}>
+    <Link href={withLocale(lang, mod.href)} style={{ textDecoration: "none" }}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -791,14 +792,14 @@ function FeaturedCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
   );
 }
 
-function GridCard({ mod, t }: { mod: ModuleItem; t: typeof ZH }) {
+function GridCard({ mod, t, lang }: { mod: ModuleItem; t: typeof ZH; lang: Locale }) {
   const [hovered, setHovered] = useState(false);
   const title = t[mod.titleKey] as string;
   const desc  = t[mod.descKey]  as string;
   const isRune = RUNE_ICONS.has(mod.icon);
 
   return (
-    <Link href={mod.href} style={{ textDecoration: "none" }}>
+    <Link href={withLocale(lang, mod.href)} style={{ textDecoration: "none" }}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}

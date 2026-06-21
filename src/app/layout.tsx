@@ -4,9 +4,10 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
-import { LOCALE_LANG, getLocaleFromPath, type Locale } from "~/lib/i18n";
+import { LOCALE_LANG, type Locale } from "~/lib/i18n";
 import { BASE_URL } from "~/lib/seo";
 import { SiteFooter } from "./components/SiteFooter";
+import { LocaleProvider } from "./components/LocaleProvider";
 
 // ── 全局默认 metadata（各页面可通过 generateMetadata 覆盖） ──────────────────
 export const metadata: Metadata = {
@@ -46,11 +47,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // 从请求头读取 x-locale（middleware 注入），或解析路径
+  // 从请求头读取 x-locale（middleware 注入），缺省 zh
   const headersList = await headers();
   const localeHeader = headersList.get("x-locale") as Locale | null;
-  const xPathname = headersList.get("x-pathname") ?? headersList.get("x-invoke-path") ?? "/";
-  const locale: Locale = localeHeader ?? getLocaleFromPath(xPathname) ?? "zh";
+  const locale: Locale = localeHeader ?? "zh";
   const htmlLang = LOCALE_LANG[locale];
 
   // ── 站点级 JSON-LD（WebSite + Organization）──────────────────────────────
@@ -109,8 +109,10 @@ export default async function RootLayout({
         <div className="stars-bg" />
         {/* 装饰星点 */}
         <Stars />
-        {children}
-        <SiteFooter locale={locale} year={new Date().getFullYear()} />
+        <LocaleProvider locale={locale}>
+          {children}
+          <SiteFooter locale={locale} year={new Date().getFullYear()} />
+        </LocaleProvider>
         <Analytics />
       </body>
     </html>

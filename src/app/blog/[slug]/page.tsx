@@ -7,7 +7,8 @@ import { canonicalSlug } from "~/lib/canonical-overrides";
 import { buildFaqSchema } from "~/lib/faq-schema";
 import { CATEGORY_META } from "../blog-data";
 import { BLOG_CHROME, catLabel, fmtDate } from "../blog-i18n";
-import { type Locale } from "~/lib/i18n";
+import { type Locale, withLocale } from "~/lib/i18n";
+import SyncHtmlLang from "./SyncHtmlLang";
 
 // 根 layout 使用 headers()（读取 locale），整站本质为动态渲染。
 // 故本路由显式 force-dynamic：按需服务端渲染，避免与 ISR(revalidate) 冲突导致
@@ -166,6 +167,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      {/* 客户端校正 <html lang> 为文章实际语言 */}
+      <SyncHtmlLang lang={post.lang} />
       {/* Article 结构化数据 */}
       <script
         type="application/ld+json"
@@ -206,11 +209,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
       {/* Nav */}
       <nav style={{ position:"sticky", top:0, zIndex:100, background:"rgba(10,6,28,0.92)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(201,168,76,0.12)", padding:"0 20px", height:52, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <Link href="/blog" className="blog-post-nav-back" style={{ display:"flex", alignItems:"center", gap:6, textDecoration:"none", color:"rgba(201,168,76,0.7)", fontSize:"0.8rem", transition:"color 0.18s" }}>{t.backKB}</Link>
+        <Link href={withLocale(locale, "/blog")} className="blog-post-nav-back" style={{ display:"flex", alignItems:"center", gap:6, textDecoration:"none", color:"rgba(201,168,76,0.7)", fontSize:"0.8rem", transition:"color 0.18s" }}>{t.backKB}</Link>
         <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:`${meta.color}18`, border:`1px solid ${meta.color}35`, borderRadius:8, padding:"3px 10px", fontSize:"0.66rem", color:meta.color, fontWeight:600 }}>
           <span>{meta.icon}</span>{catLabel(post.category, locale)}
         </div>
-        <Link href="/" style={{ color:"rgba(201,168,76,0.45)", fontSize:"0.72rem", textDecoration:"none" }}>{t.home}</Link>
+        <Link href={`/${locale}`} style={{ color:"rgba(201,168,76,0.45)", fontSize:"0.72rem", textDecoration:"none" }}>{t.home}</Link>
       </nav>
 
       <div style={{ maxWidth:720, margin:"0 auto", padding:"40px 20px 80px" }}>
@@ -262,7 +265,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               })}
             </div>
             <Link
-              href={`/blog?cat=${post.category}`}
+              href={withLocale(locale, `/blog?cat=${post.category}`)}
               className="blog-post-nav-back"
               style={{ display:"inline-flex", alignItems:"center", gap:6, marginTop:16, color:"rgba(201,168,76,0.7)", fontSize:"0.78rem", textDecoration:"none" }}
             >{t.viewAllCat(catLabel(post.category, locale))}</Link>
@@ -277,7 +280,7 @@ function CTACard({ post, meta, locale, large = false }: { post: PostDisplay; met
   // en：优先用 cta_label_en，为空时回退中文 cta_label
   const ctaLabel = locale === "en" ? (post.ctaLabelEn || post.ctaLabel) : post.ctaLabel;
   return (
-    <Link href={post.ctaHref} style={{ textDecoration:"none", display:"block" }}>
+    <Link href={withLocale(locale, post.ctaHref)} style={{ textDecoration:"none", display:"block" }}>
       <div className="blog-post-cta" style={{ borderRadius:14, background:`linear-gradient(135deg,${meta.color}14 0%,rgba(100,60,200,0.12) 100%)`, border:`1px solid ${meta.color}30`, padding:large?"20px 20px":"14px 18px", display:"flex", alignItems:"center", gap:12, cursor:"pointer", boxShadow:`0 4px 20px ${meta.color}10` }}>
         <div style={{ width:large?44:36, height:large?44:36, borderRadius:10, background:`${meta.color}20`, border:`1px solid ${meta.color}35`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:large?20:16, flexShrink:0 }}>{meta.icon}</div>
         <div style={{ flex:1 }}>

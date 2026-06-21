@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { LOCALES, detectLocale, getLocaleFromPath, type Locale } from "~/lib/i18n";
+import { LOCALES, detectLocale, getLocaleFromPath, stripLocale, type Locale } from "~/lib/i18n";
+import { isPrefixedRoute } from "~/lib/routes";
 
 // 不需要 i18n 处理的路径前缀
 const SKIP_PREFIXES = [
@@ -10,58 +11,90 @@ const SKIP_PREFIXES = [
   "/sitemap.xml",
   "/llms.txt",
   "/images",
-  "/blog",
 ];
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const COOKIE_OPTS = {
+  path: "/",
+  maxAge: 60 * 60 * 24 * 365,
+  sameSite: "lax" as const,
+};
 
-  // 跳过静态资源、API、blog
+/** 把 x-locale 注入到「传给页面的请求头」,使服务端组件 headers() 能读到。 */
+function withLocaleHeader(request: NextRequest, locale: Locale): Headers {
+  const h = new Headers(request.headers);
+  h.set("x-locale", locale);
+  return h;
+}
+
+/** 确定性语言判定:cookie → Accept-Language → zh。用于无前缀路径的 301 目标。 */
+function resolveLocale(request: NextRequest): Locale {
+  const cookieLocale = request.cookies.get("mystic_locale")?.value as Locale | undefined;
+  if (cookieLocale && LOCALES.includes(cookieLocale)) return cookieLocale;
+  const acceptLang = request.headers.get("accept-language") ?? "";
+  const firstLang = acceptLang.split(",")[0]?.trim() ?? "";
+  return detectLocale(firstLang);
+}
+
+export function middleware(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
+
+  // 跳过静态资源、API
   if (SKIP_PREFIXES.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  // 已有 locale 前缀（/zh /en /tw），直接放行
+  // ── A. 已有 locale 前缀(/zh /en /tw …) ────────────────────────────────────
   const existingLocale = getLocaleFromPath(pathname);
   if (existingLocale) {
-    const response = NextResponse.next();
-    response.headers.set("x-locale", existingLocale);
-    // 同步 cookie，让工具页面也能读到当前语言
-    response.cookies.set("mystic_locale", existingLocale, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-    });
-    return response;
+    const bare = stripLocale(pathname); // "/tarot" / "/blog" / "/" / "/blog/slug"
+
+    // 裸前缀(/zh):首页,走 app/[lang]/page.tsx,不 rewrite
+    if (bare === "/") {
+      const res = NextResponse.next({ request: { headers: withLocaleHeader(request, existingLocale) } });
+      res.cookies.set("mystic_locale", existingLocale, COOKIE_OPTS);
+      return res;
+    }
+
+    // 范围内路径(工具页/信息页/博客列表):rewrite 到物理无前缀页面
+    if (isPrefixedRoute(bare)) {
+      const url = request.nextUrl.clone();
+      url.pathname = bare;
+      const res = NextResponse.rewrite(url, { request: { headers: withLocaleHeader(request, existingLocale) } });
+      res.cookies.set("mystic_locale", existingLocale, COOKIE_OPTS);
+      return res;
+    }
+
+    // 范围外却误带前缀(如 /zh/blog/slug):301 收敛到无前缀规范 URL
+    const url = request.nextUrl.clone();
+    url.pathname = bare;
+    return NextResponse.redirect(url, 301);
   }
 
-  // 以下处理没有 locale 前缀的路径（工具页面：/tarot, /bazi 等）
-  // 工具页面不重定向，只透传语言信息给页面
+  // ── B. 无 locale 前缀 ──────────────────────────────────────────────────────
 
-  // 1. 优先读 cookie（用户手动切换过）
-  const cookieLocale = request.cookies.get("mystic_locale")?.value as Locale | undefined;
-  if (cookieLocale && LOCALES.includes(cookieLocale)) {
-    const response = NextResponse.next();
-    response.headers.set("x-locale", cookieLocale);
-    return response;
+  // 博客详情 / topic pillar:本阶段保持无前缀,只注入 x-locale(cookie,缺省 zh)
+  if (pathname.startsWith("/blog/")) {
+    const cookieLocale = request.cookies.get("mystic_locale")?.value as Locale | undefined;
+    const blogLocale = cookieLocale && LOCALES.includes(cookieLocale) ? cookieLocale : "zh";
+    return NextResponse.next({ request: { headers: withLocaleHeader(request, blogLocale) } });
   }
 
-  // 2. 仅对根路径 "/" 做浏览器语言嗅探跳转
+  // 根路径 "/":按浏览器语言重定向到 /{detected}
   if (pathname === "/") {
-    const acceptLang = request.headers.get("accept-language") ?? "";
-    const firstLang = acceptLang.split(",")[0]?.trim() ?? "";
-    const detected = detectLocale(firstLang);
-    return NextResponse.redirect(new URL(`/${detected}`, request.url));
+    return NextResponse.redirect(new URL(`/${resolveLocale(request)}`, request.url), 307);
   }
 
-  // 3. 其他无 locale 前缀的路径，直接放行（工具页面保持原 URL）
-  const response = NextResponse.next();
-  // 从 Accept-Language 推断语言并透传
-  const acceptLang = request.headers.get("accept-language") ?? "";
-  const firstLang = acceptLang.split(",")[0]?.trim() ?? "";
-  const detected = detectLocale(firstLang);
-  response.headers.set("x-locale", detected);
-  return response;
+  // 范围内的无前缀路径(/tarot、/about、精确 /blog):301 到 /{detected}{path}(保留 query)
+  if (isPrefixedRoute(pathname)) {
+    const locale = resolveLocale(request);
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}${pathname}`;
+    url.search = search;
+    return NextResponse.redirect(url, 301);
+  }
+
+  // 其余无前缀路径:兜底放行,按 Accept-Language 注入 x-locale
+  return NextResponse.next({ request: { headers: withLocaleHeader(request, resolveLocale(request)) } });
 }
 
 export const config = {
