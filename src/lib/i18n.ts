@@ -37,8 +37,8 @@ export function detectLocale(acceptLang: string): Locale {
   if (lang.startsWith("en")) {
     return "en";
   }
-  // 其他语言默认英文
-  return "en";
+  // 其他/未知语言(含无 Accept-Language)默认 zh，与 x-default / DEFAULT_LOCALE 一致
+  return DEFAULT_LOCALE;
 }
 
 /** 从 pathname 提取 locale，如 /en/tarot -> "en" */
