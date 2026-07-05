@@ -8,7 +8,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        // /_next/static/media/ 下多为字体等静态资源，被抓取后会出现在 GSC「已抓取-未索引」噪音里
+        disallow: ["/api/", "/_next/static/media/"],
       },
       // 允许主流 AI 爬虫抓取
       { userAgent: "GPTBot",        allow: "/" },
