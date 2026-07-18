@@ -674,10 +674,31 @@ function ModuleSelectPage() {
           </div>
         </Link>
       </div>
+
+      {/* ── 2026 下半年运势专题内链（SEO：首页向核心长尾页输送权重）── */}
+      <div style={{ maxWidth: 960, margin: "0 auto 16px", padding: "0 16px" }}>
+        <Link href="/blog/2026-second-half-zodiac-horoscope" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{
+            borderRadius: 12,
+            border: "1px solid rgba(201,168,76,0.16)",
+            background: "rgba(201,168,76,0.05)",
+            padding: "10px 18px",
+            display: "flex", alignItems: "center", gap: 10,
+            fontSize: "0.8rem", color: "rgba(232,213,163,0.85)",
+          }}>
+            <span style={{ fontSize: 15 }}>🔮</span>
+            <span style={{ flex: 1 }}>
+              {lang === "zh"
+                ? "2026下半年運勢：十二星座＋生肖流年·事業財運感情完整解析"
+                : "2026 Second-Half Horoscope: All 12 Signs + Chinese Zodiac Forecast"}
+            </span>
+            <span style={{ color: "rgba(201,168,76,0.5)", flexShrink: 0 }}>→</span>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }
-
 // ───────────────────────────────────────────
 // 子组件
 // ───────────────────────────────────────────

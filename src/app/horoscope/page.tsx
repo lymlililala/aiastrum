@@ -127,6 +127,23 @@ export default function HoroscopePage() {
             <p className="horoscope-page-footer">
               {t.pageFooter}
             </p>
+
+            {/* 2026 下半年运势专题内链（SEO：高权重工具页向核心长尾页导流） */}
+            <a
+              href="/blog/2026-second-half-zodiac-horoscope"
+              style={{
+                display: "inline-block", marginTop: 14,
+                fontSize: "0.78rem", color: "rgba(232,213,163,0.8)",
+                textDecoration: "none",
+                border: "1px solid rgba(201,168,76,0.2)",
+                background: "rgba(201,168,76,0.05)",
+                borderRadius: 10, padding: "8px 16px",
+              }}
+            >
+              {lang === "zh"
+                ? "🔮 2026下半年運勢：十二星座＋生肖流年完整解析 →"
+                : "🔮 2026 Second-Half Horoscope: 12 Signs + Chinese Zodiac →"}
+            </a>
           </div>
         ) : (
           <div className="horoscope-detail-step">
