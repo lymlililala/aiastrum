@@ -18,7 +18,14 @@ export const metadata: Metadata = {
     template: "%s | AiAstrum",
   },
   description: "Your daily cosmic guide — Tarot readings, birth charts, Bazi destiny, MBTI × Zodiac, AI oracle and more. Ancient wisdom meets modern AI.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  // Google 搜索要求 favicon 尺寸为 48 的倍数，提供 192x192 PNG 保证 SERP 正常显示
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+  },
   // canonical 不在此处硬写，由各页面 generateMetadata 动态设置
   // hreflang alternates 仅首页在此设置，工具页通过 generateMetadata 设置
   openGraph: {
