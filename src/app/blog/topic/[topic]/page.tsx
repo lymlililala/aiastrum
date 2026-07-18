@@ -64,6 +64,37 @@ const TOPICS: Record<string, Topic> = {
     ctaHref: "/ai-mystic",
     ctaLabel: "👉 向 AI 神秘学顾问提问",
   },
+  // ── 2026-07-18 GSC 0718 增补：灵数 / 上升星座 / 天使数字 三个验证需求集群 ──
+  "numerology-life-path": {
+    h1: "生命灵数大全 · Life Path Numbers",
+    title: "生命灵数 1-9 完整解析：计算方法、性格与配对 | Life Path Numbers",
+    description: "生命灵数 1 到 9 号人的完整指南：怎么从生日算出你的灵数、每个数字的性格底色、爱情配对与职业方向，以及 11/22/33 卓越数。",
+    intro: `<p>生命灵数是命理学的入口：把出生日期逐位相加，得到的那个数字被用来描述你的核心性格、天赋与人生课题。这个索引汇总了站内 1 到 9 号灵数的完整解析——从怎么算，到每个数字在爱情、事业里的具体表现。</p>
+<p>不知道怎么算？先看计算方法，再对照你的数字深入阅读。遇到 11、22、33 不要继续相加——那是卓越数，另有专文讲解。</p>`,
+    match: p => re(p, /life[- ]path|numerology|灵数|personal year/) && !re(p, /angel[- ]number|天使数字/),
+    ctaHref: "/numerology",
+    ctaLabel: "👉 免费计算你的生命灵数",
+  },
+  "rising-signs": {
+    h1: "上升星座大全 · Rising Signs",
+    title: "上升星座完整指南：查询方法与 12 上升星座解析 | Rising Signs",
+    description: "上升星座是什么？怎么查自己的上升？12 个上升星座的性格、外貌气质与第一印象完整解析，附太阳/月亮/上升三者关系讲解。",
+    intro: `<p>为什么同一个太阳星座的人看起来千差万别？答案往往在上升星座——你出生那一刻东方地平线上升起的星座，掌管你的外在气质与第一印象。这里汇总了站内所有上升星座解析：先查出自己的上升，再对照阅读。</p>
+<p>查上升需要准确的出生时间与地点。如果暂时查不到，也可以先读「太阳、月亮、上升的关系」建立整体概念。</p>`,
+    match: p => re(p, /rising[- ]sign|ascendant|上升星座|sun[- ]moon[- ]rising/),
+    ctaHref: "/astro",
+    ctaLabel: "👉 免费计算你的上升星座",
+  },
+  "angel-numbers": {
+    h1: "天使数字大全 · Angel Numbers",
+    title: "天使数字含义大全：111 到 1111 重复数字解析 | Angel Numbers",
+    description: "总是看到 111、333、555？天使数字 111 到 1111 的完整含义：爱情、事业、双生火焰各面向解读，以及看到这些数字时该怎么办。",
+    intro: `<p>时钟停在 11:11、收据总额 333、车牌尾号 555——反复出现的数字序列在命理学传统里被称为「天使数字」，被认为是来自宇宙或潜意识的提示。这个索引汇总了站内每个天使数字的完整解析：核心含义、爱情与事业面向，以及看到之后可以怎么做。</p>
+<p>每个数字的解读都结合了单数字能量与重复放大的逻辑，先从你最近最常看到的那个数字开始。</p>`,
+    match: p => re(p, /angel[- ]number|天使数字/),
+    ctaHref: "/numerology",
+    ctaLabel: "👉 免费解读你的数字",
+  },
 };
 
 export function generateStaticParams() {

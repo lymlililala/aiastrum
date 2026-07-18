@@ -5,6 +5,7 @@ import { fetchPostBySlug, fetchAllPosts, type DbBlogPost } from "~/lib/supabase"
 import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links";
 import { canonicalSlug } from "~/lib/canonical-overrides";
 import { buildFaqSchema } from "~/lib/faq-schema";
+import { HOWTO_SCHEMAS } from "~/lib/howto-schemas";
 import { CATEGORY_META } from "../blog-data";
 import { BLOG_CHROME, catLabel, fmtDate } from "../blog-i18n";
 import { type Locale, withLocale } from "~/lib/i18n";
@@ -135,6 +136,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   // FAQPage 结构化数据（仅当正文含明确 FAQ 段时输出）——富媒体结果 + AI 摘要
   const faqSchema = buildFaqSchema(post.content);
 
+  // HowTo 结构化数据（按规范 slug 登记，仅命中的教程类文章输出）
+  const howToSchema = HOWTO_SCHEMAS[canonicalSlug(post.slug)] ?? null;
+
   // 相关文章（按关键词相关度排序）+ 正文上下文内链：共用同一次全量查询
   let related: Array<{ slug: string; category: string; title: string; readingTime: number }> = [];
   let linkedContent = post.content;
@@ -183,6 +187,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {howToSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
         />
       )}
       <style>{`

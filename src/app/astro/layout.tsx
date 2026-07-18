@@ -6,9 +6,9 @@ import ToolArticleLinks from "~/app/components/ToolArticleLinks";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
-    title: "Birth Chart Reading — Natal Chart & Astrology Analysis",
-    description: "Precisely calculate your Sun, Moon, and Ascendant. Generate your personal birth chart and decode the cosmic blueprint of your destiny.",
-    keywords: ["birth chart", "natal chart", "astrology", "rising sign", "moon sign"],
+    title: "Sun, Moon & Rising Sign Calculator — Free Birth Chart Reading",
+    description: "Free sun, moon and rising sign calculator: enter your birth date, time and place to find your Big Three, generate your full natal chart, and decode what each placement means.",
+    keywords: ["sun moon rising calculator", "sun moon rising", "rising sign calculator", "moon sign calculator", "birth chart", "natal chart", "astrology", "big three astrology"],
   },
   zh: {
     title: "星盘解析 — 免费排个人星盘与占星分析",
@@ -34,9 +34,9 @@ export default async function AstroLayout({ children }: { children: React.ReactN
     { name: "Birth Chart", url: `${BASE_URL}/${locale}/astro` },
   ]);
   const webApp = webAppJsonLd({
-    name: "Birth Chart Reading",
+    name: "Sun, Moon & Rising Sign Calculator",
     url: `${BASE_URL}/${locale}/astro`,
-    description: "Calculate your natal chart with Sun, Moon, and Ascendant. AI decodes your cosmic blueprint.",
+    description: "Free sun, moon and rising sign calculator. Generate your natal chart and let AI decode your cosmic blueprint.",
   });
   return (
     <>

@@ -12,6 +12,9 @@ const PILLAR_LABELS = {
   "/blog/topic/tarot-spreads":        { zh: "塔罗牌阵大全", tw: "塔羅牌陣大全", en: "Tarot Spreads" },
   "/blog/topic/rune-meanings":        { zh: "卢恩符文大全", tw: "盧恩符文大全", en: "Rune Meanings" },
   "/blog/topic/crystal-healing":      { zh: "水晶疗愈大全", tw: "水晶療癒大全", en: "Crystal Healing" },
+  "/blog/topic/numerology-life-path": { zh: "生命灵数大全", tw: "生命靈數大全", en: "Life Path Numbers" },
+  "/blog/topic/rising-signs":         { zh: "上升星座大全", tw: "上升星座大全", en: "Rising Signs" },
+  "/blog/topic/angel-numbers":        { zh: "天使数字大全", tw: "天使數字大全", en: "Angel Numbers" },
 } satisfies Record<string, { zh: string; tw: string; en: string }>;
 
 const BASE_URL = "https://aiastrum.com";
@@ -218,6 +221,9 @@ export default async function BlogListPage({
             { href: "/blog/topic/tarot-spreads", icon: "🃏", label: PILLAR_LABELS["/blog/topic/tarot-spreads"][locale] },
             { href: "/blog/topic/rune-meanings", icon: "ᚠ", label: PILLAR_LABELS["/blog/topic/rune-meanings"][locale] },
             { href: "/blog/topic/crystal-healing", icon: "💎", label: PILLAR_LABELS["/blog/topic/crystal-healing"][locale] },
+            { href: "/blog/topic/numerology-life-path", icon: "🔢", label: PILLAR_LABELS["/blog/topic/numerology-life-path"][locale] },
+            { href: "/blog/topic/rising-signs", icon: "🌅", label: PILLAR_LABELS["/blog/topic/rising-signs"][locale] },
+            { href: "/blog/topic/angel-numbers", icon: "😇", label: PILLAR_LABELS["/blog/topic/angel-numbers"][locale] },
           ].map(p => (
             <Link key={p.href} href={p.href} style={{
               display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none",

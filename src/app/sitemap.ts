@@ -119,6 +119,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ── 2b. 主题 pillar 索引页 ────────────────────────────────────────────────
   const pillarEntries: MetadataRoute.Sitemap = [
     "dream-interpretation", "tarot-spreads", "rune-meanings", "crystal-healing",
+    "numerology-life-path", "rising-signs", "angel-numbers",
   ].map(topic => ({
     url: `${BASE_URL}/blog/topic/${topic}`,
     lastModified: SITE_LAUNCH,
