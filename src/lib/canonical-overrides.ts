@@ -5,11 +5,72 @@
 //
 // 依据 GSC 2026-06-09：以下两组为真重复（同语言同意图）。
 // 注意：英文 dates / survival-guide / per-sign 三篇属不同意图，未纳入。
+//
+// 2026-07-18 依据 GSC 0718 数据扩充：规范页一律选「该查询集群下展示量最高的页面」。
+// 例外说明（有意不映射）：
+// - leo-rising-personality-complete-guide 独立排第 19 位（8 展示），与其规范页查询不同，保留
+// - taurus-rising 两篇展示量相近且都弱（17 vs 2），暂不映射
+// - chiron-healing-wound-astrology 有个词排第 9 位，保留
+// - twin-flame-vs-soulmate / twin-flame-tarot-reading-guide / aries|scorpio-rising-*-combinations 属不同意图，保留
 export const CANONICAL_OVERRIDES: Record<string, string> = {
   // 中文「2026 水星逆行时间表」两篇 → 合并到 slug 更简洁的主文章
   "mercury-retrograde-2026-guide": "mercury-retrograde-2026",
-  // Celtic Cross 两篇 → 合并到 Google 已实际收录/排名（171 展示）的那篇，保住既有权重
+  // Celtic Cross 两篇 → 合并到 Google 已实际收录/排名（192 展示 pos34）的那篇，保住既有权重
   "celtic-cross-tarot-spread-guide": "celtic-cross-tarot-spread-complete-guide",
+
+  // ── 天使数字：NNN-angel-number-meaning 握有全部展示量 ──
+  "333-angel-number-deeper-meaning": "333-angel-number-meaning",
+  "angel-number-333-meaning": "333-angel-number-meaning",
+  "angel-number-444-meaning": "444-angel-number-meaning",
+  "angel-number-555-meaning": "555-angel-number-meaning",
+  "angel-number-777-meaning": "777-angel-number-meaning",
+  "angel-number-888-meaning": "888-angel-number-meaning",
+  "angel-number-999-meaning": "999-angel-number-meaning",
+  "angel-number-1111-meaning": "1111-angel-number-meaning",
+  "angel-numbers-guide-all-meanings": "angel-numbers-meaning",
+  "angel-numbers-guide-meanings": "angel-numbers-meaning",
+
+  // ── 生命灵数：life-path-number-N-meaning-guide 为规范页 ──
+  "life-path-1-numerology-meaning": "life-path-number-1-meaning-guide",
+  "life-path-2-numerology-meaning": "life-path-number-2-meaning-guide",
+  "life-path-3-numerology-meaning": "life-path-number-3-meaning-guide",
+  "life-path-4-numerology-meaning": "life-path-number-4-meaning-guide",
+  "life-path-5-numerology-meaning": "life-path-number-5-meaning-guide",
+  "life-path-6-numerology-meaning": "life-path-number-6-meaning-guide",
+  "life-path-7-numerology-meaning": "life-path-number-7-meaning-guide",
+  "life-path-8-numerology-meaning": "life-path-number-8-meaning-guide",
+  "life-path-9-numerology-meaning": "life-path-number-9-meaning-guide",
+  "numerology-life-path-complete-guide": "life-path-number-complete-guide",
+
+  // ── Twin flame：meaning 类合并到 what-is-a-twin-flame；signs 类保留 signs-explained ──
+  "twin-flame-meaning-signs-stages": "what-is-a-twin-flame",
+  "twin-flame-journey-complete-guide": "what-is-a-twin-flame",
+  "twin-flame-signs-and-stages": "twin-flame-signs-explained",
+
+  // ── 上升星座：-rising-sign-meaning 系列为规范页 ──
+  "aries-rising-personality-traits": "aries-rising-sign-meaning",
+  "gemini-rising-personality-complete": "gemini-rising-sign-meaning",
+  "cancer-rising-personality-complete": "cancer-rising-sign-meaning",
+  "virgo-rising-personality-complete": "virgo-rising-sign-meaning",
+  "virgo-rising-personality-complete-guide": "virgo-rising-sign-meaning",
+  "libra-rising-personality-complete": "libra-rising-sign-meaning",
+  "scorpio-rising-personality-traits": "scorpio-rising-sign-meaning",
+  "pisces-rising-personality-complete": "pisces-rising-sign-meaning",
+
+  // ── 其他单点重复 ──
+  "death-in-dreams-meaning": "death-dream-meaning",
+  "taurus-zodiac-sign-personality-traits": "taurus-personality-traits-complete-guide",
+  "chakra-system-seven-chakras-complete": "chakras-explained-beginners-guide",
+  "venus-in-scorpio-meaning": "venus-in-scorpio-love-guide",
+  "venus-in-scorpio-love-meaning": "venus-in-scorpio-love-guide",
+  "black-tourmaline-protection-meaning": "black-tourmaline-protection-grounding-guide",
+  "black-tourmaline-protection-guide": "black-tourmaline-protection-grounding-guide",
+  "chiron-in-natal-chart-wound-healer": "chiron-in-astrology-complete-guide",
+  "chiron-astrology-wounded-healer": "chiron-in-astrology-complete-guide",
+  "crystals-for-protection-negative-energy": "crystals-for-protection",
+  "meditation-for-beginners": "beginners-guide-to-meditation",
+  "beginner-meditation-guide-how-to-start": "beginners-guide-to-meditation",
+  "meditation-for-beginners-complete-guide": "beginners-guide-to-meditation",
 };
 
 /** 返回某 slug 的规范 slug（无映射则返回自身） */
