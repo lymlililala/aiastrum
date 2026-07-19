@@ -51,3 +51,15 @@ gsc/
 scripts/wechat/data/*
 !scripts/wechat/data/accounts.json
 scripts/out/
+
+# 0718 关键词扩展批次的一次性脚本（文章已入 Supabase，脚本不入库）
+scripts/kw-expand-0718-specs.mjs
+scripts/gen-kw-expand-0718.mjs
+scripts/link-boost-kw-0718.mjs
+
+# P2 批次一次性脚本与 OG 封面（产物已上线/入库，本地文件不入库）
+scripts/p2-backup.mjs
+scripts/p2-publish.mjs
+scripts/p2-thin-audit.mjs
+scripts/build-p2-batch2-moons.py
+public/images/og-cover.png
