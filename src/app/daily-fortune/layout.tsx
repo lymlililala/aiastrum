@@ -3,6 +3,7 @@ import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, 
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
+import { DAILY_FORTUNE_SEO } from "./daily-fortune-seo-i18n";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
@@ -39,10 +40,20 @@ export default async function DailyFortuneLayout({ children }: { children: React
     url: `${BASE_URL}/${locale}/daily-fortune`,
     description: m.description,
   });
+  const faqLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: DAILY_FORTUNE_SEO[locale].faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  });
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: webApp }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqLd }} />
       {children}
       <ToolArticleLinks category="daily-fortune" />
     </>

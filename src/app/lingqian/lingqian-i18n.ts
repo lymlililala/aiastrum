@@ -102,6 +102,35 @@ export const T = {
     recordListTitle: "历史记录",
     recordEmptyText: "还没有求签记录",
     recordEmptyHint: "今日诚心一签，开启福运之旅",
+    // ── 新手引导 / SEO / FAQ ──
+    howToTitle: "怎么求签？",
+    howToSteps: [
+      "心里默念想问的事，选择一位神明（观音灵签或黄大仙灵签）",
+      "点击签筒，或摇晃手机，摇出属于你的一支签",
+      "掷筊请示神明：掷出「圣杯」（一正一反），签文即生效",
+      "查看签诗与事业、姻缘、财运、健康四维白话解析，可每日打卡、生成海报分享",
+    ],
+    seoSections: [
+      {
+        heading: "在线求签是什么？",
+        body: "求签是流传千年的中式占卜传统：诚心默念所求之事，从签筒中摇出一支灵签，借签诗窥探事情的走向。本站收录观音灵签与黄大仙灵签，完整还原选神、摇签、掷筊、解签的流程，让你足不出户也能诚心一问。",
+      },
+      {
+        heading: "掷筊是怎么回事？",
+        body: "在传统庙宇里，求到签后还要掷筊请示神明：两枚筊杯一正一反为「圣杯」，表示神明允诺，这支签才算数；两面朝上为「笑杯」、两面朝下为「阴杯」，都需要再掷。本站同样遵循这一规矩，掷出圣杯后方能解签，让每一支签都来得郑重。",
+      },
+      {
+        heading: "求签的小建议",
+        body: "一事一签，问得越具体，签文越有针对性。每位神明每天只赐一签，求到之后不妨细读白话解析，再对照宜忌提示安排当天的事。签文是参考而非定数，心诚、理性，才是求签的正确姿势。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "在线求签收费吗？需要注册吗？", a: "完全免费，无需注册。打开页面选择神明即可开始摇签，签文解析、每日打卡、海报生成全部免费。" },
+      { q: "一天可以求几次签？", a: "每位神明每天只赐一签。同一天对同一位神明重复求签，得到的仍是之前那支签；想再问可以换一位神明，或明天再来。" },
+      { q: "掷筊一直掷不出圣杯怎么办？", a: "每次求签有多次掷筊机会。传统上认为掷不出圣杯是神明示意「时机未到」或「此事不宜再问」，不妨换个时间、换个问法再来。" },
+      { q: "求到的签准吗？", a: "灵签提供的是看事情的另一种角度，不是预言。签诗与白话解析帮你梳理现状、提示宜忌，真正的决定还是要靠自己理性判断。" },
+    ],
   },
 
   tw: {
@@ -191,6 +220,35 @@ export const T = {
     recordListTitle: "歷史記錄",
     recordEmptyText: "還沒有求籤記錄",
     recordEmptyHint: "今日誠心一籤，開啟福運之旅",
+    // ── 新手引導 / SEO / FAQ ──
+    howToTitle: "怎麼求籤？",
+    howToSteps: [
+      "心裡默念想問的事，選擇一位神明（觀音靈籤或黃大仙靈籤）",
+      "點擊籤筒，或搖晃手機，搖出屬於你的一支籤",
+      "擲筊請示神明：擲出「聖杯」（一正一反），籤文即生效",
+      "查看籤詩與事業、姻緣、財運、健康四維白話解析，可每日打卡、生成海報分享",
+    ],
+    seoSections: [
+      {
+        heading: "線上求籤是什麼？",
+        body: "求籤是流傳千年的中式占卜傳統：誠心默念所求之事，從籤筒中搖出一支靈籤，借籤詩窺探事情的走向。本站收錄觀音靈籤與黃大仙靈籤，完整還原選神、搖籤、擲筊、解籤的流程，讓你足不出戶也能誠心一問。",
+      },
+      {
+        heading: "擲筊是怎麼回事？",
+        body: "在傳統廟宇裡，求到籤後還要擲筊請示神明：兩枚筊杯一正一反為「聖杯」，表示神明允諾，這支籤才算數；兩面朝上為「笑杯」、兩面朝下為「陰杯」，都需要再擲。本站同樣遵循這一規矩，擲出聖杯後方能解籤，讓每一支籤都來得鄭重。",
+      },
+      {
+        heading: "求籤的小建議",
+        body: "一事一籤，問得越具體，籤文越有針對性。每位神明每天只賜一籤，求到之後不妨細讀白話解析，再對照宜忌提示安排當天的事。籤文是參考而非定數，心誠、理性，才是求籤的正確姿勢。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "線上求籤收費嗎？需要註冊嗎？", a: "完全免費，無需註冊。打開頁面選擇神明即可開始搖籤，籤文解析、每日打卡、海報生成全部免費。" },
+      { q: "一天可以求幾次籤？", a: "每位神明每天只賜一籤。同一天對同一位神明重複求籤，得到的仍是之前那支籤；想再問可以換一位神明，或明天再來。" },
+      { q: "擲筊一直擲不出聖杯怎麼辦？", a: "每次求籤有多次擲筊機會。傳統上認為擲不出聖杯是神明示意「時機未到」或「此事不宜再問」，不妨換個時間、換個問法再來。" },
+      { q: "求到的籤準嗎？", a: "靈籤提供的是看事情的另一種角度，不是預言。籤詩與白話解析幫你梳理現狀、提示宜忌，真正的決定還是要靠自己理性判斷。" },
+    ],
   },
 
   en: {
@@ -280,6 +338,35 @@ export const T = {
     recordListTitle: "History",
     recordEmptyText: "No draw records yet",
     recordEmptyHint: "A sincere sign today begins a journey of fortune",
+    // ── Onboarding / SEO / FAQ ──
+    howToTitle: "How to draw a sign",
+    howToSteps: [
+      "Hold your question in mind and choose a deity (Guanyin or Wong Tai Sin)",
+      "Tap the tube — or shake your phone — to draw your fortune stick",
+      "Cast the moon blocks for confirmation: a Sacred Cup (one up, one down) seals your sign",
+      "Read the poem plus plain-language readings for career, love, wealth, and health — check in daily and share a poster",
+    ],
+    seoSections: [
+      {
+        heading: "What is online fortune-stick drawing?",
+        body: "Drawing lots (qiuqian) is a centuries-old Chinese divination tradition: focus on your question, shake a stick from the tube, and let the poem hint at how things may unfold. This tool hosts the Guanyin and Wong Tai Sin oracle decks and recreates the full ritual — choose a deity, shake, cast the moon blocks, then read your sign — all from your browser.",
+      },
+      {
+        heading: "What is cup divination (zhi jiao)?",
+        body: "In traditional temples, a drawn stick must be confirmed by casting two moon blocks. One face up and one down is a Sacred Cup — the deity consents and the sign stands. Both up is a Laughing Cup, both down a Yin Cup, and you cast again. This tool follows the same rule: only a Sacred Cup unlocks the reading, keeping every sign properly earned.",
+      },
+      {
+        heading: "Tips for a meaningful draw",
+        body: "One question per sign — the more specific, the sharper the reading. Each deity grants one sign per day, so take time with the plain-language reading and the do's and don'ts before acting. Treat the sign as perspective, not prophecy: sincerity plus good judgement is the right way to ask.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Is drawing a sign free? Do I need an account?", a: "Completely free, no sign-up. Pick a deity and start shaking — readings, daily check-ins, and poster sharing are all free." },
+      { q: "How many signs can I draw per day?", a: "Each deity grants one sign per day. Asking the same deity again on the same day returns the same sign; to ask more, choose another deity or come back tomorrow." },
+      { q: "What if I can't cast a Sacred Cup?", a: "You get several casts per draw. Tradition says failing to get a Sacred Cup means the timing isn't right or the question shouldn't be pressed — try again later, or rephrase what you're asking." },
+      { q: "Are the signs accurate?", a: "A sign offers another angle on your situation, not a prediction. The poem and plain reading help you reflect and weigh do's and don'ts — the final call is always yours." },
+    ],
   },
 };
 

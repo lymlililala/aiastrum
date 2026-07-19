@@ -9,70 +9,8 @@ import Link from "next/link";
 import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
 
-// ── 三语文案 ────────────────────────────────────────
-const T = {
-  zh: {
-    back:          "返回首页",
-    brand:         "生辰八字",
-    restart:       "重新测算",
-    reqFailed:     "请求失败",
-    calcFailed:    "排盘失败，请稍后重试",
-    inputHint:     "请填写出生信息",
-    inputTitle:    "生辰八字测算",
-    inputSubtitle: "天干地支排盘 · AI 命理深度解读",
-    landTitle:     "生辰八字",
-    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
-    landDescL1:    "以出生时间为密钥，",
-    landDescL2:    "解读天干地支间隐藏的命运密码。",
-    landDescL3:    "五行性格 · 流年运势 · AI 深度解读",
-    feat1:         "四柱排盘",
-    feat2:         "五行分析",
-    feat3:         "AI解读",
-    startBtn:      "✦ 开始测算",
-    landFooter:    "✦ 天干地支排盘 · 仅供娱乐参考 ✦",
-  },
-  tw: {
-    back:          "返回首頁",
-    brand:         "生辰八字",
-    restart:       "重新測算",
-    reqFailed:     "請求失敗",
-    calcFailed:    "排盤失敗，請稍後重試",
-    inputHint:     "請填寫出生資訊",
-    inputTitle:    "生辰八字測算",
-    inputSubtitle: "天干地支排盤 · AI 命理深度解讀",
-    landTitle:     "生辰八字",
-    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
-    landDescL1:    "以出生時間為密鑰，",
-    landDescL2:    "解讀天干地支間隱藏的命運密碼。",
-    landDescL3:    "五行性格 · 流年運勢 · AI 深度解讀",
-    feat1:         "四柱排盤",
-    feat2:         "五行分析",
-    feat3:         "AI解讀",
-    startBtn:      "✦ 開始測算",
-    landFooter:    "✦ 天干地支排盤 · 僅供娛樂參考 ✦",
-  },
-  en: {
-    back:          "Home",
-    brand:         "BaZi",
-    restart:       "Restart",
-    reqFailed:     "Request failed",
-    calcFailed:    "Reading failed, please try again later",
-    inputHint:     "Enter your birth details",
-    inputTitle:    "BaZi Reading",
-    inputSubtitle: "Four Pillars chart · In-depth AI interpretation",
-    landTitle:     "BaZi",
-    landSubtitle:  "BAZI · CHINESE ASTROLOGY",
-    landDescL1:    "Your birth time is the key,",
-    landDescL2:    "unlocking the destiny hidden in the Heavenly Stems and Earthly Branches.",
-    landDescL3:    "Five Elements personality · Yearly fortune · In-depth AI reading",
-    feat1:         "Four Pillars",
-    feat2:         "Five Elements",
-    feat3:         "AI Reading",
-    startBtn:      "✦ Start Reading",
-    landFooter:    "✦ Four Pillars chart · For entertainment only ✦",
-  },
-};
-type Lang = "zh" | "en" | "tw";
+// ── 三语文案（见 bazi-i18n.ts，layout.tsx 亦引用 FAQ 生成 JSON-LD）──
+import { T, type Lang } from "./bazi-i18n";
 // ────────────────────────────────────────────────────
 
 type Phase = "landing" | "input" | "loading" | "result";
@@ -385,6 +323,61 @@ function BaziLandingPage({ t, onStart }: { t: (typeof T)[Lang]; onStart: () => v
       >
         {t.landFooter}
       </p>
+
+      {/* ── 新手说明：怎么测算（直接进入的用户也能立刻看懂） ── */}
+      <div style={{
+        marginTop: 36, maxWidth: 480, width: "100%",
+        background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.22)",
+        borderRadius: 14, padding: "18px 20px", textAlign: "left",
+      }}>
+        <div style={{
+          fontFamily: "serif", fontSize: "0.95rem",
+          color: "#e8d5a3", letterSpacing: "0.06em", marginBottom: 12,
+        }}>{t.howToTitle}</div>
+        <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+          {t.howToSteps.map((s, i) => (
+            <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{
+                flexShrink: 0, width: 22, height: 22, borderRadius: "50%",
+                border: "1px solid rgba(201,168,76,0.55)", color: "#c9a84c",
+                fontSize: "0.72rem", display: "inline-flex", alignItems: "center", justifyContent: "center",
+                marginTop: 1,
+              }}>{i + 1}</span>
+              <span style={{ fontSize: "0.85rem", color: "rgba(220,205,175,0.8)", lineHeight: 1.7 }}>{s}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* ── SEO 内容区 + FAQ（SSR 输出，爬虫可读） ── */}
+      <section style={{ maxWidth: 720, margin: "48px auto 0", padding: "0 4px", textAlign: "left" }}>
+        {t.seoSections.map((sec) => (
+          <div key={sec.heading} style={{ marginBottom: 28 }}>
+            <h2 style={{
+              fontFamily: "serif", fontSize: "1.05rem",
+              color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 10,
+              borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+            }}>{sec.heading}</h2>
+            <p style={{ fontSize: "0.88rem", color: "rgba(200,175,140,0.75)", lineHeight: 1.85, margin: 0 }}>{sec.body}</p>
+          </div>
+        ))}
+        <h2 style={{
+          fontFamily: "serif", fontSize: "1.05rem",
+          color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 12,
+          borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+        }}>{t.faqTitle}</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {t.faq.map((f) => (
+            <details key={f.q} style={{
+              background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.18)",
+              borderRadius: 12, padding: "12px 16px",
+            }}>
+              <summary style={{ cursor: "pointer", fontSize: "0.88rem", color: "rgba(232,213,163,0.9)", fontWeight: 600, lineHeight: 1.5 }}>{f.q}</summary>
+              <p style={{ fontSize: "0.84rem", color: "rgba(200,175,140,0.72)", lineHeight: 1.8, margin: "10px 0 2px" }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* 底部装饰天干地支 */}
       <div

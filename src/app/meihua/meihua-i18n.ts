@@ -142,6 +142,35 @@ export const T = {
     knowMethodQuoteSrc: "——邵雍《皇极经世》",
     knowDisclaimerBold:"善易者不卜。",
     knowDisclaimer:"梅花易数为中国传统国学文化，本工具仅供学习研究与心理参考之用，请勿迷信占卜结果，遇重大决策请理性分析、咨询专业人士。",
+    // how-to 步骤卡 / SEO 内容 / FAQ
+    howToTitle:   "怎么起卦？",
+    howToSteps: [
+      "（可选）写下你想占问的事，并选择事项分类，如感情、事业、财运",
+      "选择起卦方式：以此刻时间起卦、输入两个随心数字，或随机起卦",
+      "点击起卦按钮，系统推算出本卦、互卦、变卦与动爻",
+      "查看体用生克分析与行事建议，还可复制卦象结果分享给朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什么是梅花易数？",
+        body: "梅花易数是北宋易学家邵雍创立的占卜之法，核心在于「观物取象、随心起卦」——任何时间、数字、偶然所见之物都可以起卦。起出的卦通过体用生克、五行旺衰来推断事情的吉凶走向，因起卦灵活、断卦直接，被称为「心易」。",
+      },
+      {
+        heading: "三种起卦方式怎么选？",
+        body: "时间起卦是正统之法，以当下年月日时起卦，适合正经占问一件事；数字起卦用你随心想到的两个数字（门牌号、车牌号都可以），万物皆可成卦；随机起卦则模拟邵雍「观梅起卦」，闭目默念所问之事后点击按钮，以心动之机起卦。三种方式卦理相同，心诚则灵。",
+      },
+      {
+        heading: "起卦小贴士",
+        body: "传统讲究「不动不占、无事不占」：心中确有疑问再起卦，一事一卦，不要反复占同一件事。起卦前静下心来默念问题，断卦时重点看体卦与用卦的生克关系——用生体多吉，用克体多阻，再结合行事建议参考即可。",
+      },
+    ],
+    faqTitle:     "常见问题",
+    faq: [
+      { q: "在线起卦需要付费或注册吗？", a: "完全免费，无需注册。选择起卦方式、点击按钮即可起卦，卦象与解析立刻呈现。" },
+      { q: "时间、数字、随机三种起卦方式哪个更准？", a: "卦理相同，没有高下之分。时间起卦最正统，数字起卦最灵活，随机起卦最贴合「心易」本义。关键在起卦时的专注与诚意，而非方式本身。" },
+      { q: "同一件事可以反复起卦吗？", a: "传统上不提倡。《梅花易数》讲「不动不占」，一事反复多占反而失了机锋。一卦定下后，看懂体用生克与建议即可。" },
+      { q: "占卜结果应该怎么看待？", a: "梅花易数是国学文化的一部分，结果仅供赏玩与心理参考。「善易者不卜」——重大决策请理性分析，别让卦象替你做决定。" },
+    ],
   },
   tw: {
     back:          "← 返回首頁",
@@ -264,6 +293,34 @@ export const T = {
     knowMethodQuoteSrc: "——邵雍《皇極經世》",
     knowDisclaimerBold:"善易者不卜。",
     knowDisclaimer:"梅花易數為中國傳統國學文化，本工具僅供學習研究與心理參考之用，請勿迷信占卜結果，遇重大決策請理性分析、諮詢專業人士。",
+    howToTitle:   "怎麼起卦？",
+    howToSteps: [
+      "（可選）寫下你想占問的事，並選擇事項分類，如感情、事業、財運",
+      "選擇起卦方式：以此刻時間起卦、輸入兩個隨心數字，或隨機起卦",
+      "點擊起卦按鈕，系統推算出本卦、互卦、變卦與動爻",
+      "查看體用生剋分析與行事建議，還可複製卦象結果分享給朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是梅花易數？",
+        body: "梅花易數是北宋易學家邵雍創立的占卜之法，核心在於「觀物取象、隨心起卦」——任何時間、數字、偶然所見之物都可以起卦。起出的卦通過體用生剋、五行旺衰來推斷事情的吉凶走向，因起卦靈活、斷卦直接，被稱為「心易」。",
+      },
+      {
+        heading: "三種起卦方式怎麼選？",
+        body: "時間起卦是正統之法，以當下年月日時起卦，適合正經占問一件事；數字起卦用你隨心想到的兩個數字（門牌號、車牌號都可以），萬物皆可成卦；隨機起卦則模擬邵雍「觀梅起卦」，閉目默念所問之事後點擊按鈕，以心動之機起卦。三種方式卦理相同，心誠則靈。",
+      },
+      {
+        heading: "起卦小貼士",
+        body: "傳統講究「不動不占、無事不占」：心中確有疑問再起卦，一事一卦，不要反覆占同一件事。起卦前靜下心來默念問題，斷卦時重點看體卦與用卦的生剋關係——用生體多吉，用剋體多阻，再結合行事建議參考即可。",
+      },
+    ],
+    faqTitle:     "常見問題",
+    faq: [
+      { q: "線上起卦需要付費或註冊嗎？", a: "完全免費，無需註冊。選擇起卦方式、點擊按鈕即可起卦，卦象與解析立刻呈現。" },
+      { q: "時間、數字、隨機三種起卦方式哪個更準？", a: "卦理相同，沒有高下之分。時間起卦最正統，數字起卦最靈活，隨機起卦最貼合「心易」本義。關鍵在起卦時的專注與誠意，而非方式本身。" },
+      { q: "同一件事可以反覆起卦嗎？", a: "傳統上不提倡。《梅花易數》講「不動不占」，一事反覆多占反而失了機鋒。一卦定下後，看懂體用生剋與建議即可。" },
+      { q: "占卜結果應該怎麼看待？", a: "梅花易數是國學文化的一部分，結果僅供賞玩與心理參考。「善易者不卜」——重大決策請理性分析，別讓卦象替你做決定。" },
+    ],
   },
   en: {
     back:          "← Home",
@@ -388,6 +445,34 @@ export const T = {
     knowMethodQuoteSrc: "— Shao Yong, Supreme Principles Governing the World",
     knowDisclaimerBold:"One who truly knows the Yi does not divine.",
     knowDisclaimer:"Plum Blossom Numerology is part of traditional Chinese culture. This tool is for study and personal reflection only — do not treat its results as superstition. For major decisions, reason carefully and consult a professional.",
+    howToTitle:   "How it works",
+    howToSteps: [
+      "(Optional) Write down what you want to ask and pick a category — love, career, wealth…",
+      "Choose a casting method: by the current time, by two numbers from the heart, or random",
+      "Tap the cast button — the system derives the primary, nuclear, and changing hexagrams with the moving line",
+      "Read the Host-Guest analysis and guidance, and copy the result to share with friends",
+    ],
+    seoSections: [
+      {
+        heading: "What is Plum Blossom Numerology?",
+        body: "Plum Blossom Numerology (Mei Hua Yi Shu) is a divination method created by the Northern Song scholar Shao Yong. Its essence is \"reading images and casting from the heart\" — any time, number, or chance observation can become a hexagram. The cast is then read through the Host-Guest relationship and the strength of the Five Elements to judge which way a matter is heading. Flexible to cast and direct to read, it is known as the \"heart method\" (Xin Yi).",
+      },
+      {
+        heading: "Which casting method should I choose?",
+        body: "Casting by time is the orthodox method, deriving the hexagram from the current year, month, day, and hour — best for a formal question. Casting by number uses two numbers that come to mind (a house number, a plate number — anything can cast). Random casting simulates Shao Yong's original \"plum blossom moment\": hold your question in mind and tap the button at the heart's stirring. All three share the same principles — sincerity is what counts.",
+      },
+      {
+        heading: "Tips before you cast",
+        body: "Tradition says \"no stirring, no casting; no question, no divination\": cast only when you truly have a question, one hexagram per matter, and avoid casting the same question repeatedly. Calm yourself and hold the question in mind before casting. When reading the result, focus on the generating/controlling relationship between the Host and Guest trigrams — Guest generating Host is largely favorable, Guest controlling Host suggests obstacles — then weigh the guidance accordingly.",
+      },
+    ],
+    faqTitle:     "FAQ",
+    faq: [
+      { q: "Is online casting free? Do I need an account?", a: "Completely free, no sign-up. Pick a casting method, tap the button, and the hexagram with its reading appears instantly." },
+      { q: "Which method is more accurate — time, number, or random?", a: "All three follow the same principles; none ranks above the others. Time casting is the most orthodox, number casting the most flexible, and random casting truest to the \"heart method\" spirit. What matters is your focus and sincerity, not the method itself." },
+      { q: "Can I cast repeatedly for the same question?", a: "Tradition discourages it. Plum Blossom Numerology teaches \"no stirring, no casting\" — casting the same matter over and over dulls the moment. Once the hexagram is set, read the Host-Guest relationship and the guidance, and let it be." },
+      { q: "How should I treat the result?", a: "Plum Blossom Numerology is part of China's cultural heritage; the result is for appreciation and personal reflection only. \"One who truly knows the Yi does not divine\" — reason through major decisions yourself rather than letting a hexagram decide for you." },
+    ],
   },
 };
 export type Lang = "zh" | "en" | "tw";

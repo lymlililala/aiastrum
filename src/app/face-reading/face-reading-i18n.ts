@@ -102,6 +102,35 @@ export const FACE_T = {
     posterClose:    "关闭",
     posterShareTip: "💬 保存后发到朋友圈，让朋友也来测测看！",
     posterFileName: "AI面相分析",
+    // how-to 步骤卡 / SEO 内容 / FAQ
+    howToTitle:     "怎么测？",
+    howToSteps: [
+      "点击「立即测试」，选择「AI 面相分析」或「AI 手相分析」",
+      "上传一张正面清晰的面部照片，或左手掌心的照片",
+      "AI 自动扫描面部特征或掌纹，几秒钟生成专属分析报告",
+      "查看你的隐藏天赋与维度评分，还能生成海报分享给朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什么是 AI 面相分析？",
+        body: "面相学是流传千年的传统识人术，认为面部五官、轮廓与气色反映一个人的性格与运势。本站用 AI 神经网络模拟这一分析过程：识别你的面部特征后，生成天赋类型、命运指数与事业、财富、贵人缘等维度评分，把古老相术变成一次有趣的赛博算命体验。",
+      },
+      {
+        heading: "手相分析看的是什么？",
+        body: "手相分析聚焦左手掌纹：生命线、智慧线、感情线等主线的走向与深浅，传统上被用来解读精力、思维与情感模式。上传摊开的左手掌心照片，AI 会解读你的掌纹密码，并给出与面相分析同款的维度报告。",
+      },
+      {
+        heading: "拍出好照片的小贴士",
+        body: "面相请选择正面、光线充足、无遮挡的照片，避免侧脸、戴口罩或过暗的画面；手相请摊开手掌、正对镜头、清晰对焦。照片仅用于本次 AI 分析，完成后立即删除，不会留存任何图像数据。",
+      },
+    ],
+    faqTitle:       "常见问题",
+    faq: [
+      { q: "上传的照片会被保存吗？", a: "不会。照片仅用于本次 AI 分析，分析完成后立即删除，不会留存任何图像数据。" },
+      { q: "面相分析和手相分析有什么区别？", a: "面相分析读取面部五官与轮廓特征，侧重性格与整体运势；手相分析读取左手掌纹，侧重生命、智慧与情感线索。可以两种都测，互相参照。" },
+      { q: "分析结果准确吗？", a: "本测试仅供娱乐参考，不代表专业指导意见。把它当作一次轻松的自我探索，和朋友一起测着玩最合适。" },
+      { q: "支持什么格式的照片？", a: "支持 JPG、PNG、WebP 格式，单个文件最大 10MB。正脸清晰、光线充足的照片分析效果最好。" },
+    ],
   },
   tw: {
     navBack:        "← 返回",
@@ -198,6 +227,34 @@ export const FACE_T = {
     posterClose:    "關閉",
     posterShareTip: "💬 儲存後發到朋友圈，讓朋友也來測測看！",
     posterFileName: "AI面相分析",
+    howToTitle:     "怎麼測？",
+    howToSteps: [
+      "點擊「立即測試」，選擇「AI 面相分析」或「AI 手相分析」",
+      "上傳一張正面清晰的面部照片，或左手掌心的照片",
+      "AI 自動掃描面部特徵或掌紋，幾秒鐘生成專屬分析報告",
+      "查看你的隱藏天賦與維度評分，還能生成海報分享給朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是 AI 面相分析？",
+        body: "面相學是流傳千年的傳統識人術，認為面部五官、輪廓與氣色反映一個人的性格與運勢。本站用 AI 神經網路模擬這一分析過程：識別你的面部特徵後，生成天賦類型、命運指數與事業、財富、貴人緣等維度評分，把古老相術變成一次有趣的賽博算命體驗。",
+      },
+      {
+        heading: "手相分析看的是什麼？",
+        body: "手相分析聚焦左手掌紋：生命線、智慧線、感情線等主線的走向與深淺，傳統上被用來解讀精力、思維與情感模式。上傳攤開的左手掌心照片，AI 會解讀你的掌紋密碼，並給出與面相分析同款的維度報告。",
+      },
+      {
+        heading: "拍出好照片的小貼士",
+        body: "面相請選擇正面、光線充足、無遮擋的照片，避免側臉、戴口罩或過暗的畫面；手相請攤開手掌、正對鏡頭、清晰對焦。照片僅用於本次 AI 分析，完成後立即刪除，不會留存任何影像資料。",
+      },
+    ],
+    faqTitle:       "常見問題",
+    faq: [
+      { q: "上傳的照片會被儲存嗎？", a: "不會。照片僅用於本次 AI 分析，分析完成後立即刪除，不會留存任何影像資料。" },
+      { q: "面相分析和手相分析有什麼區別？", a: "面相分析讀取面部五官與輪廓特徵，側重性格與整體運勢；手相分析讀取左手掌紋，側重生命、智慧與情感線索。可以兩種都測，互相參照。" },
+      { q: "分析結果準確嗎？", a: "本測試僅供娛樂參考，不代表專業指導意見。把它當作一次輕鬆的自我探索，和朋友一起測著玩最合適。" },
+      { q: "支援什麼格式的照片？", a: "支援 JPG、PNG、WebP 格式，單個檔案最大 10MB。正臉清晰、光線充足的照片分析效果最好。" },
+    ],
   },
   en: {
     navBack:        "← Back",
@@ -294,6 +351,34 @@ export const FACE_T = {
     posterClose:    "Close",
     posterShareTip: "💬 Save it and share so your friends can try too!",
     posterFileName: "AI_Face_Reading",
+    howToTitle:     "How it works",
+    howToSteps: [
+      "Tap \"Test now\" and choose AI Face Reading or AI Palm Reading",
+      "Upload a clear front-facing photo of your face, or of your left palm",
+      "The AI scans your facial features or palm lines and builds your report in seconds",
+      "See your hidden talents and dimension scores — and generate a poster to share",
+    ],
+    seoSections: [
+      {
+        heading: "What is AI face reading?",
+        body: "Physiognomy is a thousand-year-old art that reads character and fortune from facial features, contours, and complexion. This site recreates the process with an AI neural network: it detects your facial features and produces a talent archetype, a destiny index, and scores for career, wealth, and connections — ancient face reading reimagined as a fun cyber fortune-telling experience.",
+      },
+      {
+        heading: "What does palm reading look at?",
+        body: "Palm reading focuses on the lines of the left hand: the direction and depth of the life line, head line, and heart line, traditionally used to read energy, thinking, and emotional patterns. Upload a photo of your open left palm and the AI decodes your palm lines into the same kind of dimension report.",
+      },
+      {
+        heading: "Tips for a good photo",
+        body: "For face reading, use a front-facing, well-lit, unobstructed photo — avoid side profiles, masks, and dim lighting. For palm reading, open your hand flat, face the camera, and focus sharply. Photos are used only for this AI analysis and deleted right after — no image data is stored.",
+      },
+    ],
+    faqTitle:       "FAQ",
+    faq: [
+      { q: "Are uploaded photos stored?", a: "No. Your photo is used only for this AI analysis and deleted immediately after — no image data is retained." },
+      { q: "What's the difference between face and palm reading?", a: "Face reading analyzes your facial features and contours, focusing on personality and overall fortune; palm reading analyzes the lines of your left palm, focusing on vitality, intellect, and emotion. Try both and compare." },
+      { q: "How accurate is the analysis?", a: "This test is for entertainment only and is not professional advice. Treat it as a light-hearted bit of self-exploration — best enjoyed with friends." },
+      { q: "What photo formats are supported?", a: "JPG, PNG, and WebP, up to 10MB per file. A clear, well-lit, front-facing photo gives the best results." },
+    ],
   },
 };
 export type FaceLang = "zh" | "en" | "tw";

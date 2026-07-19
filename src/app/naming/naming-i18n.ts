@@ -109,6 +109,35 @@ export const T = {
     ndWugeRen:     "人格",
     ndWugeDi:      "地格",
     ndWugeNote:    "* 五格剖象法仅供参考，名字的好坏以五行命理与诗意为主要依据",
+    // ── 新手步骤卡 / SEO 内容 / FAQ ──
+    howToTitle:    "怎么玩？",
+    howToSteps: [
+      "输入宝宝姓氏、性别与出生日期（时辰不确定可先选辰时）",
+      "点击免费测算，系统排出八字四柱并分析五行旺衰",
+      "查看专属喜用神，浏览附五行与诗词出处的吉名推荐",
+      "点开喜欢的名字，看逐字解析、音律平仄与综合评分",
+    ],
+    seoSections: [
+      {
+        heading: "什么是八字起名？",
+        body: "八字起名是根据宝宝出生的年、月、日、时排出四柱八字，分析五行旺衰之后，选取五行契合命局的好名字。传统命理认为，名字的五行若能补益命局，可以起到助运增势的作用。墨韵起名在此基础上结合《诗经》《楚辞》等国学经典，让每个推荐名字既有命理依据，又有诗意出处。",
+      },
+      {
+        heading: "喜用神是怎么算出来的？",
+        body: "喜用神并非简单的“缺什么补什么”，而是根据日主（出生日天干）的强弱，结合整体格局综合研判出的、命局最需要补充的五行。填写出生信息后，系统会自动排盘，给出五行旺衰分析与专属喜用神，后续的名字推荐也都以此为依据甄选。",
+      },
+      {
+        heading: "给宝宝起名字的小建议",
+        body: "一个好名字通常要兼顾三点：五行契合喜用神、寓意美好有出处、读起来音律和谐。建议多比较几个候选名的逐字解析与综合评分，把喜欢的名字念给家人听，选大家都顺口、都喜欢的那一个。测算结果仅供参考，最终决定以父母的心意为准。",
+      },
+    ],
+    faqTitle:      "常见问题",
+    faq: [
+      { q: "墨韵起名是免费的吗？", a: "完全免费，也无需注册。填写宝宝姓氏与出生信息，即可测算八字并获取吉名推荐。" },
+      { q: "不确定宝宝的出生时辰怎么办？", a: "时辰会影响时柱的推算。如果不确定，可以先选辰时（07-09 点）测算，结果仍具参考价值；之后确认了准确时辰，建议重新测算一次。" },
+      { q: "推荐名字的诗词出处是真实的吗？", a: "精选吉名均附带《诗经》《楚辞》等国学经典的出处与原文，方便你核对；AI 精选推荐的名字会注明其寓意与推荐理由。" },
+      { q: "五格数理重要吗？", a: "名字详情页附有五格数理作为参考，但本工具以五行命理契合度与诗意品格为主要甄选依据，五格剖象仅供参考。" },
+    ],
   },
   tw: {
     back:          "← 返回首頁",
@@ -206,6 +235,35 @@ export const T = {
     ndWugeRen:     "人格",
     ndWugeDi:      "地格",
     ndWugeNote:    "* 五格剖象法僅供參考，名字的好壞以五行命理與詩意為主要依據",
+    // ── 新手步驟卡 / SEO 內容 / FAQ ──
+    howToTitle:    "怎麼玩？",
+    howToSteps: [
+      "輸入寶寶姓氏、性別與出生日期（時辰不確定可先選辰時）",
+      "點擊免費測算，系統排出八字四柱並分析五行旺衰",
+      "查看專屬喜用神，瀏覽附五行與詩詞出處的吉名推薦",
+      "點開喜歡的名字，看逐字解析、音律平仄與綜合評分",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是八字起名？",
+        body: "八字起名是根據寶寶出生的年、月、日、時排出四柱八字，分析五行旺衰之後，選取五行契合命局的好名字。傳統命理認為，名字的五行若能補益命局，可以起到助運增勢的作用。墨韻起名在此基礎上結合《詩經》《楚辭》等國學經典，讓每個推薦名字既有命理依據，又有詩意出處。",
+      },
+      {
+        heading: "喜用神是怎麼算出來的？",
+        body: "喜用神並非簡單的「缺什麼補什麼」，而是根據日主（出生日天干）的強弱，結合整體格局綜合研判出的、命局最需要補充的五行。填寫出生資訊後，系統會自動排盤，給出五行旺衰分析與專屬喜用神，後續的名字推薦也都以此為依據甄選。",
+      },
+      {
+        heading: "幫寶寶取名字的小建議",
+        body: "一個好名字通常要兼顧三點：五行契合喜用神、寓意美好有出處、讀起來音律和諧。建議多比較幾個候選名的逐字解析與綜合評分，把喜歡的名字唸給家人聽，選大家都順口、都喜歡的那一個。測算結果僅供參考，最終決定以父母的心意為準。",
+      },
+    ],
+    faqTitle:      "常見問題",
+    faq: [
+      { q: "墨韻起名是免費的嗎？", a: "完全免費，也無需註冊。填寫寶寶姓氏與出生資訊，即可測算八字並獲取吉名推薦。" },
+      { q: "不確定寶寶的出生時辰怎麼辦？", a: "時辰會影響時柱的推算。如果不確定，可以先選辰時（07-09 點）測算，結果仍具參考價值；之後確認了準確時辰，建議重新測算一次。" },
+      { q: "推薦名字的詩詞出處是真實的嗎？", a: "精選吉名均附帶《詩經》《楚辭》等國學經典的出處與原文，方便你核對；AI 精選推薦的名字會註明其寓意與推薦理由。" },
+      { q: "五格數理重要嗎？", a: "名字詳情頁附有五格數理作為參考，但本工具以五行命理契合度與詩意品格為主要甄選依據，五格剖象僅供參考。" },
+    ],
   },
   en: {
     back:          "← Home",
@@ -303,6 +361,35 @@ export const T = {
     ndWugeRen:     "Human",
     ndWugeDi:      "Earth",
     ndWugeNote:    "* The Five Grids method is for reference only; element astrology and poetry are the primary basis for a good name",
+    // ── How-to steps / SEO content / FAQ ──
+    howToTitle:    "How it works",
+    howToSteps: [
+      "Enter the baby's surname, gender and birth date (pick the Chen hour if unsure)",
+      "Tap the free reading — the system builds the four BaZi pillars and analyzes the Five Elements",
+      "See the favorable elements, then browse name picks with elements and classical sources",
+      "Open any name for character-by-character analysis, tone pattern and overall score",
+    ],
+    seoSections: [
+      {
+        heading: "What is BaZi naming?",
+        body: "BaZi naming builds a Four Pillars chart from the baby's birth year, month, day and hour, analyzes the balance of the Five Elements, and selects names whose elements harmonize with the chart. Traditional metaphysics holds that a name whose elements supplement the chart can support one's fortune. Name Oracle goes further by drawing names from classics like the Book of Songs and the Songs of Chu, so every pick has both a metaphysical basis and a poetic source.",
+      },
+      {
+        heading: "How are the favorable elements calculated?",
+        body: "The favorable elements (xiyongshen) are not a simple matter of \"filling what is missing.\" They are judged from the strength of the day master — the Heavenly Stem of the birth day — together with the overall pattern of the chart. Once you submit the birth details, the system charts the pillars automatically, shows the element balance and favorable elements, and screens every recommended name against them.",
+      },
+      {
+        heading: "Tips for choosing a baby name",
+        body: "A good name usually balances three things: elements that match the favorable elements, a beautiful meaning with a literary source, and a pleasant sound. Compare the character-by-character analysis and scores of a few candidates, read the finalists aloud with your family, and pick the one everyone loves. Results are for reference only — the final choice always rests with the parents.",
+      },
+    ],
+    faqTitle:      "FAQ",
+    faq: [
+      { q: "Is Name Oracle free?", a: "Completely free, no sign-up needed. Enter the surname and birth details to get a BaZi reading and auspicious name picks." },
+      { q: "What if I don't know the exact birth hour?", a: "The birth hour affects the hour pillar. If you're unsure, choose the Chen hour (7-9 AM) — the result is still a useful reference. Once you confirm the exact hour, run the reading again." },
+      { q: "Are the classical sources real?", a: "Yes — selected names come with their source text from classics such as the Book of Songs and the Songs of Chu so you can verify them. AI picks state their meaning and recommendation reason." },
+      { q: "How much do the Five Grids matter?", a: "The name detail page includes a simplified Five Grids analysis for reference, but this tool primarily selects names by element fit and poetic quality." },
+    ],
   },
 };
 export type Lang = "zh" | "en" | "tw";

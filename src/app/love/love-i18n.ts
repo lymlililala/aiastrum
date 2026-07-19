@@ -104,6 +104,47 @@ export const LOVE_T = {
     shareTextScoreR: "）\n",
     shareTextPost: "\n\n👉 测测你的姻缘：",
     reportDisclaimer: "⚠ 本报告内容仅供情感参考与趣味体验，请理性对待，切勿将占卜结果作为重大决策依据。",
+    // 新手步骤 / SEO / FAQ
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "填写你的称呼（支持化名，无需真实姓名）",
+      "选择性别与公历出生日期",
+      "点击“免费测算我的姻缘”，稍等几秒生成专属报告",
+      "查看姻缘指数、感情特质与桃花运势；报告自动保存在本机，可随时回看",
+    ],
+    seoSections: [
+      {
+        heading: "什么是姻缘占卜？",
+        body: "这是一项结合星盘、八字与紫微的三维感情解析工具。只需出生日期与性别，就能从东西方命理的交叉视角，解读你的爱情风格、桃花运势与正缘特征，帮你更清楚地看见自己的感情模式。",
+      },
+      {
+        heading: "姻缘测算如何工作？",
+        body: "提交出生信息后，系统会根据你的命盘计算姻缘指数、桃花指数与时机指数，并生成感情特质分析、近三个月桃花运势与命中正缘画像。报告会自动保存在你的设备上，随时回来都能查看。",
+      },
+      {
+        heading: "提升姻缘的小贴士",
+        body: "把报告当作一面镜子而非预言：了解自己的感情优势与盲区，在对的时间主动一点，往往比等待更重要。桃花旺盛期适合多社交、多表达；平淡期则适合修炼自己，为下一段缘分蓄力。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      {
+        q: "测算需要提供真实姓名吗？",
+        a: "不需要。称呼支持化名，留空则显示为“匿名”，信息仅用于生成你的专属报告，不会用于其他用途。",
+      },
+      {
+        q: "姻缘占卜真的准吗？",
+        a: "报告融合了星盘与命理的统计学解读，适合自我探索与情感参考。它可以帮你看清模式与时机，但感情的走向始终掌握在你自己手中，请理性看待。",
+      },
+      {
+        q: "我的测算报告会保存吗？",
+        a: "会。报告生成后自动保存在你的浏览器本地，下次打开本页面可直接回看；点击“重新测算”即可清除并重新开始。",
+      },
+      {
+        q: "测算收费吗？",
+        a: "基础测算完全免费，无需注册。提交出生信息即可获得姻缘指数与感情特质分析，部分深度内容可在报告页解锁。",
+      },
+    ],
   },
   tw: {
     back:        "← 返回",
@@ -201,6 +242,47 @@ export const LOVE_T = {
     shareTextScoreR: "）\n",
     shareTextPost: "\n\n👉 測測你的姻緣：",
     reportDisclaimer: "⚠ 本報告內容僅供情感參考與趣味體驗，請理性對待，切勿將占卜結果作為重大決策依據。",
+    // 新手步驟 / SEO / FAQ
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "填寫你的稱呼（支援化名，無需真實姓名）",
+      "選擇性別與國曆出生日期",
+      "點擊「免費測算我的姻緣」，稍等幾秒生成專屬報告",
+      "查看姻緣指數、感情特質與桃花運勢；報告自動保存在本機，可隨時回看",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是姻緣占卜？",
+        body: "這是一項結合星盤、八字與紫微的三維感情解析工具。只需出生日期與性別，就能從東西方命理的交叉視角，解讀你的愛情風格、桃花運勢與正緣特徵，幫你更清楚地看見自己的感情模式。",
+      },
+      {
+        heading: "姻緣測算如何運作？",
+        body: "提交出生資訊後，系統會根據你的命盤計算姻緣指數、桃花指數與時機指數，並生成感情特質分析、近三個月桃花運勢與命中正緣畫像。報告會自動保存在你的裝置上，隨時回來都能查看。",
+      },
+      {
+        heading: "提升姻緣的小貼士",
+        body: "把報告當作一面鏡子而非預言：了解自己的感情優勢與盲區，在對的時間主動一點，往往比等待更重要。桃花旺盛期適合多社交、多表達；平淡期則適合修煉自己，為下一段緣分蓄力。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      {
+        q: "測算需要提供真實姓名嗎？",
+        a: "不需要。稱呼支援化名，留空則顯示為「匿名」，資訊僅用於生成你的專屬報告，不會用於其他用途。",
+      },
+      {
+        q: "姻緣占卜真的準嗎？",
+        a: "報告融合了星盤與命理的統計學解讀，適合自我探索與情感參考。它可以幫你看清模式與時機，但感情的走向始終掌握在你自己手中，請理性看待。",
+      },
+      {
+        q: "我的測算報告會保存嗎？",
+        a: "會。報告生成後自動保存在你的瀏覽器本地，下次打開本頁面可直接回看；點擊「重新測算」即可清除並重新開始。",
+      },
+      {
+        q: "測算收費嗎？",
+        a: "基礎測算完全免費，無需註冊。提交出生資訊即可獲得姻緣指數與感情特質分析，部分深度內容可在報告頁解鎖。",
+      },
+    ],
   },
   en: {
     back:        "← Back",
@@ -298,6 +380,47 @@ export const LOVE_T = {
     shareTextScoreR: ")\n",
     shareTextPost: "\n\n👉 Read your own love destiny:",
     reportDisclaimer: "⚠ This report is for emotional reflection and fun only. Please stay rational and do not treat divination as a basis for major decisions.",
+    // How-to steps / SEO / FAQ
+    howToTitle: "How it works",
+    howToSteps: [
+      "Enter a name or nickname (aliases are welcome — no real name needed)",
+      "Pick your gender and Gregorian birth date",
+      "Tap \"Read my love destiny for free\" and wait a few seconds for your personal report",
+      "See your love index, love traits and romance forecast; the report is saved on your device for anytime viewing",
+    ],
+    seoSections: [
+      {
+        heading: "What is this love destiny reading?",
+        body: "A three-dimensional love analysis combining the birth chart, BaZi, and Zi Wei. With just your birth date and gender, it reads your love style, romance luck, and soulmate traits from the cross-perspective of Eastern and Western destiny lore, helping you see your patterns in love more clearly.",
+      },
+      {
+        heading: "How does the reading work?",
+        body: "Once you submit your birth details, the system computes your love index, romance index, and timing index from your chart, then generates a personality-in-love analysis, a three-month romance forecast, and a portrait of your destined partner. The report is saved on your device so you can revisit it anytime.",
+      },
+      {
+        heading: "Tips to invite love in",
+        body: "Treat the report as a mirror, not a prophecy: know your strengths and blind spots in love, and be a little braver when the timing is right — initiative often beats waiting. Use peak romance windows to socialize and express yourself, and quiet stretches to grow into the person your next chapter deserves.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      {
+        q: "Do I need to give my real name?",
+        a: "No. Aliases are welcome, and leaving it blank shows \"Anonymous\". Your details are only used to generate your personal report and nothing else.",
+      },
+      {
+        q: "Is a love destiny reading accurate?",
+        a: "The report blends statistical readings from astrology and destiny lore, and is best used for self-exploration and emotional reference. It can reveal patterns and timing, but where your love life goes is always in your own hands — take it lightly.",
+      },
+      {
+        q: "Is my report saved?",
+        a: "Yes. Once generated, the report is stored locally in your browser, so reopening this page brings it right back. Tap \"Restart\" to clear it and begin a new reading.",
+      },
+      {
+        q: "Does the reading cost anything?",
+        a: "The basic reading is completely free and requires no sign-up. Submit your birth details to get your love index and love traits; some in-depth sections can be unlocked on the report page.",
+      },
+    ],
   },
 };
 

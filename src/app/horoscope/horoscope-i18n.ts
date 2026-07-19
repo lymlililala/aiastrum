@@ -62,6 +62,35 @@ export const T = {
       leo: "狮子座", virgo: "处女座", libra: "天秤座", scorpio: "天蝎座",
       sagittarius: "射手座", capricorn: "摩羯座", aquarius: "水瓶座", pisces: "双鱼座",
     } as Record<ZodiacId, string>,
+    // 新手步骤 + SEO 内容 + FAQ
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "在星盘中找到并点击你的星座（按出生日期选择）",
+      "进入详情页，查看综合、爱情、事业、财运、健康五维运势指数",
+      "切换今日 / 明日 / 本周 / 本月，查看不同时间维度的运势",
+      "参考幸运色、幸运数字与贴心建议，还可以生成运势海报保存分享",
+    ],
+    seoSections: [
+      {
+        heading: "什么是星座运势？",
+        body: "星座运势以你出生时太阳所在的黄道星座为基础，结合星象运行推演你在某段时间内的整体能量走向。本站覆盖十二星座，提供今日、明日、本周、本月四个时间维度，每个维度都从综合、爱情、事业、财运、健康五个方面给出指数与详解。",
+      },
+      {
+        heading: "五维运势指数怎么看？",
+        body: "五个维度的指数可以直观对比当天的强弱项：哪一项分数高，就顺势多投入；哪一项偏低，不妨放慢节奏、谨慎决策。指数之外，文字详解会给出更具体的情境描述，幸运指南则提供幸运色、幸运数字、幸运方位等日常可用的小提示。",
+      },
+      {
+        heading: "提升运势的小贴士",
+        body: "运势更适合当作生活的参考坐标，而不是行动的铁律。分数高的日子大胆推进重要计划，分数一般的日子适合复盘与蓄力。每天回来看看运势变化，长期下来你会更了解自己状态的节奏。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "星座运势需要输入出生信息吗？", a: "不需要。只要知道自己的太阳星座（按公历生日划分），点击对应星座即可查看运势，完全免费也不用注册。你的选择会保存在浏览器里，下次打开自动记住。" },
+      { q: "运势多久更新一次？", a: "今日与明日运势按天更新，本周运势按周更新，本月运势按月更新。同一天内同一星座的内容保持稳定，不会每次刷新都变化。" },
+      { q: "为什么我的运势和别人不一样？", a: "同一星座的人看到的运势是一样的——太阳星座运势面向整个星座群体。想要更个人化的解读，需要结合完整出生星盘（上升、月亮等），可以试试本站的星盘类工具。" },
+      { q: "运势分数低代表要倒霉吗？", a: "不是。低分只是提示该维度的能量相对平缓，适合守不适合攻。运势是一种节奏参考，真正的走向永远取决于你的选择和行动。" },
+    ],
   },
   tw: {
     back:            "← 返回",
@@ -117,6 +146,35 @@ export const T = {
       leo: "獅子座", virgo: "處女座", libra: "天秤座", scorpio: "天蠍座",
       sagittarius: "射手座", capricorn: "摩羯座", aquarius: "水瓶座", pisces: "雙魚座",
     } as Record<ZodiacId, string>,
+    // 新手步驟 + SEO 內容 + FAQ
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "在星盤中找到並點擊你的星座（按出生日期選擇）",
+      "進入詳情頁，查看綜合、愛情、事業、財運、健康五維運勢指數",
+      "切換今日 / 明日 / 本週 / 本月，查看不同時間維度的運勢",
+      "參考幸運色、幸運數字與貼心建議，還可以生成運勢海報儲存分享",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是星座運勢？",
+        body: "星座運勢以你出生時太陽所在的黃道星座為基礎，結合星象運行推演你在某段時間內的整體能量走向。本站覆蓋十二星座，提供今日、明日、本週、本月四個時間維度，每個維度都從綜合、愛情、事業、財運、健康五個方面給出指數與詳解。",
+      },
+      {
+        heading: "五維運勢指數怎麼看？",
+        body: "五個維度的指數可以直觀對比當天的強弱項：哪一項分數高，就順勢多投入；哪一項偏低，不妨放慢節奏、謹慎決策。指數之外，文字詳解會給出更具體的情境描述，幸運指南則提供幸運色、幸運數字、幸運方位等日常可用的小提示。",
+      },
+      {
+        heading: "提升運勢的小貼士",
+        body: "運勢更適合當作生活的參考座標，而不是行動的鐵律。分數高的日子大膽推進重要計畫，分數一般的日子適合復盤與蓄力。每天回來看看運勢變化，長期下來你會更了解自己狀態的節奏。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "星座運勢需要輸入出生資訊嗎？", a: "不需要。只要知道自己的太陽星座（按公曆生日劃分），點擊對應星座即可查看運勢，完全免費也不用註冊。你的選擇會儲存在瀏覽器裡，下次開啟自動記住。" },
+      { q: "運勢多久更新一次？", a: "今日與明日運勢按天更新，本週運勢按週更新，本月運勢按月更新。同一天內同一星座的內容保持穩定，不會每次重新整理都變化。" },
+      { q: "為什麼我的運勢和別人不一樣？", a: "同一星座的人看到的運勢是一樣的——太陽星座運勢面向整個星座群體。想要更個人化的解讀，需要結合完整出生星盤（上升、月亮等），可以試試本站的星盤類工具。" },
+      { q: "運勢分數低代表要倒楣嗎？", a: "不是。低分只是提示該維度的能量相對平緩，適合守不適合攻。運勢是一種節奏參考，真正的走向永遠取決於你的選擇和行動。" },
+    ],
   },
   en: {
     back:            "← Back",
@@ -172,6 +230,35 @@ export const T = {
       leo: "Leo", virgo: "Virgo", libra: "Libra", scorpio: "Scorpio",
       sagittarius: "Sagittarius", capricorn: "Capricorn", aquarius: "Aquarius", pisces: "Pisces",
     } as Record<ZodiacId, string>,
+    // How-to steps + SEO content + FAQ
+    howToTitle: "How it works",
+    howToSteps: [
+      "Find your zodiac sign in the wheel and tap it (by your birth date)",
+      "Open the detail page for five fortune indexes: overall, love, career, wealth, health",
+      "Switch between Today / Tomorrow / This week / This month for different time frames",
+      "Check the lucky color, lucky number, and friendly advice — and save a fortune poster to share",
+    ],
+    seoSections: [
+      {
+        heading: "What is a horoscope?",
+        body: "A horoscope reads the energy around your Sun sign — the zodiac sign the Sun occupied when you were born. This site covers all 12 signs across four time frames (today, tomorrow, this week, this month), each broken into five dimensions: overall, love, career, wealth, and health.",
+      },
+      {
+        heading: "How to read the five fortune indexes",
+        body: "The five indexes show your strong and weak spots at a glance: lean into whichever dimension scores high, and slow down where it runs low. Beyond the numbers, the written readings describe concrete situations, while the lucky guide offers everyday tips like lucky colors, numbers, and directions.",
+      },
+      {
+        heading: "Tips for making the most of your horoscope",
+        body: "Treat your horoscope as a compass, not a command. Push important plans forward on high-score days; use quieter days to review and recharge. Checking in daily over time helps you learn the rhythm of your own energy.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Do I need to enter birth details?", a: "No. Just know your Sun sign (set by your birthday), tap it, and read your fortune — completely free, no sign-up. Your choice is remembered in your browser for next time." },
+      { q: "How often is the horoscope updated?", a: "Today and tomorrow refresh daily, the weekly horoscope refreshes each week, and the monthly one each month. Within a single day, content for the same sign stays stable." },
+      { q: "Why is my horoscope the same as someone else's?", a: "People sharing a Sun sign see the same reading — Sun-sign horoscopes speak to the whole sign. For a truly personal reading you'd need your full birth chart (rising sign, Moon, and more) — try the chart tools on this site." },
+      { q: "Does a low score mean bad luck?", a: "No. A low score simply means that dimension's energy is running quiet — a day to hold rather than push. Horoscopes are a rhythm reference; your choices shape the outcome." },
+    ],
   },
 };
 

@@ -3,6 +3,7 @@ import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, 
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
+import { MBTI_SEO } from "./mbti-data";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
@@ -39,10 +40,20 @@ export default async function MbtiLayout({ children }: { children: React.ReactNo
     url: `${BASE_URL}/${locale}/mbti`,
     description: m.description,
   });
+  const faqLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: MBTI_SEO[locale].faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  });
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: webApp }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqLd }} />
       {children}
       <ToolArticleLinks category="mbti" />
     </>

@@ -50,6 +50,35 @@ export const T = {
     posterPsych: "◆ 潜意识解析",
     posterFooter:"命运密语 · 探索你的潜意识",
     posterFileName: "周公解梦",
+    // how-to 步骤卡 / SEO 内容 / FAQ
+    howToTitle:  "怎么解梦？",
+    howToSteps: [
+      "在输入框里描述你的梦，或直接输入一个关键词（如「蛇」「水」「飞翔」）",
+      "也可以点下方热门梦境或分类库里的词条，一键直达解析",
+      "点击「开始解梦」，稍等片刻即可看到传统周公解梦与心理学的双重解读",
+      "觉得有共鸣，可以生成解梦海报保存或分享给朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什么是周公解梦？",
+        body: "周公解梦是流传千年的中国传统解梦体系，认为梦中出现的物象对应着现实生活中的吉凶征兆。本站收录了梦见蛇、梦见水、梦见飞翔、梦见掉牙等数百个常见梦境词条，输入关键词即可查询传统释义，是一份随手可用的在线解梦大全。",
+      },
+      {
+        heading: "为什么要结合心理学解梦？",
+        body: "现代心理学（尤其是荣格学派）认为，梦是潜意识的投影：反复出现的梦境往往反映了你近期的情绪状态与内心冲突。因此每一次解析都会同时给出传统周公解梦的吉凶宜忌和荣格心理学的潜意识分析，两个视角互相参照，比单一说法更有参考价值。",
+      },
+      {
+        heading: "解梦小贴士",
+        body: "描述梦境时尽量具体：梦里出现了什么、你当时在做什么、醒来时的情绪如何，细节越多解析越贴合。如果只记得一个画面，直接输入那个关键词即可。解析结果适合当作自我觉察的线索，而不是对未来的预言。",
+      },
+    ],
+    faqTitle:    "常见问题",
+    faq: [
+      { q: "在线解梦需要注册或付费吗？", a: "完全免费，也不需要注册。输入梦境内容或关键词，点击「开始解梦」即可获得解析。" },
+      { q: "梦见蛇、梦见掉牙是什么意思？", a: "直接在输入框输入「蛇」「掉牙」等关键词，或点击热门梦境标签，就能看到该梦境的传统释义与心理学解读。不同的梦境细节含义不同，描述越具体解析越贴合。" },
+      { q: "解梦结果准吗？", a: "解梦不是预言。传统释义来自民间经验积累，心理学解析是自我觉察的工具——把它当作了解自己的一个视角，有共鸣就收下，不必尽信。" },
+      { q: "我输入的梦境会被保存吗？", a: "梦境内容仅用于本次生成解析，不会公开展示，也不会关联到你的个人身份。" },
+    ],
   },
   tw: {
     back:        "← 返回",
@@ -91,6 +120,34 @@ export const T = {
     posterPsych: "◆ 潛意識解析",
     posterFooter:"命運密語 · 探索你的潛意識",
     posterFileName: "周公解夢",
+    howToTitle:  "怎麼解夢？",
+    howToSteps: [
+      "在輸入框裡描述你的夢，或直接輸入一個關鍵詞（如「蛇」「水」「飛翔」）",
+      "也可以點下方熱門夢境或分類庫裡的詞條，一鍵直達解析",
+      "點擊「開始解夢」，稍等片刻即可看到傳統周公解夢與心理學的雙重解讀",
+      "覺得有共鳴，可以生成解夢海報儲存或分享給朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是周公解夢？",
+        body: "周公解夢是流傳千年的中國傳統解夢體系，認為夢中出現的物象對應著現實生活中的吉凶徵兆。本站收錄了夢見蛇、夢見水、夢見飛翔、夢見掉牙等數百個常見夢境詞條，輸入關鍵詞即可查詢傳統釋義，是一份隨手可用的線上解夢大全。",
+      },
+      {
+        heading: "為什麼要結合心理學解夢？",
+        body: "現代心理學（尤其是榮格學派）認為，夢是潛意識的投影：反覆出現的夢境往往反映了你近期的情緒狀態與內心衝突。因此每一次解析都會同時給出傳統周公解夢的吉凶宜忌和榮格心理學的潛意識分析，兩個視角互相參照，比單一說法更有參考價值。",
+      },
+      {
+        heading: "解夢小貼士",
+        body: "描述夢境時盡量具體：夢裡出現了什麼、你當時在做什麼、醒來時的情緒如何，細節越多解析越貼合。如果只記得一個畫面，直接輸入那個關鍵詞即可。解析結果適合當作自我覺察的線索，而不是對未來的預言。",
+      },
+    ],
+    faqTitle:    "常見問題",
+    faq: [
+      { q: "線上解夢需要註冊或付費嗎？", a: "完全免費，也不需要註冊。輸入夢境內容或關鍵詞，點擊「開始解夢」即可獲得解析。" },
+      { q: "夢見蛇、夢見掉牙是什麼意思？", a: "直接在輸入框輸入「蛇」「掉牙」等關鍵詞，或點擊熱門夢境標籤，就能看到該夢境的傳統釋義與心理學解讀。不同的夢境細節含義不同，描述越具體解析越貼合。" },
+      { q: "解夢結果準嗎？", a: "解夢不是預言。傳統釋義來自民間經驗累積，心理學解析是自我覺察的工具——把它當作了解自己的一個視角，有共鳴就收下，不必盡信。" },
+      { q: "我輸入的夢境會被儲存嗎？", a: "夢境內容僅用於本次生成解析，不會公開展示，也不會關聯到你的個人身份。" },
+    ],
   },
   en: {
     back:        "← Back",
@@ -132,6 +189,34 @@ export const T = {
     posterPsych: "◆ Subconscious Reading",
     posterFooter:"Whispers of destiny · Explore your subconscious",
     posterFileName: "dream",
+    howToTitle:  "How it works",
+    howToSteps: [
+      "Describe your dream in the box, or just type a keyword (e.g. snake, water, flying)",
+      "Or tap a popular dream tag or a category entry below for an instant reading",
+      "Hit \"Interpret\" and get a dual reading — traditional Chinese dream lore plus psychology",
+      "If it resonates, generate a poster to save or share with friends",
+    ],
+    seoSections: [
+      {
+        heading: "What is Zhou Gong dream interpretation?",
+        body: "Zhou Gong's dream lore is a thousand-year-old Chinese tradition that reads dream images as omens for waking life. This site indexes hundreds of common dreams — snakes, water, flying, losing teeth — so you can look up the traditional meaning of any dream by keyword, like a free online dream dictionary.",
+      },
+      {
+        heading: "Why combine it with psychology?",
+        body: "Modern psychology, especially the Jungian school, sees dreams as projections of the subconscious: recurring dreams often mirror your recent emotions and inner conflicts. Every reading here pairs the traditional omens and guidance with a Jungian analysis of your subconscious, so you get two perspectives instead of one.",
+      },
+      {
+        heading: "Tips for a better reading",
+        body: "Be specific when describing your dream: what appeared, what you were doing, how you felt when you woke up — the more detail, the better the reading. If you only remember one image, just type that keyword. Treat the result as a clue for self-reflection, not a prophecy.",
+      },
+    ],
+    faqTitle:    "FAQ",
+    faq: [
+      { q: "Is dream interpretation free? Do I need an account?", a: "Completely free, no sign-up. Type your dream or a keyword, tap \"Interpret\", and the reading appears." },
+      { q: "What does dreaming of snakes or losing teeth mean?", a: "Type \"snake\" or \"losing teeth\" into the box, or tap a popular dream tag, to see the traditional meaning plus a psychological reading. Details matter — the more specific your description, the more fitting the interpretation." },
+      { q: "Are the readings accurate?", a: "Dream interpretation is not prophecy. The traditional meanings come from folk experience, and the psychological reading is a tool for self-awareness — take it as one perspective on yourself, not gospel." },
+      { q: "Is my dream stored anywhere?", a: "Your dream text is only used to generate this reading. It is never displayed publicly or tied to your identity." },
+    ],
   },
 };
 

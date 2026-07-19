@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
+import { AI_MYSTIC_SEO } from "./ai-mystic-data";
 import "./ai-mystic.css";
 
 // ── 三语文案（UI chrome） ────────────────────────────
@@ -660,6 +661,7 @@ function nowTime(): string {
 export default function AIMysticPage() {
   const lang = useLocale() as Lang;
   const t = T[lang];
+  const seo = AI_MYSTIC_SEO[lang];
 
   const [messages, setMessages] = useState<Message[]>(() => [{
     id: "welcome",
@@ -869,6 +871,62 @@ export default function AIMysticPage() {
       <div className="mystic-disclaimer">
         {t.disclaimer}
       </div>
+
+      {/* ── 新手说明：怎么玩（直接进入的用户也能立刻看懂） ── */}
+      <div style={{
+        margin: "24px auto 0", maxWidth: 480, width: "calc(100% - 32px)",
+        background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.22)",
+        borderRadius: 14, padding: "18px 20px", textAlign: "left",
+        boxSizing: "border-box",
+      }}>
+        <div style={{
+          fontFamily: "var(--font-cinzel), serif", fontSize: "0.95rem",
+          color: "#e8d5a3", letterSpacing: "0.06em", marginBottom: 12,
+        }}>{seo.howToTitle}</div>
+        <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+          {seo.howToSteps.map((s, i) => (
+            <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <span style={{
+                flexShrink: 0, width: 22, height: 22, borderRadius: "50%",
+                border: "1px solid rgba(201,168,76,0.55)", color: "#c9a84c",
+                fontSize: "0.72rem", display: "inline-flex", alignItems: "center", justifyContent: "center",
+                marginTop: 1,
+              }}>{i + 1}</span>
+              <span style={{ fontSize: "0.85rem", color: "rgba(220,205,175,0.8)", lineHeight: 1.7 }}>{s}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* ── SEO 内容区 + FAQ（SSR 输出，爬虫可读） ── */}
+      <section style={{ maxWidth: 720, margin: "48px auto 0", padding: "0 20px 32px", textAlign: "left", boxSizing: "border-box", width: "100%" }}>
+        {seo.seoSections.map((sec) => (
+          <div key={sec.heading} style={{ marginBottom: 28 }}>
+            <h2 style={{
+              fontFamily: "var(--font-cinzel), serif", fontSize: "1.05rem",
+              color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 10,
+              borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+            }}>{sec.heading}</h2>
+            <p style={{ fontSize: "0.88rem", color: "rgba(200,175,140,0.75)", lineHeight: 1.85, margin: 0 }}>{sec.body}</p>
+          </div>
+        ))}
+        <h2 style={{
+          fontFamily: "var(--font-cinzel), serif", fontSize: "1.05rem",
+          color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 12,
+          borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+        }}>{seo.faqTitle}</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {seo.faq.map((f) => (
+            <details key={f.q} style={{
+              background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.18)",
+              borderRadius: 12, padding: "12px 16px",
+            }}>
+              <summary style={{ cursor: "pointer", fontSize: "0.88rem", color: "rgba(232,213,163,0.9)", fontWeight: 600, lineHeight: 1.5 }}>{f.q}</summary>
+              <p style={{ fontSize: "0.84rem", color: "rgba(200,175,140,0.72)", lineHeight: 1.8, margin: "10px 0 2px" }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

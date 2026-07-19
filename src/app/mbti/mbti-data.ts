@@ -825,3 +825,105 @@ export function getMBTIZodiacProfile(
 ): MBTIZodiacProfile {
   return buildProfile(mbti, zodiac, lang);
 }
+
+// ===== 新手步骤卡 / SEO 内容 / FAQ（三语，page 与 layout 的 FAQPage JSON-LD 共用） =====
+export interface MbtiSeoContent {
+  howToTitle: string;
+  howToSteps: string[];
+  seoSections: { heading: string; body: string }[];
+  faqTitle: string;
+  faq: { q: string; a: string }[];
+}
+
+export const MBTI_SEO: Record<Lang, MbtiSeoContent> = {
+  zh: {
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "在第一栏点选你的 MBTI 人格类型（16 型之一）",
+      "在第二栏点选你的星座",
+      "点击「解锁我的宇宙档案」，查看人格特质、内心 OS 与危险模式",
+      "生成专属宇宙海报，保存图片分享给朋友",
+    ],
+    seoSections: [
+      {
+        heading: "MBTI × 星座碰撞是什么？",
+        body: "把 16 型 MBTI 人格与 12 星座两两组合，生成一份带梗的人格档案：超能力、致命弱点、事业方向、爱情模式、今日内心 OS 一应俱全。16 × 12 = 192 种组合，每一种都是「宇宙限定款」，都有专属的标题、标语与解读文案。",
+      },
+      {
+        heading: "不知道自己的 MBTI 怎么办？",
+        body: "可以凭直觉先选一个最像你的类型玩起来，也可以去做一份标准 MBTI 测试后再回来对号入座。星座则按公历生日确定，比如 3 月 21 日到 4 月 19 日出生是白羊座，换语言后星座名会自动切换为当地叫法。",
+      },
+      {
+        heading: "这份档案能怎么用？",
+        body: "它最适合当社交货币：生成海报发给朋友、配上「本人实测」发动态，或者看看你和 crush 的组合配不配。档案里还附了最配类型与同类代表人物，方便你顺手玩梗。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "这个测试是免费的吗？", a: "完全免费，无需注册。点选你的 MBTI 类型和星座，就能立刻生成完整人格档案。" },
+      { q: "MBTI × 星座有科学依据吗？", a: "没有，这是娱乐向的人格玩梗工具，不是心理测评。看得开心、有共鸣，就是它全部的使命。" },
+      { q: "一共有多少种组合？", a: "16 种 MBTI × 12 星座 = 192 种组合，每种组合都有专属的标题、标语和完整解读。" },
+      { q: "可以换一个组合重新测吗？", a: "可以。点击结果页底部的「换一个组合」即可返回重新选择，不限次数。" },
+    ],
+  },
+  tw: {
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "在第一欄點選你的 MBTI 人格類型（16 型之一）",
+      "在第二欄點選你的星座",
+      "點擊「解鎖我的宇宙檔案」，查看人格特質、內心 OS 與危險模式",
+      "生成專屬宇宙海報，儲存圖片分享給朋友",
+    ],
+    seoSections: [
+      {
+        heading: "MBTI × 星座碰撞是什麼？",
+        body: "把 16 型 MBTI 人格與 12 星座兩兩組合，生成一份帶梗的人格檔案：超能力、致命弱點、事業方向、愛情模式、今日內心 OS 一應俱全。16 × 12 = 192 種組合，每一種都是「宇宙限定款」，都有專屬的標題、標語與解讀文案。",
+      },
+      {
+        heading: "不知道自己的 MBTI 怎麼辦？",
+        body: "可以憑直覺先選一個最像你的類型玩起來，也可以去做一份標準 MBTI 測試後再回來對號入座。星座則按國曆生日確定，比如 3 月 21 日到 4 月 19 日出生是牡羊座，切換語言後星座名會自動切換為當地叫法。",
+      },
+      {
+        heading: "這份檔案能怎麼用？",
+        body: "它最適合當社交貨幣：生成海報發給朋友、配上「本人實測」發動態，或者看看你和 crush 的組合配不配。檔案裡還附了最配類型與同類代表人物，方便你順手玩梗。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "這個測試是免費的嗎？", a: "完全免費，無需註冊。點選你的 MBTI 類型和星座，就能立刻生成完整人格檔案。" },
+      { q: "MBTI × 星座有科學依據嗎？", a: "沒有，這是娛樂向的人格玩梗工具，不是心理測評。看得開心、有共鳴，就是它全部的使命。" },
+      { q: "一共有多少種組合？", a: "16 種 MBTI × 12 星座 = 192 種組合，每種組合都有專屬的標題、標語和完整解讀。" },
+      { q: "可以換一個組合重新測嗎？", a: "可以。點擊結果頁底部的「換一個組合」即可返回重新選擇，不限次數。" },
+    ],
+  },
+  en: {
+    howToTitle: "How it works",
+    howToSteps: [
+      "Pick your MBTI personality type in the first grid (one of 16)",
+      "Pick your zodiac sign in the second grid",
+      "Tap \"Unlock my cosmic profile\" to see your traits, inner OS and danger mode",
+      "Generate your cosmic poster and save the image to share",
+    ],
+    seoSections: [
+      {
+        heading: "What is MBTI × Zodiac Planet Collision?",
+        body: "It pairs the 16 MBTI personality types with the 12 zodiac signs to generate a meme-flavored personality profile: superpower, fatal flaw, career path, love style and today's inner monologue. With 16 × 12 = 192 combos, every pairing is a cosmic limited edition with its own title, tagline and full reading.",
+      },
+      {
+        heading: "Don't know your MBTI type?",
+        body: "Go with your gut and pick the type that sounds most like you, or take a standard MBTI assessment first and come back. Your zodiac sign is set by your Gregorian birthday — for example, March 21 to April 19 is Aries — and sign names localize automatically when you switch languages.",
+      },
+      {
+        heading: "What can you do with your profile?",
+        body: "It's built as social currency: generate the poster and send it to friends, post it with a \"can confirm\" caption, or check the pairing between you and your crush. Each profile also lists your best match and famous people of the same combo — perfect meme material.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Is this test free?", a: "Completely free, no sign-up needed. Pick your MBTI type and zodiac sign to instantly generate the full profile." },
+      { q: "Is MBTI × Zodiac scientific?", a: "No — it's an entertainment tool for personality memes, not a psychological assessment. If it makes you laugh or feel seen, it has done its job." },
+      { q: "How many combinations are there?", a: "16 MBTI types × 12 zodiac signs = 192 combos, each with its own title, tagline and complete reading." },
+      { q: "Can I try another combination?", a: "Yes. Tap \"Try another combo\" at the bottom of the result page to go back and pick again — as many times as you like." },
+    ],
+  },
+};

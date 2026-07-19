@@ -178,6 +178,36 @@ export const T = {
     unlockFeat4:     "✦ 大限流年运势",
     unlockNote:      "一次性解锁 · 永久查看 · 支持分享精美图片",
     freeReset:       "← 重新排盘",
+
+    // ── 使用步骤 + SEO 内容 + FAQ ──
+    howToTitle:      "怎么排盘？",
+    howToSteps: [
+      "填写称呼（可用化名）与性别（坤命 / 乾命）",
+      "选择公历或农历，填下你的出生年月日",
+      "选择出生时辰；不确定可选「不确定」，系统以年月日前三柱排盘",
+      "点击生成，查看十二宫星盘、命格总评与性格标签",
+    ],
+    seoSections: [
+      {
+        heading: "什么是紫微斗数？",
+        body: "紫微斗数被誉为东方占星之王，以出生年月日时排出命盘：紫微、天府等十四主星落入命、财帛、官禄、夫妻等十二宫位，再配合禄、权、科、忌四化飞星，解读一个人的性格格局、财富事业与情感姻缘。相比星座只看太阳位置，紫微斗数的颗粒度更细，是人生轨迹的具象地图。",
+      },
+      {
+        heading: "紫微命盘怎么看？",
+        body: "命宫是整张命盘的核心，坐命的主星决定你的天赋格局；再看财帛、官禄、夫妻等宫位与三方四正的会照关系，就能读出各领域的基本盘。本工具提供小白模式与专业模式两种视图，点击任意宫位即可高亮它的三方四正，新手也能一步步看懂自己的盘。",
+      },
+      {
+        heading: "排盘小贴士",
+        body: "时辰直接决定命宫的位置，误差两小时排出的盘可能完全不同，填写前建议先向父母确认；填下出生地可做真太阳时校准，让排盘更精准。紫微斗数是传统文化参考工具，适合用来认识自我，请理性看待结果。",
+      },
+    ],
+    faqTitle:        "常见问题",
+    faq: [
+      { q: "紫微斗数和八字有什么区别？", a: "两者同源但侧重不同：八字以五行生克看命局气势，紫微斗数则把星曜落入十二个具体宫位，财富、事业、感情各有专属宫位，画面感更强、更易入门。" },
+      { q: "不知道出生时辰可以排盘吗？", a: "可以。时辰选「不确定」时，系统会以年月日前三柱提供基础排盘；但请注意命宫由时辰定位，缺了时辰，宫位解读的准确度会打折扣。" },
+      { q: "排盘是免费的吗？", a: "生成星盘完全免费：十二宫排盘、命格总评与性格标签都可直接查看；更深度的财富、事业、情感与大限流年解读需要一次性解锁。" },
+      { q: "我的星盘会被保存吗？", a: "星盘只保存在你自己的浏览器本地，方便下次打开直接查看；点击「重新排盘」即可清除。我们不会在服务器留存你的出生信息。" },
+    ],
   },
   tw: {
     back:            "返回",
@@ -340,6 +370,35 @@ export const T = {
     unlockFeat4:     "✦ 大限流年運勢",
     unlockNote:      "一次性解鎖 · 永久查看 · 支援分享精美圖片",
     freeReset:       "← 重新排盤",
+
+    howToTitle:      "怎麼排盤？",
+    howToSteps: [
+      "填寫稱呼（可用化名）與性別（坤命 / 乾命）",
+      "選擇國曆或農曆，填下你的出生年月日",
+      "選擇出生時辰；不確定可選「不確定」，系統以年月日前三柱排盤",
+      "點擊生成，查看十二宮星盤、命格總評與性格標籤",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是紫微斗數？",
+        body: "紫微斗數被譽為東方占星之王，以出生年月日時排出命盤：紫微、天府等十四主星落入命、財帛、官祿、夫妻等十二宮位，再配合祿、權、科、忌四化飛星，解讀一個人的性格格局、財富事業與情感姻緣。相比星座只看太陽位置，紫微斗數的顆粒度更細，是人生軌跡的具象地圖。",
+      },
+      {
+        heading: "紫微命盤怎麼看？",
+        body: "命宮是整張命盤的核心，坐命的主星決定你的天賦格局；再看財帛、官祿、夫妻等宮位與三方四正的會照關係，就能讀出各領域的基本盤。本工具提供小白模式與專業模式兩種視圖，點擊任意宮位即可高亮它的三方四正，新手也能一步步看懂自己的盤。",
+      },
+      {
+        heading: "排盤小貼士",
+        body: "時辰直接決定命宮的位置，誤差兩小時排出的盤可能完全不同，填寫前建議先向父母確認；填下出生地可做真太陽時校準，讓排盤更精準。紫微斗數是傳統文化參考工具，適合用來認識自我，請理性看待結果。",
+      },
+    ],
+    faqTitle:        "常見問題",
+    faq: [
+      { q: "紫微斗數和八字有什麼區別？", a: "兩者同源但側重不同：八字以五行生剋看命局氣勢，紫微斗數則把星曜落入十二個具體宮位，財富、事業、感情各有專屬宮位，畫面感更強、更易入門。" },
+      { q: "不知道出生時辰可以排盤嗎？", a: "可以。時辰選「不確定」時，系統會以年月日前三柱提供基礎排盤；但請注意命宮由時辰定位，缺了時辰，宮位解讀的準確度會打折扣。" },
+      { q: "排盤是免費的嗎？", a: "生成星盤完全免費：十二宮排盤、命格總評與性格標籤都可直接查看；更深度的財富、事業、情感與大限流年解讀需要一次性解鎖。" },
+      { q: "我的星盤會被儲存嗎？", a: "星盤只儲存在你自己的瀏覽器本地，方便下次打開直接查看；點擊「重新排盤」即可清除。我們不會在伺服器留存你的出生資訊。" },
+    ],
   },
   en: {
     back:            "Home",
@@ -502,6 +561,35 @@ export const T = {
     unlockFeat4:     "✦ Major & annual fortune",
     unlockNote:      "One-time unlock · permanent access · shareable beautiful images",
     freeReset:       "← New chart",
+
+    howToTitle:      "How it works",
+    howToSteps: [
+      "Enter a name (an alias is fine) and your gender",
+      "Pick the solar or lunar calendar and fill in your birth date",
+      "Choose your birth hour — or “Not sure” to cast a basic chart from the first three pillars",
+      "Tap generate to see your 12-palace chart, destiny overview, and personality tags",
+    ],
+    seoSections: [
+      {
+        heading: "What is Zi Wei Dou Shu?",
+        body: "Zi Wei Dou Shu (Purple Star Astrology) is known as the king of Eastern astrology. From your birth date and hour it casts a chart in which the 14 major stars — Zi Wei, Tian Fu and others — fall into twelve palaces governing life, wealth, career, marriage and more, while the four transformations (Lu, Quan, Ke, Ji) reveal where opportunities and challenges fly. Where Western zodiac signs look only at the Sun, this system maps your life's trajectory in far finer detail.",
+      },
+      {
+        heading: "How do I read the chart?",
+        body: "The Life Palace is the heart of the chart — its ruling star defines your innate pattern. Then look at the Wealth, Career, and Spouse palaces and their triads and opposites to read each area of life. This tool offers both a Beginner view in plain language and a Professional view with the traditional grid; tap any palace to highlight its triad and see how it connects.",
+      },
+      {
+        heading: "Tips for an accurate chart",
+        body: "The birth hour fixes the Life Palace, so a two-hour error can produce a completely different chart — confirm it with your parents if you can. Adding your birthplace enables true-solar-time calibration for extra precision. Zi Wei Dou Shu is a traditional-culture reference: use it for self-understanding and view the results rationally.",
+      },
+    ],
+    faqTitle:        "FAQ",
+    faq: [
+      { q: "How is Zi Wei Dou Shu different from BaZi?", a: "Both come from the same tradition but emphasize different things: BaZi reads the momentum of your chart through Five-Element interactions, while Zi Wei Dou Shu places stars into twelve concrete palaces — wealth, career, love each get their own — making it more visual and beginner-friendly." },
+      { q: "Can I cast a chart without knowing my birth hour?", a: "Yes. Choose “Not sure” and the system casts a basic chart from the year, month, and day pillars. Note that the Life Palace is located by the hour, so palace-level readings lose precision without it." },
+      { q: "Is the chart free?", a: "Casting the chart is completely free — the 12-palace layout, destiny overview, and personality tags are all included. Deeper readings of wealth, career, love, and decade/annual fortune require a one-time unlock." },
+      { q: "Is my chart saved anywhere?", a: "Your chart is stored only in your own browser so it loads instantly next time; tap “New chart” to clear it. We don't keep your birth details on our servers." },
+    ],
   },
 };
 export type Lang = "zh" | "en" | "tw";

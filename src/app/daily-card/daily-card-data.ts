@@ -849,6 +849,11 @@ export interface DailyCardUI {
   posterClose: string;
   fileName: string;
   tarotLink: string;
+  howToTitle: string;
+  howToSteps: string[];
+  seoSections: { heading: string; body: string }[];
+  faqTitle: string;
+  faq: { q: string; a: string }[];
 }
 
 export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
@@ -867,6 +872,34 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterClose: "关闭",
     fileName: "今日宇宙提示卡",
     tarotLink: "🔮 探索 78 张塔罗牌意",
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "深呼吸，心里默念一个你正在思考的问题（也可以什么都不想）",
+      "轻触卡背，翻开今天的宇宙提示",
+      "把这句话当作今天的小提醒，喜欢就保存成图片分享给朋友",
+      "每天只有一张，明天再来抽新的",
+    ],
+    seoSections: [
+      {
+        heading: "每日宇宙提示卡是什么？",
+        body: "每天一张的免费日签。系统会根据日期选出属于今天的提示卡——一句简短的宇宙讯息和一段解读，帮你在忙碌的一天开始之前停下来，换一个角度看问题。它更像一个轻松的小仪式，而不是正式的占卜。",
+      },
+      {
+        heading: "为什么每天只有一张？",
+        body: "一张刚刚好。每天固定的一张卡，让你把注意力真正放在这句话上，而不是不停地重抽直到满意为止。卡片内容当天不变，零点过后会换成新的一天、新的提示。",
+      },
+      {
+        heading: "提示卡和塔罗牌有什么不同？",
+        body: "提示卡是我们设计的轻量日签，适合每天花一分钟看一眼；如果你想深入了解牌意或自己抽牌占卜，可以逛逛 78 张塔罗牌意库，或试试在线塔罗抽牌。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "每日一签需要注册或付费吗？", a: "完全免费，也不用注册。打开页面点一下卡背就能抽，今天的内容立刻揭晓。" },
+      { q: "今天的卡可以重新抽吗？", a: "不可以。卡片是按日期确定的，同一天内容固定不变。这也是它的意义——接住今天的第一句话。明天零点会换一张新的。" },
+      { q: "这些卡片是塔罗牌吗？", a: "不是严格意义上的塔罗牌，而是本站设计的宇宙提示卡。想研究塔罗牌意，可以去 78 张塔罗牌意库慢慢看。" },
+      { q: "提示卡准吗？", a: "别把它当预言。它更像一面镜子：用一句话帮你换个角度看待今天正在发生的事。有共鸣就收下，没有就一笑而过。" },
+    ],
   },
   tw: {
     back: "← 返回",
@@ -883,6 +916,34 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterClose: "關閉",
     fileName: "今日宇宙提示卡",
     tarotLink: "🔮 探索 78 張塔羅牌意",
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "深呼吸，心裡默念一個你正在思考的問題（也可以什麼都不想）",
+      "輕觸卡背，翻開今天的宇宙提示",
+      "把這句話當作今天的小提醒，喜歡就儲存成圖片分享給朋友",
+      "每天只有一張，明天再來抽新的",
+    ],
+    seoSections: [
+      {
+        heading: "每日宇宙提示卡是什麼？",
+        body: "每天一張的免費日籤。系統會根據日期選出屬於今天的提示卡——一句簡短的宇宙訊息和一段解讀，幫你在忙碌的一天開始之前停下來，換一個角度看問題。它更像一個輕鬆的小儀式，而不是正式的占卜。",
+      },
+      {
+        heading: "為什麼每天只有一張？",
+        body: "一張剛剛好。每天固定的一張卡，讓你把注意力真正放在這句話上，而不是不停地重抽直到滿意為止。卡片內容當天不變，零點過後會換成新的一天、新的提示。",
+      },
+      {
+        heading: "提示卡和塔羅牌有什麼不同？",
+        body: "提示卡是我們設計的輕量日籤，適合每天花一分鐘看一眼；如果你想深入了解牌意或自己抽牌占卜，可以逛逛 78 張塔羅牌意庫，或試試線上塔羅抽牌。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "每日一籤需要註冊或付費嗎？", a: "完全免費，也不用註冊。打開頁面點一下卡背就能抽，今天的內容立刻揭曉。" },
+      { q: "今天的卡可以重新抽嗎？", a: "不可以。卡片是按日期確定的，同一天內容固定不變。這也是它的意義——接住今天的第一句話。明天零點會換一張新的。" },
+      { q: "這些卡片是塔羅牌嗎？", a: "不是嚴格意義上的塔羅牌，而是本站設計的宇宙提示卡。想研究塔羅牌意，可以去 78 張塔羅牌意庫慢慢看。" },
+      { q: "提示卡準嗎？", a: "別把它當預言。它更像一面鏡子：用一句話幫你換個角度看待今天正在發生的事。有共鳴就收下，沒有就一笑而過。" },
+    ],
   },
   en: {
     back: "← Back",
@@ -899,6 +960,34 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterClose: "Close",
     fileName: "Daily-Cosmic-Card",
     tarotLink: "🔮 Explore All 78 Tarot Card Meanings",
+    howToTitle: "How it works",
+    howToSteps: [
+      "Take a breath and hold a question in mind (or nothing at all)",
+      "Tap the card back to reveal today's message",
+      "Read it as a small reminder for your day — save it as an image to share",
+      "One card per day. Come back tomorrow for a new one",
+    ],
+    seoSections: [
+      {
+        heading: "What is the Daily Cosmic Card?",
+        body: "A free daily card, one per day. The system picks a card for the date — a short cosmic message with a brief reading — giving you a moment to pause and look at your day from a different angle. It's a light daily ritual rather than a formal divination.",
+      },
+      {
+        heading: "Why only one card a day?",
+        body: "One is just enough. A fixed card for the day keeps your attention on the message instead of re-drawing until you like the answer. The card stays the same all day and refreshes at midnight with a new message.",
+      },
+      {
+        heading: "How is this different from tarot?",
+        body: "The cosmic card is a lightweight daily prompt designed by us, perfect for a one-minute pause. If you want to go deeper — study card meanings or do a full reading — explore our 78-card tarot library or try an online tarot draw.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Is the daily card free? Do I need an account?", a: "Completely free, no sign-up needed. Open the page, tap the card back, and today's message is revealed instantly." },
+      { q: "Can I draw again if I don't like today's card?", a: "No — the card is determined by the date and stays fixed all day. That's the point: take the first message the day offers you. A new card arrives at midnight." },
+      { q: "Are these actual tarot cards?", a: "Not in the strict sense. They're cosmic prompt cards designed by us. To study real tarot meanings, browse our complete 78-card tarot library." },
+      { q: "Is the card 'accurate'?", a: "Don't read it as a prediction. It's a mirror: one sentence that helps you see your day from another angle. Take it if it resonates, smile and move on if it doesn't." },
+    ],
   },
 };
 

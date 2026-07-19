@@ -85,6 +85,36 @@ export const T = {
     rankBest:      "最佳",
     rankSecond:    "次佳",
     rankRecommend: "推荐",
+
+    // ── 新手引导 / SEO / FAQ ──
+    howToTitle: "怎么查黄历？",
+    howToSteps: [
+      "「今日黄历」默认展示今天的宜忌、冲煞方位与吉凶时辰",
+      "点日期两侧的箭头，可前后翻查任意一天的黄历",
+      "切到「定制择日」，选择要办的事（嫁娶、搬家、开业等）和时间范围",
+      "可选填本人生肖避冲、限定只看周末，点击推算即可得到吉日列表",
+    ],
+    seoSections: [
+      {
+        heading: "老黄历是什么？",
+        body: "老黄历（通书）是传统中式历法的生活指南：依据干支纪日、十二建除与神煞推算，标出每一天适宜和忌讳的事项——嫁娶、搬家、开业、动土、出行，一目了然。本站每日自动推算，并附财神、喜神、福神方位与彭祖百忌，方便随时查看今日宜忌。",
+      },
+      {
+        heading: "定制择日怎么工作？",
+        body: "告诉我们要办的事和时间范围，系统会在范围内逐日筛选：先匹配该事项的「宜」，再剔除与您生肖相冲的日子，还可以只保留周末。最终按吉利程度给出最佳、次佳、推荐三档黄道吉日，省去自己一页页翻黄历的功夫。",
+      },
+      {
+        heading: "用好黄历的小贴士",
+        body: "宜忌是传统历法的经验总结，适合作为安排日程的参考，而非硬性约束。遇到「诸事不宜」的日子不必焦虑；重要事项不妨多挑几个吉日备选，再结合天气、假期等现实条件做决定，才是黄历的正确打开方式。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "查黄历、择吉日收费吗？", a: "完全免费，无需注册。今日宜忌、时辰吉凶、定制择日、吉日海报全部免费使用。" },
+      { q: "每日宜忌是怎么算出来的？", a: "依据传统历法推算：以干支纪日为基础，结合十二建除、值神与神煞方位综合判定每日宜忌，并标注冲煞生肖与方位，供日常安排参考。" },
+      { q: "「生肖避冲」是什么意思？", a: "黄历中每一天都有相冲的生肖（如「冲鼠」）。择日时填入本人生肖，系统会自动剔除与您相冲的日期，避免选到对自己不利的日子。" },
+      { q: "时间范围内找不到吉日怎么办？", a: "说明该范围内没有同时满足条件的日子。建议扩大时间范围、取消「仅看周末」限制，或去掉生肖避冲后再推算一次。" },
+    ],
   },
   tw: {
     back:          "← 返回",
@@ -160,6 +190,36 @@ export const T = {
     rankBest:      "最佳",
     rankSecond:    "次佳",
     rankRecommend: "推薦",
+
+    // ── 新手引導 / SEO / FAQ ──
+    howToTitle: "怎麼查黃曆？",
+    howToSteps: [
+      "「今日黃曆」預設展示今天的宜忌、沖煞方位與吉凶時辰",
+      "點日期兩側的箭頭，可前後翻查任意一天的黃曆",
+      "切到「客製擇日」，選擇要辦的事（嫁娶、搬家、開業等）和時間範圍",
+      "可選填本人生肖避沖、限定只看週末，點擊推算即可得到吉日列表",
+    ],
+    seoSections: [
+      {
+        heading: "老黃曆是什麼？",
+        body: "老黃曆（通書）是傳統中式曆法的生活指南：依據干支紀日、十二建除與神煞推算，標出每一天適宜和忌諱的事項——嫁娶、搬家、開業、動土、出行，一目瞭然。本站每日自動推算，並附財神、喜神、福神方位與彭祖百忌，方便隨時查看今日宜忌。",
+      },
+      {
+        heading: "客製擇日怎麼運作？",
+        body: "告訴我們要辦的事和時間範圍，系統會在範圍內逐日篩選：先匹配該事項的「宜」，再剔除與您生肖相沖的日子，還可以只保留週末。最終按吉利程度給出最佳、次佳、推薦三檔黃道吉日，省去自己一頁頁翻黃曆的功夫。",
+      },
+      {
+        heading: "用好黃曆的小貼士",
+        body: "宜忌是傳統曆法的經驗總結，適合作為安排日程的參考，而非硬性約束。遇到「諸事不宜」的日子不必焦慮；重要事項不妨多挑幾個吉日備選，再結合天氣、假期等現實條件做決定，才是黃曆的正確打開方式。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "查黃曆、擇吉日收費嗎？", a: "完全免費，無需註冊。今日宜忌、時辰吉凶、客製擇日、吉日海報全部免費使用。" },
+      { q: "每日宜忌是怎麼算出來的？", a: "依據傳統曆法推算：以干支紀日為基礎，結合十二建除、值神與神煞方位綜合判定每日宜忌，並標注沖煞生肖與方位，供日常安排參考。" },
+      { q: "「生肖避沖」是什麼意思？", a: "黃曆中每一天都有相沖的生肖（如「沖鼠」）。擇日時填入本人生肖，系統會自動剔除與您相沖的日期，避免選到對自己不利的日子。" },
+      { q: "時間範圍內找不到吉日怎麼辦？", a: "說明該範圍內沒有同時滿足條件的日子。建議擴大時間範圍、取消「僅看週末」限制，或去掉生肖避沖後再推算一次。" },
+    ],
   },
   en: {
     back:          "← Back",
@@ -235,6 +295,36 @@ export const T = {
     rankBest:      "Best",
     rankSecond:    "Runner-up",
     rankRecommend: "Recommended",
+
+    // ── Onboarding / SEO / FAQ ──
+    howToTitle: "How to use the almanac",
+    howToSteps: [
+      "\"Today's Almanac\" shows today's do's & don'ts, clash directions, and lucky hours",
+      "Use the arrows beside the date to browse any day, past or future",
+      "Switch to \"Find a Date\" and pick an activity (wedding, moving, opening…) plus a time range",
+      "Optionally add your zodiac to avoid clashes or limit results to weekends, then run the search",
+    ],
+    seoSections: [
+      {
+        heading: "What is the Chinese almanac?",
+        body: "The traditional Chinese almanac (Tong Shu) is a day-by-day life guide: based on the sexagenary cycle, the twelve day officers, and symbolic stars, it marks which activities each day favors or disfavors — weddings, moving, business openings, travel, and more. This tool calculates it daily, with Wealth/Joy/Fortune god directions and Pengzu taboos included.",
+      },
+      {
+        heading: "How does custom date selection work?",
+        body: "Tell us the activity and your time window, and the engine screens every day in range: it first matches days whose \"suitable\" list includes your activity, then removes dates that clash with your zodiac sign, and can keep weekends only. Results are ranked Best, Runner-up, and Recommended — no more flipping through the almanac page by page.",
+      },
+      {
+        heading: "Tips for using the almanac well",
+        body: "Do's and don'ts are distilled from traditional calendrics — a reference for planning, not a hard rule. Don't panic over an \"everything inauspicious\" day; for big events, shortlist a few lucky days and decide alongside real-world factors like weather and holidays.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Is the almanac and date selection free?", a: "Completely free, no account needed. Daily do's & don'ts, lucky hours, custom date search, and lucky-day posters are all free." },
+      { q: "How are the daily do's & don'ts calculated?", a: "From traditional calendrics: the day's stem-branch pillars, the twelve day officers, the ruling deity, and symbolic stars together determine suitable and avoidable activities, plus clash signs and directions." },
+      { q: "What does \"avoid zodiac clash\" mean?", a: "Every day clashes with one zodiac sign (e.g. \"clashes with Rat\"). Enter your sign when searching and dates that clash with you are removed automatically, so you don't pick a day that works against you." },
+      { q: "What if no lucky days are found in my range?", a: "It means no day in that window meets all your conditions. Widen the time range, turn off \"weekends only\", or drop the zodiac filter and search again." },
+    ],
   },
 };
 export type Lang = "zh" | "en" | "tw";

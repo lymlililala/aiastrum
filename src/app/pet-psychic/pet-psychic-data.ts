@@ -579,3 +579,105 @@ function buildFullMessage(
   const hungerNote = hunger > 70 ? tpl.hungerNote(typeWord) : "";
   return tpl.compose(petName, rs(rawCard.name, lang), rs(rawCard.petVoice, lang), hungerNote);
 }
+
+// ── 新手引导 / SEO / FAQ 三语文案（页面底部内容区 + FAQPage JSON-LD 同源）──
+export interface PetPsychicContent {
+  howToTitle: string;
+  howToSteps: string[];
+  seoSections: { heading: string; body: string }[];
+  faqTitle: string;
+  faq: { q: string; a: string }[];
+}
+
+export const PET_PSYCHIC_CONTENT: Record<Lang, PetPsychicContent> = {
+  zh: {
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "上传一张宠物照片，或只填写 TA 的名字（二选一）",
+      "选择 TA 的类型：猫咪、狗狗、兔子、鸟类、仓鼠或其他",
+      "点击「聆听TA的心声」，塔罗牌会为 TA 抽出今日的一张",
+      "查看心声、状态指数、今日计划与小秘密，还可以生成心声卡保存分享",
+    ],
+    seoSections: [
+      {
+        heading: "宠物灵语是什么？",
+        body: "一个轻松有趣的宠物占卜小工具：上传毛孩的照片或名字、选好类型，系统会为 TA 抽出一张塔罗牌，用第一人称「翻译」TA 今天的心里话，并给出爱主人、今日心情、饥饿感三项状态指数，还有 TA 的今日计划和一个小秘密。",
+      },
+      {
+        heading: "塔罗牌如何「读懂」宠物？",
+        body: "每张塔罗牌都对应一种宠物心境——比如「战车」是精力过剩的拆家冲动，「星星」是安静陪伴的温柔。抽牌结果由名字、类型和日期共同决定，同一只宠物同一天抽到的牌固定不变，像一份专属的「今日心情报告」，明天再来又是新的一页。",
+      },
+      {
+        heading: "玩宠物灵语的小贴士",
+        body: "结果纯属娱乐，但也可以当成和毛孩互动的小灵感：饥饿指数偏高，也许真的该开个罐头；心情指数偏低，不妨多陪 TA 玩一会儿。另外放心，照片只在你本地浏览器里读取，不会上传到任何服务器。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      { q: "我的宠物照片会被上传吗？", a: "不会。照片只在你自己的浏览器里读取并展示，不会上传到任何服务器，关掉页面即消失，可放心使用。" },
+      { q: "不上传照片可以玩吗？", a: "可以。照片和名字二选一即可，只填名字同样能为 TA 抽牌解读；当然，配上照片的心声卡和海报会更可爱。" },
+      { q: "同一只宠物每天的结果是固定的吗？", a: "是的。结果由名字、类型和日期共同决定，同一天重复占卜结果不变；明天再来，TA 会抽到新的牌、说出新的心声。" },
+      { q: "解读结果是真的吗？", a: "这是娱乐性质的小工具，「心声」由塔罗牌与文案库生成，不代表宠物的真实想法——但如果它提醒了你多陪陪 TA，也未尝不是好事。" },
+    ],
+  },
+  tw: {
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "上傳一張寵物照片，或只填寫 TA 的名字（二選一）",
+      "選擇 TA 的類型：貓咪、狗狗、兔子、鳥類、倉鼠或其他",
+      "點擊「聆聽TA的心聲」，塔羅牌會為 TA 抽出今日的一張",
+      "查看心聲、狀態指數、今日計畫與小秘密，還可以生成心聲卡儲存分享",
+    ],
+    seoSections: [
+      {
+        heading: "寵物靈語是什麼？",
+        body: "一個輕鬆有趣的寵物占卜小工具：上傳毛孩的照片或名字、選好類型，系統會為 TA 抽出一張塔羅牌，用第一人稱「翻譯」TA 今天的心裡話，並給出愛主人、今日心情、飢餓感三項狀態指數，還有 TA 的今日計畫和一個小秘密。",
+      },
+      {
+        heading: "塔羅牌如何「讀懂」寵物？",
+        body: "每張塔羅牌都對應一種寵物心境——比如「戰車」是精力過剩的拆家衝動，「星星」是安靜陪伴的溫柔。抽牌結果由名字、類型和日期共同決定，同一隻寵物同一天抽到的牌固定不變，像一份專屬的「今日心情報告」，明天再來又是新的一頁。",
+      },
+      {
+        heading: "玩寵物靈語的小貼士",
+        body: "結果純屬娛樂，但也可以當成和毛孩互動的小靈感：飢餓指數偏高，也許真的該開個罐頭；心情指數偏低，不妨多陪 TA 玩一會兒。另外放心，照片只在你本地瀏覽器裡讀取，不會上傳到任何伺服器。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      { q: "我的寵物照片會被上傳嗎？", a: "不會。照片只在你自己的瀏覽器裡讀取並展示，不會上傳到任何伺服器，關掉頁面即消失，可放心使用。" },
+      { q: "不上傳照片可以玩嗎？", a: "可以。照片和名字二選一即可，只填名字同樣能為 TA 抽牌解讀；當然，配上照片的心聲卡和海報會更可愛。" },
+      { q: "同一隻寵物每天的結果是固定的嗎？", a: "是的。結果由名字、類型和日期共同決定，同一天重複占卜結果不變；明天再來，TA 會抽到新的牌、說出新的心聲。" },
+      { q: "解讀結果是真的嗎？", a: "這是娛樂性質的小工具，「心聲」由塔羅牌與文案庫生成，不代表寵物的真實想法——但如果它提醒了你多陪陪 TA，也未嘗不是好事。" },
+    ],
+  },
+  en: {
+    howToTitle: "How it works",
+    howToSteps: [
+      "Upload a photo of your pet — or just type their name (either works)",
+      "Pick what they are: cat, dog, rabbit, bird, hamster, or other",
+      "Tap \"Listen to their heart\" and a tarot card is drawn for them",
+      "Read their inner voice, stats, plan for today and little secret — then save and share the heart card",
+    ],
+    seoSections: [
+      {
+        heading: "What is Pet Psychic?",
+        body: "A lighthearted pet oracle: upload your fur baby's photo or name, pick their type, and the tool draws a tarot card that \"translates\" what's on their mind today — in first person. You also get three stats (loves you, mood, hunger), their plan for today, and one little secret.",
+      },
+      {
+        heading: "How does a tarot card \"read\" a pet?",
+        body: "Each card maps to a pet state of mind — the Chariot is zoomies-fueled chaos, the Star is quiet, gentle companionship. The draw is seeded by your pet's name, type, and the date, so the same pet gets the same card all day: a little daily mood report, with a fresh page tomorrow.",
+      },
+      {
+        heading: "Tips for enjoying Pet Psychic",
+        body: "It's for fun — but also a nudge to engage with your pet. Hunger stat running high? Maybe open a can. Mood stat low? Extra playtime won't hurt. And rest assured: photos are read locally in your browser and never uploaded anywhere.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      { q: "Is my pet's photo uploaded anywhere?", a: "No. The photo is read and displayed locally in your own browser — it never leaves your device and disappears when you close the page." },
+      { q: "Can I play without uploading a photo?", a: "Yes. A photo or a name — either one is enough to draw a card. That said, the heart card and poster look much cuter with a photo." },
+      { q: "Does the same pet get the same result every day?", a: "Yes. The result is seeded by name, type, and date, so re-reading on the same day gives the same card. Come back tomorrow for a brand-new message." },
+      { q: "Is the reading real?", a: "It's an entertainment tool — the \"inner voice\" comes from tarot cards and a copy library, not actual animal telepathy. But if it reminds you to spend more time with them, that's a win." },
+    ],
+  },
+};

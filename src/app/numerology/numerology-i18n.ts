@@ -52,6 +52,35 @@ export const T = {
     posterMaster:    "⚡ 卓越数字 · MASTER NUMBER",
     posterFooter:    "✦ 命运密语 · numerology ✦",
     posterAlt:       "生命灵数卡片",
+    // ── 新手步骤卡 / SEO 内容 / FAQ ──
+    howToTitle:      "怎么玩？",
+    howToSteps: [
+      "用下拉框选择你的出生年月日（公历生日）",
+      "点击「揭示我的生命灵数」，系统把生日数字逐位相加并化约",
+      "查看性格特质、潜能天赋、人生课题与幸运指南四个板块",
+      "生成专属灵数卡片，保存图片分享给朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什么是生命灵数？",
+        body: "生命灵数（Life Path Number）源于毕达哥拉斯数字命理学：把出生年月日的数字逐位相加并化约，得到 1 到 9，或卓越数字 11、22、33。每个数字都被赋予独特的性格原型与人生主题，是最常见、也最容易上手的命理入门方式之一。",
+      },
+      {
+        heading: "生命灵数是怎么计算的？",
+        body: "以 1995 年 8 月 20 日为例：1+9+9+5+0+8+2+0=34，再把 3+4 化约为 7，生命灵数就是 7。相加过程中如果出现 11、22、33 则不再化约，直接作为结果。测算后可以在结果页展开「查看计算过程」，核对你自己的每一步。",
+      },
+      {
+        heading: "卓越数字 11、22、33 有什么特别？",
+        body: "卓越数字被视为「加强版」的灵数：11 对应敏锐的直觉与灵感，22 对应把愿景落地的建造力，33 对应无私的奉献与疗愈力。它们既保留了化约后数字（2、4、6）的底色，又带有更高阶的人生课题。",
+      },
+    ],
+    faqTitle:        "常见问题",
+    faq: [
+      { q: "生命灵数测算是免费的吗？", a: "完全免费，无需注册。选择出生日期即可查看完整的灵数解读，还可以生成专属灵数卡片。" },
+      { q: "我只记得农历生日怎么办？", a: "生命灵数按公历（阳历）生日计算。如果你只记得农历生日，请先将它转换成公历日期，再来输入测算。" },
+      { q: "生命灵数和星座有什么区别？", a: "星座看的是出生时太阳所在的黄道位置，生命灵数看的是完整生日数字的加总。两者属于不同体系，结论可以互相参照着看。" },
+      { q: "灵数解读准吗？", a: "数字命理解读的是性格原型与倾向，适合作为自我探索的参考，而不是对未来的预言。有共鸣就收下，没有就当作一次有趣的娱乐。" },
+    ],
   },
   tw: {
     back:            "返回",
@@ -98,6 +127,35 @@ export const T = {
     posterMaster:    "⚡ 卓越數字 · MASTER NUMBER",
     posterFooter:    "✦ 命運密語 · numerology ✦",
     posterAlt:       "生命靈數卡片",
+    // ── 新手步驟卡 / SEO 內容 / FAQ ──
+    howToTitle:      "怎麼玩？",
+    howToSteps: [
+      "用下拉框選擇你的出生年月日（國曆生日）",
+      "點擊「揭示我的生命靈數」，系統把生日數字逐位相加並化約",
+      "查看性格特質、潛能天賦、人生課題與幸運指南四個板塊",
+      "生成專屬靈數卡片，儲存圖片分享給朋友",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是生命靈數？",
+        body: "生命靈數（Life Path Number）源於畢達哥拉斯數字命理學：把出生年月日的數字逐位相加並化約，得到 1 到 9，或卓越數字 11、22、33。每個數字都被賦予獨特的性格原型與人生主題，是最常見、也最容易上手的命理入門方式之一。",
+      },
+      {
+        heading: "生命靈數是怎麼計算的？",
+        body: "以 1995 年 8 月 20 日為例：1+9+9+5+0+8+2+0=34，再把 3+4 化約為 7，生命靈數就是 7。相加過程中如果出現 11、22、33 則不再化約，直接作為結果。測算後可以在結果頁展開「查看計算過程」，核對你自己的每一步。",
+      },
+      {
+        heading: "卓越數字 11、22、33 有什麼特別？",
+        body: "卓越數字被視為「加強版」的靈數：11 對應敏銳的直覺與靈感，22 對應把願景落地的建造力，33 對應無私的奉獻與療癒力。它們既保留了化約後數字（2、4、6）的底色，又帶有更高階的人生課題。",
+      },
+    ],
+    faqTitle:        "常見問題",
+    faq: [
+      { q: "生命靈數測算是免費的嗎？", a: "完全免費，無需註冊。選擇出生日期即可查看完整的靈數解讀，還可以生成專屬靈數卡片。" },
+      { q: "我只記得農曆生日怎麼辦？", a: "生命靈數按國曆（陽曆）生日計算。如果你只記得農曆生日，請先將它轉換成國曆日期，再來輸入測算。" },
+      { q: "生命靈數和星座有什麼區別？", a: "星座看的是出生時太陽所在的黃道位置，生命靈數看的是完整生日數字的加總。兩者屬於不同體系，結論可以互相參照著看。" },
+      { q: "靈數解讀準嗎？", a: "數字命理解讀的是性格原型與傾向，適合作為自我探索的參考，而不是對未來的預言。有共鳴就收下，沒有就當作一次有趣的娛樂。" },
+    ],
   },
   en: {
     back:            "Back",
@@ -144,6 +202,35 @@ export const T = {
     posterMaster:    "⚡ MASTER NUMBER",
     posterFooter:    "✦ Mystic Whispers · numerology ✦",
     posterAlt:       "Life Path Number card",
+    // ── How-to steps / SEO content / FAQ ──
+    howToTitle:      "How it works",
+    howToSteps: [
+      "Pick your birth year, month and day from the dropdowns (Gregorian date)",
+      "Tap \"Reveal My Life Path Number\" — your birth digits are summed and reduced",
+      "Explore the four panels: traits, gifts, life lessons and lucky guide",
+      "Generate your personal number card and save the image to share",
+    ],
+    seoSections: [
+      {
+        heading: "What is a Life Path Number?",
+        body: "The Life Path Number comes from Pythagorean numerology: the digits of your birth date are added together and reduced to a single digit from 1 to 9 — or to a master number 11, 22 or 33. Each number carries a distinct personality archetype and life theme, making it one of the most popular and beginner-friendly systems in numerology.",
+      },
+      {
+        heading: "How is the Life Path Number calculated?",
+        body: "For example, August 20, 1995: 1+9+9+5+0+8+2+0 = 34, then 3+4 = 7 — the Life Path Number is 7. If the sum hits 11, 22 or 33 along the way, it is kept as-is instead of being reduced. After your reading, expand \"View calculation\" on the result page to check every step of your own math.",
+      },
+      {
+        heading: "What's special about master numbers 11, 22 and 33?",
+        body: "Master numbers are considered amplified versions of their base digits: 11 heightens intuition and inspiration, 22 turns vision into reality as the master builder, and 33 channels selfless devotion and healing. They keep the undertone of their reduced digit (2, 4 and 6) while carrying a higher-order life lesson.",
+      },
+    ],
+    faqTitle:        "FAQ",
+    faq: [
+      { q: "Is the numerology reading free?", a: "Completely free, no sign-up needed. Pick your birth date to see the full reading and generate your personal number card." },
+      { q: "What if I only know my lunar birthday?", a: "Life Path Numbers are calculated from the Gregorian (solar) birth date. If you only know your lunar birthday, convert it to the Gregorian date first, then run the reading." },
+      { q: "How is this different from zodiac signs?", a: "Zodiac signs look at the sun's position at birth, while the Life Path Number sums the digits of your full birth date. They are different systems — read both and see where they agree." },
+      { q: "Is the reading accurate?", a: "Numerology describes personality archetypes and tendencies. Treat it as a mirror for self-exploration, not a prediction of the future. Take what resonates and enjoy the rest." },
+    ],
   },
 };
 

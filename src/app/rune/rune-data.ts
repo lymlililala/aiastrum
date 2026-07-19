@@ -1199,3 +1199,143 @@ export const THREE_STONE_POSITIONS: ThreeStonePosition[] = [
     },
   },
 ];
+
+// ===== 页面 SEO / 新手引导文案（三语，page.tsx 与 layout.tsx 共用）=====
+export type RuneSeoLang = "zh" | "en" | "tw";
+
+export interface RunePageSeo {
+  howToTitle: string;
+  howToSteps: string[];
+  seoSections: { heading: string; body: string }[];
+  faqTitle: string;
+  faq: { q: string; a: string }[];
+}
+
+export const RUNE_PAGE_SEO: Record<RuneSeoLang, RunePageSeo> = {
+  zh: {
+    howToTitle: "怎么占卜？",
+    howToSteps: [
+      "在「奥丁之眼」（单石）与「诺伦三女神」（三石）之间选择占卜方式",
+      "心中默念你的问题，点击下方开始按钮进入冥想阶段",
+      "长按石头 2 秒注入意念，或直接点击快速抽取符文",
+      "查看符文正逆位解读，可保存并分享占卜海报",
+    ],
+    seoSections: [
+      {
+        heading: "什么是卢恩符文？",
+        body: "卢恩符文源自古北欧的老弗萨克（Elder Futhark）字母，共 24 枚符文加一枚空白符文。每枚符文既是文字也是象征符号，承载着北欧先民对自然与命运的理解。几个世纪以来，人们以掷石占卜的方式向符文提问，寻求关于抉择与方向的启示。",
+      },
+      {
+        heading: "单石与三石占卜的区别",
+        body: "单石占卜「奥丁之眼」适合快速洞见：一个是/否问题或当日指引，一枚符文给出直接回应。三石占卜「诺伦三女神」以过去、现在、未来三个位置展开，适合梳理一件困扰之事的来龙去脉。符文可能以正位或逆位出现，逆位通常提示能量受阻或需要向内审视。",
+      },
+      {
+        heading: "符文占卜小贴士",
+        body: "占卜前先静心，把问题浓缩成一句具体的话——模糊的问题只会得到模糊的回应。同一个问题不建议一天内反复占问；抽到不喜欢的符文也不必沮丧，它指出的是需要留意的方向，而非注定的结局。解读仅供参考，选择权始终在你手中。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      {
+        q: "占卜前需要做什么准备？",
+        a: "找一个安静的时刻，深呼吸几次，把注意力集中在想问的事情上即可，不需要任何道具或仪式。默念问题后长按石头两秒，符文就会为你抽取。",
+      },
+      {
+        q: "同一个问题可以反复占问吗？",
+        a: "不建议。传统上认为反复占问同一个问题会稀释答案的清晰度。如果对结果感到困惑，不妨换个角度提问，或隔几天再来。",
+      },
+      {
+        q: "逆位符文是什么意思？",
+        a: "部分符文可能以逆位出现，通常表示该符文的能量受阻、延迟或转向内在。它并非「坏结果」，而是提醒你这股力量需要以另一种方式被看见。",
+      },
+      {
+        q: "占卜结果会被保存吗？",
+        a: "不会。每次占卜结果只展示在当前页面，刷新或离开后即消失；你可以主动把占卜海报保存到本地。我们不会记录你的问题与结果。",
+      },
+    ],
+  },
+  tw: {
+    howToTitle: "怎麼占卜？",
+    howToSteps: [
+      "在「奧丁之眼」（單石）與「諾倫三女神」（三石）之間選擇占卜方式",
+      "心中默念你的問題，點擊下方開始按鈕進入冥想階段",
+      "長按石頭 2 秒注入意念，或直接點擊快速抽取符文",
+      "查看符文正逆位解讀，可保存並分享占卜海報",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是盧恩符文？",
+        body: "盧恩符文源自古北歐的老弗薩克（Elder Futhark）字母，共 24 枚符文加一枚空白符文。每枚符文既是文字也是象徵符號，承載著北歐先民對自然與命運的理解。幾個世紀以來，人們以擲石占卜的方式向符文提問，尋求關於抉擇與方向的啟示。",
+      },
+      {
+        heading: "單石與三石占卜的區別",
+        body: "單石占卜「奧丁之眼」適合快速洞見：一個是/否問題或當日指引，一枚符文給出直接回應。三石占卜「諾倫三女神」以過去、現在、未來三個位置展開，適合梳理一件困擾之事的來龍去脈。符文可能以正位或逆位出現，逆位通常提示能量受阻或需要向內審視。",
+      },
+      {
+        heading: "符文占卜小貼士",
+        body: "占卜前先靜心，把問題濃縮成一句具體的話——模糊的問題只會得到模糊的回應。同一個問題不建議一天內反覆占問；抽到不喜歡的符文也不必沮喪，它指出的是需要留意的方向，而非註定的結局。解讀僅供參考，選擇權始終在你手中。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      {
+        q: "占卜前需要做什麼準備？",
+        a: "找一個安靜的時刻，深呼吸幾次，把注意力集中在想問的事情上即可，不需要任何道具或儀式。默念問題後長按石頭兩秒，符文就會為你抽取。",
+      },
+      {
+        q: "同一個問題可以反覆占問嗎？",
+        a: "不建議。傳統上認為反覆占問同一個問題會稀釋答案的清晰度。如果對結果感到困惑，不妨換個角度提問，或隔幾天再來。",
+      },
+      {
+        q: "逆位符文是什麼意思？",
+        a: "部分符文可能以逆位出現，通常表示該符文的能量受阻、延遲或轉向內在。它並非「壞結果」，而是提醒你這股力量需要以另一種方式被看見。",
+      },
+      {
+        q: "占卜結果會被保存嗎？",
+        a: "不會。每次占卜結果只展示在當前頁面，重新整理或離開後即消失；你可以主動把占卜海報保存到本地。我們不會記錄你的問題與結果。",
+      },
+    ],
+  },
+  en: {
+    howToTitle: "How to cast the runes",
+    howToSteps: [
+      "Choose a reading: Odin's Eye (single rune) or The Three Norns (three runes)",
+      "Hold your question in mind and tap the start button to enter the focus stage",
+      "Press and hold the stone for 2 seconds to channel your intent — or tap to draw instantly",
+      "Read the upright/reversed interpretation and save a poster of your reading",
+    ],
+    seoSections: [
+      {
+        heading: "What are runes?",
+        body: "Runes come from the Elder Futhark, the ancient Norse alphabet of 24 symbols plus one blank rune. Each rune is both a letter and a symbol, carrying the Norse understanding of nature and fate. For centuries, people have cast rune stones to ask questions and seek guidance on choices and direction.",
+      },
+      {
+        heading: "Single rune vs three-rune readings",
+        body: "Odin's Eye, the single-rune draw, suits quick insight: a yes/no question or guidance for the day, answered by one rune. The Three Norns spread lays runes in past, present and future positions — ideal for untangling a troubling matter. Runes may appear upright or reversed; a reversed rune usually points to blocked energy or something that needs inner reflection.",
+      },
+      {
+        heading: "Tips for a better reading",
+        body: "Settle your mind first and condense your question into one specific sentence — vague questions get vague answers. Avoid asking the same question repeatedly in a single day, and don't be discouraged by a rune you dislike: it marks a direction to watch, not a fixed outcome. Readings are for reference only; the choice is always yours.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      {
+        q: "Do I need to prepare anything before a reading?",
+        a: "Just find a quiet moment, take a few deep breaths, and focus on what you want to ask — no tools or rituals needed. Hold your question in mind, press and hold the stone for two seconds, and the runes will be drawn for you.",
+      },
+      {
+        q: "Can I ask the same question over and over?",
+        a: "It's not recommended. Tradition holds that recasting the same question dilutes the clarity of the answer. If the result confuses you, try asking from a different angle, or come back in a few days.",
+      },
+      {
+        q: "What does a reversed rune mean?",
+        a: "Some runes can appear reversed, usually meaning their energy is blocked, delayed, or turned inward. It is not a “bad result” — it's a reminder that this force needs to be seen in a different way.",
+      },
+      {
+        q: "Are my reading results saved?",
+        a: "No. Each reading only lives on the current page and disappears when you refresh or leave; you can save the poster to your device if you want to keep it. We never record your questions or results.",
+      },
+    ],
+  },
+};

@@ -608,3 +608,141 @@ export function isKong(zhi: string, riGanZhi: string): boolean {
   if (!kongPair) return false;
   return kongPair.includes(zhi);
 }
+
+// ===== 页面 SEO / 新手引导文案（三语，page.tsx 与 layout.tsx 共用）=====
+export interface QimenPageSeo {
+  howToTitle: string;
+  howToSteps: string[];
+  seoSections: { heading: string; body: string }[];
+  faqTitle: string;
+  faq: { q: string; a: string }[];
+}
+
+export const QIMEN_PAGE_SEO: Record<Lang, QimenPageSeo> = {
+  zh: {
+    howToTitle: "怎么排盘？",
+    howToSteps: [
+      "填写起局时间：默认为当前时间，可修改年月日时分，或点「当前时间」一键复位",
+      "选择起局地点，系统据此做真太阳时校正，让时辰与宫位更精准",
+      "选择排盘方式（转盘/飞盘）、定局法（拆补/置闰/茅山）与占问事由",
+      "点击「立即起局」，查看九宫盘与格局吉凶解析，还可生成分享海报",
+    ],
+    seoSections: [
+      {
+        heading: "什么是奇门遁甲？",
+        body: "奇门遁甲是中国古代三大秘术之一，以天干地支、九星、八门、八神在九宫格中的排布来推演时空能量，传统上用于择时、决策与方位判断，如今常被应用于商业决策、出行规划等场景的吉凶参考。本工具将复杂的起局计算自动化，输入时间与地点即可得到完整排盘，无需背诵口诀。",
+      },
+      {
+        heading: "真太阳时校正与九宫排盘",
+        body: "奇门排盘对时间极其敏感。本工具根据所选城市的经度做真太阳时校正，避免平太阳时带来的时辰误差；随后按你选择的定局法（拆补、置闰或茅山）确定阴阳遁与局数，将天盘、地盘、九星、八门、八神落入九宫，形成完整盘面，并给出格局吉凶解析。",
+      },
+      {
+        heading: "奇门排盘小贴士",
+        body: "占问前先明确一个具体的问题，事由选择（商业、出行或综合）会影响格局提示的侧重方向；起局时间越精确，盘面参考价值越高。同一事项不建议短时间内反复起局，一般以第一次盘面为主。点击右上角 📜 图标可查看最近五次起局记录。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      {
+        q: "排盘必须使用精确时间吗？",
+        a: "奇门遁甲以两小时为一个时辰，时辰准确即可排出有效盘面。分钟级输入主要在真太阳时校正时影响时辰交界的判断，越精确越好；拿不准时可先用当前时间起局。",
+      },
+      {
+        q: "转盘和飞盘有什么区别？",
+        a: "转盘奇门按固定顺序旋转排布星、门、神，飞盘奇门则按九宫飞泊的方式落宫，是两种不同的排盘流派。初学者建议先用转盘，与多数典籍和现代教程一致。",
+      },
+      {
+        q: "占问事由会影响排盘结果吗？",
+        a: "事由不改变盘面本身的排布，但会影响格局解析的提示方向——商业事由侧重求财与合作，出行事由侧重方位与平安，综合事由则给出通用解读。",
+      },
+      {
+        q: "我的起局记录保存在哪里？",
+        a: "最近五次起局记录保存在你浏览器的本地存储中，点击右上角 📜 图标即可查看；清除浏览器数据会同时清除记录，我们不会上传你的排盘信息。",
+      },
+    ],
+  },
+  tw: {
+    howToTitle: "怎麼排盤？",
+    howToSteps: [
+      "填寫起局時間：預設為當前時間，可修改年月日時分，或點「當前時間」一鍵復位",
+      "選擇起局地點，系統據此做真太陽時校正，讓時辰與宮位更精準",
+      "選擇排盤方式（轉盤/飛盤）、定局法（拆補/置閏/茅山）與占問事由",
+      "點擊「立即起局」，查看九宮盤與格局吉凶解析，還可生成分享海報",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是奇門遁甲？",
+        body: "奇門遁甲是中國古代三大秘術之一，以天干地支、九星、八門、八神在九宮格中的排布來推演時空能量，傳統上用於擇時、決策與方位判斷，如今常被應用於商業決策、出行規劃等場景的吉凶參考。本工具將複雜的起局計算自動化，輸入時間與地點即可得到完整排盤，無需背誦口訣。",
+      },
+      {
+        heading: "真太陽時校正與九宮排盤",
+        body: "奇門排盤對時間極其敏感。本工具根據所選城市的經度做真太陽時校正，避免平太陽時帶來的時辰誤差；隨後按你選擇的定局法（拆補、置閏或茅山）確定陰陽遁與局數，將天盤、地盤、九星、八門、八神落入九宮，形成完整盤面，並給出格局吉凶解析。",
+      },
+      {
+        heading: "奇門排盤小貼士",
+        body: "占問前先明確一個具體的問題，事由選擇（商業、出行或綜合）會影響格局提示的側重方向；起局時間越精確，盤面參考價值越高。同一事項不建議短時間內反覆起局，一般以第一次盤面為主。點擊右上角 📜 圖示可查看最近五次起局記錄。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      {
+        q: "排盤必須使用精確時間嗎？",
+        a: "奇門遁甲以兩小時為一個時辰，時辰準確即可排出有效盤面。分鐘級輸入主要在真太陽時校正時影響時辰交界的判斷，越精確越好；拿不準時可先用當前時間起局。",
+      },
+      {
+        q: "轉盤和飛盤有什麼區別？",
+        a: "轉盤奇門按固定順序旋轉排布星、門、神，飛盤奇門則按九宮飛泊的方式落宮，是兩種不同的排盤流派。初學者建議先用轉盤，與多數典籍和現代教程一致。",
+      },
+      {
+        q: "占問事由會影響排盤結果嗎？",
+        a: "事由不改變盤面本身的排布，但會影響格局解析的提示方向——商業事由側重求財與合作，出行事由側重方位與平安，綜合事由則給出通用解讀。",
+      },
+      {
+        q: "我的起局記錄保存在哪裡？",
+        a: "最近五次起局記錄保存在你瀏覽器的本地儲存中，點擊右上角 📜 圖示即可查看；清除瀏覽器資料會同時清除記錄，我們不會上傳你的排盤資訊。",
+      },
+    ],
+  },
+  en: {
+    howToTitle: "How to cast a chart",
+    howToSteps: [
+      "Set the casting time — it defaults to now; adjust year, month, day, hour and minute, or tap “Now” to reset",
+      "Pick the casting location so the chart can be corrected to true solar time",
+      "Choose the plate style (Rotating/Flying), the Ju method (Zhebu/Zhirun/Maoshan), and your question topic",
+      "Tap “Cast Now” to see the nine-palace chart and pattern analysis — you can also create a share poster",
+    ],
+    seoSections: [
+      {
+        heading: "What is Qi Men Dun Jia?",
+        body: "Qi Men Dun Jia is one of the three great arts of Chinese metaphysics. It maps heavenly stems, earthly branches, nine stars, eight doors and eight deities onto a nine-palace grid to read the energy of a moment in time. Traditionally used for timing, strategy and direction, it is now widely consulted for business decisions and travel planning. This tool automates the full casting calculation — just enter a time and a place.",
+      },
+      {
+        heading: "True solar time & the nine palaces",
+        body: "Qi Men is extremely time-sensitive. The tool corrects your input to true solar time based on the chosen city's longitude, avoiding hour-boundary errors caused by standard time. It then fixes the Yin/Yang Dun and Ju number by your chosen method (Zhebu, Zhirun or Maoshan) and places the heaven and earth plates, nine stars, eight doors and eight deities into the nine palaces to form the complete chart.",
+      },
+      {
+        heading: "Tips for a better chart",
+        body: "Frame one specific question before casting — the topic (business, travel or general) shapes the focus of the pattern guidance. The more precise the time, the more meaningful the chart. Avoid recasting the same matter repeatedly within a short span; the first chart is usually taken as the answer. Tap the 📜 icon in the top-right to revisit your five most recent charts.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      {
+        q: "Do I need an exact time to cast?",
+        a: "Qi Men works in two-hour “shichen” blocks, so an accurate hour is enough for a valid chart. Minutes mainly matter near shichen boundaries during true-solar-time correction — the more precise, the better. When in doubt, cast with the current time.",
+      },
+      {
+        q: "Rotating vs Flying plate — what's the difference?",
+        a: "Rotating-plate Qi Men arranges stars, doors and deities by rotation in a fixed order, while Flying-plate Qi Men flies them across the nine palaces. They are two distinct schools; beginners usually start with the rotating plate, which matches most classical texts and modern tutorials.",
+      },
+      {
+        q: "Does the question topic change the chart?",
+        a: "The topic does not change how the chart is laid out, but it steers the interpretation: business emphasizes wealth and partnerships, travel emphasizes direction and safety, and general gives an all-round reading.",
+      },
+      {
+        q: "Where is my casting history stored?",
+        a: "Your five most recent charts are stored locally in your browser — tap the 📜 icon in the top-right to view them. Clearing browser data removes them; nothing is uploaded to our servers.",
+      },
+    ],
+  },
+};

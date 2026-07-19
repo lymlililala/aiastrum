@@ -92,6 +92,47 @@ export const SYN_T = {
     posterHint:      "长按图片保存 / 点击按钮下载",
     posterKeyAspects: "核心相位",
     posterFooter:    "By Celestial Tarot · 星盘合盘报告",
+    // 新手步骤 / SEO / FAQ
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "选择你们的关系类型（恋人、暧昧、朋友等）",
+      "填写你的昵称和出生信息：出生日期必填，时间和城市可选",
+      "再填写 TA 的出生信息，不知道时间可以勾选“不知道”",
+      "确认信息并点击“开始合盘”，稍等片刻即可查看双星盘与契合度报告",
+    ],
+    seoSections: [
+      {
+        heading: "什么是星盘合盘（Synastry）？",
+        body: "合盘是把两个人的出生星盘叠在一起比较的占星方法。通过分析双方行星之间形成的相位（如合相、三分相、对分相），可以看出两人在情感、沟通与价值观上的天然默契与摩擦点，是占星学中解读关系最经典的工具之一。",
+      },
+      {
+        heading: "这里的合盘如何工作？",
+        body: "输入两人的出生日期（时间与城市可选），星盘引擎会分别计算双方的行星位置，再逐一比对跨盘相位，从多个维度给出契合度评分，并生成双星盘相位图与文字解析。不知道出生时间也能解析核心的行星相位。",
+      },
+      {
+        heading: "合盘结果怎么看？",
+        body: "先看契合度维度的雷达分布，找到你们得分最高和最低的维度；再读核心相位解析，理解具体是哪两颗行星在起作用。高分不代表必然合适，低分也不是判死刑——相位揭示的是互动的模式，如何经营仍在于你们自己。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      {
+        q: "不知道对方的出生时间可以合盘吗？",
+        a: "可以。仅凭出生日期即可计算太阳、月亮等主要行星的位置，足以解析核心跨盘相位；出生时间只影响上升星座与宫位，属于加分项而非必需。",
+      },
+      {
+        q: "除了恋人，还能测朋友或家人吗？",
+        a: "可以。在第一步选择你们的关系类型（如朋友、暧昧、同事），星盘会按相应的关系维度量身解析你们的互动模式。",
+      },
+      {
+        q: "需要填写真实姓名吗？",
+        a: "不需要。昵称仅用于报告中的称呼展示，你可以随意填写化名，出生信息也只用于本次星盘计算。",
+      },
+      {
+        q: "契合度分数低就代表不合适吗？",
+        a: "不是。分数反映的是能量互动的顺畅程度，低分维度往往代表需要磨合的课题。很多长久的关系恰恰是互补型的——把报告当作了解彼此的地图，而不是判决书。",
+      },
+    ],
   },
   tw: {
     back:         "← 返回",
@@ -175,6 +216,47 @@ export const SYN_T = {
     posterHint:      "長按圖片儲存 / 點擊按鈕下載",
     posterKeyAspects: "核心相位",
     posterFooter:    "By Celestial Tarot · 星盤合盤報告",
+    // 新手步驟 / SEO / FAQ
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "選擇你們的關係類型（戀人、曖昧、朋友等）",
+      "填寫你的暱稱和出生資訊：出生日期必填，時間和城市可選",
+      "再填寫 TA 的出生資訊，不知道時間可以勾選「不知道」",
+      "確認資訊並點擊「開始合盤」，稍等片刻即可查看雙星盤與契合度報告",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是星盤合盤（Synastry）？",
+        body: "合盤是把兩個人的出生星盤疊在一起比較的占星方法。透過分析雙方行星之間形成的相位（如合相、三分相、對分相），可以看出兩人在情感、溝通與價值觀上的天然默契與摩擦點，是占星學中解讀關係最經典的工具之一。",
+      },
+      {
+        heading: "這裡的合盤如何運作？",
+        body: "輸入兩人的出生日期（時間與城市可選），星盤引擎會分別計算雙方的行星位置，再逐一比對跨盤相位，從多個維度給出契合度評分，並生成雙星盤相位圖與文字解析。不知道出生時間也能解析核心的行星相位。",
+      },
+      {
+        heading: "合盤結果怎麼看？",
+        body: "先看契合度維度的雷達分佈，找到你們得分最高和最低的維度；再讀核心相位解析，理解具體是哪兩顆行星在起作用。高分不代表必然合適，低分也不是判死刑——相位揭示的是互動的模式，如何經營仍在於你們自己。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      {
+        q: "不知道對方的出生時間可以合盤嗎？",
+        a: "可以。僅憑出生日期即可計算太陽、月亮等主要行星的位置，足以解析核心跨盤相位；出生時間只影響上升星座與宮位，屬於加分項而非必需。",
+      },
+      {
+        q: "除了戀人，還能測朋友或家人嗎？",
+        a: "可以。在第一步選擇你們的關係類型（如朋友、曖昧、同事），星盤會按相應的關係維度量身解析你們的互動模式。",
+      },
+      {
+        q: "需要填寫真實姓名嗎？",
+        a: "不需要。暱稱僅用於報告中的稱呼展示，你可以隨意填寫化名，出生資訊也只用於本次星盤計算。",
+      },
+      {
+        q: "契合度分數低就代表不合適嗎？",
+        a: "不是。分數反映的是能量互動的順暢程度，低分維度往往代表需要磨合的課題。很多長久的關係恰恰是互補型的——把報告當作了解彼此的地圖，而不是判決書。",
+      },
+    ],
   },
   en: {
     back:         "← Back",
@@ -258,6 +340,47 @@ export const SYN_T = {
     posterHint:      "Long-press to save / tap to download",
     posterKeyAspects: "Key aspects",
     posterFooter:    "By Celestial Tarot · Synastry report",
+    // How-to steps / SEO / FAQ
+    howToTitle: "How it works",
+    howToSteps: [
+      "Choose your relationship type (partners, crush, friends…)",
+      "Enter your nickname and birth details: date required, time and city optional",
+      "Then enter the other person's details — you can check \"unknown\" for the birth time",
+      "Confirm and tap \"Start synastry\"; in a few seconds you'll see the bi-wheel chart and compatibility report",
+    ],
+    seoSections: [
+      {
+        heading: "What is a synastry chart?",
+        body: "Synastry is the astrological practice of laying two birth charts over each other. By analyzing the aspects formed between the two people's planets — conjunctions, trines, oppositions and more — it reveals natural harmony and friction in emotion, communication, and values. It is one of astrology's most classic tools for reading relationships.",
+      },
+      {
+        heading: "How does this synastry work?",
+        body: "Enter both birth dates (time and city optional). The chart engine computes each person's planetary positions, compares every cross-chart aspect, scores your compatibility across several dimensions, and generates a bi-wheel aspect chart with a written reading. Core planetary aspects are available even without a birth time.",
+      },
+      {
+        heading: "How to read your result",
+        body: "Start with the radar of compatibility dimensions to find your strongest and weakest areas, then read the key aspect interpretations to see which two planets are at play. A high score doesn't guarantee a match, and a low score isn't a verdict — aspects describe patterns of interaction; how you nurture them is up to you.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      {
+        q: "Can I run a synastry without the birth time?",
+        a: "Yes. The birth date alone is enough to position the major planets like the Sun and Moon, which covers the core cross-chart aspects. Birth time only refines the Ascendant and houses — a bonus, not a requirement.",
+      },
+      {
+        q: "Can I check friends or family, not just partners?",
+        a: "Yes. Choose your relationship type in the first step (friends, crush, colleagues…), and the chart will tailor the reading to that dimension of your connection.",
+      },
+      {
+        q: "Do I need to give real names?",
+        a: "No. Nicknames are only used for display in the report — feel free to use aliases. Birth details are used solely for this chart calculation.",
+      },
+      {
+        q: "Does a low compatibility score mean we're not a match?",
+        a: "No. The score reflects how smoothly your energies interact, and lower dimensions usually point to lessons that need work. Many lasting relationships are complementary — treat the report as a map for understanding each other, not a verdict.",
+      },
+    ],
   },
 };
 export type SynLang = "zh" | "en" | "tw";

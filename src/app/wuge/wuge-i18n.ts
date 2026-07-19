@@ -77,6 +77,47 @@ export const T = {
     posterFooter1: "姓名五格剖象 · 笔画藏玄机，五格测人生",
     posterFooter2: "三才五格 · 康熙字典 · 81数理灵动",
     posterFileSuffix: "-五格测算",
+    // SEO / 新手引导（page.tsx 底部内容区与 layout.tsx JSON-LD 共用）
+    howToTitle: "怎么测算？",
+    howToSteps: [
+      "输入真实中文姓名（2-5 个字），支持单姓或复姓",
+      "选择性别（乾为阳、坤为阴），用于命格判定",
+      "点击「开始测算」，系统将按康熙字典笔画推演五格",
+      "查看综合评分、三才五格拆解与命格解析，可生成命运海报",
+    ],
+    seoSections: [
+      {
+        heading: "什么是姓名五格？",
+        body: "五格剖象法是源自中国传统命名学的姓名分析法，将姓名笔画转化为天格、人格、地格、外格、总格五个数理，再对照八十一数理灵动数推断吉凶。本工具严格按康熙字典笔画计算，并结合三才五行配置，给出性格、事业、感情与健康维度的解读。",
+      },
+      {
+        heading: "五格是如何算出来的？",
+        body: "天格由姓氏笔画推演而得，代表先天祖运；人格是姓与名首字笔画之和，主管一生主运；地格为名字笔画之和，主管前半生；外格与总格分别反映社交助力与整体格局。五格之数再代入五行生克，得出三才配置与综合评分。",
+      },
+      {
+        heading: "姓名测试小贴士",
+        body: "请尽量输入日常使用的真实姓名——繁简体笔画有差异，本工具统一按康熙字典繁体笔画折算。评分仅供娱乐参考，不必因低分焦虑：姓名只是影响因素之一，真正的运势还取决于个人努力与选择。",
+      },
+    ],
+    faqTitle: "常见问题",
+    faq: [
+      {
+        q: "为什么要按康熙字典笔画计算？",
+        a: "五格剖象法以康熙字典收录的繁体字形为数理基础，简体字会被折算回对应的康熙笔画，例如「马」按「馬」的 10 画计算，以保证数理与传统体系一致。",
+      },
+      {
+        q: "五格各自代表什么？",
+        a: "天格代表先天运势与祖荫；人格是核心，主管性格与一生主运；地格主管前半生运与基础运；外格反映人际关系与外部助力；总格则统筹中晚年的整体走势。",
+      },
+      {
+        q: "测出来分数低，需要改名吗？",
+        a: "不必紧张。五格评分只是传统数理的一种参考视角，不能决定命运。它更适合作为起名、取字号时的趣味参考，而非人生决策的依据。",
+      },
+      {
+        q: "可以测英文名字吗？",
+        a: "目前仅支持 2-5 个字的纯中文姓名，因为五格体系完全建立在汉字笔画之上，拼音文字无法直接套用笔画数理。",
+      },
+    ],
   },
   tw: {
     back:          "返回首頁",
@@ -148,6 +189,46 @@ export const T = {
     posterFooter1: "姓名五格剖象 · 筆畫藏玄機，五格測人生",
     posterFooter2: "三才五格 · 康熙字典 · 81數理靈動",
     posterFileSuffix: "-五格測算",
+    howToTitle: "怎麼測算？",
+    howToSteps: [
+      "輸入真實中文姓名（2-5 個字），支援單姓或複姓",
+      "選擇性別（乾為陽、坤為陰），用於命格判定",
+      "點擊「開始測算」，系統將按康熙字典筆畫推演五格",
+      "查看綜合評分、三才五格拆解與命格解析，可生成命運海報",
+    ],
+    seoSections: [
+      {
+        heading: "什麼是姓名五格？",
+        body: "五格剖象法是源自中國傳統命名學的姓名分析法，將姓名筆畫轉化為天格、人格、地格、外格、總格五個數理，再對照八十一數理靈動數推斷吉凶。本工具嚴格按康熙字典筆畫計算，並結合三才五行配置，給出性格、事業、感情與健康維度的解讀。",
+      },
+      {
+        heading: "五格是如何算出來的？",
+        body: "天格由姓氏筆畫推演而得，代表先天祖運；人格是姓與名首字筆畫之和，主管一生主運；地格為名字筆畫之和，主管前半生；外格與總格分別反映社交助力與整體格局。五格之數再代入五行生剋，得出三才配置與綜合評分。",
+      },
+      {
+        heading: "姓名測試小貼士",
+        body: "請盡量輸入日常使用的真實姓名——繁簡體筆畫有差異，本工具統一按康熙字典繁體筆畫折算。評分僅供娛樂參考，不必因低分焦慮：姓名只是影響因素之一，真正的運勢還取決於個人努力與選擇。",
+      },
+    ],
+    faqTitle: "常見問題",
+    faq: [
+      {
+        q: "為什麼要按康熙字典筆畫計算？",
+        a: "五格剖象法以康熙字典收錄的繁體字形為數理基礎，簡體字會被折算回對應的康熙筆畫，例如「馬」按 10 畫計算，以保證數理與傳統體系一致。",
+      },
+      {
+        q: "五格各自代表什麼？",
+        a: "天格代表先天運勢與祖蔭；人格是核心，主管性格與一生主運；地格主管前半生運與基礎運；外格反映人際關係與外部助力；總格則統籌中晚年的整體走勢。",
+      },
+      {
+        q: "測出來分數低，需要改名嗎？",
+        a: "不必緊張。五格評分只是傳統數理的一種參考視角，不能決定命運。它更適合作為起名、取字號時的趣味參考，而非人生決策的依據。",
+      },
+      {
+        q: "可以測英文名字嗎？",
+        a: "目前僅支援 2-5 個字的純中文姓名，因為五格體系完全建立在漢字筆畫之上，拼音文字無法直接套用筆畫數理。",
+      },
+    ],
   },
   en: {
     back:          "Home",
@@ -219,6 +300,46 @@ export const T = {
     posterFooter1: "Name Five-Grid Reading · Strokes hold the mystery",
     posterFooter2: "Three Talents & Five Grids · Kangxi Dictionary · 81 Numerology",
     posterFileSuffix: "-wuge-reading",
+    howToTitle: "How it works",
+    howToSteps: [
+      "Enter your real Chinese name (2–5 characters); single and compound surnames both work",
+      "Choose your gender (Qian for Yang, Kun for Yin) for the fate-type reading",
+      "Tap “Start Reading” — the strokes are computed per the Kangxi Dictionary",
+      "See your overall score, the five-grid breakdown and life reading, and create a poster",
+    ],
+    seoSections: [
+      {
+        heading: "What is the Five-Grid name analysis?",
+        body: "The Five Grids (Wuge) method is a traditional Chinese name-analysis system. It converts the stroke counts of your name into five numbers — Heaven, Personality, Earth, External and Total grids — and reads their fortune against the 81 numerology numbers. This tool counts strokes strictly per the Kangxi Dictionary and combines the Three Talents and Five Elements to interpret personality, career, love and health.",
+      },
+      {
+        heading: "How are the five grids calculated?",
+        body: "The Heaven grid derives from the surname's strokes and reflects inherited fortune. The Personality grid — surname plus the first given character — governs your core character and life path. The Earth grid sums the given name and rules the first half of life, while the External and Total grids reflect social support and the overall pattern. The grid numbers are then mapped onto the Five Elements to yield the Three Talents configuration and an overall score.",
+      },
+      {
+        heading: "Tips for name testing",
+        body: "Enter the name you actually use every day — simplified and traditional forms differ in stroke count, and this tool converts everything to Kangxi traditional strokes. Treat the score as entertainment: a low score is no reason to worry, since a name is only one factor among effort and choice.",
+      },
+    ],
+    faqTitle: "FAQ",
+    faq: [
+      {
+        q: "Why count strokes by the Kangxi Dictionary?",
+        a: "The Five-Grid system was built on traditional character forms as recorded in the Kangxi Dictionary. Simplified characters are converted back to their Kangxi stroke counts — for example 马 counts as the 10 strokes of 馬 — keeping the numerology consistent with the classical system.",
+      },
+      {
+        q: "What does each of the five grids mean?",
+        a: "Heaven reflects inherited fortune and ancestry; Personality is the core grid governing character and the main life path; Earth rules early-life foundations; External reflects relationships and outside support; Total governs the overall trend of middle and later life.",
+      },
+      {
+        q: "My score is low — should I change my name?",
+        a: "No need to worry. The Five-Grid score is just one traditional perspective and cannot decide your fate. It works best as a fun reference when naming a baby or choosing a pen name — not as a basis for life decisions.",
+      },
+      {
+        q: "Can I test an English name?",
+        a: "Only pure Chinese names of 2–5 characters are supported, because the Five-Grid system is built entirely on Chinese character strokes — alphabetic names have no stroke numerology to apply.",
+      },
+    ],
   },
 };
 

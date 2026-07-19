@@ -62,9 +62,9 @@ export default function DailyCardPage() {
     setShowActions(false);
   }, []);
 
-  if (!card) return null;
-
-  const text = card.text[locale];
+  // 不再 `if (!card) return null`：SSR/首屏也要有完整页面（SEO 内容、使用说明、卡背），
+  // 卡片数据在 useEffect 注水后就位，此处仅对依赖 card 的部分做条件渲染。
+  const text = card ? card.text[locale] : null;
 
   return (
     <div className="dc-page">
@@ -90,10 +90,10 @@ export default function DailyCardPage() {
       </div>
 
 
-      {/* 动态背景 */}
+      {/* 动态背景（卡片未就绪时用默认深色渐变） */}
       <div
         className="dc-bg"
-        style={{ background: `linear-gradient(160deg, ${card.bgFrom} 0%, ${card.bgTo} 100%)` }}
+        style={{ background: card ? `linear-gradient(160deg, ${card.bgFrom} 0%, ${card.bgTo} 100%)` : "linear-gradient(160deg, #0d0a24 0%, #16102e 100%)" }}
       />
 
       {/* 星点 */}
@@ -141,29 +141,31 @@ export default function DailyCardPage() {
               <span className="dc-card-back-hint">{ui.backHint}</span>
             </div>
 
-            {/* 卡正面 */}
-            <div
-              className="dc-card-front"
-              style={{
-                background: `linear-gradient(160deg, ${card.bgFrom} 0%, ${card.bgTo} 100%)`,
-                ["--card-glow" as string]: `${card.accentColor}33`,
-              }}
-            >
-              <span className="dc-front-tag">✦ {ui.frontTag} ✦</span>
-              <span className="dc-front-emoji">{card.emoji}</span>
-              <span className="dc-front-title" style={{ color: card.accentColor }}>
-                {text.title}
-              </span>
-              <p className="dc-front-message">{text.message}</p>
-              <div className="dc-front-divider" />
-              <p className="dc-front-sub">{text.subMessage}</p>
-              <span
-                className="dc-front-category"
-                style={{ borderColor: card.accentColor + "44", color: card.accentColor + "bb" }}
+            {/* 卡正面（SSR 首屏卡片数据未就绪时不渲染正面） */}
+            {card && text && (
+              <div
+                className="dc-card-front"
+                style={{
+                  background: `linear-gradient(160deg, ${card.bgFrom} 0%, ${card.bgTo} 100%)`,
+                  ["--card-glow" as string]: `${card.accentColor}33`,
+                }}
               >
-                #{text.category}
-              </span>
-            </div>
+                <span className="dc-front-tag">✦ {ui.frontTag} ✦</span>
+                <span className="dc-front-emoji">{card.emoji}</span>
+                <span className="dc-front-title" style={{ color: card.accentColor }}>
+                  {text.title}
+                </span>
+                <p className="dc-front-message">{text.message}</p>
+                <div className="dc-front-divider" />
+                <p className="dc-front-sub">{text.subMessage}</p>
+                <span
+                  className="dc-front-category"
+                  style={{ borderColor: card.accentColor + "44", color: card.accentColor + "bb" }}
+                >
+                  #{text.category}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -195,10 +197,65 @@ export default function DailyCardPage() {
         >
           {ui.tarotLink}
         </a>
+
+        {/* ── 新手说明：怎么玩（直接进入的用户也能立刻看懂） ── */}
+        <div style={{
+          marginTop: 36, maxWidth: 480, width: "100%",
+          background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.22)",
+          borderRadius: 14, padding: "18px 20px", textAlign: "left",
+        }}>
+          <div style={{
+            fontFamily: "var(--font-cinzel), serif", fontSize: "0.95rem",
+            color: "#e8d5a3", letterSpacing: "0.06em", marginBottom: 12,
+          }}>{ui.howToTitle}</div>
+          <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+            {ui.howToSteps.map((s, i) => (
+              <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                <span style={{
+                  flexShrink: 0, width: 22, height: 22, borderRadius: "50%",
+                  border: "1px solid rgba(201,168,76,0.55)", color: "#c9a84c",
+                  fontSize: "0.72rem", display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  marginTop: 1,
+                }}>{i + 1}</span>
+                <span style={{ fontSize: "0.85rem", color: "rgba(220,205,175,0.8)", lineHeight: 1.7 }}>{s}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* ── SEO 内容区 + FAQ（SSR 输出，爬虫可读） ── */}
+        <section style={{ maxWidth: 720, margin: "48px auto 0", padding: "0 4px", textAlign: "left" }}>
+          {ui.seoSections.map((sec) => (
+            <div key={sec.heading} style={{ marginBottom: 28 }}>
+              <h2 style={{
+                fontFamily: "var(--font-cinzel), serif", fontSize: "1.05rem",
+                color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 10,
+                borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+              }}>{sec.heading}</h2>
+              <p style={{ fontSize: "0.88rem", color: "rgba(200,175,140,0.75)", lineHeight: 1.85, margin: 0 }}>{sec.body}</p>
+            </div>
+          ))}
+          <h2 style={{
+            fontFamily: "var(--font-cinzel), serif", fontSize: "1.05rem",
+            color: "#e8d5a3", letterSpacing: "0.04em", marginBottom: 12,
+            borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+          }}>{ui.faqTitle}</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {ui.faq.map((f) => (
+              <details key={f.q} style={{
+                background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.18)",
+                borderRadius: 12, padding: "12px 16px",
+              }}>
+                <summary style={{ cursor: "pointer", fontSize: "0.88rem", color: "rgba(232,213,163,0.9)", fontWeight: 600, lineHeight: 1.5 }}>{f.q}</summary>
+                <p style={{ fontSize: "0.84rem", color: "rgba(200,175,140,0.72)", lineHeight: 1.8, margin: "10px 0 2px" }}>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </div>
 
       {/* 海报弹窗 */}
-      {showPoster && (
+      {showPoster && card && text && (
         <CardPoster card={card} text={text} ui={ui} locale={locale} dateStr={dateStr} onClose={() => setShowPoster(false)} />
       )}
     </div>
