@@ -285,7 +285,7 @@ export function DrawingPhase({ domain, spreadType, lang = "zh", onComplete }: Dr
                   zIndex: i,
                 }}
               >
-                <img src="/images/cards/back.jpg" alt="Card back" className="w-full h-full object-cover" />
+                <img src="/images/cards/back.jpg" alt="Tarot card back" width={100} height={166} className="w-full h-full object-cover" />
               </div>
             ))}
           </div>
@@ -372,7 +372,7 @@ export function DrawingPhase({ domain, spreadType, lang = "zh", onComplete }: Dr
                         isSelecting && !drawnCard.selected ? "hover:shadow-gold hover:-translate-y-2" : ""
                       } ${drawnCard.selected ? "ring-2 ring-gold shadow-gold-lg" : "border border-white/10"}`}
                     >
-                      <img src="/images/cards/back.jpg" alt="Card" className="w-full h-full object-cover" />
+                      <img src="/images/cards/back.jpg" alt="Tarot card back" width={100} height={166} className="w-full h-full object-cover" />
                     </div>
                     {drawnCard.selected && (
                       <div className="absolute inset-0 flex items-center justify-center bg-gold/20 rounded-lg">
@@ -467,7 +467,7 @@ function CardFlip({ card, reversed, flipped, delay, reversedLabel }: CardFlipPro
     <div className="card-flip-container" style={{ width: "100px", height: "166px" }}>
       <div className={`card-flip w-full h-full ${flipped ? "flipped" : ""}`} style={{ transitionDelay: `${delay}s` }}>
         <div className="card-face card-back w-full h-full rounded-xl overflow-hidden shadow-lg">
-          <img src="/images/cards/back.jpg" alt="Card back" className="w-full h-full object-cover" />
+          <img src="/images/cards/back.jpg" alt="Tarot card back" width={100} height={166} className="w-full h-full object-cover" />
         </div>
         <div className="card-face card-front w-full h-full rounded-xl overflow-hidden shadow-gold relative">
           <img

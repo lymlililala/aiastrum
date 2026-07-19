@@ -8,7 +8,7 @@
  * 注意:博客详情 /blog/{slug} 与 topic pillar /blog/topic/... 不在此列(本阶段保持无前缀)。
  */
 
-/** 22 个工具页(与 sitemap toolRoutes 对齐,不含 /blog 与信息页) */
+/** 28 个工具页(与 sitemap toolRoutes 对齐,不含 /blog 与信息页) */
 export const TOOL_PATHS = [
   "/tarot",
   "/horoscope",
@@ -17,6 +17,12 @@ export const TOOL_PATHS = [
   "/bazi",
   "/ziwei",
   "/astro",
+  "/moon-sign-calculator",
+  "/rising-sign-calculator",
+  "/venus-sign-calculator",
+  "/life-path-calculator",
+  "/yes-no-tarot",
+  "/free-rune-reading",
   "/ai-mystic",
   "/synastry",
   "/love",

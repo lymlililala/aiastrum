@@ -1,5 +1,5 @@
 import { type Metadata } from "next";
-import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, shortToolName, type LocaleMeta } from "~/lib/seo";
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
@@ -29,14 +29,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DailyCardLayout({ children }: { children: React.ReactNode }) {
   const locale = await getServerLocale();
+  const m = META[locale];
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/${locale}` },
-    { name: "Daily Cosmic Card", url: `${BASE_URL}/${locale}/daily-card` },
+    { name: HOME_NAME[locale], url: `${BASE_URL}/${locale}` },
+    { name: shortToolName(m.title), url: `${BASE_URL}/${locale}/daily-card` },
   ]);
   const webApp = webAppJsonLd({
-    name: "Daily Cosmic Card",
+    name: shortToolName(m.title),
     url: `${BASE_URL}/${locale}/daily-card`,
-    description: "Daily blind-box card flip with beautiful animations — a soul-touching message from the universe.",
+    description: m.description,
   });
   return (
     <>

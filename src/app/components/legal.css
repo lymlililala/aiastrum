@@ -44,7 +44,7 @@
 }
 
 .legal-title {
-  font-family: Cinzel, serif;
+  font-family: var(--font-cinzel), serif;
   font-size: 1.85rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -83,7 +83,7 @@
   line-height: 1.8;
 }
 .legal-prose h2 {
-  font-family: Cinzel, serif;
+  font-family: var(--font-cinzel), serif;
   font-size: 1.1rem;
   font-weight: 600;
   color: rgba(220, 190, 110, 0.92);
@@ -139,7 +139,7 @@
   color: rgba(201, 168, 76, 0.6);
 }
 .legal-contact-card a {
-  font-family: Cinzel, serif;
+  font-family: var(--font-cinzel), serif;
   font-size: 1.15rem;
   color: rgba(245, 220, 150, 0.95);
   text-decoration: none;

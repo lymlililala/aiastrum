@@ -1,5 +1,5 @@
 import { type Metadata } from "next";
-import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, shortToolName, type LocaleMeta } from "~/lib/seo";
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
@@ -29,14 +29,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DailyFortuneLayout({ children }: { children: React.ReactNode }) {
   const locale = await getServerLocale();
+  const m = META[locale];
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/${locale}` },
-    { name: "Daily Fortune Guide", url: `${BASE_URL}/${locale}/daily-fortune` },
+    { name: HOME_NAME[locale], url: `${BASE_URL}/${locale}` },
+    { name: shortToolName(m.title), url: `${BASE_URL}/${locale}/daily-fortune` },
   ]);
   const webApp = webAppJsonLd({
-    name: "Daily Fortune Guide",
+    name: shortToolName(m.title),
     url: `${BASE_URL}/${locale}/daily-fortune`,
-    description: "Personalized daily lucky color, number, direction, and outfit based on your birth elements.",
+    description: m.description,
   });
   return (
     <>

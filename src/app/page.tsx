@@ -151,6 +151,18 @@ const TW = {
   tarotDesc:         "抽取塔羅牌，AI 解讀過去、現在與未來的隱秘低語",
   astroTitle:        "星盤解析",
   astroDesc:         "精準計算太陽、月亮、上升點，繪製專屬星盤，解讀命運密碼",
+  moonSignTitle:     "月亮星座計算器",
+  moonSignDesc:      "輸入出生日期時間，免費查出你的月亮星座與情緒密碼",
+  risingSignTitle:   "上升星座計算器",
+  risingSignDesc:    "輸入出生時間地點，查出你的上升星座與外在氣質",
+  venusSignTitle:    "金星星座計算器",
+  venusSignDesc:     "查出你的金星星座，讀懂你的戀愛風格與吸引力",
+  lifePathTitle:     "生命靈數計算器",
+  lifePathDesc:      "輸入生日，逐步算出你的生命道路數字",
+  yesNoTarotTitle:   "是與否塔羅",
+  yesNoTarotDesc:    "默念一個是非問題，抽牌給你是／否／待定指引",
+  runeReadingTitle:  "免費盧恩占卜",
+  runeReadingDesc:   "在線抽取盧恩符文，單張或三張牌陣即時解讀",
   mbtiTitle:         "MBTI 星球碰撞",
   mbtiDesc:          "MBTI × 星座，生成專屬梗文化人格檔案，極具傳播屬性",
   horoscopeTitle:    "星座運勢",
@@ -210,6 +222,18 @@ const ZH = {
   tarotDesc:         "抽取塔罗牌，AI 解读过去、现在与未来的隐秘低语",
   astroTitle:        "星盘解析",
   astroDesc:         "精准计算太阳、月亮、上升点，绘制专属星盘，解读命运密码",
+  moonSignTitle:     "月亮星座计算器",
+  moonSignDesc:      "输入出生日期时间，免费查出你的月亮星座与情绪密码",
+  risingSignTitle:   "上升星座计算器",
+  risingSignDesc:    "输入出生时间地点，查出你的上升星座与外在气质",
+  venusSignTitle:    "金星星座计算器",
+  venusSignDesc:     "查出你的金星星座，读懂你的恋爱风格与吸引力",
+  lifePathTitle:     "生命灵数计算器",
+  lifePathDesc:      "输入生日，逐步算出你的生命道路数字",
+  yesNoTarotTitle:   "是与否塔罗",
+  yesNoTarotDesc:    "默念一个是非问题，抽牌给你是/否/待定指引",
+  runeReadingTitle:  "免费卢恩占卜",
+  runeReadingDesc:   "在线抽取卢恩符文，单张或三张牌阵即时解读",
   mbtiTitle:         "MBTI 星球碰撞",
   mbtiDesc:          "MBTI × 星座，生成专属梗文化人格档案，极具传播属性",
   horoscopeTitle:    "星座运势",
@@ -269,6 +293,18 @@ const EN = {
   tarotDesc:         "Draw tarot cards — AI interprets past, present & future whispers",
   astroTitle:        "Birth Chart",
   astroDesc:         "Discover your Sun, Moon & Rising — decode personality & destiny",
+  moonSignTitle:     "Moon Sign Calculator",
+  moonSignDesc:      "Find your moon sign by birth date & time — decode your emotional nature",
+  risingSignTitle:   "Rising Sign Calculator",
+  risingSignDesc:    "Find your ascendant by birth time & city — your outer personality",
+  venusSignTitle:    "Venus Sign Calculator",
+  venusSignDesc:     "Find your Venus sign — decode your love style & attraction",
+  lifePathTitle:     "Life Path Calculator",
+  lifePathDesc:      "Enter your birthday — see your life path number step by step",
+  yesNoTarotTitle:   "Yes or No Tarot",
+  yesNoTarotDesc:    "Ask a yes-no question, draw a card for instant guidance",
+  runeReadingTitle:  "Free Rune Reading",
+  runeReadingDesc:   "Cast Elder Futhark runes online — single or three-rune spread",
   mbtiTitle:         "MBTI × Zodiac",
   mbtiDesc:          "Combine MBTI & zodiac for a viral personality report",
   horoscopeTitle:    "Horoscope",
@@ -334,6 +370,12 @@ const MODULES: ModuleItem[] = [
   { icon: "🔮", href: "/tarot",        titleKey: "tarotTitle",       descKey: "tarotDesc",         accentColor: "#c9a84c", bgColor: GLASS_BG, category: "western",   featured: true },
   { icon: "🧩", href: "/mbti",         titleKey: "mbtiTitle",        descKey: "mbtiDesc",          accentColor: "#A78BFA", bgColor: GLASS_BG, badge: "🔥", category: "western",   featured: true },
   { icon: "✦",  href: "/astro",        titleKey: "astroTitle",       descKey: "astroDesc",         accentColor: "#6495ED", bgColor: GLASS_BG, category: "western" },
+  { icon: "🌙", href: "/moon-sign-calculator", titleKey: "moonSignTitle", descKey: "moonSignDesc", accentColor: "#c9a84c", bgColor: GLASS_BG, badge: "NEW", category: "western" },
+  { icon: "🌅", href: "/rising-sign-calculator", titleKey: "risingSignTitle", descKey: "risingSignDesc", accentColor: "#c9a84c", bgColor: GLASS_BG, badge: "NEW", category: "western" },
+  { icon: "💘", href: "/venus-sign-calculator", titleKey: "venusSignTitle", descKey: "venusSignDesc", accentColor: "#E91E8C", bgColor: GLASS_BG, badge: "NEW", category: "western" },
+  { icon: "🧭", href: "/life-path-calculator", titleKey: "lifePathTitle", descKey: "lifePathDesc", accentColor: "#7C3AED", bgColor: GLASS_BG, badge: "NEW", category: "western" },
+  { icon: "🎴", href: "/yes-no-tarot", titleKey: "yesNoTarotTitle", descKey: "yesNoTarotDesc", accentColor: "#c9a84c", bgColor: GLASS_BG, badge: "NEW", category: "western" },
+  { icon: "ᚠ", href: "/free-rune-reading", titleKey: "runeReadingTitle", descKey: "runeReadingDesc", accentColor: "#4a9eca", bgColor: GLASS_BG, badge: "NEW", category: "western" },
   { icon: "🌌", href: "/horoscope",    titleKey: "horoscopeTitle",   descKey: "horoscopeDesc",     accentColor: "#FF9800", bgColor: GLASS_BG, category: "western" },
   { icon: "ᚠ",  href: "/rune",         titleKey: "runeTitle",        descKey: "runeDesc",          accentColor: "#4a9eca", bgColor: GLASS_BG, category: "western" },
   { icon: "🔯", href: "/numerology",   titleKey: "numerologyTitle",  descKey: "numerologyDesc",    accentColor: "#7C3AED", bgColor: GLASS_BG, category: "western" },
@@ -415,7 +457,7 @@ function ModuleSelectPage() {
           <span style={{ fontSize: 22 }}>✦</span>
           <div>
             <div style={{
-              fontFamily: "Cinzel, serif", fontSize: "0.95rem", fontWeight: 700,
+              fontFamily: "var(--font-cinzel), serif", fontSize: "0.95rem", fontWeight: 700,
               background: "linear-gradient(135deg,#e8d5a3,#c9a84c)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
               lineHeight: 1.1,
@@ -443,11 +485,11 @@ function ModuleSelectPage() {
         }} />
         {/* 副标题 & 主标题紧凑成组 */}
         <p style={{
-          fontFamily: "Cinzel, serif", fontSize: "0.68rem", letterSpacing: "0.22em",
+          fontFamily: "var(--font-cinzel), serif", fontSize: "0.68rem", letterSpacing: "0.22em",
           color: "rgba(201,168,76,0.6)", marginBottom: 8, textTransform: "uppercase",
         }}>{t.heroSub}</p>
         <h1 style={{
-          fontFamily: "Cinzel, serif", fontSize: "clamp(1.9rem, 6vw, 3.2rem)", fontWeight: 700,
+          fontFamily: "var(--font-cinzel), serif", fontSize: "clamp(1.9rem, 6vw, 3.2rem)", fontWeight: 700,
           background: "linear-gradient(135deg, #e8d5a3 0%, #c9a84c 50%, #f0e68c 100%)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           lineHeight: 1.2, marginBottom: 8, letterSpacing: "0.04em",
@@ -708,7 +750,7 @@ function SectionLabel({ icon, label }: { icon: string; label: string }) {
     <h2 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontWeight: "normal" }}>
       <span style={{ fontSize: 13, opacity: 0.65 }}>{icon}</span>
       <span style={{
-        fontSize: "0.7rem", fontFamily: "Cinzel, serif",
+        fontSize: "0.7rem", fontFamily: "var(--font-cinzel), serif",
         color: "rgba(201,168,76,0.5)", letterSpacing: "0.1em", textTransform: "uppercase",
       }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: "linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />

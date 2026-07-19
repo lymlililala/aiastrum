@@ -1,5 +1,5 @@
 import { type Metadata } from "next";
-import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, shortToolName, type LocaleMeta } from "~/lib/seo";
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
@@ -29,14 +29,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ZiweiLayout({ children }: { children: React.ReactNode }) {
   const locale = await getServerLocale();
+  const m = META[locale];
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/${locale}` },
-    { name: "Emperor's Star Chart", url: `${BASE_URL}/${locale}/ziwei` },
+    { name: HOME_NAME[locale], url: `${BASE_URL}/${locale}` },
+    { name: shortToolName(m.title), url: `${BASE_URL}/${locale}/ziwei` },
   ]);
   const webApp = webAppJsonLd({
-    name: "Emperor's Star Chart (Zi Wei Dou Shu)",
+    name: shortToolName(m.title),
     url: `${BASE_URL}/${locale}/ziwei`,
-    description: "14 major stars across 12 palaces reveal your life trajectory through the ancient Zi Wei Dou Shu system.",
+    description: m.description,
   });
   return (
     <>

@@ -52,7 +52,7 @@ export default async function ToolArticleLinks({
     <section style={{ maxWidth: 720, margin: "0 auto", padding: "8px 20px 64px", position: "relative", zIndex: 1 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
         <span style={{ fontSize: 14, opacity: 0.7 }}>{meta.icon}</span>
-        <span style={{ fontSize: "0.7rem", fontFamily: "Cinzel,serif", color: "rgba(201,168,76,0.55)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+        <span style={{ fontSize: "0.7rem", fontFamily: "var(--font-cinzel),serif", color: "rgba(201,168,76,0.55)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
           {t.related}
         </span>
         <div style={{ flex: 1, height: 1, background: "linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />

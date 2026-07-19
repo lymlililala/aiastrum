@@ -7,8 +7,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-        cinzel: ["Cinzel", "serif"],
-        crimson: ["Crimson Text", "serif"],
+        cinzel: ["var(--font-cinzel)", "serif"],
+        crimson: ["var(--font-crimson)", "serif"],
       },
       colors: {
         gold: {

@@ -22,7 +22,7 @@ export default function NotFound() {
         justifyContent: "center",
         textAlign: "center",
         padding: "40px 24px",
-        fontFamily: "Cinzel, serif",
+        fontFamily: "var(--font-cinzel), serif",
       }}
     >
       <div style={{ fontSize: "4rem", marginBottom: 16 }}>✦</div>

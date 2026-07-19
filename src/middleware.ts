@@ -79,9 +79,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next({ request: { headers: withLocaleHeader(request, blogLocale) } });
   }
 
-  // 根路径 "/":按浏览器语言重定向到 /{detected}
+  // 根路径 "/":按浏览器语言永久重定向到 /{detected}(308,权重传递给语言首页)
   if (pathname === "/") {
-    return NextResponse.redirect(new URL(`/${resolveLocale(request)}`, request.url), 307);
+    return NextResponse.redirect(new URL(`/${resolveLocale(request)}`, request.url), 308);
   }
 
   // 范围内的无前缀路径(/tarot、/about、精确 /blog):301 到 /{detected}{path}(保留 query)

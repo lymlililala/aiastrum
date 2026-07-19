@@ -1,5 +1,5 @@
 import { type Metadata } from "next";
-import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, type LocaleMeta } from "~/lib/seo";
+import { toolMetadataI18n, breadcrumbJsonLd, webAppJsonLd, BASE_URL, HOME_NAME, shortToolName, type LocaleMeta } from "~/lib/seo";
 import { getServerLocale } from "~/lib/serverLocale";
 import { type Locale } from "~/lib/i18n";
 import ToolArticleLinks from "~/app/components/ToolArticleLinks";
@@ -29,14 +29,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function QimenLayout({ children }: { children: React.ReactNode }) {
   const locale = await getServerLocale();
+  const m = META[locale];
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${BASE_URL}/${locale}` },
-    { name: "Qi Men Dun Jia", url: `${BASE_URL}/${locale}/qimen` },
+    { name: HOME_NAME[locale], url: `${BASE_URL}/${locale}` },
+    { name: shortToolName(m.title), url: `${BASE_URL}/${locale}/qimen` },
   ]);
   const webApp = webAppJsonLd({
-    name: "Qi Men Dun Jia",
+    name: shortToolName(m.title),
     url: `${BASE_URL}/${locale}/qimen`,
-    description: "9-palace grid layout with true solar time for business and travel fortune predictions.",
+    description: m.description,
   });
   return (
     <>

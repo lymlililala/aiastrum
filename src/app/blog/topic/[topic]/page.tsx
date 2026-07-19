@@ -2,6 +2,8 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
+import { canonicalSlug } from "~/lib/canonical-overrides";
+import { NOINDEX_SLUGS } from "~/lib/noindex-slugs";
 import { withLocale } from "~/lib/i18n";
 import { readBlogLocale, localeToLang, BLOG_CHROME } from "~/app/blog/blog-i18n";
 
@@ -125,7 +127,8 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
   let posts: Array<{ slug: string; title: string; description: string; readingTime: number }> = [];
   try {
     const all = await fetchAllPosts(undefined, lang);
-    posts = all.filter(t.match)
+    // 排除 canonical 被合并的次要文章与 noindex 薄文，权重只导向规范可索引页
+    posts = all.filter(p => canonicalSlug(p.slug) === p.slug && !NOINDEX_SLUGS.has(p.slug) && t.match(p))
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
       .map(p => ({ slug: p.slug, title: p.title, description: p.description ?? "", readingTime: p.reading_time }));
   } catch { /* 降级空 */ }
@@ -162,7 +165,7 @@ export default async function TopicPillarPage({ params }: { params: { topic: str
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 20px 80px" }}>
         <header style={{ marginBottom: 24 }}>
-          <h1 style={{ fontFamily: "Cinzel,serif", fontSize: "clamp(1.5rem,4vw,2.2rem)", fontWeight: 700, color: "#e8d5a3", lineHeight: 1.3, marginBottom: 14 }}>{t.h1}</h1>
+          <h1 style={{ fontFamily: "var(--font-cinzel),serif", fontSize: "clamp(1.5rem,4vw,2.2rem)", fontWeight: 700, color: "#e8d5a3", lineHeight: 1.3, marginBottom: 14 }}>{t.h1}</h1>
           <div className="pillar-intro" dangerouslySetInnerHTML={{ __html: t.intro }} />
           <p style={{ fontSize: ".72rem", color: "rgba(201,168,76,.45)", marginTop: 8 }}>{c.totalArticles(posts.length)}</p>
         </header>

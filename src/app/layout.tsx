@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
+import { Cinzel, Crimson_Text } from "next/font/google";
 import { type Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
@@ -52,6 +53,19 @@ export const metadata: Metadata = {
   keywords: ["tarot", "astrology", "bazi", "zodiac", "MBTI", "numerology", "I Ching", "feng shui", "destiny", "oracle", "AI divination", "占卜", "八字", "星盘", "塔罗"],
 };
 
+// 装饰字体自托管（next/font 自动子集化 + preload，替代外链 Google Fonts 与 CSS @import）
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-cinzel",
+});
+const crimsonText = Crimson_Text({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-crimson",
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -72,14 +86,7 @@ export default async function RootLayout({
         "name": "AiAstrum",
         "description": "AI-powered divination platform — Tarot, Astrology, Bazi & Eastern Wisdom",
         "inLanguage": ["en", "zh-CN", "zh-TW"],
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": `${BASE_URL}/blog?q={search_term_string}`,
-          },
-          "query-input": "required name=search_term_string",
-        },
+        // 不声明 SearchAction：站内无搜索功能，虚假目标会被 Google 忽略并损害结构化数据可信度
       },
       {
         "@type": "Organization",
@@ -98,14 +105,8 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={htmlLang} className={`${GeistSans.variable}`}>
+    <html lang={htmlLang} className={`${GeistSans.variable} ${cinzel.variable} ${crimsonText.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
-          rel="stylesheet"
-        />
         {/* 站点级结构化数据 */}
         <script
           type="application/ld+json"
