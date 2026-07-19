@@ -73,7 +73,7 @@ async function fetchAllPostsRaw(category?: string, lang?: string): Promise<DbBlo
     for (let from = 0; ; from += PAGE_SIZE) {
       let query = supabaseAdmin
         .from("mysticai_blog_posts")
-        .select("id,slug,category,lang,title,title_en,description,keywords,published_at,reading_time,cta_href,cta_label,cta_label_en")
+        .select("id,slug,category,lang,title,title_en,description,keywords,published_at,updated_at,reading_time,cta_href,cta_label,cta_label_en")
         .order("published_at", { ascending: false })
         .range(from, from + PAGE_SIZE - 1);
 
@@ -107,7 +107,7 @@ export function fetchAllPosts(category?: string, lang?: string): Promise<DbBlogP
 }
 
 /** 按 slug 获取单篇文章（含 content）— 服务端用 admin 绕过 RLS */
-export async function fetchPostBySlug(slug: string): Promise<DbBlogPost | null> {
+async function fetchPostBySlugRaw(slug: string): Promise<DbBlogPost | null> {
   return withRetry(async () => {
     const { data, error } = await supabaseAdmin
       .from("mysticai_blog_posts")
@@ -121,6 +121,18 @@ export async function fetchPostBySlug(slug: string): Promise<DbBlogPost | null> 
     }
     return (data as DbBlogPost) ?? null;
   });
+}
+
+// 跨请求缓存单篇文章（1 小时）：博客详情页 force-dynamic，不缓存则每次请求/抓取
+// 都实时打库；缓存后 TTFB 显著下降。slug 作为参数自动纳入缓存键。
+const fetchPostBySlugCached = unstable_cache(
+  (slug: string) => fetchPostBySlugRaw(slug),
+  ["mysticai-post-by-slug"],
+  { revalidate: 3600, tags: ["blog-posts"] },
+);
+
+export function fetchPostBySlug(slug: string): Promise<DbBlogPost | null> {
+  return fetchPostBySlugCached(slug);
 }
 
 /** 获取所有 slug（用于 generateStaticParams）— 用 admin 绕过 RLS 确保全量返回 */

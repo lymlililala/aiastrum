@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { fetchPostBySlug, fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
 import { injectContextualLinks, type LinkCandidate } from "~/lib/internal-links";
 import { canonicalSlug } from "~/lib/canonical-overrides";
+import { NOINDEX_SLUGS } from "~/lib/noindex-slugs";
 import { buildFaqSchema } from "~/lib/faq-schema";
 import { HOWTO_SCHEMAS } from "~/lib/howto-schemas";
 import { CATEGORY_META } from "../blog-data";
@@ -33,11 +34,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       const BASE_URL = "https://aiastrum.com";
       // 重复文章：canonical 指向主文章，集中排名信号
       const canonicalUrl = `${BASE_URL}/blog/${canonicalSlug(params.slug)}`;
+      // 双语双胞胎（foo 为英文版、foo-zh 为中文版）：互加 hreflang，告知 Google
+      // 这是同一内容的两个语言版本而非重复页面；canonical 保持各自自引用。
+      // 运行时探测双胞胎是否存在（不硬编码清单），后续新增双语对自动生效。
+      const twinSlug = params.slug.endsWith("-zh") ? params.slug.slice(0, -3) : `${params.slug}-zh`;
+      let languages: Record<string, string> | undefined;
+      try {
+        const twin = await fetchPostBySlug(twinSlug);
+        if (twin) {
+          const twinUrl = `${BASE_URL}/blog/${twinSlug}`;
+          const zhUrl = params.slug.endsWith("-zh") ? canonicalUrl : twinUrl;
+          const enUrl = params.slug.endsWith("-zh") ? twinUrl : canonicalUrl;
+          languages = { "zh-CN": zhUrl, en: enUrl, "x-default": zhUrl };
+        }
+      } catch { /* 探测失败则不输出 hreflang，不影响页面本身 */ }
       return {
         title: db.title, // 根 layout 模板会自动追加 " | AiAstrum"，此处不再重复品牌名
         description: db.description,
         keywords: db.keywords,
-        alternates: { canonical: canonicalUrl },
+        alternates: { canonical: canonicalUrl, ...(languages ? { languages } : {}) },
+        // 薄内容矩阵残次品（<200 词且零展示）：不索引但保留 follow 传递内链权重
+        robots: NOINDEX_SLUGS.has(params.slug) ? { index: false, follow: true } : undefined,
         openGraph: {
           title: db.title,
           description: db.description,
@@ -55,7 +72,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       };
     }
   } catch { /* 降级 */ }
-  return {};
+  // DB 失败兜底：避免回落到与首页相同的全局默认 title（产生重复标题）
+  return { title: "Blog" };
 }
 
 // ── 页面数据结构 ──────────────────────────────────────────────────────────────
@@ -74,12 +92,21 @@ type PostDisplay = {
   ctaLabelEn: string;
 };
 
+// 清洗库存正文：大量文章 HTML 自带 <article><h1>标题</h1> 开头，与页面模板渲染的
+// 唯一 h1 重复（双 h1），且产生 <article> 嵌套。渲染前剥离正文内嵌的 h1 与外层 article。
+function sanitizeContent(html: string): string {
+  return html
+    .replace(/<h1[^>]*>[\s\S]*?<\/h1>/i, "")
+    .replace(/^\s*<article[^>]*>/i, "")
+    .replace(/<\/article>\s*$/i, "");
+}
+
 function fromDb(p: DbBlogPost): PostDisplay {
   return {
     slug: p.slug, category: p.category as string, lang: p.lang, title: p.title,
     description: p.description, keywords: p.keywords ?? [],
     publishedAt: p.published_at,
-    readingTime: p.reading_time, content: p.content,
+    readingTime: p.reading_time, content: sanitizeContent(p.content),
     ctaHref: p.cta_href, ctaLabel: p.cta_label, ctaLabelEn: p.cta_label_en,
   };
 }
@@ -144,7 +171,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   let linkedContent = post.content;
   try {
     const pool = await fetchAllPosts(undefined, post.lang); // 仅元数据、无 content，同语言文章池
-    const others = pool.filter(p => p.slug !== post!.slug);
+    // 排除自身 + canonical 被合并的次要文章 + noindex 薄文：权重只导向规范可索引页
+    const others = pool.filter(p => p.slug !== post!.slug && canonicalSlug(p.slug) === p.slug && !NOINDEX_SLUGS.has(p.slug));
 
     // ── 正文自动内链：优先同类文章作为锚词来源 ──────────────────────────────
     const candidates: LinkCandidate[] = [
@@ -253,7 +281,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <section style={{ marginTop:48 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
               <span style={{ fontSize:13, opacity:0.6 }}>✦</span>
-              <span style={{ fontSize:"0.7rem", fontFamily:"Cinzel,serif", color:"rgba(201,168,76,0.5)", letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.relatedArticles}</span>
+              <span style={{ fontSize:"0.7rem", fontFamily:"var(--font-cinzel),serif", color:"rgba(201,168,76,0.5)", letterSpacing:"0.1em", textTransform:"uppercase" }}>{t.relatedArticles}</span>
               <div style={{ flex:1, height:1, background:"linear-gradient(to right,rgba(201,168,76,0.15),transparent)" }} />
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
