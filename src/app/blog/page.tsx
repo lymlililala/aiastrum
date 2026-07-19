@@ -1,6 +1,8 @@
 import { type Metadata } from "next";
 import Link from "next/link";
 import { fetchAllPosts, type DbBlogPost } from "~/lib/supabase";
+import { canonicalSlug } from "~/lib/canonical-overrides";
+import { NOINDEX_SLUGS } from "~/lib/noindex-slugs";
 import { withLocale } from "~/lib/i18n";
 import { hreflangFor } from "~/lib/seo";
 import { CATEGORY_META, type BlogCategory } from "./blog-data";
@@ -19,17 +21,30 @@ const PILLAR_LABELS = {
 
 const BASE_URL = "https://aiastrum.com";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Record<string, string | undefined>;
+}): Promise<Metadata> {
   const locale = await readBlogLocale();
   const t = BLOG_CHROME[locale];
+  // 分页/筛选页自引用 canonical（Google 分页建议），并给标题加页码后缀
+  const page = Math.max(1, parseInt(searchParams.page ?? "1", 10) || 1);
+  const cat = searchParams.cat;
+  const qs = new URLSearchParams();
+  if (cat && cat !== "all") qs.set("cat", cat);
+  if (page > 1) qs.set("page", String(page));
+  const query = qs.toString();
+  const metaTitle = page > 1 ? `${t.metaTitle} — ${t.pageSuffix(page)}` : t.metaTitle;
   const alternates = hreflangFor("/blog", locale); // canonical 带语言前缀 + 三语 hreflang
+  if (query) alternates.canonical = `${alternates.canonical as string}?${query}`;
   const canonicalUrl = alternates.canonical as string;
   return {
-    title: t.metaTitle, // 模板自动追加 " | AiAstrum"
+    title: metaTitle, // 模板自动追加 " | AiAstrum"
     description: t.metaDesc,
     alternates,
     openGraph: {
-      title: `${t.metaTitle} | AiAstrum`,
+      title: `${metaTitle} | AiAstrum`,
       description: t.metaDesc,
       url: canonicalUrl,
       type: "website",
@@ -38,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${t.metaTitle} — AiAstrum`,
+      title: `${metaTitle} — AiAstrum`,
       description: t.metaDesc,
       images: [`${BASE_URL}/images/og-cover.png`],
     },
@@ -47,6 +62,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // 强制每次请求都重新从数据库读（ISR 60s）
 export const revalidate = 60;
+
+// 每页文章数：全量 200+ 篇一次性渲染会导致页面过长
+const PAGE_SIZE = 24;
 
 const CATEGORIES: Array<{ key: BlogCategory | "all"; label: string; icon: string }> = [
   { key: "all",            label: "全部",     icon: "✦"  },
@@ -104,13 +122,35 @@ export default async function BlogListPage({
   let posts: ReturnType<typeof toDisplayPost>[] = [];
   try {
     const dbPosts = await fetchAllPosts(cat === "all" ? undefined : cat, lang);
-    posts = dbPosts.map(toDisplayPost).sort(
+    // 排除 canonical 被合并的次要文章与 noindex 薄文：列表不展示、不导向已声明「不排名」的页面
+    posts = dbPosts.filter(p => canonicalSlug(p.slug) === p.slug && !NOINDEX_SLUGS.has(p.slug)).map(toDisplayPost).sort(
       (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     );
   } catch {
     // 数据库不可达时返回空列表
     posts = [];
   }
+
+  // ── 分页：?page=N，超出范围时收敛到合法页 ─────────────────────────────────────
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+  const page = Math.min(totalPages, Math.max(1, parseInt(searchParams.page ?? "1", 10) || 1));
+  const pagePosts = posts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // 分页链接：保留 cat，page=1 时省略参数保持 URL 干净
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (cat !== "all") params.set("cat", cat);
+    if (p > 1) params.set("page", String(p));
+    const qs = params.toString();
+    return withLocale(locale, qs ? `/blog?${qs}` : "/blog");
+  };
+
+  // 页码窗口：当前页前后各 2 页
+  const winStart = Math.max(1, Math.min(page - 2, totalPages - 4));
+  const pageNumbers = Array.from(
+    { length: Math.min(5, totalPages) },
+    (_, i) => winStart + i,
+  );
 
   // ── ItemList 结构化数据 ──────────────────────────────────────────────────────
   const itemListSchema = {
@@ -120,9 +160,9 @@ export default async function BlogListPage({
     "description": t.metaDesc,
     "url": `https://aiastrum.com/${locale}/blog`,
     "numberOfItems": posts.length,
-    "itemListElement": posts.map((post, idx) => ({
+    "itemListElement": pagePosts.map((post, idx) => ({
       "@type": "ListItem",
-      "position": idx + 1,
+      "position": (page - 1) * PAGE_SIZE + idx + 1,
       "url": `https://aiastrum.com/blog/${post.slug}`,
       "name": post.title,
     })),
@@ -158,7 +198,7 @@ export default async function BlogListPage({
           <span>←</span><span>{t.backHome}</span>
         </Link>
         <div style={{
-          fontFamily: "Cinzel, serif", fontSize: "0.85rem", fontWeight: 700,
+          fontFamily: "var(--font-cinzel), serif", fontSize: "0.85rem", fontWeight: 700,
           background: "linear-gradient(135deg,#e8d5a3,#c9a84c)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
         }}>{t.kbTitle}</div>
@@ -172,11 +212,11 @@ export default async function BlogListPage({
           background: "radial-gradient(ellipse at 50% 0%, rgba(100,60,200,0.18) 0%, transparent 65%)",
           pointerEvents: "none",
         }} />
-        <p style={{ fontFamily: "Cinzel,serif", fontSize: "0.62rem", letterSpacing: "0.22em", color: "rgba(201,168,76,0.5)", marginBottom: 8, textTransform: "uppercase" }}>
+        <p style={{ fontFamily: "var(--font-cinzel),serif", fontSize: "0.62rem", letterSpacing: "0.22em", color: "rgba(201,168,76,0.5)", marginBottom: 8, textTransform: "uppercase" }}>
           {t.kbTagline}
         </p>
         <h1 style={{
-          fontFamily: "Cinzel,serif", fontSize: "clamp(1.6rem,5vw,2.6rem)", fontWeight: 700,
+          fontFamily: "var(--font-cinzel),serif", fontSize: "clamp(1.6rem,5vw,2.6rem)", fontWeight: 700,
           background: "linear-gradient(135deg,#e8d5a3 0%,#c9a84c 50%,#f0e68c 100%)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
           marginBottom: 10, lineHeight: 1.25,
@@ -245,7 +285,7 @@ export default async function BlogListPage({
           gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 420px), 1fr))",
           gap: 14,
         }}>
-          {posts.map(post => {
+          {pagePosts.map(post => {
             const meta = (CATEGORY_META as Record<string, typeof CATEGORY_META[BlogCategory]>)[post.category]
               ?? { label: "文章", labelEn: "Article", icon: "✦", color: "#c9a84c" };
             return (
@@ -290,6 +330,41 @@ export default async function BlogListPage({
             );
           })}
         </div>
+
+        {/* ── 分页导航 ── */}
+        {totalPages > 1 && (
+          <nav style={{
+            display: "flex", justifyContent: "center", alignItems: "center",
+            gap: 8, marginTop: 28, flexWrap: "wrap",
+          }}>
+            {page > 1 && (
+              <Link href={pageHref(page - 1)} className="blog-cat-tab" style={{
+                padding: "7px 16px", borderRadius: 22, textDecoration: "none",
+                border: "1px solid rgba(201,168,76,0.14)", color: "rgba(210,185,130,0.65)",
+                fontSize: "0.78rem", transition: "all 0.18s", whiteSpace: "nowrap",
+              }}>← {t.prevPage}</Link>
+            )}
+            {pageNumbers.map(n => {
+              const active = n === page;
+              return (
+                <Link key={n} href={pageHref(n)} className="blog-cat-tab" style={{
+                  padding: "7px 14px", borderRadius: 22, textDecoration: "none",
+                  border: active ? "1px solid rgba(201,168,76,0.55)" : "1px solid rgba(201,168,76,0.14)",
+                  background: active ? "rgba(201,168,76,0.14)" : "transparent",
+                  color: active ? "rgba(240,210,120,0.95)" : "rgba(210,185,130,0.65)",
+                  fontSize: "0.78rem", transition: "all 0.18s",
+                }}>{n}</Link>
+              );
+            })}
+            {page < totalPages && (
+              <Link href={pageHref(page + 1)} className="blog-cat-tab" style={{
+                padding: "7px 16px", borderRadius: 22, textDecoration: "none",
+                border: "1px solid rgba(201,168,76,0.14)", color: "rgba(210,185,130,0.65)",
+                fontSize: "0.78rem", transition: "all 0.18s", whiteSpace: "nowrap",
+              }}>{t.nextPage} →</Link>
+            )}
+          </nav>
+        )}
 
         {posts.length === 0 && (
           <div style={{ textAlign: "center", padding: "60px 0", color: "rgba(200,175,145,0.4)", fontSize: "0.9rem" }}>

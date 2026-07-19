@@ -52,6 +52,9 @@ export interface BlogChrome {
   readFull: string;
   emptyCategory: string;
   catAll: string;
+  prevPage: string;
+  nextPage: string;
+  pageSuffix: (n: number) => string;
   // 通用
   minRead: (n: number) => string;
   aboutMinRead: (n: number) => string;
@@ -75,6 +78,9 @@ export const BLOG_CHROME: Record<Locale, BlogChrome> = {
     readFull: "阅读全文 →",
     emptyCategory: "该分类暂无文章，敬请期待",
     catAll: "全部",
+    prevPage: "上一页",
+    nextPage: "下一页",
+    pageSuffix: (n) => `第 ${n} 页`,
     minRead: (n) => `${n} 分钟阅读`,
     aboutMinRead: (n) => `约 ${n} 分钟阅读`,
     backKB: "← 返回知识库",
@@ -93,6 +99,9 @@ export const BLOG_CHROME: Record<Locale, BlogChrome> = {
     readFull: "閱讀全文 →",
     emptyCategory: "該分類暫無文章，敬請期待",
     catAll: "全部",
+    prevPage: "上一頁",
+    nextPage: "下一頁",
+    pageSuffix: (n) => `第 ${n} 頁`,
     minRead: (n) => `${n} 分鐘閱讀`,
     aboutMinRead: (n) => `約 ${n} 分鐘閱讀`,
     backKB: "← 返回知識庫",
@@ -111,6 +120,9 @@ export const BLOG_CHROME: Record<Locale, BlogChrome> = {
     readFull: "Read more →",
     emptyCategory: "No articles in this category yet — stay tuned.",
     catAll: "All",
+    prevPage: "Prev",
+    nextPage: "Next",
+    pageSuffix: (n) => `Page ${n}`,
     minRead: (n) => `${n} min read`,
     aboutMinRead: (n) => `${n} min read`,
     backKB: "← Back to Knowledge Base",
