@@ -163,19 +163,53 @@ const PLANET_ORBITAL_ELEMENTS: Record<string, [number, number, number, number, n
   Pluto:   [238.9290977,    145.2078580,39.48211675, 0.24882730,  0.00005170,17.14001206, 110.30393684, -0.01183482, 224.06891629, -0.04062942],
 };
 
+// 地球（EM Bary）轨道根数（JPL 近似星历表，1800–2050），用于地心换算
+const EARTH_ORBITAL_ELEMENTS: [number, number, number, number, number, number, number, number, number, number] =
+  [100.46457166, 35999.37244981, 1.00000261, 0.01671123, -0.00004392, -0.00001531, 0.0, 0.0, 102.93768193, 0.32327364];
+
+// 由开普勒根数求行星日心黄道直角坐标（JPL 近似星历算法）
+// 根数列：[L0, L1, a, e0, e1, i0, Ω0, Ω1, ϖ0, ϖ1]，速率单位为度/儒略世纪
+function helioEclipticCoords(el: readonly number[], T: number): [number, number, number] {
+  const [L0, L1, a, e0, e1, i0, om0, om1, w0, w1] = el as [number, number, number, number, number, number, number, number, number, number];
+
+  const L = normalizeDeg(L0 + L1 * T);            // 平黄经
+  const e = e0 + e1 * T;                          // 离心率
+  const incl = deg2rad(i0);                       // 轨道倾角
+  const node = deg2rad(normalizeDeg(om0 + om1 * T)); // 升交点黄经
+  const wbar = normalizeDeg(w0 + w1 * T);         // 近日点黄经
+  const argPeri = deg2rad(normalizeDeg(wbar - (om0 + om1 * T))); // 近日点辐角
+  const M = normalizeDeg(L - wbar);               // 平近点角
+  const Mrad = deg2rad(M);
+
+  // 解开普勒方程 E - e·sinE = M（牛顿迭代）
+  let E = Mrad + e * Math.sin(Mrad);
+  for (let k = 0; k < 12; k++) {
+    E = E - (E - e * Math.sin(E) - Mrad) / (1 - e * Math.cos(E));
+  }
+
+  // 轨道面坐标
+  const xp = a * (Math.cos(E) - e);
+  const yp = a * Math.sqrt(1 - e * e) * Math.sin(E);
+
+  // 旋转到黄道坐标系
+  const cw = Math.cos(argPeri), sw = Math.sin(argPeri);
+  const cO = Math.cos(node), sO = Math.sin(node);
+  const ci = Math.cos(incl), si = Math.sin(incl);
+  const x = (cw * cO - sw * sO * ci) * xp + (-sw * cO - cw * sO * ci) * yp;
+  const y = (cw * sO + sw * cO * ci) * xp + (-sw * sO + cw * cO * ci) * yp;
+  const z = sw * si * xp + cw * si * yp;
+  return [x, y, z];
+}
+
 function calcPlanetLongitude(planet: string, T: number): number {
   const el = PLANET_ORBITAL_ELEMENTS[planet];
   if (!el) return 0;
-  const [L0, L1, , e0, e1, , , , w0, w1] = el;
-  const L = normalizeDeg(L0 + L1 * T / 36525);
-  const e = e0 + e1 * T;
-  const w = normalizeDeg(w0 + w1 * T);
-  const M = normalizeDeg(L - w);
-  const Mrad = deg2rad(M);
-  const EC = (2 * e - e * e * e / 4) * Math.sin(Mrad)
-    + (5 / 4) * e * e * Math.sin(2 * Mrad)
-    + (13 / 12) * e * e * e * Math.sin(3 * Mrad);
-  return normalizeDeg(L + rad2deg(EC));
+  // 日心坐标 → 减去地球日心坐标 = 地心矢量 → 地心黄经
+  // （此前误写为 L0 + L1*T/36525，T 已是儒略世纪导致多除 36525，
+  //   行星位置被冻结在 J2000 附近；且原返回值是日心经度，未做地心换算）
+  const [px, py] = helioEclipticCoords(el, T);
+  const [ex, ey] = helioEclipticCoords(EARTH_ORBITAL_ELEMENTS, T);
+  return normalizeDeg(rad2deg(Math.atan2(py - ey, px - ex)));
 }
 
 function getZodiacInfo(longitude: number, lang: Lang) {

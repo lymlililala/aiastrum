@@ -1,0 +1,130 @@
+// ─── GROUP=moon-a 内容增强数据（2026-07-19）────────────────────────────────
+// 纯数据数组 → 写出 moon-a.json，由 apply-p0719-updates.mjs 统一应用。
+// 每篇新增: ① Woman vs Man ③ Compatibility（② In Love and Relationships 各篇均已存在，跳过）
+import { writeFileSync } from "fs";
+
+const arr = [
+ {
+  slug: "aries-moon-sign-meaning",
+  sectionsHtml: `<h2>Aries Moon Woman vs Aries Moon Man</h2>
+<p>The emotional engine is identical in both — fast ignition, short burn time, a deep need for autonomy — but the expression often splits along the lines of what each was permitted to show. An <strong>Aries Moon woman</strong> has frequently been told her directness is &quot;intimidating,&quot; so she may have learned to translate her fire into competence: she handles things, initiates the hard conversation, and rarely asks for the comfort she actually wants. Underneath the capability is the same 2 a.m. restlessness — she just got good at disguising it as productivity.</p>
+<p>An <strong>Aries Moon man</strong> tends to process feeling as action even more completely. Where he feels hurt, he fixes; where he feels love, he protects and provides rather than narrates. His tenderness is real but usually wears a practical costume. Both versions share the same bottom line: say what you mean, don't manage them, and never mistake their speed for shallowness.</p>
+<h2>Aries Moon Compatibility</h2>
+<p>Moon sign compatibility is less about sun-sign clichés and more about <em>emotional tempo</em> — how fast each person processes, and what they need when they're raw. For the Aries Moon, the easiest matches are the ones who can meet its pace without being scorched by it.</p>
+<ul>
+<li><strong>Leo Moon and Sagittarius Moon</strong> — fellow fire Moons who match the tempo, forgive the flare-ups instantly, and read passion as connection rather than conflict.</li>
+<li><strong>Gemini Moon and Aquarius Moon</strong> — air Moons who talk feelings out as quickly as Aries acts them out, keeping things stimulating without heavy emotional processing.</li>
+<li><strong>Cancer Moon and Scorpio Moon</strong> — the growth matches. Water Moons feel slowly and deeply where Aries discharges and moves on; these pairings can be profoundly bonding, but only if the Aries Moon learns that a partner's silence is processing, not rejection.</li>
+</ul>`,
+  faqHtml: `<h3>Do Aries Moons fall in love fast?</h3>
+<p>Often, yes — or at least they feel the spark fast. An Aries Moon's emotional responses arrive at full volume with little warm-up, and attraction is no exception. The real question is staying power: this Moon needs the relationship to keep feeling alive after the initial chase, or the intensity that looked like love can cool into restlessness.</p>
+<h3>How do you make an Aries Moon feel loved?</h3>
+<p>Be direct, engage rather than withdraw, and give them something to do with you — a shared project, a trip, a friendly competition. Aries Moons feel loved through aliveness and honesty, not through careful diplomacy. If you're upset with them, say so plainly; they can handle conflict far better than they can handle guessing.</p>
+<h3>Can two Aries Moons be happy together?</h3>
+<p>They can be genuinely happy — nobody else will match their candor or forgive a fight as quickly. The risk is escalation: two people who both process by erupting can turn small friction into bonfires. It works when at least one of them learns to take the ten-second pause before responding.</p>`,
+  addKeywords: ["aries moon woman", "aries moon man", "aries moon compatibility", "aries moon in love"],
+ },
+ {
+  slug: "taurus-moon-sign-meaning",
+  sectionsHtml: `<h2>Taurus Moon Woman vs Taurus Moon Man</h2>
+<p>The core needs are the same for both — stability, sensory comfort, and people who stay — but the packaging tends to differ. A <strong>Taurus Moon woman</strong> is often cast, and casts herself, as the emotional anchor of her circle: the one whose home feels good, whose loyalty never wavers, whose calm steadies everyone else. The hidden cost is that she may wait far too long to ask for the same steadiness in return, treating her own needs as less urgent than everyone else's comfort.</p>
+<p>A <strong>Taurus Moon man</strong> usually expresses this Moon's devotion through consistency rather than words — showing up, providing, fixing what breaks, remembering how you take your coffee. His feelings run deep but surface slowly, and he may need to feel completely safe before he names them out loud. Both versions share one trait: they open slowly, commit fully, and grieve a loss long after everyone assumes they're fine.</p>
+<h2>Taurus Moon Compatibility</h2>
+<p>For a Taurus Moon, emotional compatibility comes down to one question: does this person feel like solid ground? The smoothest matches are Moons that offer steadiness without stagnation, and warmth without drama.</p>
+<ul>
+<li><strong>Cancer Moon and Pisces Moon</strong> — gentle water Moons who bring the tenderness Taurus rarely asks for but deeply needs, and who genuinely appreciate the safety Taurus provides.</li>
+<li><strong>Virgo Moon and Capricorn Moon</strong> — fellow earth Moons who speak the same language of reliability; nobody has to explain why routines matter or why a promise is sacred.</li>
+<li><strong>Aquarius Moon and Sagittarius Moon</strong> — the growth matches. These Moons need space, change, and motion where Taurus needs predictability; the pairing works only when Taurus loosens its grip and the other Moon treats consistency as love rather than boredom.</li>
+</ul>`,
+  faqHtml: `<h3>Are Taurus Moons possessive in love?</h3>
+<p>They can be, but it comes from security rather than control. A Taurus Moon bonds through the senses and through routine — shared meals, familiar rituals, physical closeness — so anything that threatens that continuity can trigger real anxiety. When they feel safe, that same energy becomes extraordinary steadiness and devotion rather than jealousy.</p>
+<h3>How do you comfort a Taurus Moon?</h3>
+<p>Skip the pep talk and go through the body: a real meal, a long hug, a walk somewhere green, or simply staying in the room without pressing them to talk. Taurus Moons self-soothe through the senses, and they trust actions over reassurances. What they need most is evidence that you aren't going anywhere.</p>
+<h3>Do Taurus Moons move on after a breakup?</h3>
+<p>Slowly — this is one of the Moons least likely to bounce back quickly. They don't just lose a partner; they lose a whole architecture of habits and sensory memories. They may look functional within weeks, but genuine release takes much longer. The upside: when a Taurus Moon finally lets go, the decision is complete and rarely reversed.</p>`,
+  addKeywords: ["taurus moon woman", "taurus moon man", "taurus moon compatibility", "taurus moon in love"],
+ },
+ {
+  slug: "gemini-moon-sign-meaning",
+  sectionsHtml: `<h2>Gemini Moon Woman vs Gemini Moon Man</h2>
+<p>Both versions run on the same wiring — feelings need words before they feel real — but the social scripting differs. A <strong>Gemini Moon woman</strong> is often the most emotionally articulate person in the room, narrating her inner life with humor and speed. The risk is that her fluency gets misread: because she can talk about anything, people assume nothing touches her deeply, when really the talking <em>is</em> the depth — it's how she finds out what she feels.</p>
+<p>A <strong>Gemini Moon man</strong> frequently channels the same quicksilver energy into analysis and jokes. Raised to keep feelings tidy, he may talk <em>about</em> emotions rather than <em>from</em> them, processing a heartbreak by explaining it brilliantly. Underneath the commentary is genuine sensitivity that needs an audience patient enough to wait past the punchline. Both need the same thing: a partner who treats conversation as intimacy, not small talk.</p>
+<h2>Gemini Moon Compatibility</h2>
+<p>The Gemini Moon's compatibility question is simple: who can keep the conversation — and the lightness — going when feelings get heavy? The best matches engage the mind without demanding wordless emotional fusion.</p>
+<ul>
+<li><strong>Libra Moon and Aquarius Moon</strong> — fellow air Moons who process through dialogue and ideas, and who understand that needing space to think is not emotional absence.</li>
+<li><strong>Aries Moon and Leo Moon</strong> — playful fire Moons who match Gemini's speed and treat emotional honesty as an adventure rather than a crisis.</li>
+<li><strong>Scorpio Moon and Cancer Moon</strong> — the growth matches. Water Moons communicate in silence, mood, and depth, which can feel like a foreign language to Gemini; these pairings work when Gemini learns to sit with unspoken feeling, and the water Moon accepts that talking is how Gemini loves.</li>
+</ul>`,
+  faqHtml: `<h3>How does a Gemini Moon show love?</h3>
+<p>Through words, curiosity, and inclusion in their mental world. A Gemini Moon in love texts you the funny thing that happened, asks your opinion on everything, and wants to know the story behind your story. If they've gone quiet and stopped sharing the running commentary of their day, that's usually the first sign something is wrong.</p>
+<h3>Can a Gemini Moon commit to one person?</h3>
+<p>Absolutely — the reputation for flightiness confuses variety of interests with variety of partners. What a Gemini Moon cannot commit to is stagnation: a relationship where nothing new is ever discussed, learned, or experienced. Give them one person who stays mentally interesting and they are remarkably loyal, often for life.</p>
+<h3>Why does a Gemini Moon sometimes go emotionally cold?</h3>
+<p>Usually because they've retreated into their head to think something through, or because the emotional atmosphere turned heavy with no conversational exit. It's rarely indifference — it's overload. The fix is almost always the same: start talking again, about anything, and let them find their way back to the feeling through the words.</p>`,
+  addKeywords: ["gemini moon woman", "gemini moon man", "gemini moon compatibility", "gemini moon in love"],
+ },
+ {
+  slug: "cancer-moon-sign-meaning",
+  sectionsHtml: `<h2>Cancer Moon Woman vs Cancer Moon Man</h2>
+<p>The Moon rules Cancer, so this placement is the lunar archetype at full strength for any gender — the difference lies in what each was allowed to do with it. A <strong>Cancer Moon woman</strong> is often granted cultural permission for the nurturing, intuitive expression of this Moon, and the trap is over-caretaking: she becomes everyone's emotional home while quietly running on empty, waiting for someone to notice she needs tending too.</p>
+<p>A <strong>Cancer Moon man</strong> carries the same tidal sensitivity with far fewer sanctioned outlets. He may protect it behind competence, humor, or a quietly gruff exterior, while expressing care the way this Moon knows best — feeding you, checking that you got home safely, remembering everything you told him. Both versions keep the past alive inside them and need a partner who understands that their moods are weather, not verdicts — and that their shells are protection, not rejection.</p>
+<h2>Cancer Moon Compatibility</h2>
+<p>A Cancer Moon bonds through safety, memory, and the feeling of being <em>known</em>. Compatibility hinges on whether a partner can offer emotional continuity — and handle depth without flinching.</p>
+<ul>
+<li><strong>Scorpio Moon and Pisces Moon</strong> — fellow water Moons who communicate in the same wordless emotional register; with them, the Cancer Moon doesn't have to translate its tides into plain language.</li>
+<li><strong>Taurus Moon and Virgo Moon</strong> — steady earth Moons who build the reliable container Cancer needs, and who show love through the daily acts of care that Cancer values most.</li>
+<li><strong>Aries Moon and Aquarius Moon</strong> — the growth matches. Aries processes too fast and Aquarius too coolly for Cancer's comfort; these bonds can be transformative if the partner learns that Cancer's sensitivity is depth, not fragility, and Cancer learns that distance isn't always withdrawal of love.</li>
+</ul>`,
+  faqHtml: `<h3>Why do Cancer Moons withdraw into their shell?</h3>
+<p>Withdrawal is this Moon's reset mechanism, not a punishment. When a Cancer Moon feels hurt, criticized, or emotionally flooded, retreating lets them process in private until they feel safe enough to re-emerge. Chasing them with demands to &quot;talk about it right now&quot; usually extends the retreat; quiet presence and a small kindness shorten it.</p>
+<h3>Do Cancer Moons hold grudges?</h3>
+<p>They hold memories — and to this Moon, a wound that was never properly repaired stays emotionally present, sometimes for years. It looks like grudge-holding from the outside, but it's really unfinished grief. Sincere acknowledgment, not just an apology, is what finally files the memory away. Once truly resolved, Cancer Moons are remarkably forgiving.</p>
+<h3>How do you rebuild trust with a Cancer Moon?</h3>
+<p>Slowly, through repetition. Words matter less than a pattern: showing up when you said you would, remembering what matters to them, and not using their confided vulnerabilities against them later. A Cancer Moon re-opens the way a tide comes in — gradually, and only when the shoreline proves safe again.</p>`,
+  addKeywords: ["cancer moon woman", "cancer moon man", "cancer moon compatibility", "cancer moon in love"],
+ },
+ {
+  slug: "leo-moon-sign-meaning",
+  sectionsHtml: `<h2>Leo Moon Woman vs Leo Moon Man</h2>
+<p>Both run on the same fuel — warmth given generously, and a private need to feel special to the people they love. A <strong>Leo Moon woman</strong> often grows up hearing she's &quot;too much&quot;: too dramatic, too proud, too hungry for attention. Many learn to edit their radiance down, then feel quietly starved when nobody notices the effort. Her loyalty is fierce, but so is her pride — she will rarely beg for the appreciation she needs, which makes it easy for partners to forget she needs it at all.</p>
+<p>A <strong>Leo Moon man</strong> frequently expresses this Moon through protectiveness, generosity, and being the person his people can rely on — the provider of good times and the defender of the group. The hidden part is how much reassurance he requires, and how ashamed he may feel about requiring it. Both versions share one truth: their confidence is real, but it runs on being genuinely seen, not just applauded.</p>
+<h2>Leo Moon Compatibility</h2>
+<p>The Leo Moon's core compatibility question: who will celebrate them sincerely — and whose love feels warm enough to match what they give? The best matches bring either equal fire or genuine admiration.</p>
+<ul>
+<li><strong>Aries Moon and Sagittarius Moon</strong> — fellow fire Moons who match the passion, forgive the drama instantly, and never find enthusiasm embarrassing.</li>
+<li><strong>Gemini Moon and Libra Moon</strong> — air Moons who genuinely enjoy the Leo Moon's shine; Libra especially offers the admiration and romance this Moon thrives on.</li>
+<li><strong>Scorpio Moon and Taurus Moon</strong> — the growth matches. Both are fixed Moons, so standoffs can be epic: Scorpio's intensity can feel like a power struggle, and Taurus's understatement can leave Leo feeling uncelebrated. These bonds deepen enormously once Leo learns that quiet loyalty is still devotion.</li>
+</ul>`,
+  faqHtml: `<h3>Why do Leo Moons need so much reassurance?</h3>
+<p>Because their emotional security is relational at its core — they feel okay when the people they love visibly reflect their worth back to them. It's not vanity; it's how this Moon receives information that it's loved. The need drops dramatically when appreciation is offered freely and specifically, rather than forced out of a partner by a crisis.</p>
+<h3>Are Leo Moons loyal?</h3>
+<p>Fiercely — this is one of the most loyal Moon placements. Once a Leo Moon counts you as their person, they defend you in rooms you're not in and show up when it counts. The one condition: loyalty must flow both ways. Feeling taken for granted is the single fastest way to dim this Moon's devotion.</p>
+<h3>How does a Leo Moon handle heartbreak?</h3>
+<p>Publicly, with dignity; privately, with real devastation. A Leo Moon will often perform being fine long before they feel it, because heartbreak wounds their pride as much as their heart. What actually heals them is not pretending it didn't matter, but being genuinely witnessed by a few trusted people — and slowly rebuilding a life that feels worth celebrating again.</p>`,
+  addKeywords: ["leo moon woman", "leo moon man", "leo moon compatibility", "leo moon in love"],
+ },
+ {
+  slug: "virgo-moon-sign-meaning",
+  sectionsHtml: `<h2>Virgo Moon Woman vs Virgo Moon Man</h2>
+<p>Both share the same emotional metabolism — feelings get sorted, analyzed, and made useful before they're expressed. A <strong>Virgo Moon woman</strong> is frequently socialized straight into this Moon's shadow: care expressed as service until it becomes over-functioning. She notices what everyone needs, handles it, and quietly converts her own anxiety into lists and competence. The cost is that asking for help feels like failing at the role she's built.</p>
+<p>A <strong>Virgo Moon man</strong> tends to love almost entirely through practical acts — fixing the squeaky door, remembering the appointment, researching the thing you mentioned once. Raised to keep feelings contained, he may analyze an emotion so thoroughly that he never quite lands inside it; his worry <em>is</em> his tenderness, though it rarely gets named that way. Both versions need the same permission: they're allowed to be messy, unproductive, and cared for without earning it first.</p>
+<h2>Virgo Moon Compatibility</h2>
+<p>The Virgo Moon bonds through reliability and thoughtful, everyday care — and needs a partner who can read devotion in small acts rather than grand declarations.</p>
+<ul>
+<li><strong>Taurus Moon and Capricorn Moon</strong> — fellow earth Moons who share the language of steadiness; nobody mistakes the Virgo Moon's practical devotion for coldness, because they're speaking it too.</li>
+<li><strong>Cancer Moon and Scorpio Moon</strong> — water Moons who value the attentiveness Virgo offers and gently draw out the feelings Virgo tends to file away unexamined.</li>
+<li><strong>Pisces Moon and Sagittarius Moon</strong> — the growth matches. Pisces surrenders where Virgo controls, and Sagittarius improvises where Virgo plans; these pairings stretch Virgo toward trust and spontaneity, and work when both sides stop trying to convert the other's style.</li>
+</ul>`,
+  faqHtml: `<h3>How does a Virgo Moon show they care?</h3>
+<p>Through acts of service and noticing. A Virgo Moon remembers how you take your tea, quietly handles the task you've been dreading, and asks the follow-up question about the thing you mentioned weeks ago. Their love is made of details — which means it's easy to miss if you're waiting for dramatic declarations instead of watching what they do.</p>
+<h3>Why do Virgo Moons worry so much?</h3>
+<p>Worry is how this Moon tries to keep the people and things it loves safe — if every risk is anticipated, nothing can go wrong on their watch. It's anxiety wearing the costume of responsibility. What helps is not being told to stop worrying, but having their competence trusted and their nervous system given something orderly to hold onto.</p>
+<h3>What actually helps a Virgo Moon relax?</h3>
+<p>Completion and order, in small doses: finishing a concrete task, tidying one drawer, walking a familiar route. Paradoxically, being told to &quot;just relax&quot; raises their tension, because idleness lets the mental checklist grow louder. A Virgo Moon relaxes <em>through</em> gentle usefulness — and through partners who relieve them of responsibility without making them feel useless.</p>`,
+  addKeywords: ["virgo moon woman", "virgo moon man", "virgo moon compatibility", "virgo moon in love"],
+ },
+];
+
+writeFileSync(new URL("./moon-a.json", import.meta.url), JSON.stringify(arr, null, 1));
+console.log(`written moon-a.json: ${arr.length} records`);
