@@ -48,6 +48,8 @@ export const CANONICAL_OVERRIDES: Record<string, string> = {
   "twin-flame-signs-and-stages": "twin-flame-signs-explained",
 
   // ── 上升星座：-rising-sign-meaning 系列为规范页 ──
+  // 例外（2026-07-18 批次4）：金牛反向合并——personality-complete 握有全部展示（17 vs 2），作规范页
+  "taurus-rising-sign-meaning": "taurus-rising-personality-complete",
   "aries-rising-personality-traits": "aries-rising-sign-meaning",
   "gemini-rising-personality-complete": "gemini-rising-sign-meaning",
   "cancer-rising-personality-complete": "cancer-rising-sign-meaning",
@@ -59,7 +61,13 @@ export const CANONICAL_OVERRIDES: Record<string, string> = {
 
   // ── 其他单点重复 ──
   "death-in-dreams-meaning": "death-dream-meaning",
+  // 火梦两篇同意图（fire dream meaning + house on fire）：合并到展示量更高的 burning 版
+  "dream-about-fire-meaning": "dream-about-fire-house-burning",
+  // 透石膏两篇同意图：合并到已扩写的 cleansing 版
+  "selenite-crystal-properties-uses": "selenite-crystal-cleansing-properties-guide",
   "taurus-zodiac-sign-personality-traits": "taurus-personality-traits-complete-guide",
+  // GSC 0719：capricorn 性格两篇同意图且均零展示，合并到 slug 更简洁的 guide 版（与 taurus 同模式）
+  "capricorn-zodiac-sign-personality-traits": "capricorn-personality-traits-guide",
   "chakra-system-seven-chakras-complete": "chakras-explained-beginners-guide",
   "venus-in-scorpio-meaning": "venus-in-scorpio-love-guide",
   "venus-in-scorpio-love-meaning": "venus-in-scorpio-love-guide",

@@ -118,6 +118,17 @@ export function breadcrumbJsonLd(items: Array<{ name: string; url: string }>): s
   return JSON.stringify(ld);
 }
 
+/** 面包屑「首页」三语文案（此前全站硬编码英文 "Home"） */
+export const HOME_NAME: Record<Locale, string> = { en: "Home", zh: "首页", tw: "首頁" };
+
+/**
+ * 从页面 title 提取短名称（取破折号/竖线前的第一段），
+ * 用于面包屑与 WebApplication 名称，随 locale 变化而非硬编码英文。
+ */
+export function shortToolName(title: string): string {
+  return (title.split(/\s*[—–|]\s*/)[0] ?? title).trim();
+}
+
 /**
  * 生成 WebApplication JSON-LD 字符串（工具页）
  */

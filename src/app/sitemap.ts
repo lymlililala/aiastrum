@@ -18,6 +18,10 @@ const REDIRECTED_BLOG_SLUGS = new Set([
   "the-world-tarot-reversed-meaning",
   "wheel-of-fortune-tarot-reversed-meaning",
   "the-chariot-tarot-reversed-meaning",
+  // GSC 0719「已抓取-未编入索引」批次：同步 301 到牌意详情页
+  "death-tarot-card-meaning",
+  "hanged-man-tarot-meaning",
+  "nine-of-pentacles-tarot-meaning",
 ]);
 
 // ISR：缓存 1 小时，不用 force-dynamic。
