@@ -8,7 +8,7 @@ import { T } from "./venus-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Venus Sign Calculator — What Is My Venus Sign? Free Lookup",
-    description: "Free venus sign calculator: enter your birth date to find your venus sign, exact degree and love style instantly. No birth time needed — plus what your venus sign means in love.",
+    description: "Free venus sign calculator: enter your birth date to find your venus sign, exact degree and love style instantly — no birth time needed.",
     keywords: ["venus sign calculator", "venus sign calculator free", "what is my venus sign", "venus sign by birth date", "venus sign love style"],
   },
   zh: {

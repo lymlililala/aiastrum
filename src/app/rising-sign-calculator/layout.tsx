@@ -7,8 +7,8 @@ import { T } from "./rising-i18n";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
-    title: "Rising Sign Calculator — What Is My Rising Sign? Free Ascendant Calculator",
-    description: "Free rising sign calculator: enter your birth date, exact time and city to find your ascendant sign and degree instantly. No birth time? Get a noon estimate — plus what your rising sign means.",
+    title: "Rising Sign Calculator — What Is My Rising Sign?",
+    description: "Free rising sign calculator: enter your birth date, exact time and city to find your ascendant sign and degree. No birth time? Get a noon estimate.",
     keywords: ["rising sign calculator", "ascendant calculator", "rising sign calculator free", "what is my rising sign", "ascendant sign calculator"],
   },
   zh: {

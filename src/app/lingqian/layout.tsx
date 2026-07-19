@@ -8,7 +8,7 @@ import { T } from "./lingqian-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Ling Qian Oracle — Guanyin & Wong Tai Sin Lots",
-    description: "Devoutly draw lots from Guanyin or Wong Tai Sin. Shake the divination cup for confirmation, then receive plain-language fortune analysis across four dimensions.",
+    description: "Draw lots from Guanyin or Wong Tai Sin online. Shake the cup for a lot, cast moon blocks for confirmation, get a plain-language reading.",
     keywords: ["lingqian", "fortune sticks", "guanyin oracle", "chinese fortune lots", "temple oracle"],
   },
   zh: {

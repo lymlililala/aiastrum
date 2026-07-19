@@ -8,7 +8,7 @@ import { T } from "./rune-reading-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Free Rune Reading Online — Single & Three-Rune Casting",
-    description: "Free rune reading online: cast Elder Futhark runes instantly. Single rune guidance or a three-rune past/present/future spread, with upright & reversed meanings.",
+    description: "Free rune reading online: cast Elder Futhark runes instantly — single rune guidance or a three-rune past/present/future spread with meanings.",
     keywords: ["free rune reading", "rune reading online", "free rune reading online", "rune casting", "three rune reading"],
   },
   zh: {

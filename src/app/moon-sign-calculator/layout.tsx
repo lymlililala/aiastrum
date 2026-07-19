@@ -8,7 +8,7 @@ import { T } from "./moon-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Moon Sign Calculator — What Is My Moon Sign? Free Lookup",
-    description: "Free moon sign calculator: enter your birth date, time and city to find your moon sign instantly. Works without birth time too — plus what your moon sign means.",
+    description: "Free moon sign calculator: enter your birth date, time and city to find your moon sign instantly. No birth time? It still works — with meaning.",
     keywords: ["moon sign calculator", "moon sign calculator free", "what is my moon sign", "moon calculator astrology", "moon sign by birth date"],
   },
   zh: {

@@ -7,8 +7,8 @@ import { T } from "./life-path-i18n";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
-    title: "Life Path Number Calculator — What Is My Life Path Number? Free",
-    description: "Free life path number calculator: enter your birth date to find your life path number (1–9, 11, 22, 33) with a step-by-step breakdown of the math, plus a full meaning reading.",
+    title: "Life Path Number Calculator — What Is My Number?",
+    description: "Free life path number calculator: enter your birth date for your life path number (1–9, 11, 22, 33) with step-by-step math and full meaning.",
     keywords: ["life path number calculator", "life path calculator", "what is my life path number", "numerology calculator free", "life path number meaning", "master number calculator"],
   },
   zh: {

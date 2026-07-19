@@ -8,7 +8,7 @@ import { T } from "./yes-no-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Yes or No Tarot — Free Accurate Yes No Tarot Reading",
-    description: "Free yes or no tarot reading: focus on your question, draw 1 or 3 cards and get an instant yes, no or maybe — upright leans yes, reversed leans no. No sign-up.",
+    description: "Free yes or no tarot reading: focus on your question, draw 1 or 3 cards and get an instant yes, no or maybe answer. No sign-up.",
     keywords: ["yes or no tarot", "yes no tarot accurate free", "yes no tarot reading", "free yes no tarot", "tarot yes or no answer"],
   },
   zh: {
