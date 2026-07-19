@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { DOMAINS } from "../tarot-data";
+import { cardSlug } from "../tarot/card-slug";
 import type { ReadingState } from "../page";
 
 // ── 双语文案 ──────────────────────────────────────────
@@ -324,8 +326,9 @@ export function ResultPhase({ readingState, lang = "zh", onRestart, onNewReading
               <p className="text-gold/60 text-xs font-cinzel tracking-wider uppercase">
                 {spreadPositions[i]}
               </p>
-              <div
-                className="relative rounded-xl overflow-hidden shadow-gold"
+              <Link
+                href={`/tarot/${cardSlug(card.name)}`}
+                className="relative rounded-xl overflow-hidden shadow-gold block"
                 style={{
                   width: readingState.spreadType === "single" ? "9rem" : "7rem",
                   height: readingState.spreadType === "single" ? "15rem" : "11.5rem",
@@ -345,10 +348,12 @@ export function ResultPhase({ readingState, lang = "zh", onRestart, onNewReading
                     {t.reversed}
                   </div>
                 )}
-              </div>
+              </Link>
               <div className="text-center">
                 <p className="text-gold text-sm font-semibold">
-                  {lang === "en" ? card.name : card.nameCn}
+                  <Link href={`/tarot/${cardSlug(card.name)}`} className="hover:underline">
+                    {lang === "en" ? card.name : card.nameCn}
+                  </Link>
                 </p>
                 <p className="text-gold/50 text-xs">{lang === "en" ? card.nameCn : card.name}</p>
                 <div className="flex flex-wrap justify-center gap-1 mt-1">

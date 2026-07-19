@@ -182,6 +182,19 @@ export default function DailyCardPage() {
             {ui.again}
           </button>
         </div>
+
+        {/* 塔罗牌意入口（内链） */}
+        <a
+          href="/tarot"
+          style={{
+            marginTop: 18, display: "inline-block",
+            color: "rgba(201,168,76,0.75)", fontSize: "0.82rem",
+            letterSpacing: "0.05em", textDecoration: "none",
+            borderBottom: "1px solid rgba(201,168,76,0.3)", paddingBottom: 2,
+          }}
+        >
+          {ui.tarotLink}
+        </a>
       </div>
 
       {/* 海报弹窗 */}

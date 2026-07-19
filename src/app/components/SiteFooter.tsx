@@ -9,6 +9,7 @@ interface FooterText {
   privacyLink: string;
   terms: string;
   blog: string;
+  tarot: string;
   rights: string;
 }
 
@@ -22,6 +23,7 @@ const T: Record<Locale, FooterText> = {
     privacyLink: "Privacy",
     terms: "Terms",
     blog: "Blog",
+    tarot: "78 Tarot Meanings",
     rights: "All rights reserved.",
   },
   zh: {
@@ -33,6 +35,7 @@ const T: Record<Locale, FooterText> = {
     privacyLink: "隐私政策",
     terms: "服务条款",
     blog: "博客",
+    tarot: "塔罗牌意",
     rights: "保留所有权利。",
   },
   tw: {
@@ -44,6 +47,7 @@ const T: Record<Locale, FooterText> = {
     privacyLink: "隱私政策",
     terms: "服務條款",
     blog: "部落格",
+    tarot: "塔羅牌意",
     rights: "保留所有權利。",
   },
 };
@@ -84,7 +88,7 @@ export function SiteFooter({ locale, year }: { locale: Locale; year: number }) {
       />
       <div
         style={{
-          fontFamily: "Cinzel,serif",
+          fontFamily: "var(--font-cinzel),serif",
           fontSize: "0.75rem",
           color: "rgba(201,168,76,0.6)",
           letterSpacing: "0.15em",
@@ -114,6 +118,8 @@ export function SiteFooter({ locale, year }: { locale: Locale; year: number }) {
         <a href={`/${locale}/terms`} style={linkStyle}>{t.terms}</a>
         <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
         <a href={`/${locale}/blog`} style={linkStyle}>{t.blog}</a>
+        <span style={{ color: "rgba(201,168,76,0.25)" }}>·</span>
+        <a href={`/${locale}/tarot`} style={linkStyle}>{t.tarot}</a>
       </nav>
 
       <p style={{ fontSize: "0.68rem", color: "rgba(180,165,145,0.6)", lineHeight: 1.6, maxWidth: 340, margin: "0 auto 8px" }}>

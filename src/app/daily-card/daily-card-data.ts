@@ -848,6 +848,7 @@ export interface DailyCardUI {
   posterSave: string;
   posterClose: string;
   fileName: string;
+  tarotLink: string;
 }
 
 export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
@@ -865,6 +866,7 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterSave: "📥 保存卡片",
     posterClose: "关闭",
     fileName: "今日宇宙提示卡",
+    tarotLink: "🔮 探索 78 张塔罗牌意",
   },
   tw: {
     back: "← 返回",
@@ -880,6 +882,7 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterSave: "📥 儲存卡片",
     posterClose: "關閉",
     fileName: "今日宇宙提示卡",
+    tarotLink: "🔮 探索 78 張塔羅牌意",
   },
   en: {
     back: "← Back",
@@ -895,6 +898,7 @@ export const DAILY_CARD_UI: Record<Locale, DailyCardUI> = {
     posterSave: "📥 Save Card",
     posterClose: "Close",
     fileName: "Daily-Cosmic-Card",
+    tarotLink: "🔮 Explore All 78 Tarot Card Meanings",
   },
 };
 

@@ -2,7 +2,8 @@
 
 import React, { useState, useCallback } from "react";
 import Link from "next/link";
-import { DOMAINS, SPREADS } from "../tarot-data";
+import { DOMAINS, SPREADS, TAROT_CARDS } from "../tarot-data";
+import { cardSlug } from "./card-slug";
 import { DrawingPhase } from "../components/DrawingPhase";
 import { ResultPhase } from "../components/ResultPhase";
 import { HistoryPanel } from "../components/HistoryPanel";
@@ -23,6 +24,7 @@ const T = {
     feat2:          "三牌阵",
     feat3:          "AI 解析",
     startBtn:       "开启占卜",
+    cardIndex:      "78 张塔罗牌意大全",
     step1:          "STEP 1",
     selectDomain:   "选择占卜领域",
     domainHint:     "你今天想探索哪个方向？",
@@ -52,6 +54,7 @@ const T = {
     feat2:          "三牌陣",
     feat3:          "AI 解析",
     startBtn:       "開啟占卜",
+    cardIndex:      "78 張塔羅牌意大全",
     step1:          "STEP 1",
     selectDomain:   "選擇占卜領域",
     domainHint:     "你今天想探索哪個方向？",
@@ -81,6 +84,7 @@ const T = {
     feat2:          "3-Card Spread",
     feat3:          "AI Reading",
     startBtn:       "Begin Reading",
+    cardIndex:      "All 78 Tarot Card Meanings",
     step1:          "STEP 1",
     selectDomain:   "Choose a Domain",
     domainHint:     "What do you want to explore today?",
@@ -192,7 +196,12 @@ export default function TarotPage() {
         </nav>
       )}
 
-      {phase === "landing" && <LandingPage t={t} onStart={() => setPhase("select-domain")} />}
+      {phase === "landing" && (
+        <>
+          <LandingPage t={t} onStart={() => setPhase("select-domain")} />
+          <CardIndex t={t} lang={lang} />
+        </>
+      )}
       {phase === "select-domain" && (
         <DomainSelectPage t={t} onSelect={handleSelectDomain} />
       )}
@@ -296,6 +305,38 @@ function LandingPage({ t, onStart }: { t: typeof T["zh"]; onStart: () => void })
         ))}
       </div>
     </div>
+  );
+}
+
+// ── 78 张牌意索引（SSR 输出，承接 /tarot/[card] 详情页入口与内链权重）─────────
+function CardIndex({ t, lang }: { t: typeof T["zh"]; lang: Lang }) {
+  return (
+    <section className="mx-auto max-w-4xl px-4 pb-24">
+      <h2
+        className="font-cinzel text-center text-gold mb-8 tracking-widest"
+        style={{ fontSize: "1.05rem", letterSpacing: "0.14em", opacity: 0.85 }}
+      >
+        {t.cardIndex}
+      </h2>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+        {TAROT_CARDS.map((c) => (
+          <Link
+            key={c.id}
+            href={`/tarot/${cardSlug(c.name)}`}
+            className="rounded-lg px-2 py-2.5 text-center transition-colors hover:border-gold"
+            style={{
+              border: "1px solid rgba(201,168,76,0.14)",
+              background: "rgba(16,10,38,0.6)",
+              color: "rgba(232,213,163,0.8)",
+              fontSize: "0.72rem",
+              textDecoration: "none",
+            }}
+          >
+            {lang === "en" ? c.name : c.nameCn}
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
