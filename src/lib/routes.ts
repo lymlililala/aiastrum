@@ -38,6 +38,8 @@ export const TOOL_PATHS = [
   "/lingqian",
   "/almanac",
   "/pet-psychic",
+  "/crystals",
+  "/horoscope/2026",
 ] as const;
 
 /** 信息 / 法律页面 */

@@ -6,6 +6,7 @@ import { LifePathResultPanel } from "./components/LifePathResult";
 import { useLocale } from "~/lib/useLocale";
 import { LangSwitcher } from "../components/LangSwitcher";
 import { T, type Lang } from "./life-path-i18n";
+import { LIFE_PATH_NUMBERS } from "./numbers-data";
 import { getNumerologyReading, type NumerologyResult } from "../numerology/numerology-engine";
 // 复用 numerology 页的视觉样式（深色神秘风 + 金色点缀 #c9a84c）
 import "../numerology/numerology.css";
@@ -132,6 +133,86 @@ export default function LifePathCalculatorPage() {
             />
           )
         )}
+
+        {/* ── 灵数速览（SSR 输出，爬虫可读）：12 张卡片网格 ── */}
+        <section style={{ maxWidth: 720, margin: "48px auto 0", padding: "0 4px" }}>
+          <h2 style={{
+            fontFamily: "var(--font-cinzel), serif",
+            fontSize: "1.15rem", color: "#e8d5a3",
+            letterSpacing: "0.04em", marginBottom: 8,
+            borderLeft: "3px solid rgba(201,168,76,0.6)", paddingLeft: 12,
+          }}>
+            {t.guideTitle}
+          </h2>
+          <p style={{
+            fontSize: "0.82rem", lineHeight: 1.7,
+            color: "rgba(220,205,175,0.6)", marginBottom: 18,
+          }}>
+            {t.guideNote}
+          </p>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+            gap: 12,
+          }}>
+            {LIFE_PATH_NUMBERS[lang].map((info) => (
+              <div
+                key={info.n}
+                id={`life-path-${info.n}`}
+                style={{
+                  borderRadius: 12, padding: "14px 16px",
+                  background: "rgba(16,10,38,0.7)",
+                  border: "1px solid rgba(201,168,76,0.15)",
+                  scrollMarginTop: 80,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <span style={{
+                    fontFamily: "var(--font-cinzel), serif",
+                    fontSize: "1.6rem", fontWeight: 700, color: "#c9a84c",
+                  }}>
+                    {info.n}
+                  </span>
+                  <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#e8d5a3" }}>
+                    {info.name}
+                  </span>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "8px 0 10px" }}>
+                  {info.keywords.map((kw) => (
+                    <span
+                      key={kw}
+                      style={{
+                        fontSize: "0.7rem", padding: "2px 8px", borderRadius: 10,
+                        background: "rgba(201,168,76,0.1)",
+                        border: "1px solid rgba(201,168,76,0.2)",
+                        color: "rgba(232,213,163,0.85)",
+                      }}
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+                <p style={{
+                  fontSize: "0.78rem", lineHeight: 1.75,
+                  color: "rgba(220,205,175,0.72)", marginBottom: 10,
+                }}>
+                  {info.summary}
+                </p>
+                {info.articleSlug && (
+                  <a
+                    href={`/blog/${info.articleSlug}`}
+                    style={{
+                      fontSize: "0.78rem", fontWeight: 600,
+                      color: "#c9a84c", textDecoration: "none",
+                    }}
+                  >
+                    {t.readFullGuide}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* ── SEO 内容区（SSR 输出，爬虫可读） ── */}
         <section style={{ maxWidth: 720, margin: "48px auto 0", padding: "0 4px" }}>

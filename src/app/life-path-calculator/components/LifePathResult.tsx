@@ -183,6 +183,18 @@ export function LifePathResultPanel({ t, lang, result, onRecalculate }: LifePath
         ✦ {t.fullReadingCta}
       </a>
 
+      {/* 跳转到下方速览卡片 */}
+      <a
+        href={`#life-path-${number}`}
+        style={{
+          display: "block", marginTop: 10,
+          color: "rgba(201,168,76,0.75)", fontSize: "0.78rem",
+          textDecoration: "none", textAlign: "center",
+        }}
+      >
+        {t.viewNumberGuide}
+      </a>
+
       {/* 操作按钮 */}
       <div className="num-result-actions">
         <button className="num-recalc-btn" onClick={onRecalculate}>

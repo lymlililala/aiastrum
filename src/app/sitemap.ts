@@ -140,6 +140,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/lingqian",      priority: 0.75, changeFrequency: "weekly"  },
     { path: "/almanac",       priority: 0.75, changeFrequency: "daily"   },
     { path: "/pet-psychic",   priority: 0.65, changeFrequency: "weekly"  },
+    { path: "/crystals",      priority: 0.85, changeFrequency: "weekly"  },
+    { path: "/horoscope/2026", priority: 0.8, changeFrequency: "weekly"  },
     // ── 信息 / 法律页面 ──
     { path: "/about",         priority: 0.5,  changeFrequency: "monthly" },
     { path: "/contact",       priority: 0.5,  changeFrequency: "monthly" },
@@ -183,6 +185,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // ── 2d. MBTI 类型详情页（16 型，无前缀规范 URL，与牌意页同策略）─────────────
+  const MBTI_TYPES = [
+    "intj", "intp", "entj", "entp", "infj", "infp", "enfj", "enfp",
+    "istj", "isfj", "estj", "esfj", "istp", "isfp", "estp", "esfp",
+  ];
+  const mbtiTypeEntries: MetadataRoute.Sitemap = MBTI_TYPES.map((t) => ({
+    url: `${BASE_URL}/mbti/${t}`,
+    lastModified: siteLastMod,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   // ── 3. 博客文章页 ────────────────────────────────────────────────────────
   const blogEntries: MetadataRoute.Sitemap = posts
     // 排除被合并到主文章的次要重复 slug（canonical 已指向主文章，sitemap 不应再列出）、
@@ -195,5 +209,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     }));
 
-  return [...homeEntries, ...toolEntries, ...pillarEntries, ...cardEntries, ...blogEntries];
+  return [...homeEntries, ...toolEntries, ...pillarEntries, ...cardEntries, ...mbtiTypeEntries, ...blogEntries];
 }

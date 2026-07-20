@@ -83,6 +83,12 @@ export const CANONICAL_OVERRIDES: Record<string, string> = {
   // ── GSC 0720：狮子座 2026 年运两篇英文同意图 ──
   // 合并到 slug/keywords 精确命中 "leo 2026 yearly horoscope"(pos 51)的主文章
   "horoscope-leo-2026-annual-complete": "leo-2026-yearly-horoscope",
+  // 天蝎座 2026 年运两篇英文同意图（与 leo 同模式）
+  "horoscope-scorpio-2026-annual-complete": "scorpio-2026-yearly-horoscope",
+  // 南北交点两篇英文同意图：合并到 slug 更简洁的主文章
+  "north-node-south-node-astrology-guide": "north-node-south-node-astrology",
+  // 冥想对比两篇同意图：合并到精确命中查询词 "mindful meditation vs transcendental"(pos 31)的新文
+  "transcendental-meditation-vs-mindfulness": "mindful-meditation-vs-transcendental",
 };
 
 /** 返回某 slug 的规范 slug（无映射则返回自身） */

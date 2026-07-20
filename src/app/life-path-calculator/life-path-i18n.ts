@@ -51,6 +51,11 @@ export const T = {
     masterNote:        "Master Numbers carry intensified energy — both a higher calling and a heavier lesson. Yours is read at its full vibration, not reduced to a single digit.",
     fullReadingCta:    "Get your full numerology reading (traits, gifts, lessons & lucky guide) →",
     recalcBtn:         "Recalculate",
+    // 速览区
+    guideTitle:        "Life Path Numbers 1–9 & Master Numbers at a Glance",
+    guideNote:         "Quick profiles of all twelve numbers — follow a card's link for the full meaning guide.",
+    readFullGuide:     "Read full guide →",
+    viewNumberGuide:   "View your number's full profile ↓",
     // SEO 内容区
     faqTitle:          "Life Path Number Calculator FAQ",
     seo: [
@@ -145,6 +150,11 @@ export const T = {
     masterNote:        "卓越数携带更强的能量——既代表更高的使命，也意味着更重的课题。你的数字按完整振动解读，不缩减为个位数。",
     fullReadingCta:    "获取完整灵数解读（特质、天赋、课题与幸运指南）→",
     recalcBtn:         "重新计算",
+    // 速览区
+    guideTitle:        "生命灵数 1-9 与卓越数速览",
+    guideNote:         "十二个数字的极简画像——点击卡片链接阅读对应完整详解。",
+    readFullGuide:     "阅读完整解析 →",
+    viewNumberGuide:   "查看数字全解 ↓",
     faqTitle:          "生命灵数计算器常见问题",
     seo: [
       {
@@ -238,6 +248,11 @@ export const T = {
     masterNote:        "卓越數攜帶更強的能量——既代表更高的使命，也意味著更重的課題。你的數字按完整振動解讀，不縮減為個位數。",
     fullReadingCta:    "獲取完整靈數解讀（特質、天賦、課題與幸運指南）→",
     recalcBtn:         "重新計算",
+    // 速覽區
+    guideTitle:        "生命靈數 1-9 與卓越數速覽",
+    guideNote:         "十二個數字的極簡畫像——點擊卡片連結閱讀對應完整詳解。",
+    readFullGuide:     "閱讀完整解析 →",
+    viewNumberGuide:   "查看數字全解 ↓",
     faqTitle:          "生命靈數計算器常見問題",
     seo: [
       {
