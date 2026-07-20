@@ -142,7 +142,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "author": { "@type": "Organization", "name": "AiAstrum", "url": "https://aiastrum.com" },
     "publisher": {
       "@type": "Organization",
-      "name": "AiAstrum · 命运密语",
+      "name": "AiAstrum",
+      "alternateName": "命运密语",
       "url": "https://aiastrum.com",
       "logo": { "@type": "ImageObject", "url": "https://aiastrum.com/favicon.ico" },
     },

@@ -19,12 +19,12 @@ export function generateStaticParams() {
 
 const LANG_META: Record<string, { title: string; description: string; lang: string }> = {
   zh: {
-    title: "AiAstrum · 命运密语 | 塔罗占卜 · 星盘解析 · 东方玄学",
+    title: "AiAstrum | 塔罗占卜 · 星盘解析 · 东方玄学",
     description: "你的每日宇宙指南 — 塔罗牌解读、生辰八字、星盘分析、紫微斗数、MBTI星座，古老智慧与现代 AI 的交融，探索属于你的命运密码。",
     lang: "zh-CN",
   },
   tw: {
-    title: "AiAstrum · 命運密語 | 塔羅占卜 · 星盤解析 · 東方玄學",
+    title: "AiAstrum | 塔羅占卜 · 星盤解析 · 東方玄學",
     description: "你的每日宇宙指南 — 塔羅牌解讀、生辰八字、星盤分析、紫微斗數、MBTI星座，古老智慧與現代 AI 的交融，探索屬於你的命運密碼。",
     lang: "zh-TW",
   },

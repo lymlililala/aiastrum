@@ -15,7 +15,8 @@ import { LocaleProvider } from "./components/LocaleProvider";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "AiAstrum · 命运密语 | Tarot, Astrology & Eastern Wisdom",
+    // 站点名统一为 AiAstrum，避免与「命运密语」混排导致 Google 提取出中文站名
+    default: "AiAstrum | Tarot, Astrology & Eastern Wisdom",
     template: "%s | AiAstrum",
   },
   description: "Your daily cosmic guide — Tarot readings, birth charts, Bazi destiny, MBTI × Zodiac, AI oracle and more. Ancient wisdom meets modern AI.",
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   // hreflang alternates 仅首页在此设置，工具页通过 generateMetadata 设置
   openGraph: {
     siteName: "AiAstrum",
-    title: "AiAstrum · 命运密语 | Destiny Oracle",
+    title: "AiAstrum | Destiny Oracle",
     description: "Your daily cosmic guide — Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
     type: "website",
     url: BASE_URL,
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AiAstrum · 命运密语 | Destiny Oracle",
+    title: "AiAstrum | Destiny Oracle",
     description: "Tarot, Astrology, Bazi, AI Mystic & more. Ancient wisdom meets modern AI.",
     images: [`${BASE_URL}/images/og-cover.png`],
   },
@@ -84,6 +85,7 @@ export default async function RootLayout({
         "@id": `${BASE_URL}/#website`,
         "url": BASE_URL,
         "name": "AiAstrum",
+        "alternateName": "命运密语",
         "description": "AI-powered divination platform — Tarot, Astrology, Bazi & Eastern Wisdom",
         "inLanguage": ["en", "zh-CN", "zh-TW"],
         // 不声明 SearchAction：站内无搜索功能，虚假目标会被 Google 忽略并损害结构化数据可信度
@@ -92,6 +94,7 @@ export default async function RootLayout({
         "@type": "Organization",
         "@id": `${BASE_URL}/#organization`,
         "name": "AiAstrum",
+        "alternateName": "命运密语",
         "url": BASE_URL,
         "logo": {
           "@type": "ImageObject",
