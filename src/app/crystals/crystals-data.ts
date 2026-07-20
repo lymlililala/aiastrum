@@ -1057,3 +1057,113 @@ export const STONE_POOL: PoolEntry[] = INTENTIONS.flatMap((it) =>
     oracle: ORACLE_MESSAGES[`${it.id}:${stone.id}`]!,
   })),
 );
+
+
+// ===== 八字选石：水晶的五行归属（按 22 种矿石去重，key = stone.id） =====
+// 归属原则：五行色 + 矿物 lore——
+//   水：黑/蓝色系（黑碧玺、黑曜石、青金、蓝纹玛瑙、月光石）
+//   木：绿色系 + 生发能量（绿东陵、萤石、血石、拉长石——青绿变彩、唤醒潜能）
+//   火：红/粉/紫色系（红玉髓、石榴石、红碧玉、蔷薇辉石、粉晶、紫水晶——红紫属火）
+//   土：黄/棕色系矿石（黄水晶、虎眼石、茶晶、黄铁矿——黄色归土，土生金）
+//   金：白/透/金属光泽（白水晶、白纹石、锂云母——云母片有金属光泽，传统归金）
+
+export type StoneElement = "木" | "火" | "土" | "金" | "水";
+
+export const STONE_ELEMENT: Record<string, StoneElement> = {
+  "black-tourmaline": "水",
+  "obsidian": "水",
+  "lapis-lazuli": "水",
+  "blue-lace-agate": "水",
+  "moonstone": "水",
+  "green-aventurine": "木",
+  "fluorite": "木",
+  "bloodstone": "木",
+  "labradorite": "木",
+  "carnelian": "火",
+  "garnet": "火",
+  "red-jasper": "火",
+  "rhodonite": "火",
+  "rose-quartz": "火",
+  "amethyst": "火",
+  "citrine": "土",
+  "tigers-eye": "土",
+  "smoky-quartz": "土",
+  "pyrite": "土",
+  "clear-quartz": "金",
+  "howlite": "金",
+  "lepidolite": "金",
+};
+
+/** 五行相生顺序（用于并列时取弱、以及「生我」母元素补益） */
+export const ELEMENT_CYCLE: StoneElement[] = ["木", "火", "土", "金", "水"];
+
+/** 生我之母：补 X 也可用生 X 的元素（如补金可用土——土生金） */
+export const GENERATES: Record<StoneElement, StoneElement> = {
+  木: "水", // 水生木
+  火: "木", // 木生火
+  土: "火", // 火生土
+  金: "土", // 土生金
+  水: "金", // 金生水
+};
+
+export interface ElementInfo {
+  /** 展示色（分布条、徽标） */
+  color: string;
+  label: Record<Locale, string>;
+  /** 补这一行带来什么（三语一句话） */
+  blurb: Record<Locale, string>;
+}
+
+export const ELEMENT_INFO: Record<StoneElement, ElementInfo> = {
+  木: {
+    color: "#7bc96f",
+    label: { zh: "木", tw: "木", en: "Wood" },
+    blurb: {
+      zh: "补木带来生长、规划与重新出发的能量，适合需要突破僵局、开启新阶段的你。",
+      tw: "補木帶來生長、規劃與重新出發的能量，適合需要突破僵局、開啟新階段的你。",
+      en: "Supplementing Wood brings growth, planning, and fresh-start energy — for breaking deadlocks and opening a new chapter.",
+    },
+  },
+  火: {
+    color: "#e63946",
+    label: { zh: "火", tw: "火", en: "Fire" },
+    blurb: {
+      zh: "补火带来热情、行动力与表达的勇气，帮你把想法说出口、把计划做出来。",
+      tw: "補火帶來熱情、行動力與表達的勇氣，幫你把想法說出口、把計畫做出來。",
+      en: "Supplementing Fire brings passion, drive, and the courage to express — turning ideas into words and plans into action.",
+    },
+  },
+  土: {
+    color: "#d4a24c",
+    label: { zh: "土", tw: "土", en: "Earth" },
+    blurb: {
+      zh: "补土带来稳定、承载与积累的能量，让漂浮的计划落地，让信心有根。",
+      tw: "補土帶來穩定、承載與積累的能量，讓漂浮的計畫落地，讓信心有根。",
+      en: "Supplementing Earth brings stability, support, and accumulation — grounding floating plans and rooting your confidence.",
+    },
+  },
+  金: {
+    color: "#d8dee9",
+    label: { zh: "金", tw: "金", en: "Metal" },
+    blurb: {
+      zh: "补金带来清明、决断与收束的能量，帮你断舍离、聚焦重点、守住成果。",
+      tw: "補金帶來清明、決斷與收束的能量，幫你斷捨離、聚焦重點、守住成果。",
+      en: "Supplementing Metal brings clarity, decisiveness, and consolidation — helping you cut the non-essential, focus, and keep what you've earned.",
+    },
+  },
+  水: {
+    color: "#5aa9e6",
+    label: { zh: "水", tw: "水", en: "Water" },
+    blurb: {
+      zh: "补水带来冷静、直觉与流动的智慧，安抚焦虑，让情绪与机会重新流动起来。",
+      tw: "補水帶來冷靜、直覺與流動的智慧，安撫焦慮，讓情緒與機會重新流動起來。",
+      en: "Supplementing Water brings calm, intuition, and flowing wisdom — easing anxiety and getting emotions and opportunities moving again.",
+    },
+  },
+};
+
+/** 天干拼音（八字选石结果页展示日主用） */
+export const STEM_PINYIN: Record<string, string> = {
+  甲: "Jiǎ", 乙: "Yǐ", 丙: "Bǐng", 丁: "Dīng", 戊: "Wù",
+  己: "Jǐ", 庚: "Gēng", 辛: "Xīn", 壬: "Rén", 癸: "Guǐ",
+};

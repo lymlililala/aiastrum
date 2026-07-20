@@ -46,12 +46,20 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
         heading: "水晶需要净化吗？",
         body: "需要。水晶在使用中会吸附环境与情绪能量，定期净化是水晶养护的基本功。最常用的方法有：月光下过夜（满月最佳）、放在白水晶簇上消磁、鼠尾草或檀香烟熏，以及用流水快速冲洗（不适用于锂云母、萤石等质地较软或易溶的石种）。净化后握住水晶，重新默念你的意图，这个「设定意图」的动作，才是整个仪式的核心。",
       },
+      {
+        heading: "八字选水晶：五行与水晶的对应",
+        body: "除了按需求选石，你还可以用自己的生日做八字选水晶。八字把出生年月日时换算成天干地支，统计金木水火土五行的强弱分布：最弱的一行是需要补益的元素，而每种水晶都有五行属性——黑蓝色系属水、绿色系属木、红紫色系属火、黄色系属土、白色透明属金。输入生日（时辰选填），工具会自动算出你的五行分布与需补元素，推荐对应的五行水晶，还能叠加你当下的诉求做双重筛选。",
+      },
     ],
     faqTitle: "常见问题",
     faq: [
       {
         q: "水晶抽石占卜怎么玩？",
         a: "先在心里默想一个问题（选填），选择单石指引或三石阵，点击「开始感应抽石」。单石直指你当下最需要的一颗水晶；三石阵分别对应「当下能量、需要接纳、行动建议」三个位置。点击石面翻开后，可以看到这颗水晶的讯息、所属领域和具体用法。结果仅供自我探索与娱乐。",
+      },
+      {
+        q: "八字选水晶是什么原理？",
+        a: "八字排盘把出生的年月日时换算成四柱天干地支，每个干支都对应金木水火土之一。统计全局后最弱的一行就是你的「需补元素」；而每种水晶也有五行属性——黑蓝色系属水、绿色系属木、红紫色系属火、黄色系属土、白色透明属金。本工具把两者对应：先算你的五行分布，再推荐补益最弱一行的水晶，还可叠加你的诉求筛选。仅供自我探索与娱乐。",
       },
       {
         q: "怎么选适合自己的水晶？",
@@ -98,12 +106,20 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
         heading: "水晶需要淨化嗎？",
         body: "需要。水晶在使用中會吸附環境與情緒能量，定期淨化是水晶養護的基本功。最常用的方法有：月光下過夜（滿月最佳）、放在白水晶簇上消磁、鼠尾草或檀香煙燻，以及用流水快速沖洗（不適用於鋰雲母、螢石等質地較軟或易溶的石種）。淨化後握住水晶，重新默念你的意圖，這個「設定意圖」的動作，才是整個儀式的核心。",
       },
+      {
+        heading: "八字選水晶：五行與水晶的對應",
+        body: "除了按需求選石，你還可以用自己的生日做八字選水晶。八字把出生年月日時換算成天干地支，統計金木水火土五行的強弱分布：最弱的一行是需要補益的元素，而每種水晶都有五行屬性——黑藍色系屬水、綠色系屬木、紅紫色系屬火、黃色系屬土、白色透明屬金。輸入生日（時辰選填），工具會自動算出你的五行分布與需補元素，推薦對應的五行水晶，還能疊加你當下的訴求做雙重篩選。",
+      },
     ],
     faqTitle: "常見問題",
     faq: [
       {
         q: "水晶抽石占卜怎麼玩？",
         a: "先在心裡默想一個問題（選填），選擇單石指引或三石陣，點擊「開始感應抽石」。單石直指你當下最需要的一顆水晶；三石陣分別對應「當下能量、需要接納、行動建議」三個位置。點擊石面翻開後，可以看到這顆水晶的訊息、所屬領域和具體用法。結果僅供自我探索與娛樂。",
+      },
+      {
+        q: "八字選水晶是什麼原理？",
+        a: "八字排盤把出生的年月日時換算成四柱天干地支，每個干支都對應金木水火土之一。統計全局後最弱的一行就是你的「需補元素」；而每種水晶也有五行屬性——黑藍色系屬水、綠色系屬木、紅紫色系屬火、黃色系屬土、白色透明屬金。本工具把兩者對應：先算你的五行分布，再推薦補益最弱一行的水晶，還可疊加你的訴求篩選。僅供自我探索與娛樂。",
       },
       {
         q: "怎麼選適合自己的水晶？",
@@ -150,12 +166,20 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
         heading: "Do crystals need cleansing?",
         body: "Yes. Crystals absorb environmental and emotional energy as you use them, so regular cleansing is basic crystal care. The safest universal methods are: overnight moonlight (a full moon is ideal), resting on a clear quartz cluster, sage or sandalwood smoke, and a quick rinse under running water (skip water for soft stones like lepidolite and fluorite). After cleansing, hold the stone and restate your intention — that moment of 'setting' is the real heart of the ritual.",
       },
+      {
+        heading: "Crystals by Bazi: Matching Stones to Your Five Elements",
+        body: "Beyond browsing by intention, you can pick a crystal by bazi five elements. A bazi chart converts your birth date and time into four pillars and tallies the strength of wood, fire, earth, metal, and water — the weakest element is the one to supplement. Every crystal carries an element too: black and blue stones are Water, green stones are Wood, red and purple are Fire, yellow and brown are Earth, white and clear are Metal. Enter your birthday (birth hour optional) and the tool computes your five-element balance, highlights your weakest element, and recommends matching stones — optionally filtered by your current intention for a double layer of personalization.",
+      },
     ],
     faqTitle: "FAQ",
     faq: [
       {
         q: "How does the crystal draw work?",
         a: "Hold a question in mind (optional), pick Single Stone Guidance or the Three-Stone Spread, then tap 'Attune & Draw'. A single stone points to the crystal you need most right now; the three positions read as Current Energy, What to Embrace, and Action Advice. Tap a stone face to reveal the crystal's message, its domain, and how to use it. For self-exploration and entertainment only.",
+      },
+      {
+        q: "How does bazi-based crystal matching work?",
+        a: "A bazi chart converts your birth date and time into four pillars of heavenly stems and earthly branches, each mapped to one of the five elements (wood, fire, earth, metal, water). The weakest element in your chart is the one to supplement — and every crystal carries an element too: black/blue stones are Water, green is Wood, red/purple is Fire, yellow/brown is Earth, white/clear is Metal. This tool connects the two: it computes your five-element balance, then recommends stones of the element you lack, optionally filtered by your intention. For self-exploration and entertainment only.",
       },
       {
         q: "How do I choose the right crystal for me?",
@@ -339,5 +363,120 @@ export const CRYSTALS_ORACLE_UI: Record<Locale, OracleUI> = {
     again: "↺ Draw Again",
     copyResult: "📋 Copy Reading",
     copied: "✓ Copied",
+  },
+};
+
+
+// ===== 八字选石模式 UI 文案（三语） =====
+
+export interface BaziUI {
+  tabBazi: string;
+  formTitle: string;
+  formHint: string;
+  birthDateLabel: string;
+  yearPlaceholder: string;
+  monthPlaceholder: string;
+  dayPlaceholder: string;
+  hourLabel: string;
+  hourUnknown: string;
+  intentionLabel: string;
+  intentionNone: string;
+  calcBtn: string;
+  invalidDate: string;
+  dayMasterLabel: string;
+  yangLabel: string;
+  yinLabel: string;
+  barTitle: string;
+  weakestTitle: string;
+  reasonLine: (el: string) => string;
+  motherNote: (el: string, mother: string) => string;
+  hourUnknownNote: string;
+  closeScoresNote: string;
+  primaryTitle: (el: string) => string;
+  secondaryTitle: string;
+  ctaBazi: string;
+}
+
+export const CRYSTALS_BAZI_UI: Record<Locale, BaziUI> = {
+  zh: {
+    tabBazi: "八字选石",
+    formTitle: "输入你的生日",
+    formHint: "排出四柱八字，统计你的五行强弱，找到需要补益的水晶",
+    birthDateLabel: "出生日期（公历）",
+    yearPlaceholder: "年",
+    monthPlaceholder: "月",
+    dayPlaceholder: "日",
+    hourLabel: "出生时辰（选填）",
+    hourUnknown: "不知道时辰",
+    intentionLabel: "想兼顾的诉求（选填）",
+    intentionNone: "暂不选择",
+    calcBtn: "生成我的五行水晶",
+    invalidDate: "请填写完整的出生年月日",
+    dayMasterLabel: "你的日主",
+    yangLabel: "阳",
+    yinLabel: "阴",
+    barTitle: "五行分布",
+    weakestTitle: "需补元素",
+    reasonLine: (el) => `你的八字「${el}」行最弱，${el}行水晶帮你补益。`,
+    motherNote: (el, mother) => `其中含 ${mother} 行水晶：${mother}生${el}，同样为你所用。`,
+    hourUnknownNote: "未填时辰：按三柱计算，精度略低。",
+    closeScoresNote: "各行分数接近，且时辰未知——需补元素仅供参考，补上时辰会更准。",
+    primaryTitle: (el) => `为你补「${el}」的水晶`,
+    secondaryTitle: "兼顾诉求的选择",
+    ctaBazi: "查看完整八字排盘 →",
+  },
+  tw: {
+    tabBazi: "八字選石",
+    formTitle: "輸入你的生日",
+    formHint: "排出四柱八字，統計你的五行強弱，找到需要補益的水晶",
+    birthDateLabel: "出生日期（公曆）",
+    yearPlaceholder: "年",
+    monthPlaceholder: "月",
+    dayPlaceholder: "日",
+    hourLabel: "出生時辰（選填）",
+    hourUnknown: "不知道時辰",
+    intentionLabel: "想兼顧的訴求（選填）",
+    intentionNone: "暫不選擇",
+    calcBtn: "生成我的五行水晶",
+    invalidDate: "請填寫完整的出生年月日",
+    dayMasterLabel: "你的日主",
+    yangLabel: "陽",
+    yinLabel: "陰",
+    barTitle: "五行分布",
+    weakestTitle: "需補元素",
+    reasonLine: (el) => `你的八字「${el}」行最弱，${el}行水晶幫你補益。`,
+    motherNote: (el, mother) => `其中含 ${mother} 行水晶：${mother}生${el}，同樣為你所用。`,
+    hourUnknownNote: "未填時辰：按三柱計算，精度略低。",
+    closeScoresNote: "各行分數接近，且時辰未知——需補元素僅供參考，補上時辰會更準。",
+    primaryTitle: (el) => `為你補「${el}」的水晶`,
+    secondaryTitle: "兼顧訴求的選擇",
+    ctaBazi: "查看完整八字排盤 →",
+  },
+  en: {
+    tabBazi: "Bazi Crystal Match",
+    formTitle: "Enter your birth date",
+    formHint: "Cast your four pillars, tally your five-element balance, and find the stones that supplement it",
+    birthDateLabel: "Birth date (Gregorian)",
+    yearPlaceholder: "YYYY",
+    monthPlaceholder: "MM",
+    dayPlaceholder: "DD",
+    hourLabel: "Birth hour (optional)",
+    hourUnknown: "I don't know",
+    intentionLabel: "Intention to combine (optional)",
+    intentionNone: "Skip",
+    calcBtn: "Reveal My Five-Element Crystals",
+    invalidDate: "Please fill in a complete birth date (year, month, day)",
+    dayMasterLabel: "Your Day Master",
+    yangLabel: "Yang",
+    yinLabel: "Yin",
+    barTitle: "Five-Element Balance",
+    weakestTitle: "Element to Supplement",
+    reasonLine: (el) => `${el} is the weakest element in your chart — ${el} stones help replenish it.`,
+    motherNote: (el, mother) => `Includes ${mother} stones: ${mother} generates ${el}, which also nourishes it.`,
+    hourUnknownNote: "No birth hour: calculated from three pillars, so precision is slightly lower.",
+    closeScoresNote: "The element scores are close and the birth hour is unknown — treat the result as indicative; adding the hour refines it.",
+    primaryTitle: (el) => `Stones to supplement your ${el}`,
+    secondaryTitle: "Also matching your intention",
+    ctaBazi: "View your full bazi chart →",
   },
 };

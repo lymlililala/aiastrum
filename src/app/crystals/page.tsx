@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import "./crystals.css";
-import { INTENTIONS, STONE_POOL } from "./crystals-data";
-import { drawCrystals, type CrystalDraw, type DrawMode } from "./crystals-engine";
-import { CRYSTALS_UI, CRYSTALS_ORACLE_UI } from "./crystals-i18n";
+import { INTENTIONS, STONE_POOL, ELEMENT_INFO, ELEMENT_CYCLE, STONE_ELEMENT, STEM_PINYIN, type StoneElement } from "./crystals-data";
+import { drawCrystals, getWeakestElement, matchStonesByElement, scoresAreClose, type CrystalDraw, type DrawMode, type BaziMatch } from "./crystals-engine";
+import { CRYSTALS_UI, CRYSTALS_ORACLE_UI, CRYSTALS_BAZI_UI } from "./crystals-i18n";
+import { calculateBazi, STEM_YIN_YANG, STEM_ELEMENT, type BaziResult } from "~/app/bazi/bazi-engine";
 import { useLocale } from "~/lib/useLocale";
 import { withLocale } from "~/lib/i18n";
 import { LangSwitcher } from "~/app/components/LangSwitcher";
 
-type Tab = "oracle" | "browse";
+type Tab = "bazi" | "oracle" | "browse";
 type Step = "input" | "casting" | "result";
 
 /** 抽石洗牌动画用的 emoji 池 */
@@ -19,8 +20,43 @@ export default function CrystalsPage() {
   const locale = useLocale();
   const ui = CRYSTALS_UI[locale];
   const o = CRYSTALS_ORACLE_UI[locale];
+  const b = CRYSTALS_BAZI_UI[locale];
 
-  const [tab, setTab] = useState<Tab>("oracle");
+  const [tab, setTab] = useState<Tab>("bazi");
+
+  // ── 八字选石模式状态 ──
+  const [bYear, setBYear] = useState("");
+  const [bMonth, setBMonth] = useState("");
+  const [bDay, setBDay] = useState("");
+  const [bHour, setBHour] = useState(""); // "" = 时辰未知
+  const [bIntention, setBIntention] = useState<string | null>(null);
+  const [bError, setBError] = useState("");
+  const [bResult, setBResult] = useState<{
+    chart: BaziResult;
+    weakest: StoneElement;
+    match: BaziMatch;
+    hourUnknown: boolean;
+    close: boolean;
+  } | null>(null);
+
+  const handleBaziCalc = () => {
+    const year = Number(bYear);
+    const month = Number(bMonth);
+    const day = Number(bDay);
+    if (!year || !month || !day || year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
+      setBError(b.invalidDate);
+      return;
+    }
+    setBError("");
+    const hourUnknown = bHour === "";
+    const chart = calculateBazi(
+      { year, month, day, hour: hourUnknown ? -1 : Number(bHour), gender: "male" },
+      locale,
+    );
+    const weakest = getWeakestElement(chart.elementScores);
+    const match = matchStonesByElement(weakest, bIntention ?? undefined);
+    setBResult({ chart, weakest, match, hourUnknown, close: scoresAreClose(chart.elementScores) });
+  };
 
   // ── 占卜模式状态 ──
   const [step, setStep] = useState<Step>("input");
@@ -139,6 +175,7 @@ export default function CrystalsPage() {
         background: "rgba(16,10,38,0.8)", border: "1px solid rgba(201,168,76,0.22)",
       }}>
         {([
+          { key: "bazi" as Tab, label: `🀄 ${b.tabBazi}` },
           { key: "oracle" as Tab, label: `🔮 ${o.tabOracle}` },
           { key: "browse" as Tab, label: `💎 ${o.tabBrowse}` },
         ]).map((tb) => {
@@ -159,6 +196,372 @@ export default function CrystalsPage() {
           );
         })}
       </div>
+
+      {/* ══════════ 八字选石模式（默认） ══════════ */}
+      {tab === "bazi" && (
+        <div style={{ width: "100%", maxWidth: 860, display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+          {/* 输入表单 */}
+          <div style={{
+            maxWidth: 720, width: "100%", margin: "0 auto",
+            borderRadius: 16, padding: "24px 22px",
+            background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.22)",
+            boxShadow: "0 0 40px rgba(201,168,76,0.06)",
+          }}>
+            <div style={{ textAlign: "center", marginBottom: 18 }}>
+              <h2 style={{
+                fontFamily: "var(--font-cinzel), serif", fontSize: "1rem", color: "#e8d5a3",
+                letterSpacing: "0.08em", margin: "0 0 6px",
+              }}>{b.formTitle}</h2>
+              <p style={{ fontSize: "0.82rem", color: "rgba(200,175,140,0.65)", margin: 0 }}>{b.formHint}</p>
+            </div>
+
+            {/* 出生日期 */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{
+                display: "block", fontSize: "0.72rem", color: "rgba(201,168,76,0.6)",
+                letterSpacing: "0.1em", marginBottom: 6,
+              }}>{b.birthDateLabel}</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {([
+                  { v: bYear, set: setBYear, ph: b.yearPlaceholder, w: "1.4" },
+                  { v: bMonth, set: setBMonth, ph: b.monthPlaceholder, w: "1" },
+                  { v: bDay, set: setBDay, ph: b.dayPlaceholder, w: "1" },
+                ]).map((f, i) => (
+                  <input
+                    key={i}
+                    type="number"
+                    inputMode="numeric"
+                    value={f.v}
+                    onChange={(e) => f.set(e.target.value)}
+                    placeholder={f.ph}
+                    style={{
+                      flex: Number(f.w), minWidth: 0,
+                      padding: "11px 12px", borderRadius: 12,
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(201,168,76,0.2)",
+                      color: "#e8d5a3", fontSize: "0.88rem", outline: "none",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* 时辰（选填） */}
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="cr-bazi-hour" style={{
+                display: "block", fontSize: "0.72rem", color: "rgba(201,168,76,0.6)",
+                letterSpacing: "0.1em", marginBottom: 6,
+              }}>{b.hourLabel}</label>
+              <select
+                id="cr-bazi-hour"
+                value={bHour}
+                onChange={(e) => setBHour(e.target.value)}
+                style={{
+                  width: "100%", padding: "11px 12px", borderRadius: 12,
+                  background: "rgba(16,10,38,0.9)",
+                  border: "1px solid rgba(201,168,76,0.2)",
+                  color: "#e8d5a3", fontSize: "0.88rem", outline: "none",
+                }}
+              >
+                <option value="">{b.hourUnknown}</option>
+                {Array.from({ length: 24 }, (_, h) => (
+                  <option key={h} value={String(h)}>{`${String(h).padStart(2, "0")}:00`}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* 诉求（选填） */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{
+                fontSize: "0.72rem", color: "rgba(201,168,76,0.6)",
+                letterSpacing: "0.1em", marginBottom: 8,
+              }}>{b.intentionLabel}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setBIntention(null)}
+                  aria-pressed={bIntention === null}
+                  style={{
+                    cursor: "pointer", padding: "7px 14px", borderRadius: 18, fontSize: "0.8rem",
+                    border: bIntention === null ? "1px solid rgba(201,168,76,0.7)" : "1px solid rgba(201,168,76,0.2)",
+                    background: bIntention === null ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.03)",
+                    color: bIntention === null ? "#e8d5a3" : "rgba(200,175,140,0.7)",
+                  }}
+                >{b.intentionNone}</button>
+                {INTENTIONS.map((it) => {
+                  const active = bIntention === it.id;
+                  return (
+                    <button
+                      type="button"
+                      key={it.id}
+                      onClick={() => setBIntention(active ? null : it.id)}
+                      aria-pressed={active}
+                      style={{
+                        cursor: "pointer", padding: "7px 14px", borderRadius: 18, fontSize: "0.8rem",
+                        border: active ? "1px solid rgba(201,168,76,0.7)" : "1px solid rgba(201,168,76,0.2)",
+                        background: active ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.03)",
+                        color: active ? "#e8d5a3" : "rgba(200,175,140,0.7)",
+                      }}
+                    >{it.emoji} {it.label[locale]}</button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {bError && (
+              <p style={{ fontSize: "0.8rem", color: "#f0908d", margin: "0 0 12px", textAlign: "center" }}>{bError}</p>
+            )}
+
+            {/* 计算按钮 */}
+            <button
+              onClick={handleBaziCalc}
+              style={{
+                width: "100%", padding: "15px 24px", borderRadius: 16, cursor: "pointer",
+                background: "linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.12), rgba(201,168,76,0.3))",
+                border: "1px solid rgba(201,168,76,0.5)",
+                color: "#e8d5a3", fontSize: "1rem", fontWeight: 700,
+                fontFamily: "var(--font-cinzel), serif", letterSpacing: "0.06em",
+              }}
+            >
+              <span style={{ marginRight: 8 }}>🀄</span>{b.calcBtn}
+            </button>
+          </div>
+
+          {/* 结果 */}
+          {bResult && (() => {
+            const { chart, weakest, match } = bResult;
+            const weakestInfo = ELEMENT_INFO[weakest];
+            const dayElement = STEM_ELEMENT[chart.dayStem as keyof typeof STEM_ELEMENT] as StoneElement;
+            const dayYY = STEM_YIN_YANG[chart.dayStem as keyof typeof STEM_YIN_YANG];
+            const scores = chart.elementScores;
+            const total = ELEMENT_CYCLE.reduce((s, el) => s + (scores[el] ?? 0), 0) || 1;
+            const hasMother = match.primary.some((e) => STONE_ELEMENT[e.stone.id] !== weakest);
+            const motherEl = ELEMENT_CYCLE.find((el) =>
+              el !== weakest && match.primary.some((e) => STONE_ELEMENT[e.stone.id] === el));
+            return (
+              <div style={{ width: "100%", marginTop: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+
+                {/* 日主 + 五行分布 */}
+                <div style={{
+                  background: "rgba(16,10,38,0.7)", border: "1px solid rgba(201,168,76,0.22)",
+                  borderRadius: 14, padding: "18px 20px",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, flexWrap: "wrap" }}>
+                    <span style={{
+                      fontSize: "2rem", color: "#e8d5a3", fontFamily: "serif",
+                      textShadow: "0 0 16px rgba(201,168,76,0.5)",
+                    }}>{chart.dayStem}</span>
+                    <div>
+                      <div style={{ fontSize: "0.68rem", color: "rgba(201,168,76,0.6)", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                        {b.dayMasterLabel}
+                      </div>
+                      <div style={{ fontSize: "0.95rem", color: "rgba(232,213,163,0.9)", marginTop: 3 }}>
+                        {locale === "en"
+                          ? `${STEM_PINYIN[chart.dayStem] ?? chart.dayStem} · ${dayYY === "阳" ? b.yangLabel : b.yinLabel} ${ELEMENT_INFO[dayElement].label[locale]}`
+                          : `${chart.dayStem}（${dayYY}${ELEMENT_INFO[dayElement].label[locale]}）`}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 分布条 */}
+                  <div style={{ fontSize: "0.68rem", color: "rgba(201,168,76,0.6)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 }}>
+                    {b.barTitle}
+                  </div>
+                  <div style={{ display: "flex", height: 14, borderRadius: 8, overflow: "hidden", gap: 2 }}>
+                    {ELEMENT_CYCLE.map((el) => {
+                      const s = scores[el] ?? 0;
+                      const pct = (s / total) * 100;
+                      return (
+                        <div
+                          key={el}
+                          title={`${ELEMENT_INFO[el].label[locale]} ${s}`}
+                          style={{
+                            width: `${Math.max(pct, 3)}%`,
+                            background: ELEMENT_INFO[el].color,
+                            opacity: el === weakest ? 1 : 0.55,
+                            outline: el === weakest ? "2px solid rgba(232,213,163,0.8)" : "none",
+                            outlineOffset: -2,
+                            borderRadius: 3,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, flexWrap: "wrap", gap: 6 }}>
+                    {ELEMENT_CYCLE.map((el) => (
+                      <span key={el} style={{
+                        fontSize: "0.72rem",
+                        color: el === weakest ? "#e8d5a3" : "rgba(200,175,140,0.6)",
+                        fontWeight: el === weakest ? 700 : 400,
+                      }}>
+                        {ELEMENT_INFO[el].label[locale]} {scores[el] ?? 0}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 需补元素 */}
+                <div style={{
+                  background: "rgba(16,10,38,0.7)",
+                  border: `1px solid ${weakestInfo.color}55`,
+                  borderRadius: 14, padding: "18px 20px",
+                  boxShadow: `0 0 24px ${weakestInfo.color}18`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <span style={{
+                      fontSize: "0.68rem", color: "rgba(201,168,76,0.6)",
+                      letterSpacing: "0.12em", textTransform: "uppercase",
+                    }}>{b.weakestTitle}</span>
+                    <span style={{
+                      padding: "3px 12px", borderRadius: 12, fontSize: "0.82rem", fontWeight: 700,
+                      background: `${weakestInfo.color}22`, border: `1px solid ${weakestInfo.color}66`,
+                      color: weakestInfo.color,
+                    }}>{weakestInfo.label[locale]}</span>
+                  </div>
+                  <p style={{ fontSize: "0.86rem", color: "rgba(220,205,175,0.82)", lineHeight: 1.75, margin: "0 0 8px" }}>
+                    {weakestInfo.blurb[locale]}
+                  </p>
+                  <p style={{ fontSize: "0.82rem", color: "rgba(232,213,163,0.85)", lineHeight: 1.7, margin: 0, fontStyle: "italic" }}>
+                    {b.reasonLine(weakestInfo.label[locale])}
+                  </p>
+                  {bResult.hourUnknown && (
+                    <p style={{ fontSize: "0.74rem", color: "rgba(200,175,140,0.55)", lineHeight: 1.7, margin: "10px 0 0" }}>
+                      {bResult.close ? b.closeScoresNote : b.hourUnknownNote}
+                    </p>
+                  )}
+                </div>
+
+                {/* 推荐水晶 */}
+                <div style={{
+                  fontFamily: "var(--font-cinzel), serif", fontSize: "0.95rem",
+                  color: "#e8d5a3", letterSpacing: "0.06em", marginTop: 6,
+                }}>
+                  {b.primaryTitle(weakestInfo.label[locale])}
+                </div>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 14, width: "100%",
+                }}>
+                  {match.primary.map((entry, i) => (
+                    <div
+                      key={entry.stone.id}
+                      className="cr-detail-card"
+                      style={{
+                        animationDelay: `${i * 0.12}s`,
+                        background: "rgba(16,10,38,0.7)",
+                        border: `1px solid ${entry.stone.color}44`,
+                        borderRadius: 14, padding: "18px 18px 16px",
+                        boxShadow: `0 0 24px ${entry.stone.color}14`,
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 12 }}>
+                        <span style={{ fontSize: 26 }}>{entry.stone.emoji}</span>
+                        <span style={{
+                          fontFamily: "var(--font-cinzel), serif",
+                          fontSize: "1.02rem", color: entry.stone.color, letterSpacing: "0.04em",
+                        }}>{entry.stone.name[locale]}</span>
+                        <span style={{
+                          fontSize: "0.66rem", padding: "2px 9px", borderRadius: 10,
+                          background: `${ELEMENT_INFO[STONE_ELEMENT[entry.stone.id]!].color}1e`,
+                          border: `1px solid ${ELEMENT_INFO[STONE_ELEMENT[entry.stone.id]!].color}55`,
+                          color: ELEMENT_INFO[STONE_ELEMENT[entry.stone.id]!].color,
+                        }}>{ELEMENT_INFO[STONE_ELEMENT[entry.stone.id]!].label[locale]}</span>
+                        {bIntention && entry.intentionId === bIntention && (
+                          <span style={{
+                            fontSize: "0.66rem", padding: "2px 9px", borderRadius: 10,
+                            background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)",
+                            color: "rgba(232,213,163,0.85)",
+                          }}>{entry.intentionEmoji} {entry.intentionLabel[locale]}</span>
+                        )}
+                      </div>
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{
+                          fontSize: "0.68rem", color: "rgba(201,168,76,0.6)",
+                          letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 4,
+                        }}>{ui.whyLabel}</div>
+                        <p style={{ fontSize: "0.84rem", color: "rgba(220,205,175,0.82)", lineHeight: 1.75, margin: 0 }}>
+                          {entry.stone.why[locale]}
+                        </p>
+                      </div>
+                      <div style={{ borderTop: `1px solid ${entry.stone.color}22`, paddingTop: 10 }}>
+                        <div style={{
+                          fontSize: "0.68rem", color: "rgba(201,168,76,0.6)",
+                          letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 4,
+                        }}>{ui.howToUseLabel}</div>
+                        <p style={{ fontSize: "0.84rem", color: "rgba(200,175,140,0.72)", lineHeight: 1.75, margin: 0 }}>
+                          {entry.stone.howToUse[locale]}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {hasMother && motherEl && (
+                  <p style={{ fontSize: "0.76rem", color: "rgba(200,175,140,0.55)", margin: 0 }}>
+                    {b.motherNote(weakestInfo.label[locale], ELEMENT_INFO[motherEl].label[locale])}
+                  </p>
+                )}
+
+                {/* 兼顾诉求 */}
+                {match.secondary.length > 0 && (
+                  <>
+                    <div style={{
+                      fontFamily: "var(--font-cinzel), serif", fontSize: "0.95rem",
+                      color: "#e8d5a3", letterSpacing: "0.06em", marginTop: 6,
+                    }}>
+                      {b.secondaryTitle}
+                    </div>
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                      gap: 14, width: "100%",
+                    }}>
+                      {match.secondary.map((entry, i) => (
+                        <div
+                          key={entry.stone.id}
+                          className="cr-detail-card"
+                          style={{
+                            animationDelay: `${i * 0.12}s`,
+                            background: "rgba(16,10,38,0.7)",
+                            border: `1px solid ${entry.stone.color}33`,
+                            borderRadius: 14, padding: "16px 18px",
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                            <span style={{ fontSize: 22 }}>{entry.stone.emoji}</span>
+                            <span style={{
+                              fontFamily: "var(--font-cinzel), serif",
+                              fontSize: "0.98rem", color: entry.stone.color,
+                            }}>{entry.stone.name[locale]}</span>
+                          </div>
+                          <p style={{ fontSize: "0.82rem", color: "rgba(220,205,175,0.78)", lineHeight: 1.7, margin: 0 }}>
+                            {entry.stone.why[locale]}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* CTA：完整八字排盘 */}
+                <a
+                  href={withLocale(locale, "/bazi")}
+                  style={{
+                    display: "block", marginTop: 8, padding: "13px 16px", borderRadius: 12,
+                    background: "linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08))",
+                    border: "1px solid rgba(201,168,76,0.35)",
+                    color: "#e8d5a3", fontSize: "0.84rem", fontWeight: 600,
+                    textDecoration: "none", textAlign: "center",
+                  }}
+                >
+                  ✦ {b.ctaBazi}
+                </a>
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
       {/* ══════════ 占卜抽石模式 ══════════ */}
       {tab === "oracle" && (
