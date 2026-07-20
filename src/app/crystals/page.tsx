@@ -16,6 +16,20 @@ type Step = "input" | "casting" | "result";
 /** 抽石洗牌动画用的 emoji 池 */
 const POOL_EMOJIS = Array.from(new Set(STONE_POOL.map((e) => e.stone.emoji)));
 
+/** 八字选石：年份上限取当前年 */
+const CURRENT_YEAR = new Date().getFullYear();
+
+/** 某年某月的实际天数（自动处理闰年；month 越界时回退 31） */
+function daysInMonth(year: number, month: number): number {
+  if (month < 1 || month > 12) return 31;
+  return new Date(year, month, 0).getDate();
+}
+
+/** 只保留数字并限制长度（配合 inputMode="numeric" 防粘贴非数字） */
+function digitsOnly(v: string, maxLen: number): string {
+  return v.replace(/\D/g, "").slice(0, maxLen);
+}
+
 export default function CrystalsPage() {
   const locale = useLocale();
   const ui = CRYSTALS_UI[locale];
@@ -24,10 +38,10 @@ export default function CrystalsPage() {
 
   const [tab, setTab] = useState<Tab>("bazi");
 
-  // ── 八字选石模式状态 ──
-  const [bYear, setBYear] = useState("");
-  const [bMonth, setBMonth] = useState("");
-  const [bDay, setBDay] = useState("");
+  // ── 八字选石模式状态(默认填当天日期,用户改为自己生日即可) ──
+  const [bYear, setBYear] = useState(() => String(new Date().getFullYear()));
+  const [bMonth, setBMonth] = useState(() => String(new Date().getMonth() + 1));
+  const [bDay, setBDay] = useState(() => String(new Date().getDate()));
   const [bHour, setBHour] = useState(""); // "" = 时辰未知
   const [bIntention, setBIntention] = useState<string | null>(null);
   const [bError, setBError] = useState("");
@@ -39,14 +53,50 @@ export default function CrystalsPage() {
     close: boolean;
   } | null>(null);
 
+  // 失焦时才夹取范围，不在输入过程中和用户抢光标
+  const clampDayToMonth = (y: number, m: number) => {
+    if (!bDay) return;
+    const maxDay = y && m ? daysInMonth(y, m) : 31;
+    const d = Math.min(Math.max(Number(bDay) || 1, 1), maxDay);
+    setBDay(String(d));
+  };
+  const handleYearBlur = () => {
+    if (!bYear) return;
+    const y = Math.min(Math.max(Number(bYear) || 1900, 1900), CURRENT_YEAR);
+    setBYear(String(y));
+    clampDayToMonth(y, Number(bMonth));
+  };
+  const handleMonthBlur = () => {
+    if (!bMonth) return;
+    const m = Math.min(Math.max(Number(bMonth) || 1, 1), 12);
+    setBMonth(String(m));
+    clampDayToMonth(Number(bYear), m);
+  };
+  const handleDayBlur = () => {
+    if (!bDay) return;
+    clampDayToMonth(Number(bYear), Number(bMonth));
+  };
+
+  // 三项齐全且在范围内才允许提交
+  const bYearN = Number(bYear);
+  const bMonthN = Number(bMonth);
+  const bDayN = Number(bDay);
+  const bDateValid =
+    bYear !== "" && bMonth !== "" && bDay !== "" &&
+    Number.isInteger(bYearN) && Number.isInteger(bMonthN) && Number.isInteger(bDayN) &&
+    bYearN >= 1900 && bYearN <= CURRENT_YEAR &&
+    bMonthN >= 1 && bMonthN <= 12 &&
+    bDayN >= 1 && bDayN <= daysInMonth(bYearN || 2000, bMonthN || 1);
+
   const handleBaziCalc = () => {
-    const year = Number(bYear);
-    const month = Number(bMonth);
-    const day = Number(bDay);
-    if (!year || !month || !day || year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1 || day > 31) {
+    // 兜底校验：非法值绝不进入 calculateBazi
+    if (!bDateValid) {
       setBError(b.invalidDate);
       return;
     }
+    const year = bYearN;
+    const month = bMonthN;
+    const day = bDayN;
     setBError("");
     const hourUnknown = bHour === "";
     const chart = calculateBazi(
@@ -224,19 +274,21 @@ export default function CrystalsPage() {
               }}>{b.birthDateLabel}</label>
               <div style={{ display: "flex", gap: 8 }}>
                 {([
-                  { v: bYear, set: setBYear, ph: b.yearPlaceholder, w: "1.4" },
-                  { v: bMonth, set: setBMonth, ph: b.monthPlaceholder, w: "1" },
-                  { v: bDay, set: setBDay, ph: b.dayPlaceholder, w: "1" },
+                  { v: bYear, set: setBYear, ph: b.yearPlaceholder, w: 1.4, len: 4, blur: handleYearBlur },
+                  { v: bMonth, set: setBMonth, ph: b.monthPlaceholder, w: 1, len: 2, blur: handleMonthBlur },
+                  { v: bDay, set: setBDay, ph: b.dayPlaceholder, w: 1, len: 2, blur: handleDayBlur },
                 ]).map((f, i) => (
                   <input
                     key={i}
-                    type="number"
+                    type="text"
                     inputMode="numeric"
+                    maxLength={f.len}
                     value={f.v}
-                    onChange={(e) => f.set(e.target.value)}
+                    onChange={(e) => f.set(digitsOnly(e.target.value, f.len))}
+                    onBlur={f.blur}
                     placeholder={f.ph}
                     style={{
-                      flex: Number(f.w), minWidth: 0,
+                      flex: f.w, minWidth: 0,
                       padding: "11px 12px", borderRadius: 12,
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(201,168,76,0.2)",
@@ -313,15 +365,19 @@ export default function CrystalsPage() {
               <p style={{ fontSize: "0.8rem", color: "#f0908d", margin: "0 0 12px", textAlign: "center" }}>{bError}</p>
             )}
 
-            {/* 计算按钮 */}
+            {/* 计算按钮（日期无效时禁用） */}
             <button
               onClick={handleBaziCalc}
+              disabled={!bDateValid}
               style={{
-                width: "100%", padding: "15px 24px", borderRadius: 16, cursor: "pointer",
+                width: "100%", padding: "15px 24px", borderRadius: 16,
+                cursor: bDateValid ? "pointer" : "not-allowed",
                 background: "linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.12), rgba(201,168,76,0.3))",
                 border: "1px solid rgba(201,168,76,0.5)",
                 color: "#e8d5a3", fontSize: "1rem", fontWeight: 700,
                 fontFamily: "var(--font-cinzel), serif", letterSpacing: "0.06em",
+                opacity: bDateValid ? 1 : 0.45,
+                transition: "opacity 0.18s",
               }}
             >
               <span style={{ marginRight: 8 }}>🀄</span>{b.calcBtn}
