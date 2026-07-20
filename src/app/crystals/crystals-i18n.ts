@@ -377,6 +377,9 @@ export interface BaziUI {
   yearPlaceholder: string;
   monthPlaceholder: string;
   dayPlaceholder: string;
+  genderLabel: string;
+  genderMale: string;
+  genderFemale: string;
   hourLabel: string;
   hourUnknown: string;
   intentionLabel: string;
@@ -406,6 +409,9 @@ export const CRYSTALS_BAZI_UI: Record<Locale, BaziUI> = {
     yearPlaceholder: "年",
     monthPlaceholder: "月",
     dayPlaceholder: "日",
+    genderLabel: "性别（用于大运排向）",
+    genderMale: "男",
+    genderFemale: "女",
     hourLabel: "出生时辰（选填）",
     hourUnknown: "不知道时辰",
     intentionLabel: "想兼顾的诉求（选填）",
@@ -433,6 +439,9 @@ export const CRYSTALS_BAZI_UI: Record<Locale, BaziUI> = {
     yearPlaceholder: "年",
     monthPlaceholder: "月",
     dayPlaceholder: "日",
+    genderLabel: "性別（用於大運排向）",
+    genderMale: "男",
+    genderFemale: "女",
     hourLabel: "出生時辰（選填）",
     hourUnknown: "不知道時辰",
     intentionLabel: "想兼顧的訴求（選填）",
@@ -460,6 +469,9 @@ export const CRYSTALS_BAZI_UI: Record<Locale, BaziUI> = {
     yearPlaceholder: "YYYY",
     monthPlaceholder: "MM",
     dayPlaceholder: "DD",
+    genderLabel: "Gender (for luck-cycle direction)",
+    genderMale: "Male",
+    genderFemale: "Female",
     hourLabel: "Birth hour (optional)",
     hourUnknown: "I don't know",
     intentionLabel: "Intention to combine (optional)",

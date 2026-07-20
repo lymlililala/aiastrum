@@ -42,6 +42,7 @@ export default function CrystalsPage() {
   const [bYear, setBYear] = useState(() => String(new Date().getFullYear()));
   const [bMonth, setBMonth] = useState(() => String(new Date().getMonth() + 1));
   const [bDay, setBDay] = useState(() => String(new Date().getDate()));
+  const [bGender, setBGender] = useState<"male" | "female">("male");
   const [bHour, setBHour] = useState(""); // "" = 时辰未知
   const [bIntention, setBIntention] = useState<string | null>(null);
   const [bError, setBError] = useState("");
@@ -100,7 +101,7 @@ export default function CrystalsPage() {
     setBError("");
     const hourUnknown = bHour === "";
     const chart = calculateBazi(
-      { year, month, day, hour: hourUnknown ? -1 : Number(bHour), gender: "male" },
+      { year, month, day, hour: hourUnknown ? -1 : Number(bHour), gender: bGender },
       locale,
     );
     const weakest = getWeakestElement(chart.elementScores);
@@ -295,6 +296,31 @@ export default function CrystalsPage() {
                       color: "#e8d5a3", fontSize: "0.88rem", outline: "none",
                     }}
                   />
+                ))}
+              </div>
+            </div>
+
+            {/* 性别(八字大运排向需要) */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{
+                fontSize: "0.72rem", color: "rgba(201,168,76,0.6)",
+                letterSpacing: "0.1em", marginBottom: 6,
+              }}>{b.genderLabel}</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {([["male", b.genderMale], ["female", b.genderFemale]] as const).map(([g, label]) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setBGender(g)}
+                    aria-pressed={bGender === g}
+                    style={{
+                      flex: 1, cursor: "pointer", padding: "10px 0", borderRadius: 12, fontSize: "0.88rem",
+                      border: bGender === g ? "1px solid rgba(201,168,76,0.7)" : "1px solid rgba(201,168,76,0.2)",
+                      background: bGender === g ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.04)",
+                      color: bGender === g ? "#e8d5a3" : "rgba(200,175,140,0.7)",
+                      fontWeight: bGender === g ? 600 : 400,
+                    }}
+                  >{label}</button>
                 ))}
               </div>
             </div>
