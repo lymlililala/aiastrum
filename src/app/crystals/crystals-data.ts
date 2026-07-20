@@ -830,3 +830,230 @@ export const INTENTIONS: Intention[] = [
     ],
   },
 ];
+
+
+// ===== 占卜模式：每颗水晶的神谕讯息（key = "需求id:水晶id"） =====
+// 占卜语境下的 1-2 句解读——「这颗石头为什么此刻选择了你」。
+
+export const ORACLE_MESSAGES: Record<string, Record<Locale, string>> = {
+  // ─── 防护 ───
+  "protection:black-tourmaline": {
+    zh: "黑碧玺在此刻来到你身边，是因为你的能量场正在向你求救。它提醒你：先立好边界，再谈付出——不是所有向你伸来的手都值得握住。",
+    tw: "黑碧璽在此刻來到你身邊，是因為你的能量場正在向你求救。它提醒你：先立好邊界，再談付出——不是所有向你伸來的手都值得握住。",
+    en: "Black Tourmaline comes to you now because your energy field has been asking for help. Its message: set your boundaries first, then give — not every hand reaching for you deserves to be held.",
+  },
+  "protection:obsidian": {
+    zh: "黑曜石是一面不说谎的镜子。它出现在这里，是要你直视那个一直在回避的真相——看清的那一刻，消耗就开始停止。",
+    tw: "黑曜石是一面不說謊的鏡子。它出現在這裡，是要你直視那個一直在迴避的真相——看清的那一刻，消耗就開始停止。",
+    en: "Obsidian is a mirror that never lies. It appears here to ask you to face the truth you've been avoiding — the moment you see it clearly, the draining stops.",
+  },
+  "protection:smoky-quartz": {
+    zh: "茶晶选择你，说明你背负的东西已经太沉了。它请求你把不属于你的重量交还给大地——轻装，才能走远。",
+    tw: "茶晶選擇你，說明你背負的東西已經太沉了。它請求你把不屬於你的重量交還給大地——輕裝，才能走遠。",
+    en: "Smoky Quartz chose you because you've been carrying too much. It asks you to hand the weight that isn't yours back to the earth — you travel farther when you travel light.",
+  },
+  "protection:amethyst": {
+    zh: "紫水晶为你升起一层紫色的结界。它说：真正的防护不是对抗，而是让自己的频率高到负能量无法停留。",
+    tw: "紫水晶為你升起一層紫色的結界。它說：真正的防護不是對抗，而是讓自己的頻率高到負能量無法停留。",
+    en: "Amethyst raises a violet ward around you. It says: real protection isn't fighting back — it's raising your frequency until negativity can no longer stay.",
+  },
+  "protection:labradorite": {
+    zh: "拉长石在提醒你这个共感人：别人的情绪是别人的。守好自己的光，你不必为每一阵路过的风雨负责。",
+    tw: "拉長石在提醒你這個共感人：別人的情緒是別人的。守好自己的光，你不必為每一陣路過的風雨負責。",
+    en: "Labradorite speaks to you, the empath: other people's emotions are theirs. Guard your own light — you are not responsible for every storm that passes by.",
+  },
+
+  // ─── 招财 ───
+  "money:citrine": {
+    zh: "黄水晶带着太阳的温度而来。它看到了你对丰盛「既渴望又不敢承认」的矛盾——它说：你值得，请先允许自己接受。",
+    tw: "黃水晶帶著太陽的溫度而來。它看到了你對豐盛「既渴望又不敢承認」的矛盾——它說：你值得，請先允許自己接受。",
+    en: "Citrine arrives with the warmth of the sun. It sees your contradiction — longing for abundance yet not daring to claim it — and says: you are worthy; allow yourself to receive.",
+  },
+  "money:pyrite": {
+    zh: "黄铁矿在此刻出现，是因为机会已经敲门，而你还在犹豫要不要开。它带给你的是行动力：想好，就出手。",
+    tw: "黃鐵礦在此刻出現，是因為機會已經敲門，而你還在猶豫要不要開。它帶給你的是行動力：想好，就出手。",
+    en: "Pyrite shows up because opportunity has already knocked and you're still deciding whether to answer. What it brings you is action: decide, then move.",
+  },
+  "money:green-aventurine": {
+    zh: "绿东陵石是机会的引路人。它告诉你：新的财源不在旧地图上——给那个你一直想去尝试的方向一次机会。",
+    tw: "綠東陵石是機會的引路人。它告訴你：新的財源不在舊地圖上——給那個你一直想去嘗試的方向一次機會。",
+    en: "Green Aventurine is a guide to opportunity. It tells you: new income is not on the old map — give that direction you've been wanting to try a real chance.",
+  },
+  "money:tigers-eye": {
+    zh: "虎眼石选中你，是要你在金钱上少一点情绪、多一点判断。关键时刻，它给你虎一般的冷静与胆识。",
+    tw: "虎眼石選中你，是要你在金錢上少一點情緒、多一點判斷。關鍵時刻，它給你虎一般的冷靜與膽識。",
+    en: "Tiger's Eye picked you to bring less emotion and more judgment to money matters. At the decisive moment, it lends you the calm nerve of the tiger.",
+  },
+  "money:clear-quartz": {
+    zh: "白水晶是意图的放大器。它出现在这里问你：你真的清楚自己要多少、为什么要吗？想清楚，它替你把愿望放大。",
+    tw: "白水晶是意圖的放大器。它出現在這裡問你：你真的清楚自己要多少、為什麼要嗎？想清楚，它替你把願望放大。",
+    en: "Clear Quartz is the amplifier of intention. It appears here to ask: do you truly know how much you want, and why? Get clear — and it will magnify the wish.",
+  },
+
+  // ─── 助眠 ───
+  "sleep:amethyst": {
+    zh: "紫水晶在夜深时来到，是因为你的头脑太久没有下班了。它轻声说：今天的事今天结束，剩下的交给明天。",
+    tw: "紫水晶在夜深時來到，是因為你的頭腦太久沒有下班了。它輕聲說：今天的事今天結束，剩下的交給明天。",
+    en: "Amethyst comes at nightfall because your mind hasn't clocked out in a long time. It whispers: today's business ends today; leave the rest to tomorrow.",
+  },
+  "sleep:moonstone": {
+    zh: "月光石感应到你情绪的潮汐。它邀请你像月亮一样，允许自己有阴晴圆缺——不必每晚都圆满。",
+    tw: "月光石感應到你情緒的潮汐。它邀請你像月亮一樣，允許自己有陰晴圓缺——不必每晚都圓滿。",
+    en: "Moonstone senses the tides of your emotions. It invites you to be like the moon — allowed to wax and wane, not required to be full every night.",
+  },
+  "sleep:lepidolite": {
+    zh: "锂云母带着天然的安定而来。它知道你躺在床上复盘人生的滋味，它说：那些念头，明早的你自会处理。",
+    tw: "鋰雲母帶著天然的安定而來。它知道你躺在床上復盤人生的滋味，它說：那些念頭，明早的你自會處理。",
+    en: "Lepidolite arrives with natural calm. It knows what it's like to lie in bed replaying your life, and says: those thoughts — tomorrow's you will handle them.",
+  },
+  "sleep:howlite": {
+    zh: "白纹石出现在你的抽石里，是因为你的脑内弹幕需要一位关灯的人。把跑马灯般的思绪，一颗颗放到它手里。",
+    tw: "白紋石出現在你的抽石裡，是因為你的腦內彈幕需要一位關燈的人。把跑馬燈般的思緒，一顆顆放到它手裡。",
+    en: "Howlite appears in your draw because your mental chatter needs someone to switch off the lights. Place the racing thoughts into its hands, one by one.",
+  },
+
+  // ─── 抗焦虑 ───
+  "anxiety:lepidolite": {
+    zh: "锂云母是水晶界的深呼吸。它在此刻赶来，是要陪你把心里那根绷到发响的弦，慢慢松半拍。",
+    tw: "鋰雲母是水晶界的深呼吸。它在此刻趕來，是要陪你把心裡那根繃到發響的弦，慢慢鬆半拍。",
+    en: "Lepidolite is the crystal world's deep breath. It rushes to you now to help you loosen — by half a beat — the string inside you wound tight enough to hum.",
+  },
+  "anxiety:blue-lace-agate": {
+    zh: "蓝纹玛瑙看到了你咽回去的话。它温柔地提醒你：被压抑的表达会变成焦虑，先对自己说真话。",
+    tw: "藍紋瑪瑙看到了你嚥回去的話。它溫柔地提醒你：被壓抑的表達會變成焦慮，先對自己說真話。",
+    en: "Blue Lace Agate sees the words you swallowed. It gently reminds you: unspoken truth turns into anxiety — start by being honest with yourself.",
+  },
+  "anxiety:rose-quartz": {
+    zh: "粉晶来到你身边，是因为你对自己太苛刻了。它把最柔软的能量给你：像对待挚友那样，对待你自己。",
+    tw: "粉晶來到你身邊，是因為你對自己太苛刻了。它把最柔軟的能量給你：像對待摯友那樣，對待你自己。",
+    en: "Rose Quartz comes because you've been too hard on yourself. It offers its softest energy: treat yourself the way you would treat a dear friend.",
+  },
+  "anxiety:amethyst": {
+    zh: "紫水晶为你的思绪按下静音键。它说：焦虑是未来的幻影，而呼吸只在当下——回到这里来。",
+    tw: "紫水晶為你的思緒按下靜音鍵。它說：焦慮是未來的幻影，而呼吸只在當下——回到這裡來。",
+    en: "Amethyst presses the mute button on your thoughts. It says: anxiety is a phantom of the future, but breath exists only now — come back here.",
+  },
+  "anxiety:smoky-quartz": {
+    zh: "茶晶出现在这里，是因为你的焦虑飘得太高了。它把你轻轻拉回地面：脚踩实地，心才有处安放。",
+    tw: "茶晶出現在這裡，是因為你的焦慮飄得太高了。它把你輕輕拉回地面：腳踩實地，心才有處安放。",
+    en: "Smoky Quartz appears because your anxiety has floated too high. It draws you gently back to the ground: feet on solid earth, and the heart has somewhere to rest.",
+  },
+
+  // ─── 爱情 ───
+  "love:rose-quartz": {
+    zh: "粉晶是爱之石，它此刻为你打开心轮。它先说一个秘密：流向你的爱意，往往从你善待自己开始。",
+    tw: "粉晶是愛之石，它此刻為你打開心輪。它先說一個秘密：流向你的愛意，往往從你善待自己開始。",
+    en: "Rose Quartz, the stone of love, opens your heart chakra now. It shares a secret first: the love that flows toward you usually begins with how you treat yourself.",
+  },
+  "love:rhodonite": {
+    zh: "蔷薇辉石为你而来，是因为心里还有一段没有好好告别的过去。疗愈它，新的爱才有位置住进来。",
+    tw: "薔薇輝石為你而來，是因為心裡還有一段沒有好好告別的過去。療癒它，新的愛才有位置住進來。",
+    en: "Rhodonite comes because there's a past in your heart that was never properly said goodbye to. Heal it, and new love will have a place to move in.",
+  },
+  "love:green-aventurine": {
+    zh: "绿东陵石带着轻盈的好运出现。它鼓励你：去那个你一直想去的场合——缘分，喜欢出现在路上。",
+    tw: "綠東陵石帶著輕盈的好運出現。它鼓勵你：去那個你一直想去的場合——緣分，喜歡出現在路上。",
+    en: "Green Aventurine arrives with lighthearted luck. It nudges you: go to that place you've been meaning to go — fate likes to meet you on the road.",
+  },
+  "love:moonstone": {
+    zh: "月光石感应到关系中未说出口的情绪。它提醒你：先听懂自己的感受，才读得懂对方的心。",
+    tw: "月光石感應到關係中未說出口的情緒。它提醒你：先聽懂自己的感受，才讀得懂對方的心。",
+    en: "Moonstone senses the unspoken emotions in a relationship. It reminds you: understand your own feelings first, and you'll be able to read the other heart.",
+  },
+  "love:garnet": {
+    zh: "石榴石携火而来。它看到你对感情的热情被日常磨淡了——它要你重新做那个主动表达的人。",
+    tw: "石榴石攜火而來。它看到你對感情的熱情被日常磨淡了——它要你重新做那個主動表達的人。",
+    en: "Garnet arrives carrying fire. It sees your passion dulled by routine — and asks you to become, once again, the one who says it out loud.",
+  },
+
+  // ─── 专注事业 ───
+  "focus:fluorite": {
+    zh: "萤石在此刻出现，是因为你的才华被杂乱掩埋了。它帮你把千头万绪，理成一条清晰的主线。",
+    tw: "螢石在此刻出現，是因為你的才華被雜亂掩埋了。它幫你把千頭萬緒，理成一條清晰的主線。",
+    en: "Fluorite appears because your talent is buried under clutter. It helps you comb a thousand loose threads into one clear main line.",
+  },
+  "focus:clear-quartz": {
+    zh: "白水晶为你校准焦点。它问：今天最重要的那一件事是什么？答上来，其余的自然会让路。",
+    tw: "白水晶為你校準焦點。它問：今天最重要的那一件事是什麼？答上來，其餘的自然會讓路。",
+    en: "Clear Quartz calibrates your focus. It asks: what is the single most important thing today? Answer that, and everything else steps aside.",
+  },
+  "focus:tigers-eye": {
+    zh: "虎眼石选中你，是要你把「准备中」改成「进行中」。它给你关键时刻出手的魄力。",
+    tw: "虎眼石選中你，是要你把「準備中」改成「進行中」。它給你關鍵時刻出手的魄力。",
+    en: "Tiger's Eye chose you to switch your status from 'preparing' to 'in progress'. It gives you the nerve to act at the crucial moment.",
+  },
+  "focus:lapis-lazuli": {
+    zh: "青金石为表达而来。它提醒你：你的想法值得被清楚地说出来——智慧若不开口，就等于不存在。",
+    tw: "青金石為表達而來。它提醒你：你的想法值得被清楚地說出來——智慧若不開口，就等於不存在。",
+    en: "Lapis Lazuli comes for expression. It reminds you: your ideas deserve to be spoken clearly — wisdom that never opens its mouth might as well not exist.",
+  },
+
+  // ─── 梦境直觉 ───
+  "dreams:amethyst": {
+    zh: "紫水晶开启你的眉心轮。它说：梦是潜意识写给你的信，而你最近一直没有拆封。",
+    tw: "紫水晶開啟你的眉心輪。它說：夢是潛意識寫給你的信，而你最近一直沒有拆封。",
+    en: "Amethyst opens your third eye. It says: dreams are letters from your subconscious — and lately you've left them unopened.",
+  },
+  "dreams:labradorite": {
+    zh: "拉长石是帷幕之后的石头。它出现在这里，是因为你的直觉一直在说话，只是你太忙了，听不见。",
+    tw: "拉長石是帷幕之後的石頭。它出現在這裡，是因為你的直覺一直在說話，只是你太忙了，聽不見。",
+    en: "Labradorite is the stone behind the veil. It appears because your intuition has been speaking all along — you've just been too busy to hear it.",
+  },
+  "dreams:moonstone": {
+    zh: "月光石为你调和梦与现实的边界。它邀请你开始记录梦境——答案，常常藏在醒来前最后一个画面里。",
+    tw: "月光石為你調和夢與現實的邊界。它邀請你開始記錄夢境——答案，常常藏在醒來前最後一個畫面裡。",
+    en: "Moonstone tunes the border between dreams and waking. It invites you to start a dream journal — answers often hide in the last image before you wake.",
+  },
+  "dreams:lapis-lazuli": {
+    zh: "青金石带来古老的灵视之力。它要你诚实地问自己：那个你早已知道的答案，打算什么时候承认？",
+    tw: "青金石帶來古老的靈視之力。它要你誠實地問自己：那個你早已知道的答案，打算什麼時候承認？",
+    en: "Lapis Lazuli brings the ancient power of inner sight. It asks you honestly: that answer you've known all along — when do you plan to admit it?",
+  },
+
+  // ─── 活力健康 ───
+  "energy:carnelian": {
+    zh: "红玉髓带着脐轮之火赶来。它看到你把能量都给了别人，轮到自己时只剩灰烬——它来帮你重新点火。",
+    tw: "紅玉髓帶著臍輪之火趕來。它看到你把能量都給了別人，輪到自己時只剩灰燼——它來幫你重新點火。",
+    en: "Carnelian rushes in with sacral fire. It sees you've given your energy to everyone else and kept only ash for yourself — it's here to relight you.",
+  },
+  "energy:red-jasper": {
+    zh: "红碧玉是耐力之石。它在此刻出现，是因为你要走的路还长——不求冲刺，它陪你稳稳走完全程。",
+    tw: "紅碧玉是耐力之石。它在此刻出現，是因為你要走的路還長——不求衝刺，它陪你穩穩走完全程。",
+    en: "Red Jasper is the stone of endurance. It appears because your road is still long — no sprinting needed; it will walk the whole way with you, steady.",
+  },
+  "energy:bloodstone": {
+    zh: "血石自古为复苏而来。它知道你正在扛一段消耗期，它说：撑住，恢复比你想象的更近。",
+    tw: "血石自古為復甦而來。它知道你正在扛一段消耗期，它說：撐住，恢復比你想像的更近。",
+    en: "Bloodstone has come for revival since ancient times. It knows you're enduring a draining season, and says: hold on — recovery is closer than you think.",
+  },
+  "energy:garnet": {
+    zh: "石榴石为你重启生命的流动。它问：上一次让你眼睛发亮的事是什么？去做它——那就是你的充电桩。",
+    tw: "石榴石為你重啟生命的流動。它問：上一次讓你眼睛發亮的事是什麼？去做它——那就是你的充電樁。",
+    en: "Garnet restarts the flow of life in you. It asks: when did something last make your eyes light up? Go do that — it is your charging station.",
+  },
+  "energy:clear-quartz": {
+    zh: "白水晶是能量的大师。它出现在这里提醒你：精力不是省出来的，是校准出来的——先对准，再发力。",
+    tw: "白水晶是能量的大師。它出現在這裡提醒你：精力不是省出來的，是校準出來的——先對準，再發力。",
+    en: "Clear Quartz is the master of energy. It appears to remind you: energy isn't saved, it's aligned — aim first, then spend.",
+  },
+};
+
+// ===== 占卜模式：全部 37 颗水晶的扁平池 =====
+
+export interface PoolEntry {
+  intentionId: string;
+  intentionLabel: Record<Locale, string>;
+  intentionEmoji: string;
+  stone: Stone;
+  oracle: Record<Locale, string>;
+}
+
+export const STONE_POOL: PoolEntry[] = INTENTIONS.flatMap((it) =>
+  it.stones.map((stone) => ({
+    intentionId: it.id,
+    intentionLabel: it.label,
+    intentionEmoji: it.emoji,
+    stone,
+    oracle: ORACLE_MESSAGES[`${it.id}:${stone.id}`]!,
+  })),
+);

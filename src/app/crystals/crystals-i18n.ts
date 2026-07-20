@@ -50,6 +50,10 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
     faqTitle: "常见问题",
     faq: [
       {
+        q: "水晶抽石占卜怎么玩？",
+        a: "先在心里默想一个问题（选填），选择单石指引或三石阵，点击「开始感应抽石」。单石直指你当下最需要的一颗水晶；三石阵分别对应「当下能量、需要接纳、行动建议」三个位置。点击石面翻开后，可以看到这颗水晶的讯息、所属领域和具体用法。结果仅供自我探索与娱乐。",
+      },
+      {
         q: "怎么选适合自己的水晶？",
         a: "先定需求再选石头。在本页选择你当前最迫切的需求（防护、招财、助眠、抗焦虑等），然后从推荐的几颗里挑一颗最有眼缘的开始。一颗用熟，胜过一堆闲置。",
       },
@@ -97,6 +101,10 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
     ],
     faqTitle: "常見問題",
     faq: [
+      {
+        q: "水晶抽石占卜怎麼玩？",
+        a: "先在心裡默想一個問題（選填），選擇單石指引或三石陣，點擊「開始感應抽石」。單石直指你當下最需要的一顆水晶；三石陣分別對應「當下能量、需要接納、行動建議」三個位置。點擊石面翻開後，可以看到這顆水晶的訊息、所屬領域和具體用法。結果僅供自我探索與娛樂。",
+      },
       {
         q: "怎麼選適合自己的水晶？",
         a: "先定需求再選石頭。在本頁選擇你當前最迫切的需求（防護、招財、助眠、抗焦慮等），然後從推薦的幾顆裡挑一顆最有眼緣的開始。一顆用熟，勝過一堆閒置。",
@@ -146,6 +154,10 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
     faqTitle: "FAQ",
     faq: [
       {
+        q: "How does the crystal draw work?",
+        a: "Hold a question in mind (optional), pick Single Stone Guidance or the Three-Stone Spread, then tap 'Attune & Draw'. A single stone points to the crystal you need most right now; the three positions read as Current Energy, What to Embrace, and Action Advice. Tap a stone face to reveal the crystal's message, its domain, and how to use it. For self-exploration and entertainment only.",
+      },
+      {
         q: "How do I choose the right crystal for me?",
         a: "Decide the intention first, then the stone. Pick the need that's most urgent for you on this page (protection, money, sleep, anxiety relief, etc.), then choose the one recommended stone you're most drawn to. One stone you actually use beats a drawer full of them.",
       },
@@ -167,5 +179,165 @@ export const CRYSTALS_UI: Record<Locale, CrystalsUI> = {
       },
     ],
     disclaimer: "* Crystal meanings are based on energy-healing tradition and folklore. For self-exploration and entertainment only — not medical advice.",
+  },
+};
+
+
+// ===== 占卜抽石模式 UI 文案（三语） =====
+
+export interface OraclePosition {
+  icon: string;
+  label: string;
+  desc: string;
+}
+
+export interface OracleUI {
+  tabOracle: string;
+  tabBrowse: string;
+  howToTitle: string;
+  howToSteps: string[];
+  questionLabel: string;
+  questionPlaceholder: string;
+  modeLabel: string;
+  focusHint: string;
+  singleName: string;
+  singleSub: string;
+  singleDesc: string;
+  threeName: string;
+  threeSub: string;
+  threeDesc: string;
+  castBtn: string;
+  castingText: string;
+  flipHint: string;
+  badgeSingle: string;
+  badgeThree: string;
+  revealHintSingle: string;
+  revealHintThree: string;
+  yourQuestion: string;
+  domainLabel: string;
+  oracleLabel: string;
+  positions: OraclePosition[];
+  again: string;
+  copyResult: string;
+  copied: string;
+}
+
+export const CRYSTALS_ORACLE_UI: Record<Locale, OracleUI> = {
+  zh: {
+    tabOracle: "水晶占卜",
+    tabBrowse: "按需求选石",
+    howToTitle: "怎么玩？",
+    howToSteps: [
+      "深呼吸三次，在心里默念一个你想问的问题（也可以写下来，或不写）",
+      "选择单石指引或三石阵，点击「开始感应抽石」",
+      "轻触石面翻开水晶，接收它此刻带给你的讯息",
+      "把抽到的水晶用进生活：佩戴、摆放，或握着它冥想",
+    ],
+    questionLabel: "你的问题（选填）",
+    questionPlaceholder: "例如：我最近最需要注意什么？",
+    modeLabel: "— 选择抽石方式 —",
+    focusHint: "默念你的问题，然后让直觉替你做决定。",
+    singleName: "单石指引",
+    singleSub: "One Stone",
+    singleDesc: "一颗水晶，直指你当下最需要的讯息",
+    threeName: "三石阵",
+    threeSub: "Three Stones",
+    threeDesc: "当下能量 · 需要接纳 · 行动建议",
+    castBtn: "开始感应抽石",
+    castingText: "水晶正在感应你的能量…",
+    flipHint: "点击翻开",
+    badgeSingle: "☽ 单石指引",
+    badgeThree: "✦ 三石阵",
+    revealHintSingle: "☽ 心存所问，轻触石面，揭晓你的水晶",
+    revealHintThree: "✦ 心存所问，轻触任意石面，三段讯息将为你展开",
+    yourQuestion: "你的问题",
+    domainLabel: "所属领域",
+    oracleLabel: "水晶的讯息",
+    positions: [
+      { icon: "☀️", label: "当下能量", desc: "你此刻所处的能量状态" },
+      { icon: "🌊", label: "需要接纳", desc: "需要你允许与接纳的部分" },
+      { icon: "🔥", label: "行动建议", desc: "接下来可以采取的具体行动" },
+    ],
+    again: "↺ 再抽一次",
+    copyResult: "📋 复制占卜结果",
+    copied: "✓ 已复制",
+  },
+  tw: {
+    tabOracle: "水晶占卜",
+    tabBrowse: "按需求選石",
+    howToTitle: "怎麼玩？",
+    howToSteps: [
+      "深呼吸三次，在心裡默念一個你想問的問題（也可以寫下來，或不寫）",
+      "選擇單石指引或三石陣，點擊「開始感應抽石」",
+      "輕觸石面翻開水晶，接收它此刻帶給你的訊息",
+      "把抽到的水晶用進生活：佩戴、擺放，或握著它冥想",
+    ],
+    questionLabel: "你的問題（選填）",
+    questionPlaceholder: "例如：我最近最需要注意什麼？",
+    modeLabel: "— 選擇抽石方式 —",
+    focusHint: "默念你的問題，然後讓直覺替你做決定。",
+    singleName: "單石指引",
+    singleSub: "One Stone",
+    singleDesc: "一顆水晶，直指你當下最需要的訊息",
+    threeName: "三石陣",
+    threeSub: "Three Stones",
+    threeDesc: "當下能量 · 需要接納 · 行動建議",
+    castBtn: "開始感應抽石",
+    castingText: "水晶正在感應你的能量…",
+    flipHint: "點擊翻開",
+    badgeSingle: "☽ 單石指引",
+    badgeThree: "✦ 三石陣",
+    revealHintSingle: "☽ 心存所問，輕觸石面，揭曉你的水晶",
+    revealHintThree: "✦ 心存所問，輕觸任意石面，三段訊息將為你展開",
+    yourQuestion: "你的問題",
+    domainLabel: "所屬領域",
+    oracleLabel: "水晶的訊息",
+    positions: [
+      { icon: "☀️", label: "當下能量", desc: "你此刻所處的能量狀態" },
+      { icon: "🌊", label: "需要接納", desc: "需要你允許與接納的部分" },
+      { icon: "🔥", label: "行動建議", desc: "接下來可以採取的具體行動" },
+    ],
+    again: "↺ 再抽一次",
+    copyResult: "📋 複製占卜結果",
+    copied: "✓ 已複製",
+  },
+  en: {
+    tabOracle: "Crystal Oracle",
+    tabBrowse: "Browse by Intention",
+    howToTitle: "How it works",
+    howToSteps: [
+      "Take three deep breaths and hold a question in mind (write it down, or don't)",
+      "Choose Single Stone or the Three-Stone Spread, then tap 'Attune & Draw'",
+      "Tap the stone face to flip your crystal and receive its message",
+      "Put the drawn crystal to use: wear it, place it, or meditate with it",
+    ],
+    questionLabel: "Your question (optional)",
+    questionPlaceholder: "e.g. What should I pay attention to right now?",
+    modeLabel: "— Choose your draw —",
+    focusHint: "Hold your question in mind, then let intuition decide.",
+    singleName: "Single Stone Guidance",
+    singleSub: "One Stone",
+    singleDesc: "One crystal, pointing straight at the message you need now",
+    threeName: "Three-Stone Spread",
+    threeSub: "Three Stones",
+    threeDesc: "Current energy · What to embrace · Action advice",
+    castBtn: "Attune & Draw",
+    castingText: "The crystals are attuning to your energy…",
+    flipHint: "Tap to reveal",
+    badgeSingle: "☽ Single Stone Guidance",
+    badgeThree: "✦ Three-Stone Spread",
+    revealHintSingle: "☽ Hold your question close, tap the stone to reveal your crystal",
+    revealHintThree: "✦ Hold your question close, tap any stone, and three messages will unfold",
+    yourQuestion: "Your question",
+    domainLabel: "Domain",
+    oracleLabel: "The crystal's message",
+    positions: [
+      { icon: "☀️", label: "Current Energy", desc: "The energy state you're in right now" },
+      { icon: "🌊", label: "What to Embrace", desc: "The part you need to allow and accept" },
+      { icon: "🔥", label: "Action Advice", desc: "The concrete step you can take next" },
+    ],
+    again: "↺ Draw Again",
+    copyResult: "📋 Copy Reading",
+    copied: "✓ Copied",
   },
 };

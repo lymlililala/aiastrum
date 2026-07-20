@@ -270,3 +270,17 @@ for (const post of posts) {
   else { console.log("OK  ", post.slug); ok++; }
 }
 console.log(`\nDone: ${ok} success, ${fail} fail`);
+
+// ─── 写库后刷新线上博客缓存 + sitemap(src/app/api/revalidate)───────────────
+// unstable_cache 跨部署保留,不刷新则 sitemap/博客页最长滞后 1 小时才收录新文
+if (SECRET && fail === 0) {
+  try {
+    const r = await fetch("https://aiastrum.com/api/revalidate", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${SECRET}` },
+    });
+    console.log("revalidate:", r.status, await r.text());
+  } catch (e) {
+    console.warn("revalidate 失败(不影响写库):", e.message);
+  }
+}

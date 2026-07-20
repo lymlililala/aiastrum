@@ -147,6 +147,19 @@ async function run() {
     }
   }
   console.log(`\n${DRY ? "DRY 预览完成" : `完成:更新 ${updated} 篇,跳过 ${skipped} 篇`}。`);
+
+  // 写库后刷新线上博客缓存 + sitemap(src/app/api/revalidate),避免收录滞后
+  if (!DRY && SECRET && updated > 0) {
+    try {
+      const r = await fetch("https://aiastrum.com/api/revalidate", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${SECRET}` },
+      });
+      console.log("revalidate:", r.status, await r.text());
+    } catch (e) {
+      console.warn("revalidate 失败(不影响写库):", e.message);
+    }
+  }
 }
 
 run();
