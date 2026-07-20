@@ -58,9 +58,10 @@ const TOPICS: Record<string, Topic> = {
   },
   "crystal-healing": {
     h1: "水晶疗愈大全 · Crystal Healing",
-    title: "水晶疗愈大全：各类水晶功效、用法与按需求选水晶 | Crystal Healing",
-    description: "黑碧玺、白水晶、黑曜石、月光石……各类水晶的功效、净化方法与使用指南，以及「焦虑/睡眠/招财/护身/爱情」按需求选水晶。",
+    title: "水晶疗愈大全：各类水晶功效、用法与按需求选水晶 | Crystal Healing & Protection Crystals",
+    description: "黑碧玺、白水晶、黑曜石、月光石……各类水晶的功效、净化方法与使用指南，以及「焦虑/睡眠/招财/护身/爱情」按需求选水晶。Protection crystals, crystals for stress relief and crystals for abundance — find the right stone for your intention.",
     intro: `<p>水晶不是迷信的摆件，而是一套关于「意图」与「专注」的练习工具。每种水晶都有它擅长的领域：黑碧玺护身、白水晶净化、月光石安抚情绪。这个索引汇总了站内所有水晶解析与脉轮主题，帮你按「水晶种类」或「想解决的问题」快速找到合适的那一颗。</p>
+<p>Looking for protection crystals, crystals for stress relief, or crystals for abundance and luck? Browse the guides below — each covers the stone's meaning, cleansing methods, and how to use it for spiritual protection, calming energy, or attracting money.</p>
 <p>第一次接触水晶？建议先看净化与使用方法，再根据自己当下的需求挑选。</p>`,
     match: p => p.category === "crystals" || p.category === "chakras" || re(p, /crystal|水晶|chakra|脉轮/),
     ctaHref: "/ai-mystic",
@@ -72,6 +73,7 @@ const TOPICS: Record<string, Topic> = {
     title: "生命灵数 1-9 完整解析：计算方法、性格与配对 | Life Path Numbers",
     description: "生命灵数 1 到 9 号人的完整指南：怎么从生日算出你的灵数、每个数字的性格底色、爱情配对与职业方向，以及 11/22/33 卓越数。",
     intro: `<p>生命灵数是命理学的入口：把出生日期逐位相加，得到的那个数字被用来描述你的核心性格、天赋与人生课题。这个索引汇总了站内 1 到 9 号灵数的完整解析——从怎么算，到每个数字在爱情、事业里的具体表现。</p>
+<p>Each life path number carries its own energy — for example, life path 3 is the communicator: creative, expressive and social. Wondering about life path number 3 meaning or any other number? Start with the calculation guide, then read your number's full profile below.</p>
 <p>不知道怎么算？先看计算方法，再对照你的数字深入阅读。遇到 11、22、33 不要继续相加——那是卓越数，另有专文讲解。</p>`,
     match: p => re(p, /life[- ]path|numerology|灵数|personal year/) && !re(p, /angel[- ]number|天使数字/),
     ctaHref: "/numerology",

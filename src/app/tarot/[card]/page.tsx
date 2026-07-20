@@ -67,7 +67,9 @@ export async function generateMetadata({ params }: { params: { card: string } })
   return {
     title: t.metaTitle,
     description: t.metaDesc,
-    keywords: [...base.keywords, base.name, base.nameCn],
+    keywords: locale === "en"
+      ? [...base.keywords, base.name, base.nameCn, `${base.name} tarot`, `${base.name} reversed`, `${base.name} tarot card meaning`]
+      : [...base.keywords, base.name, base.nameCn],
     alternates: { canonical: url },
     openGraph: {
       title: t.metaTitle,
@@ -225,11 +227,11 @@ export default async function TarotCardPage({ params }: { params: { card: string
         {t.overview.map((p, i) => <p key={i} style={para}>{p}</p>)}
 
         {/* 正位 */}
-        <h2 style={sectionTitle}>▲ {ui.upright}</h2>
+        <h2 style={sectionTitle}>▲ {locale === "en" ? `${base.name} ${ui.upright}` : ui.upright}</h2>
         {aspectBlock(t.upright)}
 
         {/* 逆位 */}
-        <h2 style={sectionTitle}>▽ {ui.reversed}</h2>
+        <h2 style={sectionTitle}>▽ {locale === "en" ? `${base.name} ${ui.reversed}` : ui.reversed}</h2>
         {aspectBlock(t.reversed)}
 
         {/* 建议 */}

@@ -9,17 +9,17 @@ const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Life Path Number Calculator — What Is My Number?",
     description: "Free life path number calculator: enter your birth date for your life path number (1–9, 11, 22, 33) with step-by-step math and full meaning.",
-    keywords: ["life path number calculator", "life path calculator", "what is my life path number", "numerology calculator free", "life path number meaning", "master number calculator"],
+    keywords: ["life path number calculator", "life path calculator", "what is my life path number", "numerology calculator free", "life path number meaning", "master number calculator", "life path 3", "life path number 3 meaning"],
   },
   zh: {
     title: "生命灵数计算器 — 免费计算你的生命道路数字",
     description: "免费生命灵数计算器：输入出生日期，立即算出你的生命灵数（1-9 及卓越数 11、22、33），展示逐步计算过程，附性格特质与人生课题解读。",
-    keywords: ["生命灵数计算器", "生命灵数怎么算", "生命道路数字", "数字命理免费", "卓越数 11 22 33"],
+    keywords: ["生命灵数计算器", "生命灵数怎么算", "生命道路数字", "数字命理免费", "卓越数 11 22 33", "生命数字", "生命数字计算", "生命数字计算器"],
   },
   tw: {
     title: "生命靈數計算器 — 免費計算你的生命道路數字",
     description: "免費生命靈數計算器：輸入出生日期，立即算出你的生命靈數（1-9 及卓越數 11、22、33），展示逐步計算過程，附性格特質與人生課題解讀。",
-    keywords: ["生命靈數計算器", "生命靈數怎麼算", "生命道路數字", "數字命理免費", "卓越數 11 22 33"],
+    keywords: ["生命靈數計算器", "生命靈數怎麼算", "生命道路數字", "數字命理免費", "卓越數 11 22 33", "生命數字", "生命數字計算", "生命數字計算器"],
   },
 };
 

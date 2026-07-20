@@ -233,7 +233,7 @@ export const PART_3: CardMeaning[] = [
     en: {
       metaTitle: "The Star Tarot Card Meaning: Upright & Reversed",
       metaDesc:
-        "The Star tarot meaning: upright & reversed for love, career and finances — hope, healing and renewal after upheaval.",
+        "The Star tarot meaning: upright & the Star reversed tarot guide for love, career and finances — hope, healing and renewal after upheaval.",
       overview: [
         "A naked woman kneels by a pool, one foot in the water, one on land, pouring from two jugs; above her shine one great eight-pointed star and seven smaller ones.",
         "Following The Tower and ruled by Aquarius, The Star is the calm after collapse: hope, healing, faith that life is refillable. The task now is gentle renewal, not survival.",

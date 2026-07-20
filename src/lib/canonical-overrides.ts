@@ -79,6 +79,10 @@ export const CANONICAL_OVERRIDES: Record<string, string> = {
   "meditation-for-beginners": "beginners-guide-to-meditation",
   "beginner-meditation-guide-how-to-start": "beginners-guide-to-meditation",
   "meditation-for-beginners-complete-guide": "beginners-guide-to-meditation",
+
+  // ── GSC 0720：狮子座 2026 年运两篇英文同意图 ──
+  // 合并到 slug/keywords 精确命中 "leo 2026 yearly horoscope"(pos 51)的主文章
+  "horoscope-leo-2026-annual-complete": "leo-2026-yearly-horoscope",
 };
 
 /** 返回某 slug 的规范 slug（无映射则返回自身） */

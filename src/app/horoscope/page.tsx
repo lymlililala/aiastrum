@@ -169,6 +169,22 @@ export default function HoroscopePage() {
                 ? "🔮 2026下半年運勢：十二星座＋生肖流年完整解析 →"
                 : "🔮 2026 Second-Half Horoscope: 12 Signs + Chinese Zodiac →"}
             </a>
+            {/* 狮子座 2026 年运内链（GSC: "leo 2026 yearly horoscope" 需求词） */}
+            <a
+              href="/blog/leo-2026-yearly-horoscope"
+              style={{
+                display: "inline-block", marginTop: 14, marginLeft: 8,
+                fontSize: "0.78rem", color: "rgba(232,213,163,0.8)",
+                textDecoration: "none",
+                border: "1px solid rgba(201,168,76,0.2)",
+                background: "rgba(201,168,76,0.05)",
+                borderRadius: 10, padding: "8px 16px",
+              }}
+            >
+              {lang === "zh"
+                ? "🦁 狮子座 2026 年度运势完整解析 →"
+                : "🦁 Leo 2026 Yearly Horoscope: Love, Career & Money →"}
+            </a>
           </div>
         ) : (
           <div className="horoscope-detail-step">

@@ -9,17 +9,17 @@ const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "MBTI × Zodiac — Cosmic Personality Profile",
     description: "Combine MBTI and zodiac sign to generate a viral personality report packed with meme culture. Highly shareable cosmic identity card.",
-    keywords: ["MBTI zodiac", "personality test", "MBTI astrology", "personality type", "16 personalities"],
+    keywords: ["MBTI zodiac", "personality test", "MBTI astrology", "personality type", "16 personalities", "mbti compatibility", "istj love", "infp best match"],
   },
   zh: {
     title: "MBTI × 星座 — 人格档案与星球碰撞测试",
     description: "结合 MBTI 与星座,生成充满梗文化的爆款人格报告,打造高度可分享的宇宙身份卡。免费 MBTI 星座测试。",
-    keywords: ["MBTI星座", "MBTI测试", "人格测试", "16型人格", "性格测试", "人格档案"],
+    keywords: ["MBTI星座", "MBTI测试", "人格测试", "16型人格", "性格测试", "人格档案", "MBTI配对", "16型人格配对"],
   },
   tw: {
     title: "MBTI × 星座 — 人格檔案與星球碰撞測試",
     description: "結合 MBTI 與星座,生成充滿梗文化的爆款人格報告,打造高度可分享的宇宙身份卡。免費 MBTI 星座測試。",
-    keywords: ["MBTI星座", "MBTI測試", "人格測試", "16型人格", "性格測試", "人格檔案"],
+    keywords: ["MBTI星座", "MBTI測試", "人格測試", "16型人格", "性格測試", "人格檔案", "MBTI配對", "16型人格配對"],
   },
 };
 
