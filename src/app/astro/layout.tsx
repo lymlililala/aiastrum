@@ -7,9 +7,9 @@ import { T } from "./astro-i18n";
 
 const META: Record<Locale, LocaleMeta> = {
   en: {
-    title: "Sun Moon Rising Calculator — Free Birth Chart",
-    description: "Free sun, moon and rising sign calculator: enter your birth date, time and city to find your Big Three and generate your full natal chart.",
-    keywords: ["sun moon rising calculator", "sun moon rising", "rising sign calculator", "moon sign calculator", "birth chart", "natal chart", "astrology", "big three astrology"],
+    title: "Birth Chart Calculator — Free Natal Chart & Sun Moon Rising",
+    description: "Free birth chart calculator: enter your birth date, time and city to generate your full natal chart — sun, moon, rising signs, planets and houses.",
+    keywords: ["birth chart calculator", "natal chart calculator", "free birth chart", "natal chart", "sun moon rising calculator", "sun moon rising", "rising sign calculator", "moon sign calculator", "birth chart", "big three astrology"],
   },
   zh: {
     title: "星盘查询 — 免费在线星盘排盘与命盘分析",

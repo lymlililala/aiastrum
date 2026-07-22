@@ -8,8 +8,8 @@ import { T } from "./yes-no-i18n";
 const META: Record<Locale, LocaleMeta> = {
   en: {
     title: "Yes or No Tarot — Free Accurate Yes No Tarot Reading",
-    description: "Free yes or no tarot reading: focus on your question, draw 1 or 3 cards and get an instant yes, no or maybe answer. No sign-up.",
-    keywords: ["yes or no tarot", "yes no tarot accurate free", "yes no tarot reading", "free yes no tarot", "tarot yes or no answer"],
+    description: "Free yes or no tarot reading: ask the oracle your question, draw 1 or 3 cards and get an instant yes, no or maybe answer with card meanings. No sign-up.",
+    keywords: ["yes or no tarot", "yes no tarot accurate free", "yes no tarot reading", "free yes no tarot", "tarot yes or no answer", "yes or no oracle", "yes no tarot card answers"],
   },
   zh: {
     title: "是与否塔罗 — 免费在线是非塔罗占卜（是/否/待定）",
